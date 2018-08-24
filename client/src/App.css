@@ -1,0 +1,159 @@
+/* Trying to use custom scroll bar */
+/* width */
+::-webkit-scrollbar {
+    width: 3px;
+    height: 3px
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+body {
+  font-family: Roboto, sans-serif;
+  padding-right: 0 !important;
+  background-color: #121212;
+    color: #c7c7c7;
+}
+
+.mainApp {
+    margin: 10px;
+}
+
+/* Improving large screens display */
+@media screen and (min-width: 840px) {
+
+  .bottomNav {
+    left: 0
+  }
+
+  .mainApp {
+    width: 40%;
+    margin: 0 auto;
+    padding-right: 0 !important;
+  }
+
+  .movieInfoDialog {
+      margin: 0 auto;
+      width: 50%;
+  }
+
+  .dataMovieInfo {
+      padding-left: 0;
+      padding-right: 0;
+      padding-top: 10px;
+  }
+
+  .protocolInput {
+      position: absolute !important;
+  }
+
+    .autoUpdateSentence {
+        width: 50%;
+    }
+}
+
+.backdropMovieInfoDialog {
+    width: 100%;
+    margin: 0 auto;
+    height: 200px;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+}
+
+/* Little screens */
+@media screen and (max-width: 839px) {
+    .movieInfoDialog {
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .dataMovieInfo {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 10px;
+    }
+
+    .protocolInput {
+        position: relative !important;
+    }
+
+    .autoUpdateSentence {
+        width: 100%;
+    }
+}
+
+/* VERY Little screens */
+@media screen and (max-width: 362px) {
+    .titleDownload {
+        width: 40%;
+    }
+
+    .buttonsDownload {
+        width: 52%;
+    }
+}
+@media screen and (min-width: 363px) {
+    .titleDownload {
+        width: 50%;
+    }
+
+    .buttonsDownload {
+        width: 42%;
+    }
+}
+
+
+
+/* Trying to solved elements moving when showing dialog */
+/*html {*/
+  /*overflow-y: auto;*/
+  /*overflow-x: hidden;*/
+/*}*/
+
+/*body, #root {*/
+  /*height: 100%;*/
+  /*width: 100%;*/
+  /*margin: 0;*/
+  /*padding: 0;*/
+/*}*/

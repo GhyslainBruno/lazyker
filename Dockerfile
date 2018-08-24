@@ -22,6 +22,8 @@ COPY . /lazyker/app/
 WORKDIR /lazyker/app/client
 RUN npm run build
 
+RUN rm -rf node_modules && rm -rf public && rm -rf src
+
 WORKDIR /lazyker/app
 ENV NODE_ENV=production
 EXPOSE 8081

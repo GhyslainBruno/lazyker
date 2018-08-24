@@ -87,7 +87,7 @@ const downloadTorrentFile = async url => {
         await page.type('input[name=pass]', db.getData('/configuration/ygg/password'));
 
         await page.keyboard.down('Enter');
-        await page.type('input[name=id]', 'Ghyslain');
+        await page.type('input[name=id]', db.getData('/configuration/ygg/username'));
         await page.keyboard.down('Enter');
 
         await page.waitForNavigation();
@@ -121,7 +121,7 @@ const downloadTorrentFile = async url => {
 
         // Without puppeteer
         // Ygg login
-        // const sessionCookie = await yggLogin('Ghyslain', '4N0uRYG!L)uDz3_IVm7n>G');
+        // const sessionCookie = await yggLogin(db.getData('/configuration/ygg/username'), db.getData('/configuration/ygg/password'));
 
         // Get id of the torrent to download
         // const id = getTorrentId(url);

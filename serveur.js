@@ -11,6 +11,7 @@ const downloader = require('./synology/download');
 const logger = require('./logs/logger');
 const path = require('path');
 const realdebrid = require('./realdebrid/debrid_links');
+const synoConnector = require('./synology/Connector');
 
 const db = new jsonDB("database.json", true, true);
 db.reload();
@@ -24,20 +25,20 @@ const Movies = require('./movies/Movies');
 
 const app = express();
 
-let syno = new Syno({
-    // Requests protocol : 'http' or 'https' (default: http)
-    protocol: db.getData('/configuration/nas/protocol'),
-    // DSM host : ip, domain name (default: localhost)
-    host: db.getData('/configuration/nas/host'),
-    // DSM port : port number (default: 5000)
-    port: db.getData('/configuration/nas/port'),
-    // DSM User account (required)
-    account: db.getData('/configuration/nas/account'),
-    // DSM User password (required)
-    passwd: db.getData('/configuration/nas/password'),
-    // DSM API version (optional, default: 6.0.2)
-    apiVersion: '6.0.2'
-});
+// let syno = new Syno({
+//     // Requests protocol : 'http' or 'https' (default: http)
+//     protocol: db.getData('/configuration/nas/protocol'),
+//     // DSM host : ip, domain name (default: localhost)
+//     host: db.getData('/configuration/nas/host'),
+//     // DSM port : port number (default: 5000)
+//     port: db.getData('/configuration/nas/port'),
+//     // DSM User account (required)
+//     account: db.getData('/configuration/nas/account'),
+//     // DSM User password (required)
+//     passwd: db.getData('/configuration/nas/password'),
+//     // DSM API version (optional, default: 6.0.2)
+//     apiVersion: '6.0.2'
+// });
 
 let autoUpdateChild = {};
 let moviesChild = {};
@@ -294,20 +295,23 @@ app.post('/api/settings', async (req, res) => {
     db.save();
 
     db.reload();
-    syno = new Syno({
-        // Requests protocol : 'http' or 'https' (default: http)
-        protocol: db.getData('/configuration/nas/protocol'),
-        // DSM host : ip, domain name (default: localhost)
-        host: db.getData('/configuration/nas/host'),
-        // DSM port : port number (default: 5000)
-        port: db.getData('/configuration/nas/port'),
-        // DSM User account (required)
-        account: db.getData('/configuration/nas/account'),
-        // DSM User password (required)
-        passwd: db.getData('/configuration/nas/password'),
-        // DSM API version (optional, default: 6.0.2)
-        apiVersion: '6.0.2'
-    });
+
+    await synoConnector.getConnection();
+
+    // syno = new Syno({
+    //     // Requests protocol : 'http' or 'https' (default: http)
+    //     protocol: db.getData('/configuration/nas/protocol'),
+    //     // DSM host : ip, domain name (default: localhost)
+    //     host: db.getData('/configuration/nas/host'),
+    //     // DSM port : port number (default: 5000)
+    //     port: db.getData('/configuration/nas/port'),
+    //     // DSM User account (required)
+    //     account: db.getData('/configuration/nas/account'),
+    //     // DSM User password (required)
+    //     passwd: db.getData('/configuration/nas/password'),
+    //     // DSM API version (optional, default: 6.0.2)
+    //     apiVersion: '6.0.2'
+    // });
 
     res.send({message: 'Settings changed'});
 });
@@ -473,7 +477,7 @@ app.get('/api/movies_in_progress', (req, res) => {
 app.get('/api/current_downloads', async (req, res) => {
 
     try {
-        const currentDownloads = await downloader.getCurrentDownloads(syno);
+        const currentDownloads = await downloader.getCurrentDownloads(await synoConnector.getConnection());
 
         res.send({
             currentDownloads: currentDownloads
@@ -488,7 +492,7 @@ app.get('/api/current_downloads', async (req, res) => {
 
 app.post('/api/resume_download', async (req, res) => {
     try {
-        const message = await downloader.resumeDownload(syno, req.body.id);
+        const message = await downloader.resumeDownload(await synoConnector.getConnection(), req.body.id);
         res.send({
             message: message
         })
@@ -501,7 +505,7 @@ app.post('/api/resume_download', async (req, res) => {
 
 app.post('/api/remove_download', async (req, res) => {
     try {
-        const message = await downloader.removeDownload(syno, req.body.id);
+        const message = await downloader.removeDownload(await synoConnector.getConnection(), req.body.id);
         res.send({
             message: message
         })
@@ -514,7 +518,7 @@ app.post('/api/remove_download', async (req, res) => {
 
 app.post('/api/pause_download', async (req, res) => {
     try {
-        const message = await downloader.pauseDownload(syno, req.body.id);
+        const message = await downloader.pauseDownload(await synoConnector.getConnection(), req.body.id);
         res.send({
             message: message
         })

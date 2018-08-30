@@ -1,5 +1,4 @@
 .idea/
 node_modules/
-database.json
 client/build/
 client/node_modules

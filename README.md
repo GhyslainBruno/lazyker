@@ -1,6 +1,6 @@
-#Lazyker
+# Lazyker
 
-###With Docker ([ghyslainbruno/lazyker](https://hub.docker.com/r/ghyslainbruno/lazyker/))
+### With Docker ([ghyslainbruno/lazyker](https://hub.docker.com/r/ghyslainbruno/lazyker/))
 
 * Build the image : ```docker build -t ghyslainbruno/lazyker .```
 * Push the image on DockerHub : ```docker push ghyslainbruno/lazyker```
@@ -8,7 +8,7 @@
 
 *Rem: an image for Raspberry pi 2B is also available, but generally not fully updated* 
 
-###WithOUT Docker - regular install
+### WithOUT Docker - regular install
 
 To use Lazyker, you must have : 
 - A Synoloy NAS (with DownloadStation & FileStation installed on it)

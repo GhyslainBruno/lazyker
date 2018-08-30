@@ -5,15 +5,42 @@ const Torrent9RootUrl = 'https://ww2.torrent9.blue';
 const realdebrid = require('../../../realdebrid/debrid_links');
 
 /**
+ * Returns the real URL used by the website - anytime
+ * @param Torrent9Url
+ * @returns {Promise<void>}
+ */
+const getRealUrl = async () => {
+    const options = {
+        method: 'GET',
+        uri: Torrent9RootUrl,
+        followRedirect: false
+    };
+
+    let urlToReturn = Torrent9RootUrl;
+
+    try {
+        const response = await rp(options);
+        console.log(response)
+    } catch(error) {
+        urlToReturn = error.response.headers.location
+    }
+
+    return urlToReturn.replace(/\/$/, '');
+};
+
+/**
  * Returns a list of Torrent9 torrents for a particular title
  * @param title
  * @returns {Promise<Array>}
  */
 const getTorrentsList = async title => {
+
+    const torrent9RealUrl = await getRealUrl();
+
     try {
         const options = {
             method: 'POST',
-            uri: Torrent9RootUrl + '/search_torrent/',
+            uri: torrent9RealUrl + '/search_torrent/',
             json: true,
             formData: {
                 "champ_recherche" : title
@@ -36,7 +63,7 @@ const getTorrentsList = async title => {
             if (element('i')[0].attribs.class === 'fa fa-video-camera') {
                 torrentsList.push({
                     title: element('a')[0].attribs.title.replace('Télécharger ', '').replace(' en Torrent', ''),
-                    url: Torrent9RootUrl + element('a')[0].attribs.href,
+                    url: torrent9RealUrl + element('a')[0].attribs.href,
                     size: element('td')[1].children[0].data,
                     seed: element('td')[2].children[0].children[0].data,
                     leech: element('td')[3].children[0].data

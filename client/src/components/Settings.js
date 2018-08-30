@@ -441,36 +441,36 @@ class Settings extends Component {
                                 </Grid>
                             </ExpansionPanelDetails>
 
-                            <ExpansionPanelDetails>
-                                <Grid container spacing={0}>
+                            {/*<ExpansionPanelDetails>*/}
+                                {/*<Grid container spacing={0}>*/}
 
-                                    <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
-                                        Ygg configuration
-                                    </Grid>
+                                    {/*<Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>*/}
+                                        {/*Ygg configuration*/}
+                                    {/*</Grid>*/}
 
-                                    <Grid item xs={12} style={{padding: '6px'}}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                label="Username"
-                                                id="ygg-username"
-                                                value={this.state.yggUsername}
-                                                onChange={(event) => this.setState({yggUsername: event.target.value})}
-                                            />
-                                        </FormControl>
-                                    </Grid>
+                                    {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
+                                        {/*<FormControl fullWidth>*/}
+                                            {/*<TextField*/}
+                                                {/*label="Username"*/}
+                                                {/*id="ygg-username"*/}
+                                                {/*value={this.state.yggUsername}*/}
+                                                {/*onChange={(event) => this.setState({yggUsername: event.target.value})}*/}
+                                            {/*/>*/}
+                                        {/*</FormControl>*/}
+                                    {/*</Grid>*/}
 
-                                    <Grid item xs={12} style={{padding: '6px'}}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                label="Password"
-                                                id="ygg-password"
-                                                value={this.state.yggPassword}
-                                                onChange={(event) => this.setState({yggPassword: event.target.value})}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                </Grid>
-                            </ExpansionPanelDetails>
+                                    {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
+                                        {/*<FormControl fullWidth>*/}
+                                            {/*<TextField*/}
+                                                {/*label="Password"*/}
+                                                {/*id="ygg-password"*/}
+                                                {/*value={this.state.yggPassword}*/}
+                                                {/*onChange={(event) => this.setState({yggPassword: event.target.value})}*/}
+                                            {/*/>*/}
+                                        {/*</FormControl>*/}
+                                    {/*</Grid>*/}
+                                {/*</Grid>*/}
+                            {/*</ExpansionPanelDetails>*/}
 
                             <Divider/>
 

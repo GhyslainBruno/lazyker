@@ -92,6 +92,8 @@ const getBetterLink = async function(links, db) {
  */
 async function getRealdebridAuthToken(db) {
 
+    db.reload();
+
     // node-json-db way
     const token = db.getData('/configuration/realdebrid/token');
 

@@ -11,10 +11,10 @@ WORKDIR /lazyker/app
 COPY package*.json /lazyker/app/
 COPY client/package*.json /lazyker/app/client/
 
-RUN npm install
+RUN npm install --silent
 
 WORKDIR /lazyker/app/client
-RUN npm install
+RUN npm install --silent
 
 WORKDIR /lazyker/app
 COPY . /lazyker/app/

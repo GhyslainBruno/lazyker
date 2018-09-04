@@ -1,7 +1,7 @@
 const rp  = require('request-promise');
 const cheerio = require('cheerio');
 const dlprotect = require('./dlprotect1co');
-const puppeteer = require('puppeteer');
+// const puppeteer = require('puppeteer');
 const logger = require('../../../logs/logger');
 
 const cloudscraper = require('cloudscraper');

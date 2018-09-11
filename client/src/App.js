@@ -10,6 +10,8 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
+import {SignUpForm} from "./components/SignUp";
+import {SignInForm} from "./components/SignIn";
 
 const theme = createMuiTheme({
     palette: {
@@ -38,12 +40,15 @@ class App extends Component {
             <Router>
                 <MuiThemeProvider theme={theme}>
                     <div className="mainApp mui-fixed" style={{paddingBottom: '80px'}}>
+                        {/* To try firebase signup */}
+                        <Route exact path='/signup' render={() =><SignUpForm />}/>
+                        <Route exact path='/signin' render={() =><SignInForm />}/>
                         <Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation}/>}/>
                         <Route exact path='/movies' render={() => <Movies changeNavigation={this.changeNavigation} />}/>
                         <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
                         <Route exact path='/settings' render={() => <Settings changeNavigation={this.changeNavigation}/>}/>
-                        <Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>
-                        <Route path='/' render={() => <Navigation navigation={this.state.navigation} />}/>
+                        {/*<Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>*/}
+                        {/*<Route path='/' render={() => <Navigation navigation={this.state.navigation} />}/>*/}
                     </div>
                 </MuiThemeProvider>
             </Router>

@@ -15,14 +15,22 @@ class Navigation extends Component {
     render() {
 
         return(
+
             <div>
 
-                <BottomNavigation className="bottomNav" value={this.props.navigation} style={{width: '100%', position: 'fixed', bottom: '0', left: '0', zIndex: '2'}}>
-                    <BottomNavigationAction label="Shows" value="shows" component={Link} to="/shows" icon={<Tv />}/>
-                    <BottomNavigationAction label="Movies" value="movies" component={Link} to="/movies" icon={<Movie />} />
-                    <BottomNavigationAction label="Downloads" value="downloads" component={Link} to="/downloads" icon={<GetApp />} />
-                    <BottomNavigationAction label="Settings" value="settings" component={Link} to="/settings" icon={<Settings/>} />
-                </BottomNavigation>
+                {
+                    this.props.authUser ?
+                        <BottomNavigation className="bottomNav" value={this.props.navigation} style={{width: '100%', position: 'fixed', bottom: '0', left: '0', zIndex: '2'}}>
+                            <BottomNavigationAction label="Shows" value="shows" component={Link} to="/shows" icon={<Tv />}/>
+                            <BottomNavigationAction label="Movies" value="movies" component={Link} to="/movies" icon={<Movie />} />
+                            <BottomNavigationAction label="Downloads" value="downloads" component={Link} to="/downloads" icon={<GetApp />} />
+                            <BottomNavigationAction label="Settings" value="settings" component={Link} to="/settings" icon={<Settings/>} />
+                        </BottomNavigation>
+                        :
+                        <div>
+                            <span>UNAUTHENTICATED</span>
+                        </div>
+                }
 
             </div>
 

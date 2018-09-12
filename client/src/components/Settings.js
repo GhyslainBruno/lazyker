@@ -21,6 +21,7 @@ import ClearLogs from '@material-ui/icons/ClearAll';
 import Divider from '@material-ui/core/Divider';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import TextField from '@material-ui/core/TextField';
+import SignOutButton from "../firebase/SignOutBtn";
 
 
 class Settings extends Component {
@@ -555,6 +556,8 @@ class Settings extends Component {
                     </ExpansionPanelActions>
 
                 </ExpansionPanel>
+
+                <SignOutButton />
 
             </div>
         )

@@ -40,7 +40,7 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import Badge from '@material-ui/core/Badge';
 
 
-import '../App.css';
+import '../App.scss';
 
 
 

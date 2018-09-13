@@ -6,7 +6,7 @@ import Tv from '@material-ui/icons/Tv';
 import Movie from '@material-ui/icons/Movie';
 import GetApp from '@material-ui/icons/GetApp';
 import Settings from '@material-ui/icons/Settings';
-import '../App.css';
+import '../App.scss';
 import Shows from "./Shows";
 import {Link} from 'react-router-dom';
 

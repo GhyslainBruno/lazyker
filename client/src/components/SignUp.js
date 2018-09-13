@@ -3,6 +3,10 @@ import { Link, withRouter } from 'react-router-dom';
 import { auth } from '../firebase';
 
 import * as routes from '../constants/routes';
+import TextField, {Input} from "@material/react-text-field";
+import Button from "@material/react-button";
+import Paper from "@material-ui/core/Paper/Paper";
+import { SignInLink } from './SignIn';
 
 const SignUpPage = ({history}) =>
     <div>
@@ -44,7 +48,7 @@ class SignUpForm extends Component {
             .then(authUser => {
                 this.setState({ ...INITIAL_STATE });
                 // Use this to redirect afterwards
-                // history.push(routes.HOME);
+                history.push(routes.MOVIES);
             })
             .catch(error => {
                 this.setState(byPropKey('error', error));
@@ -70,37 +74,89 @@ class SignUpForm extends Component {
             username === '';
 
         return (
-            <form onSubmit={this.onSubmit}>
-                <input
-                    value={username}
-                    onChange={event => this.setState(byPropKey('username', event.target.value))}
-                    type="text"
-                    placeholder="Full Name"
-                />
-                <input
-                    value={email}
-                    onChange={event => this.setState(byPropKey('email', event.target.value))}
-                    type="text"
-                    placeholder="Email Address"
-                />
-                <input
-                    value={passwordOne}
-                    onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
-                    type="password"
-                    placeholder="Password"
-                />
-                <input
-                    value={passwordTwo}
-                    onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
-                    type="password"
-                    placeholder="Confirm Password"
-                />
-                <button disabled={isInvalid} type="submit">
-                    Sign Up
-                </button>
 
-                { error && <p>{error.message}</p> }
-            </form>
+
+            <Paper elevation={1} className="signInCard">
+
+                <div style={{color: 'white'}}>
+                    Create a new account
+                </div>
+
+                <form onSubmit={this.onSubmit}>
+
+                    <div>
+                        <TextField
+                            className="authField"
+                            outlined={true}
+                            label='Username'
+                            style={{width: '100%'}}
+                        >
+                            <Input
+                                value={username}
+                                type="text"
+                                onChange={event => this.setState(byPropKey('username', event.target.value))}/>
+                        </TextField>
+                    </div>
+
+                    <div>
+                        <TextField
+                            className="authField"
+                            outlined={true}
+                            label='Email'
+                            style={{width: '100%'}}
+                        >
+                            <Input
+                                value={email}
+                                type="text"
+                                onChange={event => this.setState(byPropKey('email', event.target.value))}/>
+                        </TextField>
+                    </div>
+
+                    <div>
+                        <TextField
+                            className="authField"
+                            outlined={true}
+                            label='Password'
+                            style={{width: '100%'}}
+                        >
+                            <Input
+                                value={passwordOne}
+                                type="password"
+                                onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}/>
+                        </TextField>
+                    </div>
+
+                    <div>
+                        <TextField
+                            className="authField"
+                            outlined={true}
+                            label='Confirm password'
+                            style={{width: '100%'}}
+                        >
+                            <Input
+                                value={passwordTwo}
+                                type="password"
+                                onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}/>
+                        </TextField>
+                    </div>
+
+                    <div style={{width: '100%', display: 'inline-block', textAlign: 'center'}}>
+                        <Button
+                            className="signUpBtn"
+                            outlined={false}
+                            unelevated={true}
+                            disabled={isInvalid}
+                            type="submit">
+                            Create
+                        </Button>
+
+                        <SignInLink />
+
+                    </div>
+
+                    { error && <p>{error.message}</p> }
+                </form>
+            </Paper>
         );
     }
 }
@@ -109,8 +165,8 @@ const SignUpLink = () =>
     <p>
         Don't have an account?
         {' '}
-        <Link to={routes.SIGN_UP}>Sign Up</Link>
-    </p>
+        <Link style={{color: 'red'}} to={routes.SIGN_UP}>Sign Up</Link>
+    </p>;
 
 export default withRouter(SignUpPage);
 export {

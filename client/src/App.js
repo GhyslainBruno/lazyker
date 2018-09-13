@@ -51,10 +51,7 @@ class App extends Component {
 
                     {
                         this.state.authUser ?
-                            <div className="mainApp mui-fixed" style={{paddingBottom: '80px'}}>
-                                {/* To try firebase signup */}
-                                {/*<Route exact path='/signup' render={() =><SignUpForm />}/>*/}
-                                {/*<Route exact path='/signin' render={() =><SignInForm />}/>*/}
+                            <div className="mainApp mui-fixed">
                                 <Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation}/>}/>
                                 <Route exact path='/movies' render={() => <Movies changeNavigation={this.changeNavigation} />}/>
                                 <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
@@ -64,15 +61,8 @@ class App extends Component {
                             </div>
                             :
                             <div className="mainApp mui-fixed" style={{paddingBottom: '80px'}}>
-                                {/* To try firebase signup */}
-                                {/*<Route exact path='/signup' render={() =><SignUpForm />}/>*/}
                                 <Route exact path='/signup' render={() =><SignUpForm />}/>
                                 <Route path={/^(?!.*signup).*$/} render={() =><SignInForm />}/>
-                                {/*<Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation}/>}/>*/}
-                                {/*<Route exact path='/movies' render={() => <Movies changeNavigation={this.changeNavigation} />}/>*/}
-                                {/*<Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>*/}
-                                {/*<Route exact path='/settings' render={() => <Settings changeNavigation={this.changeNavigation}/>}/>*/}
-                                {/*<Route path='/' render={() => <Navigation navigation={this.state.navigation} authUser={this.state.authUser} />}/>*/}
                             </div>
                     }
 

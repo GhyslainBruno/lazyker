@@ -3,7 +3,8 @@ const admin = require("firebase-admin");
 const db = admin.database();
 const rp = require('request-promise');
 const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
-const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
+const youtubeAPIKey = 'AIzaSyDJUXgEKJSwbsr_Gj7IuWTNlTPoGKP_xn8';
+// const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
 const usersRef = db.ref("/users");
 
 module.exports = (app) => {
@@ -161,6 +162,72 @@ module.exports = (app) => {
             res.send({message: "Movie in progress"});
         } catch(error) {
             res.status(500).send({message: error});
+        }
+    });
+
+    /**
+     * Get all tmdb movie genres
+     */
+    app.get('/api/movies_genres', async (req, res) => {
+
+        const options = {
+            method: 'GET',
+            uri: 'https://api.themoviedb.org/3/genre/movie/list' + '?api_key=' + tmdbApiKey,
+            json: true
+        };
+
+        try {
+            const results = await rp(options);
+
+            res.send(results.genres)
+        }
+        catch(error) {
+            res.send(error)
+        }
+    });
+
+    /**
+     * Get TMDB infos for a particular movie
+     */
+    app.get('/api/movie_info', async (req, res) => {
+        const id = req.query.id;
+
+        const options = {
+            method: 'GET',
+            uri: url = 'https://api.themoviedb.org/3/movie/' + id + '?api_key=' + tmdbApiKey + '&language=fr-FR',
+            json: true
+        };
+
+        // Using TMDB as a trailer provider
+        // const optionsTrailer = {
+        //     method: 'GET',
+        //     uri: url = 'https://api.themoviedb.org/3/movie/' + id + '/videos' + '?api_key=' + tmdbApiKey + '&language=en-EN',
+        //     json: true
+        // };
+
+
+        try {
+            let movieInfo = await rp(options);
+
+            // Using youtube as a trailer provider
+            const optionsTrailer = {
+                method: 'GET',
+                uri: 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=' + movieInfo.title + '&type=video&key=' + youtubeAPIKey,
+                json: true
+            };
+
+            let movieTrailer = await rp(optionsTrailer);
+
+            if (movieTrailer.items.length > 0) {
+                movieInfo['trailer'] = 'https://www.youtube.com/watch?v=' + movieTrailer.items[0].id.videoId;
+            } else {
+                movieInfo['trailer'] = false;
+            }
+
+            res.send(movieInfo)
+        }
+        catch(error) {
+            res.send(error)
         }
     });
 

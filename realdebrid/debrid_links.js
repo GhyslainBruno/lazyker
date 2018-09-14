@@ -10,8 +10,13 @@ const CLIENT_SECRET = '1e56fa016de2d07058c2501737710683a12d3dee';
 const rootUrlRealDebrid = "https://api.real-debrid.com/rest/1.0";
 const authUrlRealDebrid = "https://api.real-debrid.com/oauth/v2/token";
 
-const db = new jsonDB("database.json", true, true);
-db.reload();
+// Firebase part
+const admin = require("firebase-admin");
+const db = admin.database();
+const usersRef = db.ref("/users");
+
+// const db = new jsonDB("database.json", true, true);
+// db.reload();
 
 
 // TODO: Remove duplicate code
@@ -87,77 +92,85 @@ const getBetterLink = async function(links, db) {
 
 /**
  * Returns a RealDebrid authentication token to use in (almost) every RealDebrid requests
- * @param db
+ * @param uid (from firebase --> userId)
  * @returns {Promise<any>}
  */
-async function getRealdebridAuthToken(db) {
+async function getRealdebridAuthToken(uid) {
 
-    db.reload();
+    try {
+        let token = await usersRef.child(uid).child('/settings/realdebrid/token').once('value');
+        token = token.val();
 
-    // node-json-db way
-    const token = db.getData('/configuration/realdebrid/token');
+        if (token) {
 
-    if (token.hasOwnProperty("refresh_token") && token.hasOwnProperty("access_token")) {
+            // If has the nodes --> check for validity of token --> if not valid, reauthenticate, store new, and return if valid --> returning token
+            const options = {
+                uri: rootUrlRealDebrid + '/user',
+                qs: {
+                    auth_token: token.access_token
+                },
+                json: true
+            };
 
-        // If has the nodes --> check for validity of token --> if not valid, reauthenticate, store new, and return if valid --> returning token
-        const options = {
-            uri: rootUrlRealDebrid + '/user',
-            qs: {
-                auth_token: token.access_token
-            },
-            json: true
-        };
+            try {
+                // Checking the validity of the token by fetching user profile
+                await rp(options);
+                return token
+            }
+            catch(erorr) {
+                const options = {
+                    method: 'POST',
+                    uri: authUrlRealDebrid,
+                    formData: {
+                        client_id: CLIENT_ID,
+                        client_secret: CLIENT_SECRET,
+                        code: token.refresh_token,
+                        grant_type: "http://oauth.net/grant_type/device/1.0"
+                    },
+                    json: true
+                };
 
-        try {
-            // Checking the validity of the token by fetching user profile
-            const realdebridUser = await rp(options);
-            return token
+                try {
+                    const newToken = await rp(options);
+                    // db.push('/configuration/realdebrid/token', newToken);
+                    await usersRef.child(uid).child('/settings/realdebrid/token').set(newToken);
+                    return newToken
+                } catch(error) {
+                    logger.info('Realdebrid Auth ERROR - ' + erorr)
+                }
+            }
         }
-        catch(erorr) {
+        else {
+
+            // If no one is present, authenticate and create some
+            let username = await usersRef.child(uid).child('/settings/realdebrid/credentials/username').once('value');
+            username = username.val();
+            let password = await usersRef.child(uid).child('/settings/realdebrid/credentials/password').once('value');
+            password = password.val();
+
             const options = {
                 method: 'POST',
                 uri: authUrlRealDebrid,
                 formData: {
                     client_id: CLIENT_ID,
-                    client_secret: CLIENT_SECRET,
-                    code: token.refresh_token,
-                    grant_type: "http://oauth.net/grant_type/device/1.0"
+                    username: username,
+                    password: password,
+                    grant_type: "password"
                 },
                 json: true
             };
 
             try {
                 const newToken = await rp(options);
-                db.push('/configuration/realdebrid/token', newToken);
+                await usersRef.child(uid).child('/settings/realdebrid/token').set(newToken);
                 return newToken
             } catch(error) {
-                logger.info('Realdebrid Auth ERROR - ' + erorr)
+                logger.info(error)
             }
         }
-    }
-    else {
 
-        // If no one is present, authenticate and create some
-        // TODO: extract RealDebrid credentials
-        const options = {
-            method: 'POST',
-            uri: authUrlRealDebrid,
-            formData: {
-                client_id: CLIENT_ID,
-                username: db.getData('/configuration/realdebrid/credentials/username'),
-                password: db.getData('/configuration/realdebrid/credentials/password'),
-                grant_type: "password"
-            },
-            json: true
-        };
-
-        try {
-            const newToken = await rp(options);
-            db.push('/configuration/realdebrid/token', newToken);
-            return newToken
-        } catch(error) {
-            logger.info(error)
-        }
+    } catch(error) {
+        throw error;
     }
 }
 
@@ -499,13 +512,14 @@ async function getLighterLink(links) {
 /**
  * Adds magnet link to realdebrid service - returns id of torrent
  * @param magnetLink
+ * @param user
  * @returns {Promise<void>}
  */
-const addMagnetLinkToRealdebrid = async magnetLink => {
+const addMagnetLinkToRealdebrid = async (magnetLink, user) => {
 
     try {
 
-        const token = await getRealdebridAuthToken(db);
+        const token = await getRealdebridAuthToken(user.uid);
 
         const options = {
             method: 'POST',
@@ -532,12 +546,13 @@ const addMagnetLinkToRealdebrid = async magnetLink => {
 /**
  * Select all files of a torrent added
  * @param torrentId
+ * @param user
  * @returns {Promise<void>}
  */
-const selectAllTorrentFiles = async torrentId => {
+const selectAllTorrentFiles = async (torrentId, user) => {
     try {
 
-        const token = await getRealdebridAuthToken(db);
+        const token = await getRealdebridAuthToken(user.uid);
 
         const options = {
             method: 'POST',
@@ -564,10 +579,10 @@ const selectAllTorrentFiles = async torrentId => {
  * Get all torrents present in realdebrid service
  * @returns {Promise<void>}
  */
-const getTorrents = async () => {
+const getTorrents = async (user) => {
     try {
 
-        const token = await getRealdebridAuthToken(db);
+        const token = await getRealdebridAuthToken(user.uid);
 
         const options = {
             method: 'GET',
@@ -592,10 +607,10 @@ const getTorrents = async () => {
  * Deletes a particular torrent in realdebrid service
  * @returns {Promise<void>}
  */
-const deleteTorrent = async torrentId => {
+const deleteTorrent = async (torrentId, user) => {
     try {
 
-        const token = await getRealdebridAuthToken(db);
+        const token = await getRealdebridAuthToken(user.uid);
 
         const options = {
             method: 'DELETE',

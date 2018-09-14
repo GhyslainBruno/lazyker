@@ -30,9 +30,9 @@ const getTorrentsList = async title => {
  * @param url
  * @returns {Promise<void>}
  */
-const downloadTorrentFile = async url => {
+const downloadTorrentFile = async (url, user) => {
     // TODO: use more providers
-    const torrentsList = await torrent9.downloadTorrentFile(url);
+    const torrentsList = await torrent9.downloadTorrentFile(url, user);
 
     return torrentsList
 };

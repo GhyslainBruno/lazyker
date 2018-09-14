@@ -50,7 +50,8 @@ class MovieInfoDialog extends React.Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
                     url: torrent.url

@@ -82,10 +82,11 @@ const getTorrentsList = async title => {
 
 /**
  * Start the download of a torrent file
- * @param title
- * @returns {Promise<void>}
+ * @param url
+ * @param user
+ * @returns {Promise<null>}
  */
-const downloadTorrentFile = async url => {
+const downloadTorrentFile = async (url, user) => {
 
     try {
 
@@ -102,8 +103,8 @@ const downloadTorrentFile = async url => {
         const magnetLink = $('a.btn.btn-danger.download')[1].attribs.href;
 
         // Adding torrent to realdebrid service
-        const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink);
-        await realdebrid.selectAllTorrentFiles(rdTorrentInfo.id);
+        const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink, user);
+        await realdebrid.selectAllTorrentFiles(rdTorrentInfo.id, user);
 
         return null;
 

@@ -20,3 +20,12 @@ export const doPasswordReset = (email) =>
 export const doPasswordUpdate = (password) =>
     auth.currentUser.updatePassword(password);
 
+// Getting user idToken to get authenticated by backend
+export const getIdToken = async () => {
+    try {
+        return await auth.currentUser.getIdToken(true);
+    } catch(error) {
+        throw error;
+    }
+};
+

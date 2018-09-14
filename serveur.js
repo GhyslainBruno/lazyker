@@ -23,6 +23,15 @@ const youtubeAPIKey = 'AIzaSyDJUXgEKJSwbsr_Gj7IuWTNlTPoGKP_xn8';
 const dlprotect = require('./movies/scappers/zonetelechargementlol/dlprotect1co');
 const Movies = require('./movies/Movies');
 
+//Using firebase
+const admin = require('firebase-admin');
+const serviceAccount = require("./lazyker-568c4-firebase-adminsdk-b7xs7-03f3744551");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://lazyker-568c4.firebaseio.com"
+});
+
+
 const app = express();
 
 // let syno = new Syno({
@@ -54,6 +63,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+require('./api/User')(app);
+
+require('./api/Settings')(app);
 
 app.get('/api/shows', function(req, res) {
     db.reload();
@@ -278,42 +291,6 @@ app.get('/api/autoupdate_output', async (req, res) => {
             res.send(dataToSend)
         }
     });
-});
-
-app.get('/api/settings', async (req, res) => {
-    db.reload();
-    res.send(db.data.configuration)
-});
-
-app.post('/api/settings', async (req, res) => {
-    db.reload();
-    db.data.configuration.qualities = req.body.qualities;
-    db.data.configuration.nas = req.body.nas;
-    db.data.configuration.realdebrid.credentials = req.body.realdebrid.credentials;
-    db.data.configuration.autoupdateTime = req.body.autoupdateTime;
-    db.data.configuration.ygg = req.body.ygg;
-    db.save();
-
-    db.reload();
-
-    await synoConnector.getConnection();
-
-    // syno = new Syno({
-    //     // Requests protocol : 'http' or 'https' (default: http)
-    //     protocol: db.getData('/configuration/nas/protocol'),
-    //     // DSM host : ip, domain name (default: localhost)
-    //     host: db.getData('/configuration/nas/host'),
-    //     // DSM port : port number (default: 5000)
-    //     port: db.getData('/configuration/nas/port'),
-    //     // DSM User account (required)
-    //     account: db.getData('/configuration/nas/account'),
-    //     // DSM User password (required)
-    //     passwd: db.getData('/configuration/nas/password'),
-    //     // DSM API version (optional, default: 6.0.2)
-    //     apiVersion: '6.0.2'
-    // });
-
-    res.send({message: 'Settings changed'});
 });
 
 app.post('/api/search_providers_movie', async (req, res) => {

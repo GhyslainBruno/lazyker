@@ -41,6 +41,7 @@ import Badge from '@material-ui/core/Badge';
 
 
 import '../App.scss';
+import * as auth from "../firebase/auth";
 
 
 
@@ -78,13 +79,20 @@ class Shows extends Component {
   //   console.log('state is', this.state);
   // }
 
-    searchShow = () => {
+
+    // Searching for a new tv show
+    searchShow = async () => {
 
       this.setState({isInSearchView: true, loading: true, shows: []});
 
       const showTitle = document.getElementById('show_title_to_search').value;
 
-      fetch('/api/search_shows?title=' + showTitle)
+      fetch('/api/search_shows?title=' + showTitle, {
+          method: 'GET',
+          headers: {
+              'token': await auth.getIdToken()
+          }
+      })
           .then(response => {
               return response.json()
           })
@@ -97,12 +105,20 @@ class Shows extends Component {
 
   };
 
+
+    // Loading shows from database
     loadShowsInDb = async () => {
         this.setState({loading: true, shows: [], showTitleToSearch: ''});
 
         try {
 
-            let response = await fetch('/api/shows');
+            let response = await fetch('/api/shows', {
+                method: 'GET',
+                headers: {
+                    'token': await auth.getIdToken()
+                }
+            }
+        );
             response = await response.json();
             this.setState({ shows: response , loading: false, isInSearchView: false});
 
@@ -114,11 +130,15 @@ class Shows extends Component {
 
     async componentWillMount() {
         await this.loadShowsInDb();
-        this.clearNewEpisodesTags();
+        await this.clearNewEpisodesTags();
     }
 
-    clearNewEpisodesTags = () => {
-        fetch('/api/clear_new_episodes')
+    clearNewEpisodesTags = async () => {
+        fetch('/api/clear_new_episodes',{
+            headers: {
+                'token': await auth.getIdToken()
+            }
+        })
             .then(response => {
                 return response.json()
             })
@@ -126,7 +146,7 @@ class Shows extends Component {
                 return null
             })
             .catch(error => {
-                this.setState({snack: true, snackBarMessage: 'Error clearing new episodes', loading: false, isInSearchView: false})
+                this.setState({snack: true, snackBarMessage: 'Error clearing new episodes tags', loading: false, isInSearchView: false})
             })
     };
 
@@ -168,29 +188,34 @@ class Shows extends Component {
 
     };
 
+    // Adding a new tv show to database
     addShow = async () => {
 
-        this.closeDialog();
-        this.setState({loading: true, shows: []});
-        const show = this.state.showToAdd;
-        // show.autoUpdate = true;
+        try {
 
-        let response = await fetch('/api/add_show', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                show: show
-            })
-        });
+            this.closeDialog();
+            this.setState({loading: true, shows: []});
+            const show = this.state.showToAdd;
 
-        response = await response.json();
+            await fetch('/api/show', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                },
+                body: JSON.stringify({
+                    show: show
+                })
+            });
 
-        this.setState({loading: false});
+            this.setState({loading: false});
 
-        this.loadShowsInDb();
+            this.loadShowsInDb();
+
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error adding show', loading: false, isInSearchView: false})
+        }
 
     };
 
@@ -200,42 +225,40 @@ class Shows extends Component {
         }
     };
 
+    // Removing a tv show from database
     removeShow = async () => {
-
-        // this.setState({loading: true});
 
         this.closeDialog();
 
         const show = this.state.showToRemove;
 
-        let response = await fetch('/api/remove_show', {
-            method: 'POST',
+        await fetch('/api/show', {
+            method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'token': await auth.getIdToken()
             },
             body: JSON.stringify({
                 show: show
             })
         });
 
-        response = response.json();
-
-        // this.setState({loading: false});
-
         this.loadShowsInDb();
 
     };
 
+    // Changing the "autoUpdate" state of the tv show | TODO add a try/catch block here
     updateShow = async (show) => {
 
         show.autoUpdate = !show.autoUpdate;
 
-        let response = await fetch('/api/update_show', {
-            method: 'POST',
+        let response = await fetch('/api/show', {
+            method: 'PUT',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'token': await auth.getIdToken()
             },
             body: JSON.stringify({
                 show: show
@@ -244,7 +267,7 @@ class Shows extends Component {
 
         response = await response.json();
 
-        this.setState({snack: true, snackBarMessage: show.title + ' updated', shows: response})
+        this.setState({snack: true, snackBarMessage: show.title + ' updated'})
     };
 
     clearTitle = () => {
@@ -263,31 +286,30 @@ class Shows extends Component {
 
     };
 
-    changeShowLang = event => {
+    // Changing the lang of the tv show (vostfr, french, multi)
+    changeShowLang = async event => {
 
         const show = this.state.showToDisplayInfo;
-
-
         show.lang = event.target.value;
 
-        fetch('/api/tv_show_info', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                show: show
-            })
-        }).then(response => {
-            response = response.json();
-
-            // this.loadShowsInDb();
+        try {
+            await fetch('/api/show', {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                },
+                body: JSON.stringify({
+                    show: show
+                })
+            });
 
             this.setState({snack: true, snackBarMessage: show.title + ' lang updated', showLang: show.lang})
-        })
 
-
+        } catch (error) {
+            this.setState({snack: true, snackBarMessage: 'Error changing lang', loading: false, isInSearchView: false})
+        }
     };
 
   render() {
@@ -403,9 +425,11 @@ class Shows extends Component {
 
               <Grid container spacing={0} style={{marginTop: '10px'}}>
 
-                  { this.state.shows !== null ? this.state.shows.length > 0 ?
+                  { this.state.shows.total > 0 ?
 
-                      this.state.shows.map(show => {
+                      Object.keys(this.state.shows.shows).map(showFirebase => {
+
+                          const show = this.state.shows.shows[showFirebase];
 
                       return (
 
@@ -469,12 +493,8 @@ class Shows extends Component {
 
                   :
 
-
-
                       <div style={this.state.loading ? {display: 'none'} : {display: 'inline-block', padding: '30px', color: 'grey', marginRight: 'auto', marginLeft: 'auto'}}>no results found</div>
 
-                  :
-                      null
                   }
 
               </Grid>

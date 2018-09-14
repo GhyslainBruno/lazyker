@@ -67,16 +67,30 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-require('./api/User')(app);
 
+// require('./api/User')(app);
+
+/**
+ * Settings routes declaration
+ */
 require('./api/Settings')(app);
 
+/**
+ * Shows routes declaration
+ */
 require('./api/Shows')(app);
 
-// app.get('/api/shows', function(req, res) {
-//     db.reload();
-//     res.send(db.getData('/shows'));
-// });
+/**
+ * Movies routes declaration
+ */
+require('./api/Movies')(app);
+
+/**
+ * Downloads routes declaration
+ */
+require('./api/Downloads')(app);
+
+
 
 app.get('/api/autoupdate_state', function(req, res) {
     res.send(db.getData('/states').autoUpdate)
@@ -111,181 +125,6 @@ app.get('/api/autoupdate', function(req, res) {
     }
 });
 
-// app.post('/api/update_show', function(req, res) {
-//     const show = req.body.show;
-//     const showsInDb = db.getData('/shows');
-//
-//     showsInDb.filter(dbShow => dbShow.title === show.title)[0].autoUpdate = show.autoUpdate;
-//
-//     db.push('/shows', showsInDb);
-//
-//     res.send(showsInDb)
-// });
-
-// app.post('/api/add_show', function(req, res) {
-//     const show = req.body.show;
-//     show.autoUpdate = true;
-//     show.episode = false;
-//     show.lang = 'vostfr';
-//     const showsInDb = db.getData(('/shows'));
-//
-//     showsInDb.push(show);
-//
-//     db.push('/shows', showsInDb);
-//
-//     res.send(showsInDb)
-// });
-//
-// app.post('/api/remove_show', function(req, res) {
-//     const showToRemove = req.body.show;
-//     const showsInDb = db.getData(('/shows'));
-//
-//     const showsFilter = showsInDb.filter(show => show.title !== showToRemove.title);
-//
-//     db.push('/shows', showsFilter);
-//
-//     res.send(showsFilter)
-// });
-
-app.get('/api/movies', async (req, res) => {
-
-    const genreWanted = req.query.genre;
-    const page = req.query.page;
-
-    let url = '';
-
-    switch (genreWanted) {
-        case 'popular':
-            url = 'https://api.themoviedb.org/3/movie/popular' + '?api_key=' + tmdbApiKey + '&language=fr-FR&page=' + page;
-            break;
-        // case 'latest':
-        //     url = 'https://api.themoviedb.org/3/movie/latest' + '?api_key=' + tmdbApiKey + '&language=fr-FR&page=' + page;
-        //     break;
-        case 'now_playing':
-            url = 'https://api.themoviedb.org/3/movie/now_playing' + '?api_key=' + tmdbApiKey + '&language=fr-FR&page=' + page;
-            break;
-        case 'top_rated':
-            url = 'https://api.themoviedb.org/3/movie/top_rated' + '?api_key=' + tmdbApiKey + '&language=fr-FR&page=' + page;
-            break;
-        case 'upcoming':
-            url = 'https://api.themoviedb.org/3/movie/upcoming' + '?api_key=' + tmdbApiKey + '&language=fr-FR&page=' + page;
-            break;
-        default :
-            url = 'https://api.themoviedb.org/3/discover/movie' + '?api_key=' + tmdbApiKey + '&language=fr-FR&page=' + page + '&with_genres=' + genreWanted;
-    }
-
-    const options = {
-        method: 'GET',
-        uri: url,
-        json: true
-    };
-
-    try {
-        let results = await rp(options);
-
-        // Get only wanted fields in tmdb api response
-        results = results.results.map(movie => {
-
-            const posterPath = movie.poster_path;
-            const title = movie.title;
-            const note = movie.vote_average;
-            const video = movie.video;
-            const id = movie.id;
-
-            if (posterPath !== null && title !== null) {
-                return {posterPath: posterPath, title: title, note: note, video: video, id: id}
-            } else {
-                return null
-            }
-
-        });
-
-        // Removing tv shows without title or poster path
-        results = results.filter(movie => movie !== null);
-
-        res.send(results)
-    }
-    catch(error) {
-        res.send(error)
-    }
-});
-
-app.get('/api/search_tmdb_movie', async (req, res) => {
-    const title = req.query.title;
-
-    const options = {
-        method: 'GET',
-        uri: searchMovieTmdbUrl + '?api_key=' + tmdbApiKey + '&language=fr-FR&query=' + encodeURI(title) + '&page=1&include_adult=false',
-        json: true
-    };
-
-    try {
-        let results = await rp(options);
-
-        // Get only wanted fields in tmdb api response
-        results = results.results.map(movie => {
-
-            const posterPath = movie.poster_path;
-            const title = movie.title;
-            const note = movie.vote_average;
-            const video = movie.video;
-            const id = movie.id;
-
-            if (posterPath !== null && title !== null) {
-                return {posterPath: posterPath, title: title, note: note, video: video, id: id}
-            } else {
-                return null
-            }
-
-        });
-
-        // Removing tv shows without title or poster path
-        results = results.filter(movie => movie !== null);
-
-        res.send(results)
-    }
-    catch(error) {
-        res.send(error)
-    }
-});
-
-// app.get('/api/search_shows', async (req, res) => {
-//
-//     const title = req.query.title;
-//
-//     const options = {
-//         method: 'GET',
-//         uri: searchTvTmdbUrl + '?api_key=' + tmdbApiKey + '&language=en-US&query=' + encodeURI(title) + '&page=1',
-//         json: true
-//     };
-//
-//     try {
-//         let results = await rp(options);
-//
-//         // Get only wanted fields in tmdb api response
-//         results = results.results.map(show => {
-//
-//             const posterPath = show.poster_path;
-//             const title = show.original_name;
-//
-//             if (posterPath !== null && title !== null) {
-//                 return {posterPath: posterPath, title: title}
-//             } else {
-//                 return null
-//             }
-//
-//         });
-//
-//         // Removing tv shows without title or poster path
-//         results = results.filter(show => show !== null);
-//
-//         res.send(results)
-//     }
-//     catch(error) {
-//         res.send(error)
-//     }
-// });
-
 app.get('/api/autoupdate_output', async (req, res) => {
 
     fs.readFile('logs/stdout.txt', 'utf8', function (err,data) {
@@ -298,55 +137,7 @@ app.get('/api/autoupdate_output', async (req, res) => {
     });
 });
 
-app.post('/api/search_providers_movie', async (req, res) => {
 
-    try {
-
-        const results = await Movies.getUrls(req.body.title);
-
-        res.send(results);
-    } catch(error) {
-        res.status(500).send({
-            message: error
-        })
-    }
-
-});
-
-app.post('/api/search_qualities', async (req, res) => {
-
-    try {
-        res.send(await Movies.getQualities(req.body.wanted.url, req.body.title, req.body.provider));
-    } catch(error) {
-        res.status(500).send({
-            message: error
-        })
-    }
-
-});
-
-app.post('/api/start_movie_download', async (req, res) => {
-
-    db.reload();
-    // Write in db that the app is finding the movie links
-    const moviesInDb = db.getData('/movies');
-    moviesInDb.push({
-        title: req.body.title,
-        state: 'finding_links'
-    });
-    const currentMovieInDb = db.push('/movies', moviesInDb);
-
-    try {
-
-        Movies.startDownloadMovieTask(req.body.quality_wanted.url, req.body.title, req.body.provider, db);
-        res.send({message: "movie in progress"});
-    } catch(error) {
-        res.status(500).send({
-            message: error
-        })
-    }
-
-});
 
 /**
  * Get list of torrents for a particular title
@@ -388,27 +179,6 @@ app.get('/api/realdebrid_torrents', async (req, res) => {
     }
 });
 
-// app.get('/api/clear_new_episodes', (req, res) => {
-//     try {
-//
-//         db.reload();
-//
-//         // Passing all "episodes" tags to false
-//         const showsInDb = db.getData('/shows');
-//         showsInDb.map(show => show.episode = false);
-//
-//         db.push('/shows', showsInDb);
-//
-//         res.send({
-//             message: 'ok'
-//         });
-//     } catch(error) {
-//         res.status(500).send({
-//             message: error
-//         })
-//     }
-// });
-
 app.post('/api/realdebrid_torrent_download', async (req, res) => {
     try {
         await downloader.startRealdebridTorrentDownload(req.body.torrent, req.body.torrent.filename.replace(/\.[^/.]+$/, ""));
@@ -438,23 +208,6 @@ app.delete('/api/realdebrid_torrents', async (req, res) => {
     }
 });
 
-app.get('/api/movies_in_progress', (req, res) => {
-
-    try {
-
-        db.reload();
-        const moviesInDb = db.getData('/movies');
-
-        res.send({
-            moviesInProgress: moviesInDb
-        });
-
-    } catch(error) {
-        res.send({
-            message: error
-        })
-    }
-});
 
 app.get('/api/current_downloads', async (req, res) => {
 
@@ -511,61 +264,7 @@ app.post('/api/pause_download', async (req, res) => {
     }
 });
 
-app.post('/api/remove_in_progress_movie', (req, res) => {
 
-    try {
-        const title = req.body.title;
-        const moviesInDb = db.getData('/movies');
-        const moviesToPushInDB = moviesInDb.filter(movie => movie.title !== title);
-        db.push('/movies', moviesToPushInDB);
-        res.send({moviesInProgress: moviesToPushInDB});
-    } catch(error) {
-        res.status(500).send({
-            message: error
-        })
-    }
-
-});
-
-// app.get('/api/tv_show_info', (req, res) => {
-//     try {
-//
-//         const show = req.body.show;
-//         const showsInDb = db.getData('/shows');
-//
-//         const lang = showsInDb.filter(dbShow => dbShow.title === show.title)[0].lang;
-//
-//         res.send({
-//             lang: lang
-//         });
-//
-//     } catch(error) {
-//         res.send({
-//             message: error
-//         })
-//     }
-// });
-//
-// app.post('/api/tv_show_info', (req, res) => {
-//     try {
-//
-//         const show = req.body.show;
-//         const showsInDb = db.getData('/shows');
-//
-//         showsInDb.filter(dbShow => dbShow.title === show.title)[0].lang = show.lang;
-//
-//         db.push('/shows', showsInDb);
-//
-//         res.send({
-//             message: 'ok'
-//         });
-//
-//     } catch(error) {
-//         res.send({
-//             message: error
-//         })
-//     }
-// });
 
 app.post('/api/clear_logs', (req, res) => {
     fs.writeFile('logs/stdout.txt', '', function(){

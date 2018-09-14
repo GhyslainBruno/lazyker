@@ -90,9 +90,7 @@ class Settings extends Component {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                headers: {
-                    'token': await auth.getIdToken()
-                },
+                'token': await auth.getIdToken()
             },
             body: JSON.stringify({
                 logs: 'logs'

@@ -55,23 +55,29 @@ class Settings extends Component {
         props.changeNavigation('settings');
     }
 
-    startAutoUpdate = async () => {
-        let response = await fetch('/api/autoupdate?start=true');
-        response = await response.json();
-        this.loadAutoUpdateState();
-    };
+    // startAutoUpdate = async () => {
+    //     let response = await fetch('/api/autoupdate?start=true');
+    //     response = await response.json();
+    //     this.loadAutoUpdateState();
+    // };
+    //
+    // stopAutoUpdate = async () => {
+    //     let response = await fetch('/api/autoupdate?stop=true');
+    //     response = await response.json();
+    //     this.loadAutoUpdateState();
+    // };
 
-    stopAutoUpdate = async () => {
-        let response = await fetch('/api/autoupdate?stop=true');
-        response = await response.json();
-        this.loadAutoUpdateState();
-    };
-
-    loadAutoUpdateState = async () => {
-        let response = await fetch('/api/autoupdate_state');
-        response = await response.json();
-        this.setState({ autoUpdate: response })
-    };
+    // loadAutoUpdateState = async () => {
+    //
+    //     try {
+    //         let response = await fetch('/api/autoupdate_state');
+    //         response = await response.json();
+    //         this.setState({ autoUpdate: response })
+    //     } catch(error) {
+    //         this.setState({snack: true, snackBarMessage: 'Error loading auto update state', settingsLoading: false})
+    //     }
+    //
+    // };
 
     // componentWillMount() {
     //     this.loadAutoUpdateState();
@@ -109,7 +115,7 @@ class Settings extends Component {
         this.setState({settingsLoading: true});
 
         try {
-            this.loadAutoUpdateState();
+            // this.loadAutoUpdateState();
 
             let response = await fetch('/api/settings', {
                 method: 'GET',

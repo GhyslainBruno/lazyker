@@ -1,10 +1,11 @@
 const stringSimilarity = require('string-similarity');
 const logger = require('../logs/logger');
 const Syno = require('syno');
-const jsonDB = require('node-json-db');
-const db = new jsonDB("database.json", true, true);
+const admin = require("firebase-admin");
+const db = admin.database();
 const realdebrid = require('../realdebrid/debrid_links');
-db.reload();
+const connector = require('./Connector');
+const usersRef = db.ref("/users");
 
 /**
  * Starts a movie download
@@ -14,7 +15,7 @@ db.reload();
  */
 const startMovieDownload = async (linkFromRealdebrid, title) => {
 
-    db.reload();
+    // db.reload();
 
     // Create syno object firstly
     const syno = new Syno({
@@ -55,39 +56,28 @@ const startMovieDownload = async (linkFromRealdebrid, title) => {
  * Starts a movie download from realdebrid torrent
  * @param linkFromRealdebrid
  * @param title
- * @returns {Promise<void>}
+ * @param user
+ * @returns {Promise<*>}
  */
-const startMovieDownloadFromRealdebridTorrent = async (linkFromRealdebrid, title) => {
+const startMovieDownloadFromRealdebridTorrent = async (linkFromRealdebrid, title, user) => {
 
-    db.reload();
+    // Getting a connection to synology NAS
+    const syno = await connector.getConnection(user);
 
-    // Create syno object firstly
-    const syno = new Syno({
-        // Requests protocol : 'http' or 'https' (default: http)
-        protocol: db.getData('/configuration/nas/protocol'),
-        // DSM host : ip, domain name (default: localhost)
-        host: db.getData('/configuration/nas/host'),
-        // DSM port : port number (default: 5000)
-        port: db.getData('/configuration/nas/port'),
-        // DSM User account (required)
-        account: db.getData('/configuration/nas/account'),
-        // DSM User password (required)
-        passwd: db.getData('/configuration/nas/password'),
-        // DSM API version (optional, default: 6.0.2)
-        apiVersion: '6.0.2'
-    });
+    const snapshot = await usersRef.child(user.uid).child('/settings/nas/moviesPath').once('value');
+    const moviesPath = snapshot.val();
 
     // Get all current downloads in downloadStation
     const currentDownloads = await getCurrentDownloads(syno);
 
     // If no download in the folder wanted is present --> start download
-    if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === db.getData('/configuration/nas/moviesPath') + '/' + title).length === 0) {
+    if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === moviesPath + '/' + title).length === 0) {
 
-        let directoryToStartDownload = await createMovieDir(title, syno, db);
+        let directoryToStartDownload = await createMovieDir(title, syno, moviesPath);
         directoryToStartDownload = directoryToStartDownload.replace(/^\//,'');
 
         //   Then --> start download task
-        return await createMovieDownload(linkFromRealdebrid, syno, directoryToStartDownload, db, title);
+        return await createMovieDownload(linkFromRealdebrid, syno, directoryToStartDownload, user, title);
 
 
     } else {
@@ -174,15 +164,15 @@ function createDir(show, syno) {
 }
 
 /**
- *
+ * Create a directory for a particular movie in movies path
  * @param title
  * @param syno
- * @param db
+ * @param moviesPath
  * @returns {Promise<any>}
  */
-const createMovieDir = (title, syno, db) => {
+const createMovieDir = (title, syno, moviesPath) => {
     return new Promise((resolve, reject) => {
-        syno.fs.createFolder({'folder_path': db.getData('/configuration/nas/moviesPath'), 'force_parent': true, 'name': title.replace(':', '')}, function(error, data) {
+        syno.fs.createFolder({'folder_path': moviesPath, 'force_parent': true, 'name': title.replace(':', '')}, function(error, data) {
             if (!error) {
                 // Returns the full path of folder created
                 resolve(data.folders[0].path)
@@ -237,18 +227,24 @@ function createDownload(show, syno, directoryToStartDownload, db) {
  * @param link
  * @param syno
  * @param directoryToStartDownload
- * @param db
+ * @param user
  * @param title
  * @returns {Promise<any>}
  */
-const createMovieDownload = (link, syno, directoryToStartDownload, db, title) => {
+const createMovieDownload = (link, syno, directoryToStartDownload, user, title) => {
 
     return new Promise((resolve, reject) => {
-        syno.dl.createTask({'uri': link.download, 'destination': directoryToStartDownload}, function(error, data) {
+        syno.dl.createTask({'uri': link.download, 'destination': directoryToStartDownload}, async (error, data) => {
             if (!error) {
                 logger.info(title + ' --> download STARTED !');
-                // Removing the movie in db
-                db.push('/movies', db.getData('/movies').filter(movie => movie.title !== title));
+                // Removing the movie in database inProgress movies - TODO: find a way if multiple movies with the same title
+                // db.push('/movies', db.getData('/movies').filter(movie => movie.title !== title));
+                const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
+                const inProgressMovie = snapshot.val();
+                if (inProgressMovie) {
+                    await usersRef.child(user.uid).child('/movies').child(inProgressMovie.id).remove();
+                }
+
                 resolve(data)
             } else {
                 reject(error)
@@ -298,12 +294,13 @@ const removeDownload = (syno, downloadId) => {
  * Start the download of a torrent file already downloaded in realdebrid service
  * @param torrent
  * @param name
+ * @param user
  * @returns {Promise<void>}
  */
-const startRealdebridTorrentDownload = async (torrent, name) => {
+const startRealdebridTorrentDownload = async (torrent, name, user) => {
     try {
-        const unrestrictedLink = await realdebrid.unrestricLinkNoDB(torrent.links[0]);
-        return await startMovieDownloadFromRealdebridTorrent(unrestrictedLink, name);
+        const unrestrictedLink = await realdebrid.unrestricLinkNoDB(torrent.links[0], user);
+        return await startMovieDownloadFromRealdebridTorrent(unrestrictedLink, name, user);
     } catch(error) {
         throw error
     }

@@ -15,7 +15,6 @@ module.exports = (app) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const snapshot = await usersRef.child(user.uid).child('/shows').once('value');
-
             const shows = snapshot.val();
 
             // Adding a "total" property

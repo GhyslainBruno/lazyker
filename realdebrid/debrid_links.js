@@ -453,12 +453,12 @@ async function unrestricLink(link, token) {
 /**
  * Unrestricts an only one link using RealDebrid WITHOUT db dependancy
  * @param link
- * @param token
+ * @param user
  * @returns {Promise<void>}
  */
-async function unrestricLinkNoDB(link) {
+async function unrestricLinkNoDB(link, user) {
 
-    const token = await getRealdebridAuthToken(db);
+    const token = await getRealdebridAuthToken(user.uid);
 
     const options = {
         method: 'POST',

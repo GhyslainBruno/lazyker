@@ -8,7 +8,7 @@ console.log("\n");
 logger.info("Starting auto update...");
 
 const showScrappers = require('./scrappers/main');
-const dsmCommunication = require('./synology/download');
+const dsmCommunication = require('./synology/Download');
 
 // Using local NoSQL database instead of Firestore (usefull for random people) - creating a "database.json" file to store data
 // var Datastore = require('nedb')

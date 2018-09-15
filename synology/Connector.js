@@ -1,29 +1,36 @@
 const Syno = require('syno');
-const jsonDB = require('node-json-db');
+const admin = require("firebase-admin");
+const db = admin.database();
+const usersRef = db.ref("/users");
 
 /**
  * Returns a good Syno (Synology connection) object every time
  * @returns {Promise<void>}
  */
-const getConnection = async () => {
+const getConnection = async (user) => {
 
-    const db = new jsonDB("database.json", true, true);
-    db.reload();
+    try{
+        const snapshot = await usersRef.child(user.uid).child('/settings/nas').once('value');
+        const nasConfiguration = snapshot.val();
 
-    return new Syno({
-        // Requests protocol : 'http' or 'https' (default: http)
-        protocol: db.getData('/configuration/nas/protocol'),
-        // DSM host : ip, domain name (default: localhost)
-        host: db.getData('/configuration/nas/host'),
-        // DSM port : port number (default: 5000)
-        port: db.getData('/configuration/nas/port'),
-        // DSM User account (required)
-        account: db.getData('/configuration/nas/account'),
-        // DSM User password (required)
-        passwd: db.getData('/configuration/nas/password'),
-        // DSM API version (optional, default: 6.0.2)
-        apiVersion: '6.0.2'
-    });
+        return new Syno({
+            // Requests protocol : 'http' or 'https' (default: http)
+            protocol: nasConfiguration.protocol,
+            // DSM host : ip, domain name (default: localhost)
+            host: nasConfiguration.host,
+            // DSM port : port number (default: 5000)
+            port: nasConfiguration.port,
+            // DSM User account (required)
+            account: nasConfiguration.account,
+            // DSM User password (required)
+            passwd: nasConfiguration.password,
+            // DSM API version (optional, default: 6.0.2)
+            apiVersion: '6.0.2'
+        });
+    } catch(error) {
+        throw error;
+    }
+
 };
 
 module.exports.getConnection = getConnection;

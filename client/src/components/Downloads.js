@@ -54,6 +54,11 @@ class Downloads extends Component {
 
     }
 
+    /**
+     * Resume a particular download
+     * @param downloadId
+     * @returns {Promise<void>}
+     */
     resumeDownload = async (downloadId) => {
         this.setState({currentDownloadsLoading: true, currentDownloads: null});
         try {
@@ -61,7 +66,8 @@ class Downloads extends Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
                     id: downloadId
@@ -78,6 +84,11 @@ class Downloads extends Component {
         await this.loadCurrentDownloads();
     };
 
+    /**
+     * Pause a particular download
+     * @param downloadId
+     * @returns {Promise<void>}
+     */
     pauseDownload = async (downloadId) => {
         this.setState({currentDownloadsLoading: true, currentDownloads: null});
         try {
@@ -85,7 +96,8 @@ class Downloads extends Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
                     id: downloadId
@@ -102,6 +114,10 @@ class Downloads extends Component {
         await this.loadCurrentDownloads();
     };
 
+    /**
+     * Remove a particular download
+     * @returns {Promise<void>}
+     */
     removeDownload = async () => {
 
         this.closeRemoveDialog();
@@ -114,7 +130,8 @@ class Downloads extends Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
                     id: downloadId
@@ -131,6 +148,45 @@ class Downloads extends Component {
         await this.loadCurrentDownloads();
     };
 
+    /**
+     * Clears every done downloads
+     * @param event
+     * @returns {Promise<void>}
+     */
+    clearDownloads = async (event) => {
+        const downloadsToRemove = this.state.currentDownloads.tasks.filter(dl => dl.status === "finished").map(dl => dl.id).join(',');
+
+        if (downloadsToRemove.length > 0) {
+            this.setState({currentDownloadsLoading: true, currentDownloads: null});
+
+            try {
+                let response = await fetch('/api/remove_download', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'token': await auth.getIdToken()
+                    },
+                    body: JSON.stringify({
+                        id: downloadsToRemove
+                    })
+                });
+
+                response = await response.json();
+
+                this.setState({snack: true, snackBarMessage: 'Removed'});
+
+            } catch(error) {
+                this.setState({snack: true, snackBarMessage: 'Error'});
+            }
+            await this.loadCurrentDownloads();
+        }
+    };
+
+    /**
+     * Load all movies in progress - basically finding the best links before starting the download
+     * @returns {Promise<void>}
+     */
     loadMoviesInProgress = async () => {
 
         try {
@@ -147,11 +203,19 @@ class Downloads extends Component {
         }
     };
 
+    /**
+     * Load all current downloads for the downloader selected
+     */
     loadCurrentDownloads = async () => {
         this.setState({currentDownloadsLoading: true, currentDownloads: null});
 
         try {
-            let response = await fetch('/api/current_downloads');
+            let response = await fetch('/api/current_downloads', {
+                method: 'GET',
+                headers: {
+                    'token': await auth.getIdToken()
+                }
+            });
             const downloadsStates = await response.json();
 
             if (downloadsStates.message) {
@@ -161,10 +225,13 @@ class Downloads extends Component {
             }
             
         } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'error', currentDownloadsLoading: false});
+            this.setState({snack: true, snackBarMessage: 'Error while loading downloads', currentDownloadsLoading: false});
         }
     };
 
+    /**
+     * Remove a particular in progress movie
+     */
     removeInProgressMovie = async (movie) => {
 
         try {
@@ -194,35 +261,6 @@ class Downloads extends Component {
 
     showRemoveDialog = async (taskId) => {
         this.setState({showRemoveDialog: true, downloadTaskIdToRemove: taskId});
-    };
-
-    clearDownloads = async (event) => {
-        const downloadsToRemove = this.state.currentDownloads.tasks.filter(dl => dl.status === "finished").map(dl => dl.id).join(',');
-
-        if (downloadsToRemove.length > 0) {
-            this.setState({currentDownloadsLoading: true, currentDownloads: null});
-
-            try {
-                let response = await fetch('/api/remove_download', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        id: downloadsToRemove
-                    })
-                });
-
-                response = await response.json();
-
-                this.setState({snack: true, snackBarMessage: 'Removed'});
-
-            } catch(error) {
-                this.setState({snack: true, snackBarMessage: 'Error'});
-            }
-            await this.loadCurrentDownloads();
-        }
     };
 
     displaySnackMessage = message => {

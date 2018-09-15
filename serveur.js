@@ -145,61 +145,6 @@ app.get('/api/autoupdate_output', async (req, res) => {
 
 
 
-app.get('/api/current_downloads', async (req, res) => {
-
-    try {
-        const currentDownloads = await downloader.getCurrentDownloads(await synoConnector.getConnection());
-
-        res.send({
-            currentDownloads: currentDownloads
-        })
-    } catch(error) {
-        res.send({
-            message: error
-        })
-    }
-
-});
-
-app.post('/api/resume_download', async (req, res) => {
-    try {
-        const message = await downloader.resumeDownload(await synoConnector.getConnection(), req.body.id);
-        res.send({
-            message: message
-        })
-    } catch(error) {
-        res.send({
-            message: error
-        })
-    }
-});
-
-app.post('/api/remove_download', async (req, res) => {
-    try {
-        const message = await downloader.removeDownload(await synoConnector.getConnection(), req.body.id);
-        res.send({
-            message: message
-        })
-    } catch(error) {
-        res.send({
-            message: error
-        })
-    }
-});
-
-app.post('/api/pause_download', async (req, res) => {
-    try {
-        const message = await downloader.pauseDownload(await synoConnector.getConnection(), req.body.id);
-        res.send({
-            message: message
-        })
-    } catch(error) {
-        res.send({
-            message: error
-        })
-    }
-});
-
 app.post('/api/clear_logs', (req, res) => {
     fs.writeFile('logs/stdout.txt', '', function(){
         res.send({message: 'logs cleared'});

@@ -11,30 +11,38 @@ const usersRef = db.ref("/users");
  * Starts a movie download
  * @param linkFromRealdebrid
  * @param title
+ * @param user
  * @returns {Promise<void>}
  */
-const startMovieDownload = async (linkFromRealdebrid, title, user) => {
+const  startMovieDownload = async (linkFromRealdebrid, title, user) => {
 
-    const syno = await connector.getConnection(user);
+    try {
+        const syno = await connector.getConnection(user);
 
-    // Get all current downloads in downloadStation
-    const currentDownloads = await getCurrentDownloads(syno);
+        // Get all current downloads in downloadStation
+        const currentDownloads = await getCurrentDownloads(syno);
 
-    const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
-    const inProgressMovies = snapshot.val();
+        // const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
+        // const inProgressMovies = snapshot.val();
 
-    // If no download in the folder wanted is present --> start download
-    if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === db.getData('/configuration/nas/moviesPath') + '/' + title).length === 0) {
+        let moviesPath = await usersRef.child(user.uid).child('/settings/nas/moviesPath').once('value');
+        moviesPath = moviesPath.val();
 
-        let directoryToStartDownload = await createMovieDir(title, syno, db);
-        directoryToStartDownload = directoryToStartDownload.replace(/^\//,'');
+        // If no download in the folder wanted is present --> start download
+        if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === moviesPath + '/' + title).length === 0) {
 
-        //   Then --> start download task
-        await createMovieDownload(linkFromRealdebrid[0], syno, directoryToStartDownload, db, title);
+            let directoryToStartDownload = await createMovieDir(title, syno, moviesPath);
+            directoryToStartDownload = directoryToStartDownload.replace(/^\//,'');
+
+            //   Then --> start download task
+            await createMovieDownload(linkFromRealdebrid[0], syno, directoryToStartDownload, user, title);
 
 
-    } else {
-        logger.info('Movie already in download')
+        } else {
+            logger.info('Movie already in download')
+        }
+    } catch(error) {
+        throw error;
     }
 
 };
@@ -226,14 +234,28 @@ const createMovieDownload = (link, syno, directoryToStartDownload, user, title) 
                 logger.info(title + ' --> download STARTED !');
                 // Removing the movie in database inProgress movies - TODO: find a way if multiple movies with the same title
                 // db.push('/movies', db.getData('/movies').filter(movie => movie.title !== title));
-                const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
+                const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
                 const inProgressMovie = snapshot.val();
+
                 if (inProgressMovie) {
-                    await usersRef.child(user.uid).child('/movies').child(inProgressMovie.id).remove();
+
+                    // If several inProgressMovies with the same title, taking the first one
+                    const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
+                    await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).remove();
                 }
 
                 resolve(data)
             } else {
+                const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
+                const inProgressMovie = snapshot.val();
+
+                // Passing the movie state in error into database
+                if (inProgressMovie) {
+                    // If several inProgressMovies with the same title, taking the first one
+                    const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
+                    await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).child('/state').set('error');
+                }
+
                 reject(error)
             }
         })

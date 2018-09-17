@@ -1,4 +1,4 @@
 .idea/
-node_modules/
+backend/node_modules/
 client/build/
 client/node_modules

@@ -1,38 +1,16 @@
-//Using firebase
 const admin = require('firebase-admin');
-const serviceAccount = require("./lazyker-568c4-firebase-adminsdk-b7xs7-03f3744551");
+const serviceAccount = require("../lazyker-568c4-firebase-adminsdk-b7xs7-03f3744551");
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://lazyker-568c4.firebaseio.com"
 });
 
 const express = require('express');
-const Syno = require('syno');
-const SynoPerso = require('./synology/SynoPerso');
 const bodyParser = require('body-parser');
-const jsonDB = require('node-json-db');
 fork = require('child_process').fork;
-const rp = require('request-promise');
-const _ = require('lodash');
 const fs = require('fs');
-// const downloader = require('./synology/download');
 const logger = require('./logs/logger');
 const path = require('path');
-const realdebrid = require('./realdebrid/debrid_links');
-const synoConnector = require('./synology/Connector');
-
-const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
-const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
-
-// const db = new jsonDB("database.json", true, true);
-// db.reload();
-// const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
-// const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
-const searchMovieTmdbUrl = 'https://api.themoviedb.org/3/search/movie';
-// const youtubeAPIKey = 'AIzaSyDJUXgEKJSwbsr_Gj7IuWTNlTPoGKP_xn8';
-
-const dlprotect = require('./movies/scappers/zonetelechargementlol/dlprotect1co');
-const Movies = require('./movies/Movies');
 
 
 const app = express();
@@ -53,7 +31,6 @@ const app = express();
 // });
 
 let autoUpdateChild = {};
-let moviesChild = {};
 
 // For CORS error
 app.use(function(req, res, next) {
@@ -67,8 +44,6 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-
-// require('./api/User')(app);
 
 /**
  * Settings routes declaration

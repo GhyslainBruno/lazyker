@@ -1,3 +1,0 @@
-
-08:39:52 | StatusCodeError: 403 - {"error":"invalid_login","error_code":12}
-08:39:52 | TypeError: Cannot read property 'access_token' of undefined

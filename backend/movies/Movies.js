@@ -107,7 +107,7 @@ const getUnprotectedLinks = async (host, db) => {
  * @param qualityLink
  * @param title
  * @param provider
- * @param db
+ * @param user
  * @returns {Promise<void>}
  */
 const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
@@ -155,7 +155,7 @@ const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
         }
 
         if (linkToDownload === '') {
-            // Set movie in progress (in db) to movie in error
+            // Set movie in progress state to movie in error (in db)
             const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
             const inProgressMovies = snapshot.val();
             await usersRef.child(user.uid).child('/movies').child(inProgressMovies.id).child('/state').set('error');
@@ -179,7 +179,7 @@ const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
         for (let host in premiumHostsOrdered) {
             try {
 
-                linkToDownload = await realdebrid.getUnrestrictedLinks(await unprotectLinks(premiumHostsOrdered[host].links, provider), db);
+                linkToDownload = await realdebrid.getUnrestrictedLinks(await unprotectLinks(premiumHostsOrdered[host].links, provider), user);
 
                 if (linkToDownload !== '' && linkToDownload !== undefined) {
                     break;

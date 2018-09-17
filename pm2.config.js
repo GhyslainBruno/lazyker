@@ -2,7 +2,7 @@ module.exports = {
     apps : [
         {
             name: "lazyker",
-            script: "./serveur.js",
+            script: "./server.js",
             watch: false,
             error_file: "stderr.txt",
             env: {

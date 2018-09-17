@@ -28,4 +28,4 @@ WORKDIR /lazyker/app
 ENV NODE_ENV=production
 EXPOSE 8081
 
-CMD ["node","serveur.js"]
+CMD ["node","server.js"]

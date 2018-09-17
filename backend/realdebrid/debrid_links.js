@@ -18,7 +18,7 @@ const usersRef = db.ref("/users");
 /**
  * Get unrestricted links
  * @param links
- * @param db
+ * @param user
  * @returns {Promise<*>}
  */
 const getUnrestrictedLinks = async function(links, user) {

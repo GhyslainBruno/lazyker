@@ -1,21 +1,22 @@
 const rapidmoviez = require('./rapidmoviez');
 const zonetelechargement = require('./zonetelechargement');
 const pMap = require('p-map');
-const logger = require('../logs/logger');
+const logger = require('../../logs/logger');
 
 /**
  * Returns an only one link
  * @param show
- * @param database
+ * @param user
+ * @param qualities
  * @returns {Promise<*>}
  */
-const getLink = async (show, database) => {
+const getLink = async (show, user, qualities) => {
 
     try {
 
         const providersPromises = [
-            rapidmoviez.getLink(show, database),
-            zonetelechargement.getLink(show, database)
+            rapidmoviez.getLink(show, user, qualities),
+            zonetelechargement.getLink(show, user, qualities)
         ];
 
         const links = await pMap(providersPromises, link => {

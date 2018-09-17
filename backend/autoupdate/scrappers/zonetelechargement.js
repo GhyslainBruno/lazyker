@@ -2,9 +2,12 @@ const cheerio = require('cheerio');
 const rp  = require('request-promise');
 const stringSimilarity = require('string-similarity');
 const pMap = require('p-map');
-const dlProtect = require('../movies/scappers/zonetelechargement/dlprotect1com');
-const realdebrid = require('../realdebrid/debrid_links');
-const logger = require('../logs/logger');
+const dlProtect = require('../../scappers/zonetelechargement/dlprotect1com');
+const realdebrid = require('../../realdebrid/debrid_links');
+const logger = require('../../logs/logger');
+const admin = require("firebase-admin");
+const db = admin.database();
+const usersRef = db.ref("/users");
 const CloudflareBypasser = require('cloudflare-bypasser');
 
 // let cf = new CloudflareBypasser();
@@ -52,21 +55,21 @@ const getRealUrl = async () => {
     return urlToReturn
 };
 
-const getLink = async (show, database) => {
+const getLink = async (show, user, qualities) => {
     try {
 
         const showUrl = await getTvShowPage(show.name);
 
-        const qualities = await getQualities(database);
+        // const qualities = await getQualities(database);
 
-        const lang = getLangWantedForThisTvShow(show, database);
+        const lang = getLangWantedForThisTvShow(show, user);
 
         const hostLinksWithQuality = await getHostsWithQualities(show, qualities, showUrl, lang);
 
-        return await realdebrid.getBetterLink(hostLinksWithQuality, database);
+        return await realdebrid.getBetterLink(hostLinksWithQuality, user);
 
     } catch(error) {
-        logger.info(error)
+        await logger.info(error, user)
     }
 };
 
@@ -265,12 +268,20 @@ const getHostsWithQualities = async (show, qualities, showUrl, langWanted) => {
 /**
  * Return the lang ("fr" or "vostfr") for a particular tv show, present in database
  * @param show
- * @param db
+ * @param user
  * @returns {Promise<*>}
  */
-const getLangWantedForThisTvShow = (show, db) => {
-    const showTitleWantedToUpdateFromDb = stringSimilarity.findBestMatch(show.name, db.getData('/shows').map(showFromDb => showFromDb.title)).bestMatch.target;
-    return db.getData('/shows').find( showFromDb => showFromDb.title === showTitleWantedToUpdateFromDb).lang
+const getLangWantedForThisTvShow = async (show, user) => {
+
+    const showsSnapshot = await usersRef.child(user.uid).child('/shows').once('value');
+    const shows = showsSnapshot.val();
+
+    const showTitleWantedToUpdateFromDb = stringSimilarity.findBestMatch(show.name, Object.keys(shows).map(showId => shows[showId].title)).bestMatch.target;
+
+    const showsOrdered = await usersRef.child(user.uid).child('/shows').orderByChild("title").equalTo(showTitleWantedToUpdateFromDb).once('value');
+    const showsWanted = showsOrdered.val();
+    return showsWanted[Object.keys(showsWanted)[0]].lang;
+
 };
 
 /**

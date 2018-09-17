@@ -2,28 +2,28 @@ const cloudscraper = require('cloudscraper');
 const cheerio = require('cheerio');
 const _ = require('lodash');
 
-const logger = require('../logs/logger');
-const realdebrid = require('../realdebrid/debrid_links');
+const logger = require('../../logs/logger');
+const realdebrid = require('../../realdebrid/debrid_links');
 
 const rootRMZ = "http://rmz.cr/";
 
 // TODO: fill "returns" documentation
 
-const getLink = async function getLink(show, database) {
+const getLink = async function getLink(show, user, qualities) {
     try {
 
         const path = await getTvShowPath(show.name);
 
         const rmzLinks = await getRMZLinks(path, show.lastSeason, show.lastEpisode);
 
-        const qualities = await getQualities(database);
+        // const qualities = await getQualities(database);
 
         const rmzLinksSortedWithQualities = await getRMZLinksWithQualityWanted(qualities, rmzLinks);
 
         const hostsLinks = await getHostsLinks(rmzLinksSortedWithQualities);
 
         // Calling the RealDebrid module
-        return await realdebrid.getBetterLink(hostsLinks, database);
+        return await realdebrid.getBetterLink(hostsLinks, user);
 
 
     } catch(error) {
@@ -125,7 +125,7 @@ async function getRMZLinks(showPath, seasonNumber, episodeNumber) {
  * @param db
  * @returns {Promise<any>}
  */
-async function getQualities(db) {
+async function getQualities(database) {
 
     // Firestore way
     // return new Promise(function(resolve, reject) {
@@ -150,14 +150,17 @@ async function getQualities(db) {
     // })
 
     // node-json-db way
-    const qualitiesFromDb = db.getData('/configuration/qualities')
+    // const qualitiesFromDb = db.getData('/configuration/qualities')
+    //
+    // return Object.keys(qualitiesFromDb)
+    //     .filter(key => qualitiesFromDb[key] !== "none")
+    //     .reduce((obj, key) => {
+    //         obj[key] = qualitiesFromDb[key];
+    //         return obj;
+    //     }, {});
 
-    return Object.keys(qualitiesFromDb)
-        .filter(key => qualitiesFromDb[key] !== "none")
-        .reduce((obj, key) => {
-            obj[key] = qualitiesFromDb[key];
-            return obj;
-        }, {});
+
+    // Firebase way
 
 }
 

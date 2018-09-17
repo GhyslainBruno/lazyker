@@ -158,7 +158,7 @@ module.exports = (app) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             await usersRef.child(user.uid).child('/movies').child(req.body.id).set({title: req.body.title, state: 'finding_links', id: req.body.id});
-            Movies.startDownloadMovieTask(req.body.quality_wanted.url, req.body.title, req.body.provider, db);
+            Movies.startDownloadMovieTask(req.body.quality_wanted.url, req.body.title, req.body.provider, user);
             res.send({message: "Movie in progress"});
         } catch(error) {
             res.status(500).send({message: error});

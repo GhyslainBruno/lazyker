@@ -22,6 +22,9 @@ import Divider from '@material-ui/core/Divider';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import TextField from '@material-ui/core/TextField';
 import SignOutButton from "../firebase/SignOutBtn";
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import { auth } from '../firebase';
 
 
@@ -32,7 +35,7 @@ class Settings extends Component {
 
         this.state = {
             autoUpdate: null,
-            output: null,
+            output: [],
             h265: false,
             snack: false,
             snackBarMessage: null,
@@ -84,10 +87,15 @@ class Settings extends Component {
     // }
 
     loadOutput = async () => {
-        this.setState({output: null, loading: true});
-        let response = await fetch('/api/autoupdate_output');
+        this.setState({output: [], loading: true});
+        let response = await fetch('/api/logs', {
+            method: 'GET',
+            headers: {
+                'token': await auth.getIdToken()
+            }
+        });
         response = await response.json();
-        this.setState({ output: response.output , loading: false})
+        this.setState({ output: response.map(el => {return {text: el.textPayload, time: el.timestamp.seconds * 1000}}) , loading: false})
     };
 
     clearLogs = async () => {
@@ -555,9 +563,28 @@ class Settings extends Component {
                         </div>
 
 
-                        <p style={{whiteSpace: 'pre', overflow: 'scroll', height: '200px', width: '100%'}}>
-                            {this.state.output}
-                        </p>
+                        <List dense={true}>
+
+                            {this.state.output.map(log => {
+
+                                // const date = new Date(log.time).toDateString();
+
+                                return (
+                                    <ListItem>
+                                        <ListItemText
+                                            primary={log.text}
+                                            secondary={new Date(log.time).toDateString()}
+                                        />
+                                    </ListItem>
+                                )
+
+                            })}
+
+                        </List>
+
+                        {/*<p style={{whiteSpace: 'pre', overflow: 'scroll', height: '200px', width: '100%'}}>*/}
+                            {/*{this.state.output}*/}
+                        {/*</p>*/}
                     </ExpansionPanelDetails>
 
                     <Divider />

@@ -75,7 +75,6 @@ const getTorrentsList = async title => {
         return torrentsList;
 
     } catch(error) {
-        logger.info(error);
         throw error;
     }
 };
@@ -109,7 +108,6 @@ const downloadTorrentFile = async (url, user) => {
         return null;
 
     } catch(error) {
-        logger.info(error);
         throw error;
     }
 };

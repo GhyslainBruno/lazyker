@@ -54,7 +54,6 @@ const getTorrentsList = async title => {
         return torrentsList;
 
     } catch(error) {
-        logger.info(error);
         throw error;
     }
 };
@@ -134,7 +133,6 @@ const downloadTorrentFile = async url => {
         await removeAllFiles(path.join(__dirname, 'torrent_temp'));
 
         browser.close();
-        logger.info(error);
         throw error;
     }
 };
@@ -256,7 +254,6 @@ const yggLogin = async (login, password) => {
         // Where the session cookie is stored
         return response.headers['set-cookie'][0].match(/ygg_=[a-z0-9]*/g)[0];
     } catch(error) {
-        logger.info(error);
         throw error;
     }
 };
@@ -315,7 +312,6 @@ const startTorrentDownload = async (torrentId, sessionCookie) => {
             writeStream.end();
         })
         .catch(error => {
-            logger.info(error);
             throw error;
         })
 };

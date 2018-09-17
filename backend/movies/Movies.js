@@ -150,7 +150,7 @@ const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
                 }
 
             } catch(error) {
-                logger.info('ERROR ' + host + error)
+                logger.info('ERROR ' + host + error, user)
             }
         }
 
@@ -186,7 +186,7 @@ const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
                 }
 
             } catch(error) {
-                logger.info('ERROR ' + host + error)
+                logger.info('ERROR ' + host + error, user)
             }
         }
 

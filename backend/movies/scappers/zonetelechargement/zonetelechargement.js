@@ -160,7 +160,6 @@ const getUrls = async function getUrls(title) {
         return {title: title, provider: providerName, results: resultsToReturn};
 
     } catch(error) {
-        logger.info(error);
         throw error;
     }
 };

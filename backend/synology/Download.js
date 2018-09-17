@@ -39,7 +39,7 @@ const  startMovieDownload = async (linkFromRealdebrid, title, user) => {
 
 
         } else {
-            logger.info('Movie already in download')
+            logger.info('Movie already in download', user)
         }
     } catch(error) {
         throw error;
@@ -76,7 +76,7 @@ const startMovieDownloadFromRealdebridTorrent = async (linkFromRealdebrid, title
 
 
     } else {
-        logger.info('Movie already in download');
+        logger.info('Movie already in download', user);
         return null;
     }
 
@@ -179,14 +179,13 @@ const createMovieDir = (title, syno, moviesPath) => {
 };
 
 /**
- *
+ * Creates a tv show download
  * @param show
  * @param syno
  * @param directoryToStartDownload
  * @param db
  * @returns {Promise<any>}
  */
-// TODO: if in download but paused --> resume
 function createDownload(show, syno, directoryToStartDownload, db) {
 
     return new Promise((resolve, reject) => {
@@ -231,7 +230,7 @@ const createMovieDownload = (link, syno, directoryToStartDownload, user, title) 
     return new Promise((resolve, reject) => {
         syno.dl.createTask({'uri': link.download, 'destination': directoryToStartDownload}, async (error, data) => {
             if (!error) {
-                logger.info(title + ' --> download STARTED !');
+                logger.info(title + ' --> download STARTED !', user);
                 // Removing the movie in database inProgress movies - TODO: find a way if multiple movies with the same title
                 // db.push('/movies', db.getData('/movies').filter(movie => movie.title !== title));
                 const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
@@ -263,6 +262,12 @@ const createMovieDownload = (link, syno, directoryToStartDownload, user, title) 
 
 };
 
+/**
+ * Resume a synology download
+ * @param syno
+ * @param downloadId
+ * @returns {Promise<any>}
+ */
 const resumeDownload = (syno, downloadId) => {
     return new Promise((resolve, reject) => {
         syno.dl.resumeTask({'id': downloadId}, function(error, data) {
@@ -275,6 +280,12 @@ const resumeDownload = (syno, downloadId) => {
     });
 };
 
+/**
+ * Pause a synology download
+ * @param syno
+ * @param downloadId
+ * @returns {Promise<any>}
+ */
 const pauseDownload = (syno, downloadId) => {
     return new Promise((resolve, reject) => {
         syno.dl.pauseTask({'id': downloadId}, function(error, data) {
@@ -287,6 +298,12 @@ const pauseDownload = (syno, downloadId) => {
     });
 };
 
+/**
+ * Remove a synology download
+ * @param syno
+ * @param downloadId
+ * @returns {Promise<any>}
+ */
 const removeDownload = (syno, downloadId) => {
     return new Promise((resolve, reject) => {
         syno.dl.deleteTask({'id': downloadId}, function(error, data) {

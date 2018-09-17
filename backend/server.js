@@ -70,6 +70,11 @@ require('./api/Downloads')(app);
  */
 require('./api/Torrents')(app);
 
+/**
+ * Logs routes declaration
+ */
+require('./api/Logs')(app);
+
 
 
 app.get('/api/autoupdate_state', function(req, res) {
@@ -105,26 +110,24 @@ app.get('/api/autoupdate', function(req, res) {
     }
 });
 
-app.get('/api/autoupdate_output', async (req, res) => {
 
-    fs.readFile('logs/stdout.txt', 'utf8', function (err,data) {
-        if (err) {
-            res.send(err);
-        } else {
-            let dataToSend = {output: data};
-            res.send(dataToSend)
-        }
-    });
-});
+// app.get('/api/autoupdate_output', async (req, res) => {
+//
+//     fs.readFile('logs/stdout.txt', 'utf8', function (err,data) {
+//         if (err) {
+//             res.send(err);
+//         } else {
+//             let dataToSend = {output: data};
+//             res.send(dataToSend)
+//         }
+//     });
+// });
 
-
-
-
-app.post('/api/clear_logs', (req, res) => {
-    fs.writeFile('logs/stdout.txt', '', function(){
-        res.send({message: 'logs cleared'});
-    });
-});
+// app.post('/api/clear_logs', (req, res) => {
+//     fs.writeFile('logs/stdout.txt', '', function(){
+//         res.send({message: 'logs cleared'});
+//     });
+// });
 
 if (process.env.NODE_ENV === 'production') {
     // Serve any static files

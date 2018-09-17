@@ -13,28 +13,15 @@ const usersRef = db.ref("/users");
  * @param title
  * @returns {Promise<void>}
  */
-const startMovieDownload = async (linkFromRealdebrid, title) => {
+const startMovieDownload = async (linkFromRealdebrid, title, user) => {
 
-    // db.reload();
-
-    // Create syno object firstly
-    const syno = new Syno({
-        // Requests protocol : 'http' or 'https' (default: http)
-        protocol: db.getData('/configuration/nas/protocol'),
-        // DSM host : ip, domain name (default: localhost)
-        host: db.getData('/configuration/nas/host'),
-        // DSM port : port number (default: 5000)
-        port: db.getData('/configuration/nas/port'),
-        // DSM User account (required)
-        account: db.getData('/configuration/nas/account'),
-        // DSM User password (required)
-        passwd: db.getData('/configuration/nas/password'),
-        // DSM API version (optional, default: 6.0.2)
-        apiVersion: '6.0.2'
-    });
+    const syno = await connector.getConnection(user);
 
     // Get all current downloads in downloadStation
     const currentDownloads = await getCurrentDownloads(syno);
+
+    const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
+    const inProgressMovies = snapshot.val();
 
     // If no download in the folder wanted is present --> start download
     if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === db.getData('/configuration/nas/moviesPath') + '/' + title).length === 0) {

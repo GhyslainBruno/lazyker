@@ -1,10 +1,10 @@
 const rp = require('request-promise');
 const pFilter = require('p-filter');
 const pMap = require('p-map');
-const jsonDB = require('node-json-db');
 
 const logger = require('../logs/logger');
 
+// Realdebrid authentication part
 const CLIENT_ID = 'GPA2MB33HLS3I';
 const CLIENT_SECRET = '1e56fa016de2d07058c2501737710683a12d3dee';
 const rootUrlRealDebrid = "https://api.real-debrid.com/rest/1.0";
@@ -15,21 +15,16 @@ const admin = require("firebase-admin");
 const db = admin.database();
 const usersRef = db.ref("/users");
 
-// const db = new jsonDB("database.json", true, true);
-// db.reload();
-
-
-// TODO: Remove duplicate code
 /**
- *
+ * Get unrestricted links
  * @param links
  * @param db
  * @returns {Promise<*>}
  */
-const getUnrestrictedLinks = async function(links, db) {
+const getUnrestrictedLinks = async function(links, user) {
     try {
 
-        const token = await getRealdebridAuthToken(db);
+        const token = await getRealdebridAuthToken(user.uid);
 
         const regexes = await getRegexes(token);
 
@@ -51,7 +46,7 @@ const getUnrestrictedLinks = async function(links, db) {
 
 
     } catch (error) {
-        logger.info(error)
+        logger.info(error);
         throw error
     }
 };
@@ -132,7 +127,6 @@ async function getRealdebridAuthToken(uid) {
 
                 try {
                     const newToken = await rp(options);
-                    // db.push('/configuration/realdebrid/token', newToken);
                     await usersRef.child(uid).child('/settings/realdebrid/token').set(newToken);
                     return newToken
                 } catch(error) {

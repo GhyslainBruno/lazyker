@@ -1,14 +1,7 @@
-// import * as realdebrid from "../realdebrid/debrid_links";
 const realdebrid = require('../realdebrid/debrid_links');
 const admin = require("firebase-admin");
-const rp = require('request-promise');
-const db = admin.database();
-const usersRef = db.ref("/users");
 const Movies = require('../movies/Movies');
 const downloader = require('../synology/Download');
-
-const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
-const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
 
 module.exports = (app) => {
 

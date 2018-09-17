@@ -11,6 +11,11 @@ const pMap = require('p-map');
 const ygg = require('./torrents/ygg/ygg');
 const torrent9 = require('./torrents/torrents9/torrent9');
 
+// Using firebase
+const admin = require("firebase-admin");
+const db = admin.database();
+const usersRef = db.ref("/users");
+
 /**
  * Get a list of torrents (title and url of the page to find the actual torrent) - aggregator
  * @param title
@@ -105,7 +110,7 @@ const getUnprotectedLinks = async (host, db) => {
  * @param db
  * @returns {Promise<void>}
  */
-const startDownloadMovieTask = async (qualityLink, title, provider, db) => {
+const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
 
     let hosts = {};
 
@@ -138,7 +143,7 @@ const startDownloadMovieTask = async (qualityLink, title, provider, db) => {
         for (let host in freeHostsOrdered) {
             try {
 
-                linkToDownload = await realdebrid.getUnrestrictedLinks(await unprotectLinks(freeHostsOrdered[host].links, provider), db);
+                linkToDownload = await realdebrid.getUnrestrictedLinks(await unprotectLinks(freeHostsOrdered[host].links, provider), user);
 
                 if (linkToDownload !== '' && linkToDownload !== undefined) {
                     break;
@@ -151,15 +156,12 @@ const startDownloadMovieTask = async (qualityLink, title, provider, db) => {
 
         if (linkToDownload === '') {
             // Set movie in progress (in db) to movie in error
-            const moviesInDb = db.getData('/movies').filter(movie => movie.title !== title);
-            const movieInErrorToPushInBn = db.getData('/movies').filter(movie => movie.title === title)[0];
-            movieInErrorToPushInBn.state = 'error';
-            movieInErrorToPushInBn.title = title;
+            const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
+            const inProgressMovies = snapshot.val();
+            await usersRef.child(user.uid).child('/movies').child(inProgressMovies.id).child('/state').set('error');
 
-            moviesInDb.push(movieInErrorToPushInBn);
-            db.push('/movies', moviesInDb)
         } else {
-            return await download.startMovieDownload(linkToDownload, title);
+            return await download.startMovieDownload(linkToDownload, title, user);
         }
 
 
@@ -190,15 +192,12 @@ const startDownloadMovieTask = async (qualityLink, title, provider, db) => {
 
         if (linkToDownload === '') {
             // Set movie in progress (in db) to movie in error
-            const moviesInDb = db.getData('/movies').filter(movie => movie.title !== title);
-            const movieInErrorToPushInBn = db.getData('/movies').filter(movie => movie.title === title)[0];
-            movieInErrorToPushInBn.state = 'error';
-            movieInErrorToPushInBn.title = title;
+            const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
+            const inProgressMovies = snapshot.val();
+            await usersRef.child(user.uid).child('/movies').child(inProgressMovies.id).child('/state').set('error');
 
-            moviesInDb.push(movieInErrorToPushInBn);
-            db.push('/movies', moviesInDb)
         } else {
-            return await download.startMovieDownload(linkToDownload, title);
+            return await download.startMovieDownload(linkToDownload, title, user);
         }
 
     }

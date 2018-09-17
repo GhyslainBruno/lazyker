@@ -1,9 +1,9 @@
-const ZTScrapper = require('./scappers/zonetelechargement/zonetelechargement');
-const ZTScrapperlol = require('./scappers/zonetelechargementlol/zonetelechargementlol');
-const EDScrapper = require('./scappers/extremedownload/extremedownload');
-const dlprotectlol = require('./scappers/zonetelechargementlol/dlprotect1co');
-const dlprotect = require('./scappers/zonetelechargement/dlprotect1com');
-const edprotect = require('./scappers/extremedownload/edprotect');
+const ZTScrapper = require('../scappers/zonetelechargement/zonetelechargement');
+const ZTScrapperlol = require('../scappers/zonetelechargementlol/zonetelechargementlol');
+const EDScrapper = require('../scappers/extremedownload/extremedownload');
+const dlprotectlol = require('../scappers/zonetelechargementlol/dlprotect1co');
+const dlprotect = require('../scappers/zonetelechargement/dlprotect1com');
+const edprotect = require('../scappers/extremedownload/edprotect');
 const realdebrid = require('../realdebrid/debrid_links');
 const download = require('../synology/Download');
 const logger = require('../logs/logger');
@@ -156,9 +156,14 @@ const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
 
         if (linkToDownload === '') {
             // Set movie in progress state to movie in error (in db)
-            const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
-            const inProgressMovies = snapshot.val();
-            await usersRef.child(user.uid).child('/movies').child(inProgressMovies.id).child('/state').set('error');
+            const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
+            const inProgressMovie = snapshot.val();
+
+            if (inProgressMovie) {
+                // If several inProgressMovies with the same title, taking the first one
+                const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
+                await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).child('/state').set('error');
+            }
 
         } else {
             return await download.startMovieDownload(linkToDownload, title, user);
@@ -192,9 +197,15 @@ const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
 
         if (linkToDownload === '') {
             // Set movie in progress (in db) to movie in error
-            const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
-            const inProgressMovies = snapshot.val();
-            await usersRef.child(user.uid).child('/movies').child(inProgressMovies.id).child('/state').set('error');
+            // Set movie in progress state to movie in error (in db)
+            const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
+            const inProgressMovie = snapshot.val();
+
+            if (inProgressMovie) {
+                // If several inProgressMovies with the same title, taking the first one
+                const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
+                await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).child('/state').set('error');
+            }
 
         } else {
             return await download.startMovieDownload(linkToDownload, title, user);

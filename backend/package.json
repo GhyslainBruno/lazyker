@@ -12,6 +12,7 @@
   "author": "BRUNO Ghyslain",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/logging": "^3.0.2",
     "body-parser": "^1.18.2",
     "cheerio": "^1.0.0-rc.2",
     "cloudflare-bypasser": "0.0.3",
@@ -26,6 +27,7 @@
     "path": "^0.12.7",
     "request": "^2.85.0",
     "request-promise": "^4.2.2",
+    "semver": "^5.5.1",
     "string-similarity": "^1.2.0",
     "syno": "^2.1.0",
     "torrent-to-magnet": "^1.0.1",

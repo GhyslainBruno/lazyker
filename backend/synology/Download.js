@@ -1,6 +1,5 @@
 const stringSimilarity = require('string-similarity');
 const logger = require('../logs/logger');
-const Syno = require('syno');
 const admin = require("firebase-admin");
 const db = admin.database();
 const realdebrid = require('../realdebrid/debrid_links');
@@ -86,10 +85,10 @@ const startMovieDownloadFromRealdebridTorrent = async (linkFromRealdebrid, title
  * Starts a tv show download
  * @param show
  * @param syno
- * @param db
+ * @param user
  * @returns {Promise<void>}
  */
-const startDownload = async function(show, syno, db) {
+const startDownload = async function(show, syno, user) {
 
     try {
 
@@ -104,14 +103,14 @@ const startDownload = async function(show, syno, db) {
         // If there is NOT already a download to the destination wanted --> start download | IF there is one, don't do anything (for now)
         if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === directoryToStartDownload).length === 0) {
             //   Then --> start download task
-            await createDownload(show, syno, directoryToStartDownload, db);
+            await createDownload(show, syno, directoryToStartDownload, user);
         } else {
-            logger.info(show.name + ' S' + show.lastSeason + 'E' + show.lastEpisode + ' --> already in download')
+            await logger.info(show.name + ' S' + show.lastSeason + 'E' + show.lastEpisode + ' --> already in download', user)
         }
 
 
     } catch (error) {
-        logger.info(error);
+        await logger.info(error, user);
     }
 
 
@@ -183,38 +182,37 @@ const createMovieDir = (title, syno, moviesPath) => {
  * @param show
  * @param syno
  * @param directoryToStartDownload
- * @param db
- * @returns {Promise<any>}
+ * @param user
+ * @returns {Promise<void>}
  */
-function createDownload(show, syno, directoryToStartDownload, db) {
+const createDownload = async (show, syno, directoryToStartDownload, user) =>{
 
-    return new Promise((resolve, reject) => {
-        syno.dl.createTask({'uri': show.unrestrictedLink.download, 'destination': directoryToStartDownload}, function(error, data) {
-            if (!error) {
-                logger.info(show.name + ' S' + show.lastSeason + 'E' + show.lastEpisode + ' --> download STARTED !');
+    syno.dl.createTask({'uri': show.unrestrictedLink.download, 'destination': directoryToStartDownload}, async (error, data) => {
+        if (!error) {
+            await logger.info(show.name + ' S' + show.lastSeason + 'E' + show.lastEpisode + ' --> download STARTED !', user);
 
-                try {
-                    // Telling db that a new episode has been found (for ui display)
-                    db.reload();
-                    const showsInDb = db.getData('/shows');
-                    const correspondigShowTitleInDb = stringSimilarity.findBestMatch(show.name, showsInDb.map(showInDb => showInDb.title)).bestMatch.target;
-                    // showsInDb.filter(dbShow => dbShow.title === correspondigShowTitleInDb)[0].newEpisodeFound = true;
-                    // db.push('/shows', showsInDb);
+            try {
+                // Telling db that a new episode has been found (for ui display)
+                const showsSnapshot = await usersRef.child(user.uid).child('/shows').once('value');
+                const shows = showsSnapshot.val();
 
-                    db.data.shows.filter(showDb => showDb.title === correspondigShowTitleInDb)[0].episode = true;
-                    db.save();
+                const showTitleWantedToUpdateFromDb = stringSimilarity.findBestMatch(show.name, Object.keys(shows).map(showId => Object.keys(shows)[showId].title)).bestMatch.target;
 
-                } catch (error) {
-                    logger.info(error)
-                }
+                const showsOrdered = await usersRef.child(user.uid).child('/shows').orderByChild("title").equalTo(showTitleWantedToUpdateFromDb).once('value');
+                const showsWanted = showsOrdered.val();
+                await usersRef.child(user.uid).child('/shows').child(showsWanted[Object.keys(showsWanted)[0]]).child('/episode').set('true');
 
-                resolve(data)
-            } else {
-                reject(error)
+            } catch (error) {
+                await logger.info(error, user);
             }
-        })
-    });
-}
+
+            return data
+        } else {
+            throw error;
+        }
+    })
+
+};
 
 /**
  * Creates a movie download
@@ -237,7 +235,6 @@ const createMovieDownload = (link, syno, directoryToStartDownload, user, title) 
                 const inProgressMovie = snapshot.val();
 
                 if (inProgressMovie) {
-
                     // If several inProgressMovies with the same title, taking the first one
                     const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
                     await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).remove();

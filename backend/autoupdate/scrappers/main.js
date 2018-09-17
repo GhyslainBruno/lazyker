@@ -3,6 +3,12 @@ const zonetelechargement = require('./zonetelechargement');
 const pMap = require('p-map');
 const logger = require('../logs/logger');
 
+/**
+ * Returns an only one link
+ * @param show
+ * @param database
+ * @returns {Promise<*>}
+ */
 const getLink = async (show, database) => {
 
     try {
@@ -25,7 +31,7 @@ const getLink = async (show, database) => {
 };
 
 /**
- *
+ * Returns the ligher link (from array of links)
  * @param links
  * @returns {*}
  */

@@ -1,60 +1,20 @@
 const rp  = require('request-promise');
 const cheerio = require('cheerio');
-const dlprotect = require('./dlprotect1com');
-const logger = require('../../../logs/logger');
+const dlprotect = require('./dlprotect1co');
+// const puppeteer = require('puppeteer');
+const logger = require('../../logs/logger');
+
+const cloudscraper = require('cloudscraper');
+const CloudflareBypasser = require('cloudflare-bypasser');
+
+let cf = new CloudflareBypasser();
+
+const ZTRootUrl = 'https://www.zone-telechargement.lol/';
+
+const providerName = 'zonetelechargementlol';
 
 
-const ZTRootUrl = 'https://www.zone-telechargement1.org/';
-
-const providerName = 'zonetelechargement';
-
-/**
- * Returns the real URL used by the website - anytime
- * @param ZTRootUrl
- * @returns {Promise<void>}
- */
-const getRealUrl = async () => {
-    const options = {
-        method: 'POST',
-        uri: ZTRootUrl + 'index.php?do=search',
-        formData: {
-            do: 'search',
-            subaction: 'search',
-            story: 'foo',
-            search_start: 0,
-            full_search: 1,
-            result_from: 1,
-            titleonly: 3,
-            searchuser: '',
-            replyless: '',
-            replylimit: '',
-            searchdate: '' ,
-            beforeafter: 'after',
-            sortby: 'date',
-            resorder: 'desc',
-            showposts: 0,
-            'catlist[]': 2,
-        }
-    };
-
-    let urlToReturn = ZTRootUrl;
-
-    try {
-        const response = await rp(options);
-        console.log(response)
-    } catch(error) {
-        urlToReturn = error.response.headers.location
-    }
-
-    return urlToReturn
-};
-
-/**
- * Return available qualities for a particular movie using this provider
- * @param moviePath
- * @param title
- * @returns {Promise<{title: *, qualities: Array}>}
- */
+// First bloc of usefull functions - display qualities of movie to user
 const getMovieQualities = async function getMovieQualities(moviePath, title) {
 
     const qualitiesToReturn = [];
@@ -65,7 +25,7 @@ const getMovieQualities = async function getMovieQualities(moviePath, title) {
         json: true
     };
 
-    const response = await rp(options);
+    const response = await cf.request(options);
     const $ = cheerio.load(response);
 
     const otherQualities = $('.otherversions > a');
@@ -107,84 +67,108 @@ const getMovieQualities = async function getMovieQualities(moviePath, title) {
  */
 const getUrls = async function getUrls(title) {
 
-    const ZTRealUrl = await getRealUrl();
-
-    const options = {
-        method: 'POST',
-        uri: ZTRealUrl,
-        formData: {
-            do: 'search',
-            subaction: 'search',
-            story: title,
-            search_start: 0,
-            full_search: 1,
-            result_from: 1,
-            titleonly: 3,
-            searchuser: '',
-            replyless: '',
-            replylimit: '',
-            searchdate: '' ,
-            beforeafter: 'after',
-            sortby: 'date',
-            resorder: 'desc',
-            showposts: 0,
-            'catlist[]': 2,
-        },
-        followAllRedirects: false,
-        json: true
-    };
-
+    // Using pupeteer
+    const browser = await puppeteer.launch({headless: false, timeout: 60000});
     try {
+        const page = await browser.newPage();
 
-        // const response = await cf.request(options);
+        await page.goto(ZTRootUrl, {timeout: 60000});
 
-        const response = await rp(options);
+        // Waiting to bypass cloudflare
+        await page.waitFor(10000);
 
-        const $ = cheerio.load(response);
+        await page.waitForSelector("body");
 
-        const results = $('.cover_global');
+        await page.click("button.navbar-toggler");
+
+        await page.type('input[name=story]', title);
+
+        await page.keyboard.down('Enter');
+
+        await page.waitForSelector("body");
+
+        await page.waitFor(1000);
+
+        const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
+
+        browser.close();
+
+        const $ = cheerio.load(html);
+
+        const results = $('.mov');
 
         const resultsToReturn = [];
 
         results.map((i, result) => {
-
             const element = cheerio.load(result);
-
             resultsToReturn.push({
-                image: element('div > a > img')[0].attribs.src,
-                url: element('.cover_infos_global > .cover_infos_title > a')[0].attribs.href,
-                title: element('.cover_infos_global > .cover_infos_title > a')[0].children[0].data
+                image: ZTRootUrl + element('img')[0].attribs.src,
+                url: element('.mov-t')[0].attribs.href,
+                title: element('.mov-t')[0].attribs.title
             })
         });
 
         return {title: title, provider: providerName, results: resultsToReturn};
 
     } catch(error) {
+        logger.info(error);
+        browser.close();
         throw error;
     }
+
+
+
+
+
+    // Using cheerio
+    // const options = {
+    //     method: 'POST',
+    //     url: ZTRootUrl,
+    //     formData: {
+    //         do: 'search',
+    //         subaction: 'search',
+    //         story: title,
+    //         user_hash: 'eb98083a84ed28aa143abdf7995a5953ab19b38d'
+    //     },
+    //     followAllRedirects: false,
+    //     json: true
+    // };
+    //
+    // try {
+    //
+    //     // const response = await cf.request(options);
+    //
+    //     const response = await cloudScrapperRequest(options);
+    //
+    //     const $ = cheerio.load(response);
+    //
+    //     const results = $('.cover_global');
+    //
+    //     const resultsToReturn = [];
+    //
+    //     results.map((i, result) => {
+    //
+    //         const element = cheerio.load(result);
+    //
+    //         resultsToReturn.push({
+    //             image: element('div > a > img')[0].attribs.src,
+    //             url: element('.cover_infos_global > .cover_infos_title > a')[0].attribs.href,
+    //             title: element('.cover_infos_global > .cover_infos_title > a')[0].children[0].data
+    //         })
+    //     });
+    //
+    //     return {title: title, provider: providerName, results: resultsToReturn};
+    //
+    // } catch(error) {
+    //     throw error
+    // }
 };
 
-/**
- * Return object{
- *     premium: {
- *         host_name: "hostName",
- *         links: [links]
- *     },
- *     free: {
- *         host_name: "hostName",
- *         links: [links]
- *     }
- * }
- * @param url
- * @returns {Promise<*>}
- */
 const getDownloadLinks = async function getDownloadLinks(url) {
-
-    const ZTRealUrl = await getRealUrl();
 
     const options = {
         method: 'GET',
-        uri: ZTRealUrl.replace('/index.php?do=search', '') + url,
+        uri: ZTRootUrl + url,
         json: true
     };
 
@@ -201,7 +185,7 @@ const getDownloadLinks = async function getDownloadLinks(url) {
             premium: []
         };
 
-        const response = await rp(options);
+        const response = await cf.request(options);
         const $ = cheerio.load(response);
 
         let isInPremiumPart = false;
@@ -237,7 +221,7 @@ const getDownloadLinks = async function getDownloadLinks(url) {
                 }
 
             } else {
-                // Add in PREMIUM part
+            // Add in PREMIUM part
 
                 // find the host name
                 if (item.children[0].children !== undefined && item.children.length === 1 && item.children[0].attribs.href === undefined) {
@@ -261,9 +245,29 @@ const getDownloadLinks = async function getDownloadLinks(url) {
     }
 };
 
+/**
+ * Some cloudscrapper wrapper into promises
+ * @param options
+ * @returns {Promise<any>}
+ */
+const cloudScrapperRequest = async options => {
+    return new Promise((resolve, reject) => {
+        cloudscraper.request(
+            options , function(err, response, body) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(body);
+                }
+        });
+    })
+};
+
 // Second bloc - use quality selected (just url is needed)
 // to check availability and, if so, start download
 
 module.exports.getMovieQualities = getMovieQualities;
+
 module.exports.getUrls = getUrls;
+
 module.exports.getDownloadLinks = getDownloadLinks;

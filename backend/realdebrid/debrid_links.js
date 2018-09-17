@@ -54,14 +54,14 @@ const getUnrestrictedLinks = async function(links, user) {
 /**
  * Returns the best (and lighter) link from [firstQuality[{host link}], etc..]
  * @param links
- * @param db
+ * @param user
  * @returns {Promise<*>}
  */
-const getBetterLink = async function(links, db) {
+const getBetterLink = async function(links, user) {
 
     try {
 
-        const token = await getRealdebridAuthToken(db);
+        const token = await getRealdebridAuthToken(user.uid);
 
         const regexes = await getRegexes(token);
 

@@ -2,9 +2,12 @@ const admin = require("firebase-admin");
 const rp = require('request-promise');
 const db = admin.database();
 const usersRef = db.ref("/users");
+const pMap = require('p-map');
 
 const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
 const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
+
+const autoupdate = require('../autoupdate/Main');
 
 module.exports = (app) => {
 
@@ -147,6 +150,26 @@ module.exports = (app) => {
             res.status(500).send({
                 message: error
             })
+        }
+    });
+
+    /**
+     * Starts an autoupdate task for every users
+     */
+    app.get('/api/autoupdate_start', async (req, res) => {
+
+        try {
+
+            res.send({message: 'Auto updated started'});
+            const snapshot = await usersRef.child('/').once('value');
+            const users = snapshot.val();
+
+            await pMap(Object.keys(users), async uid => {
+                autoupdate.startUpdate(await admin.auth().getUser(uid));
+            }, {concurency: 1});
+
+        } catch(error) {
+            await logger.info(error.message, user);
         }
     });
 

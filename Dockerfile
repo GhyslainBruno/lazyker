@@ -24,7 +24,8 @@ WORKDIR /lazyker/app/client
 # Building the UI code
 RUN npm run build
 
-RUN rm -rf node_modules && rm -rf public && rm -rf src
+WORKDIR /lazyker/app/
+RUN rm -rf client
 
 WORKDIR /lazyker/app/backend
 ENV NODE_ENV=production

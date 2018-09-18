@@ -65,7 +65,7 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-const server = app.listen(8081, () => {
+const server = app.listen(process.env.PORT || 8081, () => {
     console.log('Server is up...')
 });
 

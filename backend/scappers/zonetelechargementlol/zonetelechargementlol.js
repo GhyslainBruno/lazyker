@@ -7,7 +7,7 @@ const logger = require('../../logs/logger');
 const cloudscraper = require('cloudscraper');
 const CloudflareBypasser = require('cloudflare-bypasser');
 
-let cf = new CloudflareBypasser();
+// let cf = new CloudflareBypasser();
 
 const ZTRootUrl = 'https://www.zone-telechargement.lol/';
 

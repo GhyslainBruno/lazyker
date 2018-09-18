@@ -8,7 +8,7 @@ const logger = require('../../logs/logger');
 const admin = require("firebase-admin");
 const db = admin.database();
 const usersRef = db.ref("/users");
-const CloudflareBypasser = require('cloudflare-bypasser');
+// const CloudflareBypasser = require('cloudflare-bypasser');
 
 // let cf = new CloudflareBypasser();
 

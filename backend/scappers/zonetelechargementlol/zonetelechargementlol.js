@@ -5,7 +5,7 @@ const dlprotect = require('./dlprotect1co');
 const logger = require('../../logs/logger');
 
 const cloudscraper = require('cloudscraper');
-const CloudflareBypasser = require('cloudflare-bypasser');
+// const CloudflareBypasser = require('cloudflare-bypasser');
 
 // let cf = new CloudflareBypasser();
 

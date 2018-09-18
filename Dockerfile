@@ -8,7 +8,6 @@ COPY backend/package*.json /lazyker/app/backend/
 COPY client/package*.json /lazyker/app/client/
 
 WORKDIR /lazyker/app/backend
-
 RUN npm install --silent
 
 WORKDIR /lazyker/app/client

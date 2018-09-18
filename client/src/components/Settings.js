@@ -576,7 +576,7 @@ class Settings extends Component {
                                     <ListItem>
                                         <ListItemText
                                             primary={log.text}
-                                            secondary={new Date(log.time).toDateString()}
+                                            secondary={new Date(log.time).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour:'numeric', minute: 'numeric' })}
                                         />
                                     </ListItem>
                                 )

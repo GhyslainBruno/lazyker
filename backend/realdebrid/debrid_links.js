@@ -564,7 +564,6 @@ const selectAllTorrentFiles = async (torrentId, user) => {
 
 
     } catch(error) {
-        logger.info(error);
         throw error;
     }
 };

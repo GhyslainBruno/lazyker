@@ -1,15 +1,13 @@
 FROM node:8.11.3-alpine
 
 # Create app directory and use it as the working directory
-RUN mkdir -p /lazyker/app/client
+RUN mkdir -p /lazyker/app/client && mkdir -p /lazyker/app/backend
 WORKDIR /lazyker/app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-
-COPY package*.json /lazyker/app/
+COPY backend/package*.json /lazyker/app/backend/
 COPY client/package*.json /lazyker/app/client/
+
+WORKDIR /lazyker/app/backend
 
 RUN npm install --silent
 
@@ -17,15 +15,20 @@ WORKDIR /lazyker/app/client
 RUN npm install --silent
 
 WORKDIR /lazyker/app
+
+# Copy all the code into container
 COPY . /lazyker/app/
 
 WORKDIR /lazyker/app/client
+
+# Building the UI code
 RUN npm run build
 
 RUN rm -rf node_modules && rm -rf public && rm -rf src
 
-WORKDIR /lazyker/app
+WORKDIR /lazyker/app/backend
 ENV NODE_ENV=production
 EXPOSE 8081
 
+# Starting server in production mode
 CMD ["node","server.js"]

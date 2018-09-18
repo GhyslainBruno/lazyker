@@ -62,7 +62,7 @@ const getLink = async (show, user, qualities) => {
 
         // const qualities = await getQualities(database);
 
-        const lang = getLangWantedForThisTvShow(show, user);
+        const lang = await getLangWantedForThisTvShow(show, user);
 
         const hostLinksWithQuality = await getHostsWithQualities(show, qualities, showUrl, lang);
 
@@ -244,7 +244,6 @@ const getHostsWithQualities = async (show, qualities, showUrl, langWanted) => {
                 const response = await rp(options);
                 const $ = cheerio.load(response);
 
-                // 15 should be replaced with show.lastEpisode
                 const dlProtectLinksForThisEpisode = $('.postinfo > b').toArray().filter(item => item.children[0].children[0].data === 'Episode ' + parseInt(show.lastEpisode));
                 const dlProtectLinksForThisEpisodeClean = dlProtectLinksForThisEpisode.map(item => item.children[0].attribs.href);
 
@@ -259,7 +258,6 @@ const getHostsWithQualities = async (show, qualities, showUrl, langWanted) => {
         return hostLinksToReturn;
 
     } catch(error) {
-        logger.info(error);
         throw error;
     }
 

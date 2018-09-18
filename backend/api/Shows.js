@@ -160,7 +160,7 @@ module.exports = (app) => {
 
         try {
 
-            res.send({message: 'Auto updated started'});
+            res.send({message: 'Auto-update started'});
             const snapshot = await usersRef.child('/').once('value');
             const users = snapshot.val();
 

@@ -19,6 +19,7 @@ const findNewEpisodes = async (lastEpisodesFromStorage, user, qualities) => {
         let betterLink = await showsScrapers.getLink(link, user, qualities);
 
         // Better to check if the episode wanted is found or not
+        // Here, if episode + 1 of the same season is not found, we are looking for episode 01 of season : seasonNumber + 1 --> TODO: still need to be tested with firebase
         if (betterLink === null) {
 
             const lastEpisodeObjectToUseHere = lastEpisodes.find(show => show.name === link.name);

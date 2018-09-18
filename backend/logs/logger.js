@@ -31,19 +31,37 @@ const info = async (textToLog, user) => {
     log
         .write(entry)
         .then(() => {
-            console.log(`Logged: ${text}`);
             return null
         })
         .catch(err => {
-            console.error('ERROR:', err);
             throw error
         });
 };
 
 /**
+ * Clears the user's logs
+ * @param user
+ * @returns {Promise<DeleteLogResponse>}
+ */
+const clearLogs = async user => {
+
+    // The name of the log to write to
+    const logName = user.uid;
+    // Selects the log to write to
+    const log = logging.log(logName);
+
+    try {
+        return await log.delete();
+    } catch(error) {
+        throw error
+    }
+
+};
+
+/**
  * Get all logs for a particular user
  * @param user
- * @returns {Promise<void>}
+ * @returns {Promise<GetEntriesResponse>}
  */
 const getLogs = async user => {
     // The name of the log to write to
@@ -51,7 +69,7 @@ const getLogs = async user => {
     // Selects the log to write to
     const log = logging.log(logName);
 
-    // Gettings the stackdriver logs
+    // Getting the Stackdriver logs
     try {
         return await log.getEntries();
     } catch(error) {
@@ -61,3 +79,4 @@ const getLogs = async user => {
 
 module.exports.info = info;
 module.exports.getLogs = getLogs;
+module.exports.clearLogs = clearLogs;

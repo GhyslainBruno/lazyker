@@ -9,8 +9,7 @@ const usersRef = db.ref("/users");
 async function getTvShowsToUpdateFromDatabase(user) {
     // Set movie in progress state to movie in error (in db)
     const snapshot = await usersRef.child(user.uid).child('/shows').orderByChild('autoUpdate').equalTo(true).once('value');
-    const autoUpdateShows = snapshot.val();
-    return autoUpdateShows;
+    return snapshot.val();
 }
 
 /**
@@ -30,7 +29,10 @@ const getTvShowsPath = async user => {
  */
 const getQualitiesWanted = async user => {
     const snapshot = await usersRef.child(user.uid).child('/settings/qualities').once('value');
-    return snapshot.val();
+    const qualities = snapshot.val();
+
+    // Removing all qualities set to "none
+    return await Object.keys(qualities).filter(key => qualities[key] !== "none").reduce((obj, key) => {obj[key] = qualities[key]; return obj;}, {});
 };
 
 module.exports.getTvShowsPath = getTvShowsPath;

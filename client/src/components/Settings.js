@@ -99,23 +99,26 @@ class Settings extends Component {
     };
 
     clearLogs = async () => {
-        let response = await fetch('/api/clear_logs', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'token': await auth.getIdToken()
-            },
-            body: JSON.stringify({
-                logs: 'logs'
-            })
-        });
+        try {
+            let response = await fetch('/api/logs', {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                },
+                body: JSON.stringify({
+                    logs: 'logs'
+                })
+            });
 
-        response = await response.json();
+            response = await response.json();
+            this.setState({snack: true, snackBarMessage: response.message});
+            this.loadOutput();
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error clearing logs'})
+        }
 
-        this.setState({snack: true, snackBarMessage: response.message});
-
-        this.loadOutput();
     };
 
     loadSettings = async () => {

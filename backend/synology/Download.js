@@ -196,11 +196,11 @@ const createDownload = async (show, syno, directoryToStartDownload, user) =>{
                 const showsSnapshot = await usersRef.child(user.uid).child('/shows').once('value');
                 const shows = showsSnapshot.val();
 
-                const showTitleWantedToUpdateFromDb = stringSimilarity.findBestMatch(show.name, Object.keys(shows).map(showId => Object.keys(shows)[showId].title)).bestMatch.target;
+                const showTitleWantedToUpdateFromDb = stringSimilarity.findBestMatch(show.name, Object.keys(shows).map(showId => shows[showId].title)).bestMatch.target;
 
                 const showsOrdered = await usersRef.child(user.uid).child('/shows').orderByChild("title").equalTo(showTitleWantedToUpdateFromDb).once('value');
                 const showsWanted = showsOrdered.val();
-                await usersRef.child(user.uid).child('/shows').child(showsWanted[Object.keys(showsWanted)[0]]).child('/episode').set('true');
+                await usersRef.child(user.uid).child('/shows').child(showsWanted[Object.keys(showsWanted)[0]].id).child('/episode').set('true');
 
             } catch (error) {
                 await logger.info(error, user);

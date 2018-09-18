@@ -31,13 +31,13 @@ This project is composed of :
 
 Can, for now, be build in dev / prod mode : 
 * dev : 
-  * ```npm install``` (root folder)
+  * ```npm install``` (backend folder)
   * ```npm install``` (client folder)  
-  * ```node server.js``` (root folder)
+  * ```node server.js``` (backend folder)
   * ```npm start``` (client folder)
 * prod : 
-  * ```npm install``` (root folder)
+  * ```npm install``` (backend folder)
   * ```npm install``` (client folder)  
   * ```npm run build``` (client folder)
-  * ```NODE_ENV=production node server.js``` (root folder)
+  * ```NODE_ENV=production node server.js``` (backend folder)
   

@@ -1,7 +1,9 @@
 const rp = require('request-promise');
-const jsonDB = require('node-json-db');
-const db = new jsonDB("database.json", true, true);
-db.reload();
+
+/**
+ * ! WARNING ! File not functional for now !
+ * @returns {Promise<*>}
+ */
 
 const getSid = async () => {
     try {

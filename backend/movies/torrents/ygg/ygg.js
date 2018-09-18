@@ -10,9 +10,15 @@ const path = require('path');
 const torrentToMagnet = require('torrent-to-magnet');
 const parseTorrent = require('parse-torrent');
 const realdebrid = require('../../../realdebrid/debrid_links');
-const jsonDB = require('node-json-db');
 
-const db = new jsonDB("database.json", true, true);
+/**
+ * ! WARNING ! File not functional for now !!
+ * @param body
+ * @param response
+ * @param resolveWithFullResponse
+ * @returns {{headers: *, data: *, fullResponse: *}}
+ * @private
+ */
 
 // Used to read headers responses in requests
 const _include_headers = function(body, response, resolveWithFullResponse) {

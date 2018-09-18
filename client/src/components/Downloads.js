@@ -30,6 +30,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Clear from '@material-ui/icons/ClearAll';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import Torrents from './downloads/Torrents';
+import * as auth from "../firebase/auth";
 
 
 
@@ -40,7 +41,7 @@ class Downloads extends Component {
         super(props);
         this.state = {
             currentDownloads: null,
-            moviesInProgress: null,
+            moviesInProgress: {total: 0},
             snack: false,
             snackBarMessage: null,
             moviesInProgressLoading: false,
@@ -53,6 +54,11 @@ class Downloads extends Component {
 
     }
 
+    /**
+     * Resume a particular download
+     * @param downloadId
+     * @returns {Promise<void>}
+     */
     resumeDownload = async (downloadId) => {
         this.setState({currentDownloadsLoading: true, currentDownloads: null});
         try {
@@ -60,7 +66,8 @@ class Downloads extends Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
                     id: downloadId
@@ -77,6 +84,11 @@ class Downloads extends Component {
         await this.loadCurrentDownloads();
     };
 
+    /**
+     * Pause a particular download
+     * @param downloadId
+     * @returns {Promise<void>}
+     */
     pauseDownload = async (downloadId) => {
         this.setState({currentDownloadsLoading: true, currentDownloads: null});
         try {
@@ -84,7 +96,8 @@ class Downloads extends Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
                     id: downloadId
@@ -101,6 +114,10 @@ class Downloads extends Component {
         await this.loadCurrentDownloads();
     };
 
+    /**
+     * Remove a particular download
+     * @returns {Promise<void>}
+     */
     removeDownload = async () => {
 
         this.closeRemoveDialog();
@@ -113,7 +130,8 @@ class Downloads extends Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
                     id: downloadId
@@ -130,58 +148,11 @@ class Downloads extends Component {
         await this.loadCurrentDownloads();
     };
 
-    loadMoviesInProgress = async () => {
-        this.setState({moviesInProgressLoading: true});
-        let response = await fetch('/api/movies_in_progress');
-        const moviesInProgress = await response.json();
-        this.setState({moviesInProgress: moviesInProgress.moviesInProgress, moviesInProgressLoading: false})
-    };
-
-    loadCurrentDownloads = async () => {
-        this.setState({currentDownloadsLoading: true, currentDownloads: null});
-
-        try {
-            let response = await fetch('/api/current_downloads');
-            const downloadsStates = await response.json();
-
-            if (downloadsStates.message) {
-                this.setState({currentDownloads: null, snack: true, snackBarMessage: 'error', currentDownloadsLoading: false})
-            } else {
-                this.setState({currentDownloads: downloadsStates.currentDownloads, currentDownloadsLoading: false})
-            }
-            
-        } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'error', currentDownloadsLoading: false});
-        }
-    };
-
-    removeInProgressMovie = async (title) => {
-
-        let response = await fetch('/api/remove_in_progress_movie', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title: title
-            })
-        });
-
-        const downloadsStates = await response.json();
-
-        this.setState({moviesInProgress: downloadsStates.moviesInProgress, snack: true, snackBarMessage: title + ' removed'})
-
-    };
-
-    closeRemoveDialog = () => {
-        this.setState({showRemoveDialog: false, downloadTaskIdToRemove: null})
-    };
-
-    showRemoveDialog = async (taskId) => {
-        this.setState({showRemoveDialog: true, downloadTaskIdToRemove: taskId});
-    };
-
+    /**
+     * Clears every done downloads
+     * @param event
+     * @returns {Promise<void>}
+     */
     clearDownloads = async (event) => {
         const downloadsToRemove = this.state.currentDownloads.tasks.filter(dl => dl.status === "finished").map(dl => dl.id).join(',');
 
@@ -193,7 +164,8 @@ class Downloads extends Component {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'token': await auth.getIdToken()
                     },
                     body: JSON.stringify({
                         id: downloadsToRemove
@@ -209,6 +181,86 @@ class Downloads extends Component {
             }
             await this.loadCurrentDownloads();
         }
+    };
+
+    /**
+     * Load all movies in progress - basically finding the best links before starting the download
+     * @returns {Promise<void>}
+     */
+    loadMoviesInProgress = async () => {
+
+        try {
+            this.setState({moviesInProgressLoading: true});
+            let response = await fetch('/api/movies_in_progress', {
+                headers: {
+                    'token': await auth.getIdToken()
+                }
+            });
+            const moviesInProgress = await response.json();
+            this.setState({moviesInProgress: moviesInProgress, moviesInProgressLoading: false})
+        } catch(error) {
+            this.setState({currentDownloads: null, snack: true, snackBarMessage: 'Error loading movies in progress', currentDownloadsLoading: false})
+        }
+    };
+
+    /**
+     * Load all current downloads for the downloader selected
+     */
+    loadCurrentDownloads = async () => {
+        this.setState({currentDownloadsLoading: true, currentDownloads: null});
+
+        try {
+            let response = await fetch('/api/current_downloads', {
+                method: 'GET',
+                headers: {
+                    'token': await auth.getIdToken()
+                }
+            });
+            const downloadsStates = await response.json();
+
+            if (downloadsStates.message) {
+                this.setState({currentDownloads: null, snack: true, snackBarMessage: 'error', currentDownloadsLoading: false})
+            } else {
+                this.setState({currentDownloads: downloadsStates.currentDownloads, currentDownloadsLoading: false})
+            }
+            
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error while loading downloads', currentDownloadsLoading: false});
+        }
+    };
+
+    /**
+     * Remove a particular in progress movie
+     */
+    removeInProgressMovie = async (movie) => {
+
+        try {
+            let response = await fetch('/api/remove_in_progress_movie', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                },
+                body: JSON.stringify({
+                    movie: movie
+                })
+            });
+
+            const moviesInProgress = await response.json();
+
+            this.setState({moviesInProgress: moviesInProgress, snack: true, snackBarMessage: 'Movie removed'})
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error removing the movie'});
+        }
+    };
+
+    closeRemoveDialog = () => {
+        this.setState({showRemoveDialog: false, downloadTaskIdToRemove: null})
+    };
+
+    showRemoveDialog = async (taskId) => {
+        this.setState({showRemoveDialog: true, downloadTaskIdToRemove: taskId});
     };
 
     displaySnackMessage = message => {
@@ -253,7 +305,7 @@ class Downloads extends Component {
                 <h1>Downloads</h1>
 
                 {/*Movies in progress*/}
-                <ExpansionPanel onChange={(event, expanded) => expanded ? this.loadMoviesInProgress() : null}>
+                <ExpansionPanel onChange={(event, expanded) => expanded ? this.loadMoviesInProgress() : this.setState({moviesInProgress: {total: 0}})}>
                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography>Movies in progress</Typography>
                     </ExpansionPanelSummary>
@@ -263,7 +315,10 @@ class Downloads extends Component {
 
                             <CircularProgress style={this.state.moviesInProgressLoading ? {display: 'inline-block'} : {display: 'none'}} />
 
-                            {this.state.moviesInProgress !== null ? this.state.moviesInProgress.length > 0 ? this.state.moviesInProgress.map(movie => {
+                            { this.state.moviesInProgress.total > 0 ? Object.keys(this.state.moviesInProgress.moviesInProgress).map(movieInProgress => {
+
+                                const movie = this.state.moviesInProgress.moviesInProgress[movieInProgress];
+
                                 return (
                                     <ListItem button>
                                         <ListItemText primary={movie.title}/>
@@ -278,7 +333,7 @@ class Downloads extends Component {
                                             }
 
                                             <IconButton>
-                                                <Delete onClick={() => this.removeInProgressMovie(movie.title)} />
+                                                <Delete onClick={() => this.removeInProgressMovie(movie)} />
                                             </IconButton>
                                         </ListItemSecondaryAction>
                                     </ListItem>
@@ -286,11 +341,9 @@ class Downloads extends Component {
                             })
                                 :
 
-                                <div style={{padding: '10px', fontSize: '0.9rem', color: 'grey'}}>no movies in progress</div>
+                                <div style={this.state.moviesInProgressLoading ? {display: 'none'} : {padding: '10px', fontSize: '0.9rem', color: 'grey'}}>no movies in progress</div>
 
-                                :
-
-                                null}
+                                }
 
                         </List>
 

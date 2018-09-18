@@ -23,6 +23,7 @@ import React from "react";
 import screenfull from "screenfull";
 import {findDOMNode} from "react-dom";
 import Slide from "@material-ui/core/Slide";
+import * as auth from "../../firebase/auth";
 
 
 class MovieInfoDialog extends React.Component {
@@ -49,7 +50,8 @@ class MovieInfoDialog extends React.Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
                     url: torrent.url
@@ -203,23 +205,30 @@ class MovieInfoDialog extends React.Component {
     };
 
     // Starts the download of a particular quality, for a particular movie, using a particular provider
-    startDownload = async (title, qualityWanted) => {
-        let response = fetch('/api/start_movie_download', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title: title,
-                quality_wanted: qualityWanted,
-                provider: qualityWanted.provider
-            })
-        });
+    startDownload = async (movie, qualityWanted) => {
+        try {
+            fetch('/api/start_movie_download', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                },
+                body: JSON.stringify({
+                    title: movie.title,
+                    quality_wanted: qualityWanted,
+                    provider: qualityWanted.provider,
+                    id: movie.id
+                })
+            });
 
-        this.props.closeDialog();
-        this.props.displaySnackMessage('Added - check Downloads for status');
-        this.setState({providersMovies: null, qualities: null});
+            this.props.closeDialog();
+            this.props.displaySnackMessage('Added - check Downloads for status');
+            this.setState({providersMovies: null, qualities: null});
+        } catch (error) {
+            this.props.displaySnackMessage('Error while starting the download');
+        }
+
     };
 
     // Close the dialog and clears data
@@ -445,7 +454,7 @@ class MovieInfoDialog extends React.Component {
                                         return (
                                             <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
                                                 <ListItem button>
-                                                    <ListItemText primary={quality.quality + quality.lang} onClick={() => this.startDownload(this.props.selectedMovie.title, quality)}/>
+                                                    <ListItemText primary={quality.quality + quality.lang} onClick={() => this.startDownload(this.props.selectedMovie, quality)}/>
                                                 </ListItem>
                                             </Paper>
 

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "lazyker-568c4",
+  "private_key_id": "1eebc13a0386d8bd5f6ea3b39f71a58742bce2b7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCyw2Cx1Rcl/Kep\nOOqdTpD0q3w3VJ+F6K1hWZejbde7Dwi02TOcFv42xfRnd2b89s227G6ehro93skB\n0EKDRV4QK5LewZ7kTs95tFVHaDEIhnVuiAI2COM+Gy6dBx7uw1643DqCpqwksL67\nXoEP6qC5DuEInoXeNye4jbdIn3RgYZlHK1/kq8HXDNxCh6L3K5fHJcSxjv7eankr\nBe4pI87HUHWkOygmWVk0eOD+9KAVRm7qGEWAOX8QCXSHMdbm4sMZsPHjFsy/XIT6\nEdDMRvl1Jg5ea78i2dtRpCcCwO7xe+DRBYaVTik8wXLqCabSD8P07x2ddF0HWdDd\nERdDcskFAgMBAAECggEAWGJ3ZZWZK2P/NZD5lytoSkCbWvQRJ3FCgDZ+3gQKPOeT\nA2+8r7lCmaxISfvkRMB2N7Iwg1rTrJGBSs9Ag40Bk/cnV9HdkL5SoLcDzxl53OA2\nIZ9HkJXWXTetVWBW7/BS3g2tNDnaNQ3aT+PK5ia4rqbnpo5SW+tjTUFsVJDaRmhF\nvcH6Al2zVfLhjKyEbmqoLD5nHnyGnV8J9d40X6u7ibm4gF4+RiVunN4TIZHV5nsd\not5y6cv1i4ghPs26ug/rbt0FnE68lE/geAkhpXby0pDDAG2IuoCBYwaXjX+5R5Mn\nyftQkzwySOFCbXX7nMfM6Va+/9Mzo2enaUn0OuqJZQKBgQDzqstxL4XdJDDiG21H\nqyYmU4V4Ag79t4A5wDYoPDYgjJZdfWmhT+ej28IuqTuym6/QyRK9gPtN6hVr1BVy\niT0OO9ZeKYI1JiM8MOyuGqowxx8Q6vdvZUs1hn61HdqD909cr39uwGKwP+Fyxrql\nO8gcpDBU1OGDjA0Xoba3+Ox0GwKBgQC7z56f8d2dL6NbtCp5CvnJB478l1PI2pVG\ncwzv2r2auC1OOtknTT0LqDwUsOb/6YfLoMu3kmodt4/lmSZp4cs85jFyfihzdA5i\n5ceWktvmFNb/dtDTPHQIHncTg5ZfKeO1ytzD3mTyVsM7fRxCvIfnJHk5wZSBRo/A\nvN74XUhJXwKBgQC53P/N2FgdtOtsrUsQLeatuWvHfJp+wagXZRxqWHNZJKPVsEIQ\nf+jLPmfCO+iDduoHMjkPQAFxDytD0sSBV1mxL8d2j+b4L50U3qTKsSA8kMaLmw8e\nc3+I1ox0Ds+NdemdY2iqzCj7E98eM6RPQWiFIGCVdMSIGR4rdnjvn/qNHQKBgGUO\nkov92QF7YKs3hqMbBMznBElmI+8vrqL5xTxKtztJXxd5Et/S78YWAD4h8ipBvpAT\nNYrRfcf/va4Nel3+4R0jv/ebaqi1CgitG3gqDakADa/ofvUq0kSMIAagB4mtQJnR\nTnkWcbr0dJjN+SbvyzDUr2Ykg4QMM83B0zhQ+VSBAoGBAKiF46igheJo+jFvtFmL\nut0KYPGcqEnP4NzzRZPD1n4qjpFPDnLXYXuV3OvJiyw+5xzqjT++EPm2MGZIJRdY\nT3MUTFT2n7gltEIdn38YQTtxoN1JSmfGkcFjBRkngeY+l6gmWH+hNBKhvtH9nAz+\nF2h7uIlQZp0DqSBxfY2Ki0Dd\n-----END PRIVATE KEY-----\n",
+  "client_email": "lazyker-service-account@lazyker-568c4.iam.gserviceaccount.com",
+  "client_id": "115249673277835492119",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/lazyker-service-account%40lazyker-568c4.iam.gserviceaccount.com"
+}

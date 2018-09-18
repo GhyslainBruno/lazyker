@@ -21,6 +21,11 @@ import ClearLogs from '@material-ui/icons/ClearAll';
 import Divider from '@material-ui/core/Divider';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import TextField from '@material-ui/core/TextField';
+import SignOutButton from "../firebase/SignOutBtn";
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import { auth } from '../firebase';
 
 
 class Settings extends Component {
@@ -30,7 +35,7 @@ class Settings extends Component {
 
         this.state = {
             autoUpdate: null,
-            output: null,
+            output: [],
             h265: false,
             snack: false,
             snackBarMessage: null,
@@ -53,52 +58,67 @@ class Settings extends Component {
         props.changeNavigation('settings');
     }
 
-    startAutoUpdate = async () => {
-        let response = await fetch('/api/autoupdate?start=true');
-        response = await response.json();
-        this.loadAutoUpdateState();
-    };
+    // startAutoUpdate = async () => {
+    //     let response = await fetch('/api/autoupdate?start=true');
+    //     response = await response.json();
+    //     this.loadAutoUpdateState();
+    // };
+    //
+    // stopAutoUpdate = async () => {
+    //     let response = await fetch('/api/autoupdate?stop=true');
+    //     response = await response.json();
+    //     this.loadAutoUpdateState();
+    // };
 
-    stopAutoUpdate = async () => {
-        let response = await fetch('/api/autoupdate?stop=true');
-        response = await response.json();
-        this.loadAutoUpdateState();
-    };
-
-    loadAutoUpdateState = async () => {
-        let response = await fetch('/api/autoupdate_state');
-        response = await response.json();
-        this.setState({ autoUpdate: response })
-    };
+    // loadAutoUpdateState = async () => {
+    //
+    //     try {
+    //         let response = await fetch('/api/autoupdate_state');
+    //         response = await response.json();
+    //         this.setState({ autoUpdate: response })
+    //     } catch(error) {
+    //         this.setState({snack: true, snackBarMessage: 'Error loading auto update state', settingsLoading: false})
+    //     }
+    //
+    // };
 
     // componentWillMount() {
     //     this.loadAutoUpdateState();
     // }
 
     loadOutput = async () => {
-        this.setState({output: null, loading: true});
-        let response = await fetch('/api/autoupdate_output');
+        this.setState({output: [], loading: true});
+        let response = await fetch('/api/logs', {
+            method: 'GET',
+            headers: {
+                'token': await auth.getIdToken()
+            }
+        });
         response = await response.json();
-        this.setState({ output: response.output , loading: false})
+        this.setState({ output: response.map(el => {return {text: el.textPayload, time: el.timestamp.seconds * 1000}}) , loading: false})
     };
 
     clearLogs = async () => {
-        let response = await fetch('/api/clear_logs', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                logs: 'logs'
-            })
-        });
+        try {
+            let response = await fetch('/api/logs', {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                },
+                body: JSON.stringify({
+                    logs: 'logs'
+                })
+            });
 
-        response = await response.json();
+            response = await response.json();
+            this.setState({snack: true, snackBarMessage: response.message});
+            this.loadOutput();
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error clearing logs'})
+        }
 
-        this.setState({snack: true, snackBarMessage: response.message});
-
-        this.loadOutput();
     };
 
     loadSettings = async () => {
@@ -106,10 +126,17 @@ class Settings extends Component {
         this.setState({settingsLoading: true});
 
         try {
-            this.loadAutoUpdateState();
+            // this.loadAutoUpdateState();
 
-            let response = await fetch('/api/settings');
+            let response = await fetch('/api/settings', {
+                method: 'GET',
+                headers: {
+                    'token': await auth.getIdToken()
+                },
+            });
             response = await response.json();
+            response = response.settings;
+
             this.setState({
                 settingsLoading: false,
                 firstQuality: response.qualities.first,
@@ -143,7 +170,8 @@ class Settings extends Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
                     qualities: {
@@ -472,45 +500,45 @@ class Settings extends Component {
                                 {/*</Grid>*/}
                             {/*</ExpansionPanelDetails>*/}
 
-                            <Divider/>
+                            {/*<Divider/>*/}
 
-                            <ExpansionPanelDetails style={{display: 'inline'}}>
+                            {/*<ExpansionPanelDetails style={{display: 'inline'}}>*/}
 
-                                <div style={{padding: '6px', textAlign: 'center', color: 'white', marginTop: '20px', marginBottom: '20px'}}>
-                                    Auto Update Management
-                                </div>
+                                {/*<div style={{padding: '6px', textAlign: 'center', color: 'white', marginTop: '20px', marginBottom: '20px'}}>*/}
+                                    {/*Auto Update Management*/}
+                                {/*</div>*/}
 
-                                <div className="autoUpdateSentence" style={{display: 'flex', textAlign: 'center', width: '100%'}}>
+                                {/*<div className="autoUpdateSentence" style={{display: 'flex', textAlign: 'center', width: '100%'}}>*/}
 
-                                    <div style={{flex: '2'}}>
-                                        Launch update every
-                                    </div>
+                                    {/*<div style={{flex: '2'}}>*/}
+                                        {/*Launch update every*/}
+                                    {/*</div>*/}
 
-                                    <div style={{flex: '1', width: '10%'}}>
-                                        <TextField
-                                            style={{maxWidth: '100%'}}
-                                            id="every"
-                                            value={this.state.every}
-                                            onChange={(event) => this.setState({every: event.target.value})}
-                                            type="number"
-                                        />
-                                    </div>
+                                    {/*<div style={{flex: '1', width: '10%'}}>*/}
+                                        {/*<TextField*/}
+                                            {/*style={{maxWidth: '100%'}}*/}
+                                            {/*id="every"*/}
+                                            {/*value={this.state.every}*/}
+                                            {/*onChange={(event) => this.setState({every: event.target.value})}*/}
+                                            {/*type="number"*/}
+                                        {/*/>*/}
+                                    {/*</div>*/}
 
-                                    <div style={{flex: '1'}}>
-                                        hours
-                                    </div>
-                                </div>
+                                    {/*<div style={{flex: '1'}}>*/}
+                                        {/*hours*/}
+                                    {/*</div>*/}
+                                {/*</div>*/}
 
-                                <div style={{margin: '0 auto', textAlign: 'center', marginTop: '30px'}}>
-                                    <Button variant="outlined" disabled={this.state.autoUpdate} onClick={this.startAutoUpdate} style={{margin: '5px'}}>
-                                        Start
-                                    </Button>
+                                {/*<div style={{margin: '0 auto', textAlign: 'center', marginTop: '30px'}}>*/}
+                                    {/*<Button variant="outlined" disabled={this.state.autoUpdate} onClick={this.startAutoUpdate} style={{margin: '5px'}}>*/}
+                                        {/*Start*/}
+                                    {/*</Button>*/}
 
-                                    <Button variant="outlined" disabled={!this.state.autoUpdate} onClick={this.stopAutoUpdate} style={{margin: '5px'}}>
-                                        Stop
-                                    </Button>
-                                </div>
-                            </ExpansionPanelDetails>
+                                    {/*<Button variant="outlined" disabled={!this.state.autoUpdate} onClick={this.stopAutoUpdate} style={{margin: '5px'}}>*/}
+                                        {/*Stop*/}
+                                    {/*</Button>*/}
+                                {/*</div>*/}
+                            {/*</ExpansionPanelDetails>*/}
 
                             <Divider/>
 
@@ -538,9 +566,28 @@ class Settings extends Component {
                         </div>
 
 
-                        <p style={{whiteSpace: 'pre', overflow: 'scroll', height: '200px', width: '100%'}}>
-                            {this.state.output}
-                        </p>
+                        <List dense={true}>
+
+                            {this.state.output.map(log => {
+
+                                // const date = new Date(log.time).toDateString();
+
+                                return (
+                                    <ListItem>
+                                        <ListItemText
+                                            primary={log.text}
+                                            secondary={new Date(log.time).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour:'numeric', minute: 'numeric' })}
+                                        />
+                                    </ListItem>
+                                )
+
+                            })}
+
+                        </List>
+
+                        {/*<p style={{whiteSpace: 'pre', overflow: 'scroll', height: '200px', width: '100%'}}>*/}
+                            {/*{this.state.output}*/}
+                        {/*</p>*/}
                     </ExpansionPanelDetails>
 
                     <Divider />
@@ -555,6 +602,8 @@ class Settings extends Component {
                     </ExpansionPanelActions>
 
                 </ExpansionPanel>
+
+                <SignOutButton />
 
             </div>
         )

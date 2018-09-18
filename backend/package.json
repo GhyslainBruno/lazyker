@@ -1,0 +1,43 @@
+{
+  "name": "lazyker",
+  "version": "1.0.0",
+  "bin": {
+    "lazyker": "server.js"
+  },
+  "description": "Back-End to trigger downloads (and some more things) on synology nas",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "BRUNO Ghyslain",
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/logging": "^3.0.2",
+    "body-parser": "^1.18.2",
+    "cheerio": "^1.0.0-rc.2",
+    "cloudscraper": "^1.5.0",
+    "express": "^4.16.3",
+    "firebase-admin": "^6.0.0",
+    "lodash": "^4.17.5",
+    "p-filter": "^1.0.0",
+    "p-map": "^1.2.0",
+    "parse-torrent": "^6.1.1",
+    "path": "^0.12.7",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2",
+    "semver": "^5.5.1",
+    "string-similarity": "^1.2.0",
+    "syno": "^2.1.0",
+    "torrent-to-magnet": "^1.0.1"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/syno/definitions/6.x/_full.json",
+      "client/build/**/*",
+      "client/build/index.html"
+    ],
+    "scripts": [
+      "node_modules/puppeteer/lib/*.js"
+    ]
+  }
+}

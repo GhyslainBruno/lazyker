@@ -1,4 +1,4 @@
-node_modules/
-client/node_modules/
-.idea
+/client/node_modules/*
+/backend/node_modules/*
 .git
+pm2.config.js

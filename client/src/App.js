@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+import { auth } from './firebase/firebase';
+import './App.css';
 import Shows from './components/Shows';
 import Navigation from './components/Navigation';
 import Movies from './components/Movies';
@@ -10,6 +10,8 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
+import {SignUpForm} from "./components/SignUp";
+import {SignInForm} from "./components/SignIn";
 
 const theme = createMuiTheme({
     palette: {
@@ -25,8 +27,17 @@ class App extends Component {
         super(props);
 
         this.state = {
-            navigation: null
+            navigation: null,
+            authUser: null
         }
+    }
+
+    componentDidMount() {
+        auth.onAuthStateChanged(authUser => {
+            authUser
+                ? this.setState({ authUser })
+                : this.setState({ authUser: null });
+        });
     }
 
     changeNavigation = (target) => {
@@ -37,14 +48,25 @@ class App extends Component {
         return (
             <Router>
                 <MuiThemeProvider theme={theme}>
-                    <div className="mainApp mui-fixed" style={{paddingBottom: '80px'}}>
-                        <Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation}/>}/>
-                        <Route exact path='/movies' render={() => <Movies changeNavigation={this.changeNavigation} />}/>
-                        <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
-                        <Route exact path='/settings' render={() => <Settings changeNavigation={this.changeNavigation}/>}/>
-                        <Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>
-                        <Route path='/' render={() => <Navigation navigation={this.state.navigation} />}/>
-                    </div>
+
+                    {
+                        this.state.authUser ?
+                            <div className="mainApp mui-fixed">
+                                <Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation}/>}/>
+                                <Route exact path='/movies' render={() => <Movies changeNavigation={this.changeNavigation} />}/>
+                                <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
+                                <Route exact path='/settings' render={() => <Settings changeNavigation={this.changeNavigation}/>}/>
+                                <Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>
+                                <Route path='/' render={() => <Navigation navigation={this.state.navigation} authUser={this.state.authUser} />}/>
+                            </div>
+                            :
+                            <div className="mainApp mui-fixed" style={{paddingBottom: '80px'}}>
+                                <Route exact path='/signup' render={() =><SignUpForm />}/>
+                                <Route path={/^(?!.*signup).*$/} render={() =><SignInForm />}/>
+                            </div>
+                    }
+
+
                 </MuiThemeProvider>
             </Router>
         )

@@ -5,6 +5,7 @@
 * Build the image : ```docker build -t ghyslainbruno/lazyker .```
 * Push the image on DockerHub : ```docker push ghyslainbruno/lazyker```
 * Run the Docker image as a container : ```docker run -p 8081:8081 -d ghyslainbruno/lazyker```
+* Deploy the application to [now](https://zeit.co/) service: `now`
 
 *Rem: an image for Raspberry pi 2B is also available, but generally not fully updated* 
 
@@ -28,11 +29,11 @@ Can, for now, be build in dev / prod mode :
 * dev : 
   * ```npm install``` (root folder)
   * ```npm install``` (client folder)  
-  * ```node serveur.js``` (root folder)
+  * ```node server.js``` (root folder)
   * ```npm start``` (client folder)
 * prod : 
   * ```npm install``` (root folder)
   * ```npm install``` (client folder)  
   * ```npm run build``` (client folder)
-  * ```NODE_ENV=production node serveur.js``` (root folder)
+  * ```NODE_ENV=production node server.js``` (root folder)
   

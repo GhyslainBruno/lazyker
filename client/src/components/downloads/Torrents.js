@@ -29,6 +29,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
+import * as auth from "../../firebase/auth";
 
 function CloudDoneGreen(props) {
     return (
@@ -59,7 +60,12 @@ class Torrents extends React.Component {
         this.setState({torrentsLoading: true, torrents: null});
 
         try {
-            let response = await fetch('/api/realdebrid_torrents');
+            let response = await fetch('/api/realdebrid_torrents', {
+                method: 'GET',
+                headers: {
+                    'token': await auth.getIdToken()
+                }
+            });
             const torrents = await response.json();
             this.setState({torrents: torrents, torrentsLoading: false})
         } catch(error) {
@@ -81,7 +87,10 @@ class Torrents extends React.Component {
 
         try {
             let response = await fetch('/api/realdebrid_torrents?torrentId=' + this.state.torrentIdToRemove, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    'token': await auth.getIdToken()
+                }
             });
             const torrents = await response.json();
             // this.setState({torrents: torrents, torrentsLoading: false})
@@ -100,7 +109,8 @@ class Torrents extends React.Component {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
                     torrent: torrent

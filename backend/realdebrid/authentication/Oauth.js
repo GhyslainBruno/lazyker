@@ -17,7 +17,6 @@ connectUser = async (code, uid) => {
         formData: {
             client_id: CLIENT_ID,
             client_secret: CLIENT_SECRET,
-            code: token.refresh_token,
             code: code,
             redirect_uri: 'https://lazyker.herokuapp.com/settings',
             grant_type: "authorization_code"

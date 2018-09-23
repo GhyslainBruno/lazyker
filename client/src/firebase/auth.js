@@ -29,3 +29,12 @@ export const getIdToken = async () => {
     }
 };
 
+// Getting user uid to connect realdebrid - is not best practice at all TODO: should be changed
+export const getUid = () => {
+    try {
+        return auth.currentUser.uid;
+    } catch(error) {
+        throw error;
+    }
+};
+

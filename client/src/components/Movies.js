@@ -324,7 +324,7 @@ class Movies extends Component {
                         {
                             this.state.movieGenres !== null ? this.state.movieGenres.map(movieGenre => {
                                 return (
-                                    <Chip label={movieGenre.name} style={{margin: '5px'}} className="movieGenre" clickable="true" onClick={() => this.searchMovieGenre(movieGenre)} />
+                                    <Chip label={movieGenre.name} style={{margin: '5px'}} className="movieGenre" clickable="true" onClick={() => this.searchMovieGenre(movieGenre)} variant="outlined"/>
                                     )
                             })
                                 :
@@ -334,10 +334,10 @@ class Movies extends Component {
                     </Paper>
 
                     <div style={{paddingTop: '5px'}}>
-                        <Chip label="Now Playing" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Now Playing"})} />
-                        <Chip label="Popular" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Popular"})} />
-                        <Chip label="Top Rated" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Top Rated"})} />
-                        <Chip label="Upcoming" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Upcoming"})} />
+                        <Chip variant="outlined" label="Now Playing" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Now Playing"})} />
+                        <Chip variant="outlined" label="Popular" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Popular"})} />
+                        <Chip variant="outlined" label="Top Rated" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Top Rated"})} />
+                        <Chip variant="outlined" label="Upcoming" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Upcoming"})} />
                     </div>
 
 

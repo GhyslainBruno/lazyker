@@ -1,5 +1,6 @@
 // Import Admin SDK
 const admin = require("firebase-admin");
+const realdebrid = require('../realdebrid/debrid_links');
 
 // Get a database reference to our blog
 const db = admin.database();
@@ -35,5 +36,31 @@ module.exports = (app) => {
             res.status(500).send({message: error});
         }
 
+    });
+
+    /**
+     * Link/connect Realdebrid user
+     */
+    app.get('/api/link', async (req, res) => {
+        try {
+            const uid = req.query.state;
+            const code = req.query.code;
+            return await realdebrid.connectUser(code, uid);
+        } catch(error) {
+            res.status(500).send({message: error});
+        }
+    });
+
+    /**
+     * Disconnect Realdebrid user
+     */
+    app.get('/api/unlink', async (req, res) => {
+        try {
+            const user = await admin.auth().verifyIdToken(req.headers.token);
+            await usersRef.child(user.uid).child('/settings').child('realdebrid').remove();
+            res.send({message: 'Disconnected'});
+        } catch(error) {
+            res.status(500).send({message: error});
+        }
     });
 };

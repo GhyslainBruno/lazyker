@@ -15,6 +15,22 @@ const admin = require("firebase-admin");
 const db = admin.database();
 const usersRef = db.ref("/users");
 
+// Using separate files
+const rdAuth = require('./authentication/Oauth');
+
+/**
+ * Connectiong realdebrid user using OAuth
+ * @param code
+ * @param user
+ * @returns {Promise<void>}
+ */
+const connectUser = async (code, uid) => {
+    return await rdAuth.connectUser(code, uid);
+};
+
+
+
+
 /**
  * Get unrestricted links
  * @param links
@@ -136,31 +152,35 @@ async function getRealdebridAuthToken(uid) {
         }
         else {
 
+            // Old way of doing realdebrid auth - now connection using OAuth
             // If no one is present, authenticate and create some
-            let username = await usersRef.child(uid).child('/settings/realdebrid/credentials/username').once('value');
-            username = username.val();
-            let password = await usersRef.child(uid).child('/settings/realdebrid/credentials/password').once('value');
-            password = password.val();
+            // let username = await usersRef.child(uid).child('/settings/realdebrid/credentials/username').once('value');
+            // username = username.val();
+            // let password = await usersRef.child(uid).child('/settings/realdebrid/credentials/password').once('value');
+            // password = password.val();
+            //
+            // const options = {
+            //     method: 'POST',
+            //     uri: authUrlRealDebrid,
+            //     formData: {
+            //         client_id: CLIENT_ID,
+            //         username: username,
+            //         password: password,
+            //         grant_type: "password"
+            //     },
+            //     json: true
+            // };
+            //
+            // try {
+            //     const newToken = await rp(options);
+            //     await usersRef.child(uid).child('/settings/realdebrid/token').set(newToken);
+            //     return newToken
+            // } catch(error) {
+            //     logger.info(error)
+            // }
 
-            const options = {
-                method: 'POST',
-                uri: authUrlRealDebrid,
-                formData: {
-                    client_id: CLIENT_ID,
-                    username: username,
-                    password: password,
-                    grant_type: "password"
-                },
-                json: true
-            };
-
-            try {
-                const newToken = await rp(options);
-                await usersRef.child(uid).child('/settings/realdebrid/token').set(newToken);
-                return newToken
-            } catch(error) {
-                logger.info(error)
-            }
+            logger.info('ERROR : please connect to "Realdebrid" debrider first --> Go to Settings');
+            throw new Error('Realdebrid connection needed');
         }
 
     } catch(error) {
@@ -625,6 +645,7 @@ const deleteTorrent = async (torrentId, user) => {
 
 
 module.exports.unrestricLinkNoDB = unrestricLinkNoDB;
+module.exports.connectUser = connectUser;
 module.exports.deleteTorrent = deleteTorrent;
 module.exports.getTorrents = getTorrents;
 module.exports.selectAllTorrentFiles = selectAllTorrentFiles;

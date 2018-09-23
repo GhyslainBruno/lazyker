@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^1.0.0",
-    "@material-ui/icons": "^1.0.0",
+    "@material-ui/icons": "^2.0.0-beta.1",
     "@material/react-button": "^0.4.2",
     "@material/react-text-field": "^0.4.2",
     "@material/theme": "^0.39.1",
@@ -23,7 +23,7 @@
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules ./src/App.scss -o ./src",
     "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules --watch ./src/App.scss ./src/App.css",
     "start-js": "react-scripts start",
-    "start": "PORT=3006 npm-run-all -p watch-css start-js",
+    "start": "npm-run-all -p watch-css start-js",
     "build-js": "react-scripts build",
     "postbuild": "mv build ../backend/client_build",
     "build": "npm-run-all build-css build-js",

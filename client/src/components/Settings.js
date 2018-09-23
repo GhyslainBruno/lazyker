@@ -26,6 +26,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { auth } from '../firebase';
+import CheckCircle from "../../node_modules/@material-ui/icons/CheckCircle";
+import CancelCircle from "../../node_modules/@material-ui/icons/CancelOutlined";
 
 
 class Settings extends Component {
@@ -46,8 +48,8 @@ class Settings extends Component {
             port: '',
             nasUsername: '',
             nasPassword: '',
-            realdebridUsername: '',
-            realdebridPassword: '',
+            // realdebridUsername: '',
+            // realdebridPassword: '',
             yggUsername: '',
             yggPassword: '',
             protocol: 'http',
@@ -150,8 +152,7 @@ class Settings extends Component {
                 port: response.nas.port,
                 nasUsername: response.nas.account,
                 nasPassword: response.nas.password,
-                realdebridUsername: response.realdebrid.credentials.username,
-                realdebridPassword: response.realdebrid.credentials.password,
+                realdebrid: response.hasOwnProperty('realdebrid'),
                 yggUsername: response.ygg.username,
                 yggPassword: response.ygg.password,
                 every: response.autoupdateTime
@@ -189,12 +190,12 @@ class Settings extends Component {
                         account: this.state.nasUsername,
                         password: this.state.nasPassword
                     },
-                    realdebrid: {
-                        credentials: {
-                            username: this.state.realdebridUsername,
-                            password: this.state.realdebridPassword
-                        }
-                    },
+                    // realdebrid: {
+                    //     credentials: {
+                    //         username: this.state.realdebridUsername,
+                    //         password: this.state.realdebridPassword
+                    //     }
+                    // },
                     ygg: {
                         username: this.state.yggUsername,
                         password: this.state.yggPassword
@@ -212,6 +213,46 @@ class Settings extends Component {
 
     };
 
+    realdebridDisconnect = async () => {
+        try {
+            let response = await fetch('/api/unlink', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                }
+            });
+
+            response = await response.json();
+
+            this.loadSettings();
+
+            this.setState({snack: true, snackBarMessage: response.message})
+
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
+        }
+    };
+
+    realdebridConnect = async () => {
+        try {
+            let response = await fetch('https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.herokuapp.com/link&response_type=code&state=' + await auth.getUid(), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            response = await response.json();
+
+            this.setState({snack: true, snackBarMessage: response.message})
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
+        }
+    };
+
     handlerQualityChange = event => {
         this.setState({ [event.target.name]: event.target.value });
     };
@@ -225,6 +266,9 @@ class Settings extends Component {
     };
 
     render() {
+
+        const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.herokuapp.com/link&response_type=code&state=' + auth.getUid();
+
         return (
             <div style={{width: '100%'}}>
 
@@ -442,30 +486,63 @@ class Settings extends Component {
                                 <Grid container spacing={0}>
 
                                     <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
-                                        RealDebrid configuration
+                                        Debriders
                                     </Grid>
 
-                                    <Grid item xs={12} style={{padding: '6px'}}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                label="Username"
-                                                id="realdebrid-username"
-                                                value={this.state.realdebridUsername}
-                                                onChange={(event) => this.setState({realdebridUsername: event.target.value})}
-                                            />
-                                        </FormControl>
-                                    </Grid>
+                                    {
+                                        this.state.realdebrid ?
+                                            <Grid item xs={12} style={{padding: '6px'}}>
 
-                                    <Grid item xs={12} style={{padding: '6px'}}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                label="Password"
-                                                id="realdebrid-password"
-                                                value={this.state.realdebridPassword}
-                                                onChange={(event) => this.setState({realdebridPassword: event.target.value})}
-                                            />
-                                        </FormControl>
-                                    </Grid>
+                                                <div style={{display: 'flex'}}>
+                                                    <div style={{flex: '1', marginTop: '10px'}}>
+                                                        Realdebrid
+                                                    </div>
+
+                                                    <div style={{flex: '1', marginTop: '10px'}}>
+                                                        <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                    </div>
+
+                                                    <div style={{flex: '1'}}>
+                                                        <Button variant="outlined" onClick={this.realdebridDisconnect}>
+                                                            Disconnect
+                                                        </Button>
+                                                    </div>
+                                                </div>
+
+                                            </Grid>
+                                            :
+                                            <Grid item xs={12} style={{padding: '6px'}}>
+
+                                                <div style={{display: 'flex'}}>
+                                                    <div style={{flex: '1', marginTop: '10px'}}>
+                                                        Realdebrid
+                                                    </div>
+
+                                                    <div style={{flex: '1', marginTop: '10px'}}>
+                                                        <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
+                                                    </div>
+
+                                                    <div style={{flex: '1'}}>
+                                                        <Button variant="outlined" href={redirectUri}>
+                                                            Connect
+                                                        </Button>
+                                                    </div>
+                                                </div>
+
+                                            </Grid>
+
+                                    }
+
+                                    {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
+                                        {/*<FormControl fullWidth>*/}
+                                            {/*<TextField*/}
+                                                {/*label="Password"*/}
+                                                {/*id="realdebrid-password"*/}
+                                                {/*value={this.state.realdebridPassword}*/}
+                                                {/*onChange={(event) => this.setState({realdebridPassword: event.target.value})}*/}
+                                            {/*/>*/}
+                                        {/*</FormControl>*/}
+                                    {/*</Grid>*/}
                                 </Grid>
                             </ExpansionPanelDetails>
 

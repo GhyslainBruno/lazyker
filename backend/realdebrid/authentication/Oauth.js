@@ -3,6 +3,9 @@ const logger = require('../../logs/logger');
 const CLIENT_ID = 'GPA2MB33HLS3I';
 const CLIENT_SECRET = '1e56fa016de2d07058c2501737710683a12d3dee';
 const authUrlRealDebrid = "https://api.real-debrid.com/oauth/v2/token";
+const admin = require("firebase-admin");
+const db = admin.database();
+const usersRef = db.ref("/users");
 
 /**
  * Connects user to realdebrid using their OAuth process

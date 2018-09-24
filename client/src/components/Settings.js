@@ -7,10 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -28,7 +25,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { auth } from '../firebase';
 import CheckCircle from "../../node_modules/@material-ui/icons/CheckCircle";
 import CancelCircle from "../../node_modules/@material-ui/icons/CancelOutlined";
-
+import queryString from 'query-string';
 
 class Settings extends Component {
 
@@ -48,8 +45,6 @@ class Settings extends Component {
             port: '',
             nasUsername: '',
             nasPassword: '',
-            // realdebridUsername: '',
-            // realdebridPassword: '',
             yggUsername: '',
             yggPassword: '',
             protocol: 'http',
@@ -60,33 +55,31 @@ class Settings extends Component {
         props.changeNavigation('settings');
     }
 
-    // startAutoUpdate = async () => {
-    //     let response = await fetch('/api/autoupdate?start=true');
-    //     response = await response.json();
-    //     this.loadAutoUpdateState();
-    // };
-    //
-    // stopAutoUpdate = async () => {
-    //     let response = await fetch('/api/autoupdate?stop=true');
-    //     response = await response.json();
-    //     this.loadAutoUpdateState();
-    // };
+    async componentDidMount() {
+        if (this.props.location !== undefined) {
+            if (this.props.location.pathname === '/api/link') {
+                const params = queryString.parse(this.props.location.search);
 
-    // loadAutoUpdateState = async () => {
-    //
-    //     try {
-    //         let response = await fetch('/api/autoupdate_state');
-    //         response = await response.json();
-    //         this.setState({ autoUpdate: response })
-    //     } catch(error) {
-    //         this.setState({snack: true, snackBarMessage: 'Error loading auto update state', settingsLoading: false})
-    //     }
-    //
-    // };
+                try {
+                    let response = await fetch('/api/link?code=' + params.code, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'token': await auth.getIdToken()
+                        }
+                    });
 
-    // componentWillMount() {
-    //     this.loadAutoUpdateState();
-    // }
+                    response = await response.json();
+                    this.setState({snack: true, snackBarMessage: response.message});
+                } catch(error) {
+                    this.setState({snack: true, snackBarMessage: 'Error connecting to realdebrid'})
+                }
+
+                this.props.history.push('/settings');
+            }
+        }
+    };
 
     loadOutput = async () => {
         this.setState({output: [], loading: true});
@@ -128,7 +121,6 @@ class Settings extends Component {
         this.setState({settingsLoading: true});
 
         try {
-            // this.loadAutoUpdateState();
 
             let response = await fetch('/api/settings', {
                 method: 'GET',
@@ -190,12 +182,6 @@ class Settings extends Component {
                         account: this.state.nasUsername,
                         password: this.state.nasPassword
                     },
-                    // realdebrid: {
-                    //     credentials: {
-                    //         username: this.state.realdebridUsername,
-                    //         password: this.state.realdebridPassword
-                    //     }
-                    // },
                     ygg: {
                         username: this.state.yggUsername,
                         password: this.state.yggPassword
@@ -267,7 +253,7 @@ class Settings extends Component {
 
     render() {
 
-        const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.herokuapp.com/api/link&response_type=code&state=' + auth.getUid();
+        const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.herokuapp.com/api/link&response_type=code&state=foobar';
 
         return (
             <div style={{width: '100%'}}>

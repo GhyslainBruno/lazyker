@@ -41,3 +41,6 @@ Can, for now, be build in dev / prod mode :
   * ```npm run build``` (client folder)
   * ```NODE_ENV=production node server.js``` (backend folder)
   
+
+**Careful : in Settings component, a callback url for OAuth realdebrid authentication is set to lazyker.herokuapp.com**
+  

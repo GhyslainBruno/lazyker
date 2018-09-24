@@ -45,7 +45,8 @@ module.exports = (app) => {
         try {
             const uid = req.query.state;
             const code = req.query.code;
-            return await realdebrid.connectUser(code, uid);
+            await realdebrid.connectUser(code, uid);
+            res.send({message: 'Connected'});
         } catch(error) {
             res.status(500).send({message: error});
         }

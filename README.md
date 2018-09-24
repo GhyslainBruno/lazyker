@@ -9,7 +9,7 @@
 * Deploy with [heroku](https://dashboard.heroku.com/apps/lazyker): 
   * `heroku container:push web -a lazyker`
   * `heroku container:release web -a lazyker`
-  * `heroku open`
+  * `heroku open -a lazyker`
 
 *Rem: an image for Raspberry pi 2B is also available, but generally not fully updated* 
 

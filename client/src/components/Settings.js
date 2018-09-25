@@ -25,7 +25,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { auth } from '../firebase';
 import CheckCircle from "../../node_modules/@material-ui/icons/CheckCircle";
 import CancelCircle from "../../node_modules/@material-ui/icons/CancelOutlined";
-import queryString from 'query-string';
+import queryString from "qs";
 
 class Settings extends Component {
 
@@ -58,7 +58,7 @@ class Settings extends Component {
     async componentDidMount() {
         if (this.props.location !== undefined) {
             if (this.props.location.pathname === '/api/link') {
-                const params = queryString.parse(this.props.location.search);
+                const params = queryString.parse(this.props.location.search.replace(/^\?/,''));
 
                 try {
                     let response = await fetch('/api/link?code=' + params.code, {

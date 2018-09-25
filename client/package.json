@@ -10,7 +10,7 @@
     "@material/theme": "^0.39.1",
     "firebase": "^5.4.2",
     "materialize-css": "^1.0.0-rc.1",
-    "query-string": "^6.1.0",
+    "qs": "^6.5.2",
     "react": "^16.3.2",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.3.2",

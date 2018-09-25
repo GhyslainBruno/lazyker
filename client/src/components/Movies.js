@@ -334,10 +334,10 @@ class Movies extends Component {
                     </Paper>
 
                     <div style={{paddingTop: '5px'}}>
-                        <Chip variant="outlined" label="Now Playing" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Now Playing"})} />
-                        <Chip variant="outlined" label="Popular" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Popular"})} />
-                        <Chip variant="outlined" label="Top Rated" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Top Rated"})} />
-                        <Chip variant="outlined" label="Upcoming" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Upcoming"})} />
+                        <Chip label="Now Playing" style={{margin: '3px'}} clickable="true" onClick={() => this.searchMovieGenre({name: "Now Playing"})} variant="outlined"/>
+                        <Chip label="Popular" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Popular"})} variant="outlined"/>
+                        <Chip label="Top Rated" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Top Rated"})} variant="outlined"/>
+                        <Chip label="Upcoming" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Upcoming"})} variant="outlined"/>
                     </div>
 
 

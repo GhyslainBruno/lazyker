@@ -9,6 +9,7 @@ import * as routes from '../constants/routes';
 import Button from '@material/react-button/dist';
 import TextField, {HelperText, Input} from '@material/react-text-field';
 import Paper from '@material-ui/core/Paper';
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const SignInPage = ({ history }) =>
     <div>
@@ -24,6 +25,7 @@ const byPropKey = (propertyName, value) => () => ({
 const INITIAL_STATE = {
     email: '',
     password: '',
+    signInLoading: false,
     error: null,
 };
 
@@ -35,6 +37,9 @@ class SignInForm extends Component {
     }
 
     onSubmit = (event) => {
+
+        this.setState({signInLoading: true});
+
         const {
             email,
             password,
@@ -46,10 +51,12 @@ class SignInForm extends Component {
 
         auth.doSignInWithEmailAndPassword(email, password)
             .then(() => {
+                this.setState({signInLoading: false});
                 this.setState({ ...INITIAL_STATE });
                 history.push(routes.MOVIES);
             })
             .catch(error => {
+                this.setState({signInLoading: false});
                 this.setState(byPropKey('error', error));
             });
 
@@ -108,9 +115,13 @@ class SignInForm extends Component {
                             className="signInBtn"
                             outlined={false}
                             unelevated={true}
-                            disabled={isInvalid}
+                            disabled={isInvalid || this.state.signInLoading}
                             type="submit">
-                            Sign In
+                            {this.state.signInLoading ?
+                                <b>Loading</b>
+                                :
+                                <b>Sign In</b>
+                            }
                         </Button>
 
                         <SignUpLink />

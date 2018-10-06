@@ -253,7 +253,7 @@ class Settings extends Component {
 
     render() {
 
-        const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.herokuapp.com/api/link&response_type=code&state=foobar';
+        const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=http%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foobar';
 
         return (
             <div style={{width: '100%'}}>

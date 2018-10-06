@@ -12,6 +12,7 @@ import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
 import {SignUpForm} from "./components/SignUp";
 import {SignInForm} from "./components/SignIn";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const theme = createMuiTheme({
     palette: {
@@ -28,12 +29,15 @@ class App extends Component {
 
         this.state = {
             navigation: null,
-            authUser: null
+            authUser: null,
+            userLoading: true
         }
     }
 
     componentDidMount() {
+        this.setState({userLoading: true});
         auth.onAuthStateChanged(authUser => {
+            this.setState({userLoading: false});
             authUser
                 ? this.setState({ authUser })
                 : this.setState({ authUser: null });
@@ -50,21 +54,33 @@ class App extends Component {
                 <MuiThemeProvider theme={theme}>
 
                     {
-                        this.state.authUser ?
-                            <div className="mainApp mui-fixed">
-                                <Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation}/>}/>
-                                <Route exact path='/movies' render={() => <Movies changeNavigation={this.changeNavigation} />}/>
-                                <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
-                                <Route exact path='/settings' render={() => <Settings changeNavigation={this.changeNavigation}/>}/>
-                                <Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>
-                                <Route path='/api/link_rd' render={(props)=> <Settings changeNavigation={this.changeNavigation} {...props} />}/>
-                                <Route path='/' render={() => <Navigation navigation={this.state.navigation} authUser={this.state.authUser} />}/>
+
+                        this.state.userLoading ?
+
+                            <div className="mainApp mui-fixed" >
+                                <div style={{width: '100%', marginTop: '50vh', textAlign: 'center'}}>
+                                    <CircularProgress style={this.state.userLoading ? {display: 'inline-block'} : {display: 'none'}}/>
+                                </div>
                             </div>
+
                             :
-                            <div className="mainApp mui-fixed" style={{paddingBottom: '80px'}}>
-                                <Route exact path='/signup' render={() =><SignUpForm />}/>
-                                <Route path={/^(?!.*signup).*$/} render={() =><SignInForm />}/>
-                            </div>
+
+                            this.state.authUser ?
+                                <div className="mainApp mui-fixed">
+                                    <Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation}/>}/>
+                                    <Route exact path='/movies' render={() => <Movies changeNavigation={this.changeNavigation} />}/>
+                                    <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
+                                    <Route exact path='/settings' render={() => <Settings changeNavigation={this.changeNavigation}/>}/>
+                                    <Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>
+                                    <Route path='/api/link_rd' render={(props)=> <Settings changeNavigation={this.changeNavigation} {...props} />}/>
+                                    <Route path='/' render={() => <Navigation navigation={this.state.navigation} authUser={this.state.authUser} />}/>
+                                </div>
+                                :
+                                <div className="mainApp mui-fixed" style={{paddingBottom: '80px'}}>
+                                    <Route exact path='/signup' render={() =><SignUpForm />}/>
+                                    <Route path={/^(?!.*signup).*$/} render={() =><SignInForm />}/>
+                                </div>
+
                     }
 
 

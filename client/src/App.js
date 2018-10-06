@@ -57,7 +57,7 @@ class App extends Component {
                                 <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
                                 <Route exact path='/settings' render={() => <Settings changeNavigation={this.changeNavigation}/>}/>
                                 <Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>
-                                <Route path='/api/link' render={(props)=> <Settings changeNavigation={this.changeNavigation} {...props} />}/>
+                                <Route path='/api/link_rd' render={(props)=> <Settings changeNavigation={this.changeNavigation} {...props} />}/>
                                 <Route path='/' render={() => <Navigation navigation={this.state.navigation} authUser={this.state.authUser} />}/>
                             </div>
                             :

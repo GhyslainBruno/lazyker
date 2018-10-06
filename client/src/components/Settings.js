@@ -57,7 +57,7 @@ class Settings extends Component {
 
     async componentDidMount() {
         if (this.props.location !== undefined) {
-            if (this.props.location.pathname === '/api/link') {
+            if (this.props.location.pathname === '/api/link_rd') {
                 const params = queryString.parse(this.props.location.search.replace(/^\?/,''));
 
                 try {
@@ -223,7 +223,7 @@ class Settings extends Component {
 
     realdebridConnect = async () => {
         try {
-            let response = await fetch('https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.herokuapp.com/link&response_type=code&state=' + await auth.getUid(), {
+            let response = await fetch('https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=http%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foo', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',

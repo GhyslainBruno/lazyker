@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Link, withRouter} from 'react-router-dom';
-
+import Divider from '@material-ui/core/Divider';
 import { SignUpLink } from './SignUp';
 import { auth } from '../firebase';
 import * as routes from '../constants/routes';
@@ -10,6 +10,7 @@ import Button from '@material/react-button/dist';
 import TextField, {HelperText, Input} from '@material/react-text-field';
 import Paper from '@material-ui/core/Paper';
 import CircularProgress from "@material-ui/core/CircularProgress";
+import {GoogleProvider, Providers} from "./SignInProviders";
 
 const SignInPage = ({ history }) =>
     <div>
@@ -128,6 +129,9 @@ class SignInForm extends Component {
 
                     </div>
 
+                    <Divider/>
+
+                    <Providers/>
 
                     { error && <p>{error.message}</p> }
                 </form>

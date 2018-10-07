@@ -1,4 +1,5 @@
 import { auth } from './firebase';
+import firebase from 'firebase/app';
 
 // Sign Up
 export const doCreateUserWithEmailAndPassword = (email, password) =>
@@ -7,6 +8,12 @@ export const doCreateUserWithEmailAndPassword = (email, password) =>
 // Sign In
 export const doSignInWithEmailAndPassword = (email, password) =>
     auth.signInWithEmailAndPassword(email, password);
+
+// Sign In with Google provider
+export const signInWithGoogle = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithRedirect(provider);
+};
 
 // Sign out
 export const doSignOut = () =>

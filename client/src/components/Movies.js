@@ -16,6 +16,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Close from '@material-ui/icons/Close';
 import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
+import Typography from '@material-ui/core/Typography';
+import CardContent from '@material-ui/core/CardContent';
 import MovieInfoDialog from './movies/MovieInfoDialog';
 
 const styles = {
@@ -389,31 +391,31 @@ class Movies extends Component {
                                             <CardMedia
                                                 // onClick={() => this.searchProvidersMovie(movie.title)}
                                                 onClick={() => this.displayMovieInfo(movie)}
-                                                style={{paddingTop: '150%'}}
+                                                style={{paddingTop: '150%', cursor: 'pointer'}}
                                                 image={"https://image.tmdb.org/t/p/w500" + movie.posterPath}
                                                 title={movie.title}
+                                                clickable="true"
                                             />
 
-                                            <CardActions style={{display: 'flex'}} disableActionSpacing>
-                                                <Button style={{minWidth: '0', flex: '1'}}>
-                                                    <Star style={{fontSize: '18'}}/>
+                                            {/*<CardActions style={{display: 'flex'}} disableActionSpacing>*/}
+                                                {/*<Button style={{minWidth: '0', flex: '1'}}>*/}
+                                                    {/*<Star style={{fontSize: '18'}}/>*/}
+                                                    {/*{movie.note}*/}
+                                                {/*</Button>*/}
+                                            {/*</CardActions>*/}
+
+                                            <CardContent>
+                                                <div>
+                                                    <Star style={{fontSize: '18', verticalAlign: 'bottom'}}/>
                                                     {movie.note}
-                                                </Button>
+                                                </div>
 
-                                                {/*<Button style={{minWidth: '0', flex: '1'}}>*/}
-                                                    {/*<Info style={{fontSize: '18'}}/>*/}
-                                                {/*</Button>*/}
 
-                                                {/*<Button style={{minWidth: '0', flex: '1'}}>*/}
-
-                                                    {/*{movie.video ?*/}
-                                                        {/*<Video style={{fontSize: '18'}}/>*/}
-                                                    {/*:*/}
-                                                        {/*<VideoOff style={{fontSize: '18'}}/>*/}
-                                                    {/*}*/}
-
-                                                {/*</Button>*/}
-                                            </CardActions>
+                                                {/*<Typography component="p">*/}
+                                                    {/*Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging*/}
+                                                    {/*across all continents except Antarctica*/}
+                                                {/*</Typography>*/}
+                                            </CardContent>
 
                                         </Card>
                                     </Grid>

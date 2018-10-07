@@ -18,6 +18,20 @@ import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
 import MovieInfoDialog from './movies/MovieInfoDialog';
 
+const styles = {
+
+    outlinedChip : {
+        border: 'thin solid grey',
+        backgroundColor: 'transparent',
+        margin: '3px'
+    },
+    selectedChip: {
+        border: 'none',
+        backgroundColor: '#424242',
+        margin: '3px'
+    }
+
+};
 
 class Movies extends Component {
 
@@ -39,7 +53,7 @@ class Movies extends Component {
             oldScroll: 0,
             movieGenres: null,
             movieGenresLoading: true,
-            moviesGenre: null,
+            moviesGenre: '',
             showInfoDialog: false,
         };
 
@@ -324,7 +338,7 @@ class Movies extends Component {
                         {
                             this.state.movieGenres !== null ? this.state.movieGenres.map(movieGenre => {
                                 return (
-                                    <Chip label={movieGenre.name} style={{margin: '5px'}} className="movieGenre" clickable="true" onClick={() => this.searchMovieGenre(movieGenre)} variant="outlined"/>
+                                    <Chip label={movieGenre.name} style={styles.outlinedChip} className="movieGenre" clickable="true" onClick={() => this.searchMovieGenre(movieGenre)} />
                                     )
                             })
                                 :
@@ -333,11 +347,11 @@ class Movies extends Component {
 
                     </Paper>
 
-                    <div style={{paddingTop: '5px'}}>
-                        <Chip label="Now Playing" style={{margin: '3px'}} clickable="true" onClick={() => this.searchMovieGenre({name: "Now Playing"})} variant="outlined"/>
-                        <Chip label="Popular" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Popular"})} variant="outlined"/>
-                        <Chip label="Top Rated" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Top Rated"})} variant="outlined"/>
-                        <Chip label="Upcoming" style={{margin: '3px'}} className="movieKind" clickable="true" onClick={() => this.searchMovieGenre({name: "Upcoming"})} variant="outlined"/>
+                    <div style={{paddingTop: '10px', paddingBottom: '10px'}}>
+                        <Chip label="Now Playing" style={this.state.moviesGenre.name === 'Now Playing' ? styles.selectedChip : styles.outlinedChip} clickable="true" onClick={() => this.searchMovieGenre({name: "Now Playing"})}/>
+                        <Chip label="Popular" style={this.state.moviesGenre.name === 'Popular' ? styles.selectedChip : styles.outlinedChip} clickable="true" onClick={() => this.searchMovieGenre({name: "Popular"})} />
+                        <Chip label="Top Rated" style={this.state.moviesGenre.name === 'Top Rated' ? styles.selectedChip : styles.outlinedChip} clickable="true" onClick={() => this.searchMovieGenre({name: "Top Rated"})} />
+                        <Chip label="Upcoming" style={this.state.moviesGenre.name === 'Upcoming' ? styles.selectedChip : styles.outlinedChip} clickable="true" onClick={() => this.searchMovieGenre({name: "Upcoming"})} />
                     </div>
 
 
@@ -351,7 +365,15 @@ class Movies extends Component {
 
                     <div>
 
-                        <h2>{this.state.moviesGenre.name} movies</h2>
+                        {
+                            this.state.moviesGenre.name !== 'Now Playing' &&
+                            this.state.moviesGenre.name !== 'Popular' &&
+                            this.state.moviesGenre.name !== 'Top Rated' &&
+                            this.state.moviesGenre.name !== 'Upcoming' ?
+                                <h2>{this.state.moviesGenre.name} movies</h2>
+                                :
+                                null
+                        }
 
                         <Grid container spacing={0}>
 

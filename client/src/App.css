@@ -1129,6 +1129,10 @@
   animation: App-logo-spin infinite 20s linear;
   height: 80px; }
 
+.chip-outlined {
+  border: thin solid grey !important;
+  background-color: #121212 !important; }
+
 .App-header {
   background-color: #222;
   height: 150px;

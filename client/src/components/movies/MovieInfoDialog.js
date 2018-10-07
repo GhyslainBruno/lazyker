@@ -25,6 +25,13 @@ import {findDOMNode} from "react-dom";
 import Slide from "@material-ui/core/Slide";
 import * as auth from "../../firebase/auth";
 
+const styles = {
+    outlinedChip : {
+        border: 'thin solid grey',
+        backgroundColor: 'transparent',
+        margin: '5px'
+    }
+};
 
 class MovieInfoDialog extends React.Component {
 
@@ -426,7 +433,7 @@ class MovieInfoDialog extends React.Component {
                                         <p className="dataMovieInfo" style={{textAlign: 'left'}}>Genre(s) :</p>
                                         {this.state.movieInfo.genres.map(genre => {
                                             return (
-                                                <Chip label={genre.name} style={{margin: '5px'}} />
+                                                <Chip label={genre.name} style={styles.outlinedChip} />
                                             )
                                         })}
                                     </div>

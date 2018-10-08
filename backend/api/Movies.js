@@ -4,7 +4,7 @@ const db = admin.database();
 const rp = require('request-promise');
 const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
 const youtubeAPIKey = 'AIzaSyDJUXgEKJSwbsr_Gj7IuWTNlTPoGKP_xn8';
-// const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
+const searchMovieTmdbUrl = 'https://api.themoviedb.org/3/search/movie';
 const usersRef = db.ref("/users");
 
 module.exports = (app) => {

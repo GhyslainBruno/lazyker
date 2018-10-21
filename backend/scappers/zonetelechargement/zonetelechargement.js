@@ -16,6 +16,7 @@ const providerName = 'zonetelechargement';
 const getRealUrl = async () => {
     const options = {
         method: 'POST',
+        "rejectUnauthorized": false,
         uri: ZTRootUrl + 'index.php?do=search',
         formData: {
             do: 'search',
@@ -61,6 +62,7 @@ const getMovieQualities = async function getMovieQualities(moviePath, title) {
 
     const options = {
         method: 'GET',
+        "rejectUnauthorized": false,
         uri: moviePath,
         json: true
     };
@@ -112,6 +114,7 @@ const getUrls = async function getUrls(title) {
     const options = {
         method: 'POST',
         uri: ZTRealUrl,
+        "rejectUnauthorized": false,
         formData: {
             do: 'search',
             subaction: 'search',
@@ -184,6 +187,7 @@ const getDownloadLinks = async function getDownloadLinks(url) {
 
     const options = {
         method: 'GET',
+        "rejectUnauthorized": false,
         uri: ZTRealUrl.replace('/index.php?do=search', '') + url,
         json: true
     };

@@ -22,6 +22,7 @@ const ZTRootUrl = 'https://www.zone-telechargement1.org/';
 const getRealUrl = async () => {
     const options = {
         method: 'POST',
+        "rejectUnauthorized": false,
         uri: ZTRootUrl + 'index.php?do=search',
         formData: {
             do: 'search',
@@ -86,6 +87,7 @@ const getTvShowPage = async (title) => {
 
     const options = {
         method: 'POST',
+        "rejectUnauthorized": false,
         uri: ZTRealUrl,
         formData: {
             do: 'search',
@@ -146,6 +148,7 @@ const getHostsWithQualities = async (show, qualities, showUrl, langWanted) => {
     try {
         const options = {
             method: 'GET',
+            "rejectUnauthorized": false,
             uri: showUrl,
             json: true
         };
@@ -237,6 +240,7 @@ const getHostsWithQualities = async (show, qualities, showUrl, langWanted) => {
 
                 const options = {
                     method: 'GET',
+                    "rejectUnauthorized": false,
                     uri: ZTRealUrl + linkToGetHostLinks.url,
                     json: true
                 };

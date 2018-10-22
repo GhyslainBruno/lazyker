@@ -275,7 +275,7 @@ class Movies extends Component {
     render() {
 
         return (
-            <div style={{textAlign: 'center'}}>
+            <div style={{textAlign: 'center', paddingBottom: '20%'}}>
 
                 {/* Movie dialog info extracted */}
                 {this.state.showInfoDialog ?
@@ -377,8 +377,6 @@ class Movies extends Component {
                         }
 
                         <Grid container spacing={0}>
-
-
                             {this.state.tmdbMovies.map(movie => {
 
                                 return (
@@ -409,7 +407,6 @@ class Movies extends Component {
                                 )
 
                             })}
-
                         </Grid>
 
                         <CircularProgress style={this.state.infiniteLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>

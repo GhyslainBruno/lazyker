@@ -15,6 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
 import Play from "@material-ui/icons/PlayArrow";
+import ArrowBack from '@material-ui/icons/ArrowBack';
 import Star from "@material-ui/icons/Star";
 import Download from "@material-ui/icons/GetApp";
 import ReactPlayer from "react-player";
@@ -44,9 +45,20 @@ class MovieInfoDialog extends React.Component {
             trailerPlaying: false,
             torrentsList: null,
             providersMovies: null,
-            qualities: null
+            qualities: null,
+            isInTorrentOrDdl: false
         };
     }
+
+    /**
+     * Clears all the torrents / DDL results
+     */
+    clearTorrentsOrDdl = () => {
+        this.setState({
+            torrentsList: null,
+            providersmovies: null
+        })
+    };
 
     // Start the download of a torrent file (in realdebrid)
     downloadTorrentFile = async (torrent) => {
@@ -119,9 +131,7 @@ class MovieInfoDialog extends React.Component {
 
     // Get a list of all torrents available
     getTorrentsList = async (movie) => {
-
-        this.setState({movieInfoLoading: true, movieInfo: null});
-
+        this.setState({movieInfoLoading: true, movieInfo: null, isInTorrentOrDdl: true});
         try {
             let response = await fetch('/api/torrents?title=' + movie.title, {
                 method: 'GET'
@@ -141,11 +151,7 @@ class MovieInfoDialog extends React.Component {
     searchProvidersMovie = async (title) => {
 
         window.removeEventListener('scroll', this.handleOnScroll);
-
-        this.setState({movieInfoLoading: true, movieInfo: null});
-
-        // const movieTitle = document.getElementById('movie_title_to_search').value;
-
+        this.setState({movieInfoLoading: true, movieInfo: null, isInTorrentOrDdl: true});
         try {
             let response = await fetch('/api/search_providers_movie', {
                 method: 'POST',
@@ -194,7 +200,7 @@ class MovieInfoDialog extends React.Component {
 
     // Getting movie info
     getMovieInfo = async (movie) => {
-        this.setState({movieInfoLoading: true});
+        this.setState({movieInfoLoading: true, torrentsList: null, providersMovies: null, isInTorrentOrDdl: false});
         try {
             let movieInfo = await fetch('/api/movie_info?id=' + movie.id);
             movieInfo =  await movieInfo.json();
@@ -240,7 +246,7 @@ class MovieInfoDialog extends React.Component {
 
     // Close the dialog and clears data
     closeDialog = () => {
-        this.setState({torrentsList: null});
+        this.setState({torrentsList: null, isInTorrentOrDdl: false});
         this.props.closeDialog();
     };
 
@@ -266,9 +272,17 @@ class MovieInfoDialog extends React.Component {
                         <Button
                             onClick={() => closeDialog()}
                             variant="fab"
-                            style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white"}}>
-                            
+                            mini
+                            style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>
                             <Close />
+                        </Button>
+
+                        <Button
+                            onClick={() => this.getMovieInfo(this.props.selectedMovie)}
+                            variant="fab"
+                            mini
+                            style={this.state.isInTorrentOrDdl ? {margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", left: '0'} : {display: 'none'}}>
+                            <ArrowBack />
                         </Button>
 
                         <div style={{textAlign: 'center'}}>

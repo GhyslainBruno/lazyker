@@ -388,7 +388,6 @@ class Movies extends Component {
                                         <Card>
 
                                             <CardMedia
-                                                // onClick={() => this.searchProvidersMovie(movie.title)}
                                                 onClick={() => this.displayMovieInfo(movie)}
                                                 style={{paddingTop: '150%', cursor: 'pointer', WebkitTapHighlightColor: 'transparent'}}
                                                 image={"https://image.tmdb.org/t/p/w500" + movie.posterPath}
@@ -396,24 +395,12 @@ class Movies extends Component {
                                                 clickable="true"
                                             />
 
-                                            {/*<CardActions style={{display: 'flex'}} disableActionSpacing>*/}
-                                                {/*<Button style={{minWidth: '0', flex: '1'}}>*/}
-                                                    {/*<Star style={{fontSize: '18'}}/>*/}
-                                                    {/*{movie.note}*/}
-                                                {/*</Button>*/}
-                                            {/*</CardActions>*/}
-
                                             <CardContent>
                                                 <div>
                                                     <Star style={{fontSize: '18', verticalAlign: 'bottom'}}/>
                                                     {movie.note}
                                                 </div>
 
-
-                                                {/*<Typography component="p">*/}
-                                                    {/*Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging*/}
-                                                    {/*across all continents except Antarctica*/}
-                                                {/*</Typography>*/}
                                             </CardContent>
 
                                         </Card>

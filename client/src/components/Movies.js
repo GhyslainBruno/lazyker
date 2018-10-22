@@ -32,7 +32,6 @@ const styles = {
         backgroundColor: '#424242',
         margin: '3px'
     }
-
 };
 
 class Movies extends Component {
@@ -391,7 +390,7 @@ class Movies extends Component {
                                             <CardMedia
                                                 // onClick={() => this.searchProvidersMovie(movie.title)}
                                                 onClick={() => this.displayMovieInfo(movie)}
-                                                style={{paddingTop: '150%', cursor: 'pointer'}}
+                                                style={{paddingTop: '150%', cursor: 'pointer', WebkitTapHighlightColor: 'transparent'}}
                                                 image={"https://image.tmdb.org/t/p/w500" + movie.posterPath}
                                                 title={movie.title}
                                                 clickable="true"

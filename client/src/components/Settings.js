@@ -27,6 +27,10 @@ import CheckCircle from "../../node_modules/@material-ui/icons/CheckCircle";
 import CancelCircle from "../../node_modules/@material-ui/icons/CancelOutlined";
 import queryString from "qs";
 import OutlinedInput from "@material-ui/core/OutlinedInput/OutlinedInput";
+import InputAdornment from "@material-ui/core/InputAdornment/InputAdornment";
+import IconButton from "@material-ui/core/IconButton/IconButton";
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 class Settings extends Component {
 
@@ -50,7 +54,8 @@ class Settings extends Component {
             yggPassword: '',
             protocol: 'http',
             every: '',
-            settingsLoading: false
+            settingsLoading: false,
+            showPassword: false
         };
 
         props.changeNavigation('settings');
@@ -220,6 +225,10 @@ class Settings extends Component {
         } catch(error) {
             this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
         }
+    };
+
+    handleClickShowPassword = () => {
+        this.setState(state => ({ showPassword: !state.showPassword }));
     };
 
     realdebridConnect = async () => {
@@ -474,9 +483,22 @@ class Settings extends Component {
                                             <TextField
                                                 label="Password"
                                                 id="nas-password"
+                                                type={this.state.showPassword ? 'text' : 'password'}
                                                 variant="outlined"
                                                 value={this.state.nasPassword}
                                                 onChange={(event) => this.setState({nasPassword: event.target.value})}
+                                                InputProps={{
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            <IconButton
+                                                                aria-label="Toggle password visibility"
+                                                                onClick={this.handleClickShowPassword}
+                                                            >
+                                                                {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                                                            </IconButton>
+                                                        </InputAdornment>
+                                                    ),
+                                                }}
                                             />
                                         </FormControl>
 

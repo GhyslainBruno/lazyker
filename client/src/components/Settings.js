@@ -26,6 +26,7 @@ import { auth } from '../firebase';
 import CheckCircle from "../../node_modules/@material-ui/icons/CheckCircle";
 import CancelCircle from "../../node_modules/@material-ui/icons/CancelOutlined";
 import queryString from "qs";
+import OutlinedInput from "@material-ui/core/OutlinedInput/OutlinedInput";
 
 class Settings extends Component {
 
@@ -288,14 +289,17 @@ class Settings extends Component {
                                     </Grid>
 
                                     <Grid item xs={4} style={{padding: '6px'}}>
-                                        <FormControl style={{minWidth: '80px'}}>
+                                        <FormControl style={{minWidth: '80px'}} variant="outlined">
                                             <Select
                                                 value={this.state.firstQuality}
                                                 onChange={this.handlerQualityChange}
-                                                inputProps={{
-                                                    name: 'firstQuality',
-                                                    id: 'first-quality',
-                                                }}>
+                                                input={
+                                                    <OutlinedInput
+                                                    labelWidth={this.state.labelWidth}
+                                                    name="firstQuality"
+                                                    id="first-quality"
+                                                    />
+                                                }>
 
                                                 <MenuItem value="none">
                                                     <em>None</em>
@@ -310,14 +314,17 @@ class Settings extends Component {
 
 
                                     <Grid item xs={4} style={{padding: '6px'}}>
-                                        <FormControl style={{minWidth: '80px', margin: '0 auto'}}>
+                                        <FormControl variant="outlined" style={{minWidth: '80px', margin: '0 auto'}}>
                                             <Select
                                                 value={this.state.secondQuality}
                                                 onChange={this.handlerQualityChange}
-                                                inputProps={{
-                                                    name: 'secondQuality',
-                                                    id: 'second-quality',
-                                                }}>
+                                                input={
+                                                    <OutlinedInput
+                                                        labelWidth={this.state.labelWidth}
+                                                        name="secondQuality"
+                                                        id="second-quality"
+                                                    />
+                                                }>
 
                                                 <MenuItem value="none">
                                                     <em>None</em>
@@ -332,14 +339,18 @@ class Settings extends Component {
 
 
                                     <Grid item xs={4} style={{padding: '6px'}}>
-                                        <FormControl style={{minWidth: '80px', margin: '0 auto'}}>
+                                        <FormControl style={{minWidth: '80px', margin: '0 auto'}} variant="outlined">
                                             <Select
                                                 value={this.state.thirdQuality}
                                                 onChange={this.handlerQualityChange}
-                                                inputProps={{
-                                                    name: 'thirdQuality',
-                                                    id: 'third-quality',
-                                                }}>
+                                                input={
+                                                <OutlinedInput
+                                                    labelWidth={this.state.labelWidth}
+                                                    name="thirdQuality"
+                                                    id="third-quality"
+                                                />
+                                            }>
+
 
                                                 <MenuItem value="none">
                                                     <em>None</em>
@@ -383,6 +394,7 @@ class Settings extends Component {
                                             <TextField
                                                 label="Path to Movies"
                                                 id="movie-path"
+                                                variant="outlined"
                                                 value={this.state.moviesPath}
                                                 onChange={(event) => this.setState({moviesPath: event.target.value})}
                                             />
@@ -394,6 +406,7 @@ class Settings extends Component {
                                             <TextField
                                                 label="Path to Tv Shows"
                                                 id="tv-shows-path"
+                                                variant="outlined"
                                                 value={this.state.tvShowsPath}
                                                 onChange={(event) => this.setState({tvShowsPath: event.target.value})}
                                             />
@@ -401,14 +414,17 @@ class Settings extends Component {
                                     </Grid>
 
                                     <Grid item xs={12} sm={2} style={{padding: '6px', position: 'relative', marginRight: '1.6rem', marginTop: '1rem', textAlign: 'left'}}>
-                                        <FormControl className="protocolInput" fullWidth style={{minWidth: '80px', margin: '0 auto', bottom: '6px'}}>
+                                        <FormControl className="protocolInput" variant="outlined" fullWidth style={{minWidth: '80px', margin: '0 auto', bottom: '6px'}}>
                                             <Select
                                                 value={this.state.protocol}
                                                 onChange={this.handleProtocolChange}
-                                                inputProps={{
-                                                    name: 'protocol',
-                                                    id: 'protocol',
-                                                }}>
+                                                input={
+                                                    <OutlinedInput
+                                                        labelWidth={0}
+                                                        name="protocol"
+                                                        id="protocol"
+                                                    />
+                                                }>
 
                                                 <MenuItem value={'http'}>http</MenuItem>
                                                 <MenuItem value={'https'}>https</MenuItem>
@@ -422,6 +438,7 @@ class Settings extends Component {
                                             <TextField
                                                 label="Host"
                                                 id="host"
+                                                variant="outlined"
                                                 value={this.state.host}
                                                 onChange={(event) => this.setState({host: event.target.value})}
                                             />
@@ -433,6 +450,7 @@ class Settings extends Component {
                                             <TextField
                                                 label="Port"
                                                 id="port"
+                                                variant="outlined"
                                                 value={this.state.port}
                                                 onChange={(event) => this.setState({port: event.target.value})}
                                             />
@@ -444,6 +462,7 @@ class Settings extends Component {
                                             <TextField
                                                 label="Username"
                                                 id="nas-username"
+                                                variant="outlined"
                                                 value={this.state.nasUsername}
                                                 onChange={(event) => this.setState({nasUsername: event.target.value})}
                                             />
@@ -455,6 +474,7 @@ class Settings extends Component {
                                             <TextField
                                                 label="Password"
                                                 id="nas-password"
+                                                variant="outlined"
                                                 value={this.state.nasPassword}
                                                 onChange={(event) => this.setState({nasPassword: event.target.value})}
                                             />

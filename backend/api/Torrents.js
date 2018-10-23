@@ -69,9 +69,17 @@ module.exports = (app) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const unrestrictedTorrent = await realdebrid.unrestricLinkNoDB(req.body.link, user);
-            res.send({
-                streamingLink: 'https://real-debrid.com/streaming-' + unrestrictedTorrent.id
-            })
+
+            if (unrestrictedTorrent.streamable === 1) {
+                res.send({
+                    streamingLink: 'https://real-debrid.com/streaming-' + unrestrictedTorrent.id
+                })
+            } else {
+                res.status(500).send({
+                    error: 'File not streamable'
+                })
+            }
+
         } catch (error) {
             res.status(500).send({
                 message: error

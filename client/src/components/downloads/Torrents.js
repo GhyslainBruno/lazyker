@@ -116,9 +116,14 @@ class Torrents extends React.Component {
                 })
             });
             response = await response.json();
-            window.location = response.streamingLink;
+
+            if (response.error) {
+                this.props.displaySnackMessage('File not streamable');
+            } else {
+                window.location = response.streamingLink;
+            }
         } catch (error) {
-            this.props.displaySnackMessage('Impossible to start streaming this torrent');
+            this.props.displaySnackMessage('Impossible to stream this torrent');
         }
     };
 

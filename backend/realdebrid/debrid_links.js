@@ -18,6 +18,7 @@ const usersRef = db.ref("/users");
 // Using separate files
 const rdAuth = require('./authentication/Oauth');
 
+
 /**
  * Connectiong realdebrid user using OAuth
  * @param code
@@ -27,9 +28,6 @@ const rdAuth = require('./authentication/Oauth');
 const connectUser = async (code, uid) => {
     return await rdAuth.connectUser(code, uid);
 };
-
-
-
 
 /**
  * Get unrestricted links
@@ -496,30 +494,45 @@ async function unrestricLinkNoDB(link, user) {
  */
 async function getLighterLink(links) {
 
+    // Have to get the lighter link OF THE FIRST QUALITY WANTED !
+    if (links.firstQualityLinks.length > 0) {
+        return links.firstQualityLinks.find(link => link.filesize === Math.min.apply(Math, links.firstQualityLinks.map(link => link.filesize)));
+    } else {
+        if (links.secondQualityLinks.length > 0) {
+            return links.secondQualityLinks.find(link => link.filesize === Math.min.apply(Math, links.secondQualityLinks.map(link => link.filesize)));
+        } else {
+            if (links.thirdQualityLinks.length > 0) {
+                return links.thirdQualityLinks.find(link => link.filesize === Math.min.apply(Math, links.thirdQualityLinks.map(link => link.filesize)));
+            } else {
+                // TODO : test this case
+                return null
+            }
+        }
+    }
 
     // TODO: find a cleaner way of doing this !
     // TODO: handle if no episode is found
-    const lowerSizesToUse = [];
-
-    for (let quality in links) {
-
-        // Getting the lower file size from all unrestricted links - and putting it in the array of lower sizes
-        lowerSizesToUse.push(Math.min.apply(Math, links[quality].map(link => link.filesize)));
-
-    }
-
-    const lowerSize = Math.min.apply(Math, lowerSizesToUse);
-
-    // Doing this to find the unrestricted link which has the lower file size (calculated above)
-    // Need to do this because of nature of object used : <qualities{[links]}>
-    for (let quality in links) {
-
-        const lighterLink = links[quality].find(link => link.filesize === lowerSize);
-
-        if (lighterLink !== undefined) {
-            return lighterLink
-        }
-    }
+    // const lowerSizesToUse = [];
+    //
+    // for (let quality in links) {
+    //
+    //     // Getting the lower file size from all unrestricted links - and putting it in the array of lower sizes
+    //     lowerSizesToUse.push(Math.min.apply(Math, links[quality].map(link => link.filesize)));
+    //
+    // }
+    //
+    // const lowerSize = Math.min.apply(Math, lowerSizesToUse);
+    //
+    // // Doing this to find the unrestricted link which has the lower file size (calculated above)
+    // // Need to do this because of nature of object used : <qualities{[links]}>
+    // for (let quality in links) {
+    //
+    //     const lighterLink = links[quality].find(link => link.filesize === lowerSize);
+    //
+    //     if (lighterLink !== undefined) {
+    //         return lighterLink
+    //     }
+    // }
 
 }
 

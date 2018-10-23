@@ -63,6 +63,23 @@ module.exports = (app) => {
     });
 
     /**
+     * Get straming links for a particular realdebrid torrent
+     */
+    app.post('/api/streaming_torrent', async (req, res) => {
+        try {
+            const user = await admin.auth().verifyIdToken(req.headers.token);
+            const unrestrictedTorrent = await realdebrid.unrestricLinkNoDB(req.body.link, user);
+            res.send({
+                streamingLink: 'https://real-debrid.com/streaming-' + unrestrictedTorrent.id
+            })
+        } catch (error) {
+            res.status(500).send({
+                message: error
+            })
+        }
+    });
+
+    /**
      * Remove a particular realdebrid torrent
      */
     app.delete('/api/realdebrid_torrents', async (req, res) => {

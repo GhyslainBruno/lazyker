@@ -15,6 +15,7 @@ import React from "react";
 import Downloads from "../Downloads";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import PlayCircle from "@material-ui/icons/PlayCircleOutline";
+import PlayArrow from "@material-ui/icons/PlayArrow";
 import PauseCircle from "@material-ui/icons/PauseCircleOutline";
 import RemoveCircle from "@material-ui/icons/RemoveCircleOutline";
 import Download from "@material-ui/icons/GetApp";
@@ -98,6 +99,26 @@ class Torrents extends React.Component {
         } catch(error) {
             this.props.displaySnackMessage('Error getting Realdebrid torrents');
             this.setState({torrentsLoading: false});
+        }
+    };
+
+    startTorrentStreaming = async torrent => {
+        try {
+            let response = await fetch('/api/streaming_torrent', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                },
+                body: JSON.stringify({
+                    link: torrent.links[0]
+                })
+            });
+            response = await response.json();
+            window.location = response.streamingLink;
+        } catch (error) {
+            this.props.displaySnackMessage('Impossible to start streaming this torrent');
         }
     };
 
@@ -216,6 +237,11 @@ class Torrents extends React.Component {
 
                                                     <IconButton style={{padding: '5px'}} disabled={torrent.status !== 'downloaded'}>
                                                         <Download onClick={() => this.startTorrentDownload(torrent)}/>
+                                                    </IconButton>
+
+                                                    {/* TODO: use a generic streaming url (not only realdebrid service) */}
+                                                    <IconButton style={{padding: '5px'}} disabled={torrent.status !== 'downloaded'} onClick={() => this.startTorrentStreaming(torrent)}>
+                                                        <PlayArrow/>
                                                     </IconButton>
 
                                                     {/*<IconButton style={{padding: '5px'}}>*/}

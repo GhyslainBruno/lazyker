@@ -30,7 +30,8 @@ module.exports = (app) => {
 
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
-            await usersRef.child(user.uid).child('/settings').set(req.body);
+            await usersRef.child(user.uid).child('/settings/nas').set(req.body.nas);
+            await usersRef.child(user.uid).child('/settings/qualities').set(req.body.qualities);
             res.send({message: 'Settings changed'});
         } catch(error) {
             res.status(500).send({message: error});

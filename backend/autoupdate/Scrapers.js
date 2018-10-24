@@ -30,7 +30,7 @@ const findNewEpisodes = async (lastEpisodesFromStorage, user, qualities) => {
             betterLink = await showsScrapers.getLink(lastEpisodeObjectToUseHere, user, qualities);
 
             if (betterLink === null) {
-                await logger.info('No new episode found for ' + lastEpisodeObjectToUseHere.name, user);
+                // await logger.info('No new episode found for ' + lastEpisodeObjectToUseHere.name, user);
             }
 
             lastEpisodes.find(show => show.name === link.name).unrestrictedLink = betterLink;

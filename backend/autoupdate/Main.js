@@ -25,7 +25,7 @@ const startUpdate = async user => {
 
     try {
 
-        await logger.info('Starting shows auto-update', user);
+        // await logger.info('Starting shows auto-update', user);
 
         /**
          * 1 - Get Tv Shows path from Firebase database
@@ -77,7 +77,7 @@ const startUpdate = async user => {
          */
         await storage.startDownload(lastEpisodes, storageInstance, user);
 
-        await logger.info('Shows auto-update done', user);
+        // await logger.info('Shows auto-update done', user);
 
     } catch (error) {
         await logger.info(error.message, user);

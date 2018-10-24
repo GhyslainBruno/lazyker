@@ -207,7 +207,7 @@ async function mainFunction() {
                 betterLink = await showScrappers.getLink(lastEpisodeObjectToUseHere, db);
 
                 if (betterLink === null) {
-                    logger.info('No new episode found for ' + lastEpisodeObjectToUseHere.name)
+                    // logger.info('No new episode found for ' + lastEpisodeObjectToUseHere.name)
                 }
 
                 lastEpisodes.find(show => show.name === link.name).unrestrictedLink = betterLink;

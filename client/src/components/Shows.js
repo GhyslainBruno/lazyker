@@ -317,7 +317,7 @@ class Shows extends Component {
         if (this.state.shows != null) {
           return (
 
-          <div className="Foo" style={{textAlign: "center"}}>
+          <div className="Foo" style={{textAlign: "center", paddingBottom: '10%'}}>
 
               <Snackbar
                   open={this.state.snack}

@@ -324,44 +324,46 @@ class MovieInfoDialog extends React.Component {
                             {/*URL for DDL*/}
                             {this.state.providersMovies !== undefined ?
                                 this.state.providersMovies !== null  ?
-                                    this.state.providersMovies.length > 0 ?
+                                    this.state.providersMovies[0].results.length > 0 ?
                                         <div>
                                             {this.state.providersMovies.map(provider => {
                                                 return (
                                                     <div className="movieInfoDialog">
                                                         <h2>{provider.provider}</h2>
                                                         <Grid container spacing={0}>
-                                                            {provider.results.map(movie => {
-                                                                movie.validImage = movie.image.match(/^http/g) === null ? imageNotFound : movie.image;
-                                                                return (
-                                                                    <Grid item xs={4} style={{padding: '6px'}}>
-                                                                        <Card>
-                                                                            <CardMedia
-                                                                                onClick={() => this.findProviderQualities(movie.title, movie, provider.provider)}
-                                                                                style={{paddingTop: '150%'}}
-                                                                                image={movie.validImage}
-                                                                                title={movie.title}
-                                                                            />
-                                                                            <CardContent style={{padding: '5px', backgroundColor: '#757575'}}>
-                                                                                <Typography gutterBottom component="p" style={{
-                                                                                    overflow: 'hidden',
-                                                                                    lineHeight: '1.5em',
-                                                                                    textOverflow: 'ellipsis',
-                                                                                    height: '3em'
-                                                                                }}>
-                                                                                    {movie.title}</Typography>
-                                                                            </CardContent>
-                                                                        </Card>
-                                                                    </Grid>
-                                                                )
-                                                            })}</Grid>
+                                                            {
+                                                                provider.results.map(movie => {
+                                                                    movie.validImage = movie.image.match(/^http/g) === null ? imageNotFound : movie.image;
+                                                                    return (
+                                                                        <Grid item xs={4} style={{padding: '6px'}}>
+                                                                            <Card>
+                                                                                <CardMedia
+                                                                                    onClick={() => this.findProviderQualities(movie.title, movie, provider.provider)}
+                                                                                    style={{paddingTop: '150%'}}
+                                                                                    image={movie.validImage}
+                                                                                    title={movie.title}
+                                                                                />
+                                                                                <CardContent style={{padding: '5px', backgroundColor: '#757575'}}>
+                                                                                    <Typography gutterBottom component="p" style={{
+                                                                                        overflow: 'hidden',
+                                                                                        lineHeight: '1.5em',
+                                                                                        textOverflow: 'ellipsis',
+                                                                                        height: '3em'
+                                                                                    }}>
+                                                                                        {movie.title}</Typography>
+                                                                                </CardContent>
+                                                                            </Card>
+                                                                        </Grid>
+                                                                    )})
+                                                            }
+                                                            </Grid>
                                                     </div>
                                                 )
                                             })
                                             }
                                         </div>
                                         :
-                                        <div style={{padding: "30px", color: "grey"}}>no results found</div>
+                                        <div style={{paddingTop: '20rem', fontSize: '0.9rem', color: 'grey'}}>no results found</div>
                                     :
                                     null
                                 :

@@ -200,7 +200,7 @@ class MovieInfoDialog extends React.Component {
 
     // Getting movie info
     getMovieInfo = async (movie) => {
-        this.setState({movieInfoLoading: true, torrentsList: null, providersMovies: null, isInTorrentOrDdl: false});
+        this.setState({movieInfoLoading: true, torrentsList: null, providersMovies: null, isInTorrentOrDdl: false, qualities: null});
         try {
             let movieInfo = await fetch('/api/movie_info?id=' + movie.id);
             movieInfo =  await movieInfo.json();

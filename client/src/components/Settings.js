@@ -32,6 +32,14 @@ import IconButton from "@material-ui/core/IconButton/IconButton";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
+import GooglePicker from 'react-google-picker';
+
+import gapi from 'gapi-client';
+import Chip from "@material-ui/core/Chip/Chip";
+
+let auth2 = null;
+
+
 class Settings extends Component {
 
     constructor (props) {
@@ -55,13 +63,24 @@ class Settings extends Component {
             protocol: 'http',
             every: '',
             settingsLoading: false,
-            showPassword: false
+            showPassword: false,
+            googleDriveConnectLoading: false,
+            storage: ''
         };
 
         props.changeNavigation('settings');
     }
 
     async componentDidMount() {
+
+        gapi.load('auth2', function() {
+            auth2 = gapi.auth2.init({
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+                clientId: '348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com',
+                scope: 'https://www.googleapis.com/auth/drive.readonly'
+            });
+        });
+
         if (this.props.location !== undefined) {
             if (this.props.location.pathname === '/api/link_rd') {
                 const params = queryString.parse(this.props.location.search.replace(/^\?/,''));
@@ -227,6 +246,54 @@ class Settings extends Component {
         }
     };
 
+    googleDriveConnect = async () => {
+
+        this.setState({googleDriveConnectLoading: true});
+
+        const code = await auth2.grantOfflineAccess();
+
+        try {
+            let response = await fetch('/api/gdrive_auth', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                },
+                body: JSON.stringify({
+                    code: code
+                })
+            });
+
+            response = await response.json();
+            console.log('foo');
+            this.setState({googleDriveConnectLoading: false});
+        } catch (error) {
+            this.setState({snack: true, snackBarMessage: 'Error connecting to Google Drive', googleDriveConnectLoading: false});
+        }
+
+    };
+
+    testGdriveList = async () => {
+
+        try {
+            let response = await fetch('/api/gdrive_list', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                }
+            });
+
+            response = await response.json();
+            console.log('foo');
+        } catch (error) {
+            this.setState({snack: true, snackBarMessage: 'Error listing files from Google Drive'});
+        }
+
+    };
+
     handleClickShowPassword = () => {
         this.setState(state => ({ showPassword: !state.showPassword }));
     };
@@ -389,13 +456,166 @@ class Settings extends Component {
 
                             <Divider/>
 
+                            {/* TODO use something more user friendly in production - why not tabs ?  */}
+
+                            <ExpansionPanelDetails>
+                                <Grid container spacing={0}>
+                                    <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
+                                        Storage
+                                    </Grid>
+
+                                    <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
+                                        <Chip
+                                            label="Google Drive"
+                                            variant={this.state.storage === "gdrive" ? "default" : "outlined"}
+                                            style={{margin: '3px'}} clickable="true"
+                                            onClick={() => {this.setState({storage: 'gdrive'})}}/>
+                                        <Chip
+                                            label="NAS Synology"
+                                            variant={this.state.storage === "nas" ? "default" : "outlined"}
+                                            style={{margin: '3px'}}
+                                            clickable="true"
+                                            onClick={() => {this.setState({storage: 'nas'})}}/>
+                                    </Grid>
+
+
+
+                                    { this.googleDriveConnectLoading ?
+                                        <CircularProgress style={this.state.settingsLoading ? {display: 'inline-block', margin: '5px'} : {display: 'none'}} />
+                                    :
+                                        <Grid item xs={12} style={{padding: '6px'}}>
+
+                                            <div style={{display: 'flex'}}>
+                                                <div style={{flex: '1'}}>
+                                                    Authorization
+                                                </div>
+                                                <div style={{flex: '1'}}>
+                                                    <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                </div>
+                                                <div style={{flex: '1'}}>
+                                                    <Button variant="outlined" onClick={this.googleDriveConnect}>
+                                                        Authorize
+                                                    </Button>
+                                                </div>
+                                            </div>
+
+                                            <div style={{display: 'flex'}}>
+                                                <div style={{flex: '1', marginTop: '10px'}}>
+                                                    Movies Folder
+                                                </div>
+                                                <div style={{flex: '1', marginTop: '10px'}}>
+                                                    <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                </div>
+                                                <div style={{flex: '1', marginTop: '10px'}}>
+                                                    {/* To get more details about Google Picker : https://github.com/sdoomz/react-google-picker (in demo specifically) */}
+                                                    {/* Google Picker API must be enabled in Google developer console */}
+                                                    <GooglePicker clientId={'348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com'}
+                                                                  developerKey={'AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0'}
+                                                                  scope={['https://www.googleapis.com/auth/drive.readonly']}
+                                                                  onChange={data => console.log('on change:', data)}
+                                                                  onAuthFailed={data => console.log('on auth failed:', data)}
+                                                                  multiselect={false}
+                                                                  navHidden={true}
+                                                                  authImmediate={false}
+                                                                  mimeTypes={['application/vnd.google-apps.folder']}
+                                                                  viewId={'FOLDERS'}
+                                                                  createPicker={ (google, oauthToken) => {
+                                                                      const googleViewId = google.picker.ViewId.FOLDERS;
+                                                                      const docsView = new google.picker.DocsView(googleViewId)
+                                                                          .setIncludeFolders(true)
+                                                                          .setMimeTypes('application/vnd.google-apps.folder')
+                                                                          .setSelectFolderEnabled(true);
+
+                                                                      const picker = new window.google.picker.PickerBuilder()
+                                                                          .addView(docsView)
+                                                                          .setOAuthToken(oauthToken)
+                                                                          .setDeveloperKey('AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0')
+                                                                          .setCallback((data)=>{
+
+                                                                              if (data.action === 'picked') {
+                                                                                  console.log('File id picked : ' + data.docs[0].id);
+                                                                              }
+
+                                                                          });
+
+                                                                      picker.build().setVisible(true);
+                                                                  }}
+                                                    >
+
+                                                        <Button variant="outlined">
+                                                            Select
+                                                        </Button>
+
+                                                    </GooglePicker>
+                                                </div>
+                                            </div>
+
+                                            <div style={{display: 'flex'}}>
+                                                <div style={{flex: '1', marginTop: '10px'}}>
+                                                    Tv Shows Folder
+                                                </div>
+                                                <div style={{flex: '1', marginTop: '10px'}}>
+                                                    <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                </div>
+                                                <div style={{flex: '1', marginTop: '10px'}}>
+                                                    {/* To get more details about Google Picker : https://github.com/sdoomz/react-google-picker (in demo specifically) */}
+                                                    {/* Google Picker API must be enabled in Google developer console */}
+                                                    <GooglePicker clientId={'348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com'}
+                                                                  developerKey={'AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0'}
+                                                                  scope={['https://www.googleapis.com/auth/drive.readonly']}
+                                                                  onChange={data => console.log('on change:', data)}
+                                                                  onAuthFailed={data => console.log('on auth failed:', data)}
+                                                                  multiselect={false}
+                                                                  navHidden={true}
+                                                                  authImmediate={false}
+                                                                  mimeTypes={['application/vnd.google-apps.folder']}
+                                                                  viewId={'FOLDERS'}
+                                                                  createPicker={ (google, oauthToken) => {
+                                                                      const googleViewId = google.picker.ViewId.FOLDERS;
+                                                                      const docsView = new google.picker.DocsView(googleViewId)
+                                                                          .setIncludeFolders(true)
+                                                                          .setMimeTypes('application/vnd.google-apps.folder')
+                                                                          .setSelectFolderEnabled(true);
+
+                                                                      const picker = new window.google.picker.PickerBuilder()
+                                                                          .addView(docsView)
+                                                                          .setOAuthToken(oauthToken)
+                                                                          .setDeveloperKey('AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0')
+                                                                          .setCallback((data)=>{
+
+                                                                              if (data.action === 'picked') {
+                                                                                  console.log('File id picked : ' + data.docs[0].id);
+                                                                              }
+
+                                                                          });
+
+                                                                      picker.build().setVisible(true);
+                                                                  }}
+                                                    >
+
+                                                        <Button variant="outlined">
+                                                            Select
+                                                        </Button>
+
+                                                    </GooglePicker>
+                                                </div>
+                                            </div>
+
+                                        </Grid>
+                                    }
+
+                                </Grid>
+                            </ExpansionPanelDetails>
+
+                            <Divider/>
+
                             <ExpansionPanelDetails>
 
                                 <Grid container spacing={0}>
 
-                                    <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
-                                        NAS configuration
-                                    </Grid>
+                                    {/*<Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>*/}
+                                        {/*NAS configuration*/}
+                                    {/*</Grid>*/}
 
 
                                     <Grid item xs={12} style={{padding: '6px'}}>

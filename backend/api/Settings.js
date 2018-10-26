@@ -1,6 +1,7 @@
 // Import Admin SDK
 const admin = require("firebase-admin");
 const realdebrid = require('../realdebrid/debrid_links');
+const gdrive = require('../gdrive/gdrive');
 
 // Get a database reference to our blog
 const db = admin.database();
@@ -63,6 +64,37 @@ module.exports = (app) => {
             res.send({message: 'Disconnected'});
         } catch(error) {
             res.status(500).send({message: error});
+        }
+    });
+
+    /**
+     * Gets and stores a Gdrive access token to database from single use client token
+     */
+    app.post('/api/gdrive_auth', async (req, res) => {
+        try {
+            const user = await admin.auth().verifyIdToken(req.headers.token);
+            const code = req.body.code;
+            await gdrive.getGDriveAccessToken(code, user);
+            res.send({
+                message: 'Connected'
+            });
+        } catch(error) {
+            res.status(500).send({message: error})
+        }
+    });
+
+    /**
+     * Gets and stores a Gdrive access token to database from single use client token
+     */
+    app.get('/api/gdrive_list', async (req, res) => {
+        try {
+            const user = await admin.auth().verifyIdToken(req.headers.token);
+            await gdrive.listFiles(user);
+            res.send({
+                message: 'Foo'
+            });
+        } catch(error) {
+            res.status(500).send({message: error})
         }
     });
 };

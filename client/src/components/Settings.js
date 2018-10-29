@@ -23,6 +23,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { auth } from '../firebase';
+import { database } from '../firebase/firebase';
+import firebase from 'firebase';
 import CheckCircle from "../../node_modules/@material-ui/icons/CheckCircle";
 import CancelCircle from "../../node_modules/@material-ui/icons/CancelOutlined";
 import queryString from "qs";
@@ -72,6 +74,8 @@ class Settings extends Component {
     }
 
     async componentDidMount() {
+
+        console.log(firebase.database());
 
         gapi.load('auth2', function() {
             auth2 = gapi.auth2.init({
@@ -478,255 +482,374 @@ class Settings extends Component {
                                             onClick={() => {this.setState({storage: 'nas'})}}/>
                                     </Grid>
 
+                                    {this.state.storage === 'gdrive' ?
+                                        <div style={{width: '100%'}}>
+                                            { this.googleDriveConnectLoading ?
+                                                <CircularProgress style={this.state.settingsLoading ? {display: 'inline-block', margin: '5px'} : {display: 'none'}} />
+                                                :
+                                                <Grid item xs={12} style={{padding: '6px'}}>
 
+                                                    <div style={{display: 'flex'}}>
+                                                        <div style={{flex: '1'}}>
+                                                            Authorization
+                                                        </div>
+                                                        <div style={{flex: '1'}}>
+                                                            <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                        </div>
+                                                        <div style={{flex: '1'}}>
+                                                            <Button variant="outlined" onClick={this.googleDriveConnect}>
+                                                                Authorize
+                                                            </Button>
+                                                        </div>
+                                                    </div>
 
-                                    { this.googleDriveConnectLoading ?
-                                        <CircularProgress style={this.state.settingsLoading ? {display: 'inline-block', margin: '5px'} : {display: 'none'}} />
+                                                    <div style={{display: 'flex'}}>
+                                                        <div style={{flex: '1', marginTop: '10px'}}>
+                                                            Movies Folder
+                                                        </div>
+                                                        <div style={{flex: '1', marginTop: '10px'}}>
+                                                            <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                        </div>
+                                                        <div style={{flex: '1', marginTop: '10px'}}>
+                                                            {/* To get more details about Google Picker : https://github.com/sdoomz/react-google-picker (in demo specifically) */}
+                                                            {/* Google Picker API must be enabled in Google developer console */}
+                                                            <GooglePicker clientId={'348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com'}
+                                                                          developerKey={'AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0'}
+                                                                          scope={['https://www.googleapis.com/auth/drive.readonly']}
+                                                                          onChange={data => console.log('on change:', data)}
+                                                                          onAuthFailed={data => console.log('on auth failed:', data)}
+                                                                          multiselect={false}
+                                                                          navHidden={true}
+                                                                          authImmediate={false}
+                                                                          mimeTypes={['application/vnd.google-apps.folder']}
+                                                                          viewId={'FOLDERS'}
+                                                                          createPicker={ (google, oauthToken) => {
+                                                                              const googleViewId = google.picker.ViewId.FOLDERS;
+                                                                              const docsView = new google.picker.DocsView(googleViewId)
+                                                                                  .setIncludeFolders(true)
+                                                                                  .setMimeTypes('application/vnd.google-apps.folder')
+                                                                                  .setSelectFolderEnabled(true);
+
+                                                                              const picker = new window.google.picker.PickerBuilder()
+                                                                                  .addView(docsView)
+                                                                                  .setOAuthToken(oauthToken)
+                                                                                  .setDeveloperKey('AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0')
+                                                                                  .setCallback((data)=>{
+
+                                                                                      if (data.action === 'picked') {
+                                                                                          console.log('File id picked : ' + data.docs[0].id);
+                                                                                      }
+
+                                                                                  });
+
+                                                                              picker.build().setVisible(true);
+                                                                          }}
+                                                            >
+
+                                                                <Button variant="outlined">
+                                                                    Select
+                                                                </Button>
+
+                                                            </GooglePicker>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style={{display: 'flex'}}>
+                                                        <div style={{flex: '1', marginTop: '10px'}}>
+                                                            Tv Shows Folder
+                                                        </div>
+                                                        <div style={{flex: '1', marginTop: '10px'}}>
+                                                            <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                        </div>
+                                                        <div style={{flex: '1', marginTop: '10px'}}>
+                                                            {/* To get more details about Google Picker : https://github.com/sdoomz/react-google-picker (in demo specifically) */}
+                                                            {/* Google Picker API must be enabled in Google developer console */}
+                                                            <GooglePicker clientId={'348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com'}
+                                                                          developerKey={'AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0'}
+                                                                          scope={['https://www.googleapis.com/auth/drive.readonly']}
+                                                                          onChange={data => console.log('on change:', data)}
+                                                                          onAuthFailed={data => console.log('on auth failed:', data)}
+                                                                          multiselect={false}
+                                                                          navHidden={true}
+                                                                          authImmediate={false}
+                                                                          mimeTypes={['application/vnd.google-apps.folder']}
+                                                                          viewId={'FOLDERS'}
+                                                                          createPicker={ (google, oauthToken) => {
+                                                                              const googleViewId = google.picker.ViewId.FOLDERS;
+                                                                              const docsView = new google.picker.DocsView(googleViewId)
+                                                                                  .setIncludeFolders(true)
+                                                                                  .setMimeTypes('application/vnd.google-apps.folder')
+                                                                                  .setSelectFolderEnabled(true);
+
+                                                                              const picker = new window.google.picker.PickerBuilder()
+                                                                                  .addView(docsView)
+                                                                                  .setOAuthToken(oauthToken)
+                                                                                  .setDeveloperKey('AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0')
+                                                                                  .setCallback((data)=>{
+
+                                                                                      if (data.action === 'picked') {
+                                                                                          console.log('File id picked : ' + data.docs[0].id);
+                                                                                      }
+
+                                                                                  });
+
+                                                                              picker.build().setVisible(true);
+                                                                          }}
+                                                            >
+
+                                                                <Button variant="outlined">
+                                                                    Select
+                                                                </Button>
+
+                                                            </GooglePicker>
+                                                        </div>
+                                                    </div>
+
+                                                </Grid>
+                                            }
+                                        </div>
                                     :
-                                        <Grid item xs={12} style={{padding: '6px'}}>
+                                        <div>
+                                            <Grid container spacing={0}>
 
-                                            <div style={{display: 'flex'}}>
-                                                <div style={{flex: '1'}}>
-                                                    Authorization
-                                                </div>
-                                                <div style={{flex: '1'}}>
-                                                    <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
-                                                </div>
-                                                <div style={{flex: '1'}}>
-                                                    <Button variant="outlined" onClick={this.googleDriveConnect}>
-                                                        Authorize
-                                                    </Button>
-                                                </div>
-                                            </div>
+                                                {/*<Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>*/}
+                                                {/*NAS configuration*/}
+                                                {/*</Grid>*/}
 
-                                            <div style={{display: 'flex'}}>
-                                                <div style={{flex: '1', marginTop: '10px'}}>
-                                                    Movies Folder
-                                                </div>
-                                                <div style={{flex: '1', marginTop: '10px'}}>
-                                                    <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
-                                                </div>
-                                                <div style={{flex: '1', marginTop: '10px'}}>
-                                                    {/* To get more details about Google Picker : https://github.com/sdoomz/react-google-picker (in demo specifically) */}
-                                                    {/* Google Picker API must be enabled in Google developer console */}
-                                                    <GooglePicker clientId={'348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com'}
-                                                                  developerKey={'AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0'}
-                                                                  scope={['https://www.googleapis.com/auth/drive.readonly']}
-                                                                  onChange={data => console.log('on change:', data)}
-                                                                  onAuthFailed={data => console.log('on auth failed:', data)}
-                                                                  multiselect={false}
-                                                                  navHidden={true}
-                                                                  authImmediate={false}
-                                                                  mimeTypes={['application/vnd.google-apps.folder']}
-                                                                  viewId={'FOLDERS'}
-                                                                  createPicker={ (google, oauthToken) => {
-                                                                      const googleViewId = google.picker.ViewId.FOLDERS;
-                                                                      const docsView = new google.picker.DocsView(googleViewId)
-                                                                          .setIncludeFolders(true)
-                                                                          .setMimeTypes('application/vnd.google-apps.folder')
-                                                                          .setSelectFolderEnabled(true);
 
-                                                                      const picker = new window.google.picker.PickerBuilder()
-                                                                          .addView(docsView)
-                                                                          .setOAuthToken(oauthToken)
-                                                                          .setDeveloperKey('AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0')
-                                                                          .setCallback((data)=>{
+                                                <Grid item xs={12} style={{padding: '6px'}}>
+                                                    <FormControl fullWidth>
+                                                        <TextField
+                                                            label="Path to Movies"
+                                                            id="movie-path"
+                                                            variant="outlined"
+                                                            value={this.state.moviesPath}
+                                                            onChange={(event) => this.setState({moviesPath: event.target.value})}
+                                                        />
+                                                    </FormControl>
+                                                </Grid>
 
-                                                                              if (data.action === 'picked') {
-                                                                                  console.log('File id picked : ' + data.docs[0].id);
-                                                                              }
+                                                <Grid item xs={12} style={{padding: '6px'}}>
+                                                    <FormControl fullWidth>
+                                                        <TextField
+                                                            label="Path to Tv Shows"
+                                                            id="tv-shows-path"
+                                                            variant="outlined"
+                                                            value={this.state.tvShowsPath}
+                                                            onChange={(event) => this.setState({tvShowsPath: event.target.value})}
+                                                        />
+                                                    </FormControl>
+                                                </Grid>
 
-                                                                          });
+                                                <Grid item xs={12} sm={2} style={{padding: '6px', position: 'relative', marginRight: '1.6rem', marginTop: '1rem', textAlign: 'left'}}>
+                                                    <FormControl className="protocolInput" variant="outlined" fullWidth style={{minWidth: '80px', margin: '0 auto', bottom: '6px'}}>
+                                                        <Select
+                                                            value={this.state.protocol}
+                                                            onChange={this.handleProtocolChange}
+                                                            input={
+                                                                <OutlinedInput
+                                                                    labelWidth={0}
+                                                                    name="protocol"
+                                                                    id="protocol"
+                                                                />
+                                                            }>
 
-                                                                      picker.build().setVisible(true);
-                                                                  }}
-                                                    >
+                                                            <MenuItem value={'http'}>http</MenuItem>
+                                                            <MenuItem value={'https'}>https</MenuItem>
+                                                        </Select>
+                                                        {/*<FormHelperText>Protocol</FormHelperText>*/}
+                                                    </FormControl>
+                                                </Grid>
 
-                                                        <Button variant="outlined">
-                                                            Select
-                                                        </Button>
+                                                <Grid item xs={12} sm={7} style={{padding: '6px'}}>
+                                                    <FormControl fullWidth>
+                                                        <TextField
+                                                            label="Host"
+                                                            id="host"
+                                                            variant="outlined"
+                                                            value={this.state.host}
+                                                            onChange={(event) => this.setState({host: event.target.value})}
+                                                        />
+                                                    </FormControl>
+                                                </Grid>
 
-                                                    </GooglePicker>
-                                                </div>
-                                            </div>
+                                                <Grid item xs={4} sm={2} style={{padding: '6px'}}>
+                                                    <FormControl fullWidth>
+                                                        <TextField
+                                                            label="Port"
+                                                            id="port"
+                                                            variant="outlined"
+                                                            value={this.state.port}
+                                                            onChange={(event) => this.setState({port: event.target.value})}
+                                                        />
+                                                    </FormControl>
+                                                </Grid>
 
-                                            <div style={{display: 'flex'}}>
-                                                <div style={{flex: '1', marginTop: '10px'}}>
-                                                    Tv Shows Folder
-                                                </div>
-                                                <div style={{flex: '1', marginTop: '10px'}}>
-                                                    <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
-                                                </div>
-                                                <div style={{flex: '1', marginTop: '10px'}}>
-                                                    {/* To get more details about Google Picker : https://github.com/sdoomz/react-google-picker (in demo specifically) */}
-                                                    {/* Google Picker API must be enabled in Google developer console */}
-                                                    <GooglePicker clientId={'348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com'}
-                                                                  developerKey={'AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0'}
-                                                                  scope={['https://www.googleapis.com/auth/drive.readonly']}
-                                                                  onChange={data => console.log('on change:', data)}
-                                                                  onAuthFailed={data => console.log('on auth failed:', data)}
-                                                                  multiselect={false}
-                                                                  navHidden={true}
-                                                                  authImmediate={false}
-                                                                  mimeTypes={['application/vnd.google-apps.folder']}
-                                                                  viewId={'FOLDERS'}
-                                                                  createPicker={ (google, oauthToken) => {
-                                                                      const googleViewId = google.picker.ViewId.FOLDERS;
-                                                                      const docsView = new google.picker.DocsView(googleViewId)
-                                                                          .setIncludeFolders(true)
-                                                                          .setMimeTypes('application/vnd.google-apps.folder')
-                                                                          .setSelectFolderEnabled(true);
+                                                <Grid item xs={12} style={{padding: '6px'}}>
+                                                    <FormControl fullWidth>
+                                                        <TextField
+                                                            label="Username"
+                                                            id="nas-username"
+                                                            variant="outlined"
+                                                            value={this.state.nasUsername}
+                                                            onChange={(event) => this.setState({nasUsername: event.target.value})}
+                                                        />
+                                                    </FormControl>
+                                                </Grid>
 
-                                                                      const picker = new window.google.picker.PickerBuilder()
-                                                                          .addView(docsView)
-                                                                          .setOAuthToken(oauthToken)
-                                                                          .setDeveloperKey('AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0')
-                                                                          .setCallback((data)=>{
+                                                <Grid item xs={12} style={{padding: '6px'}}>
+                                                    <FormControl fullWidth>
+                                                        <TextField
+                                                            label="Password"
+                                                            id="nas-password"
+                                                            type={this.state.showPassword ? 'text' : 'password'}
+                                                            variant="outlined"
+                                                            value={this.state.nasPassword}
+                                                            onChange={(event) => this.setState({nasPassword: event.target.value})}
+                                                            InputProps={{
+                                                                endAdornment: (
+                                                                    <InputAdornment position="end">
+                                                                        <IconButton
+                                                                            aria-label="Toggle password visibility"
+                                                                            onClick={this.handleClickShowPassword}
+                                                                        >
+                                                                            {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                                                                        </IconButton>
+                                                                    </InputAdornment>
+                                                                ),
+                                                            }}
+                                                        />
+                                                    </FormControl>
 
-                                                                              if (data.action === 'picked') {
-                                                                                  console.log('File id picked : ' + data.docs[0].id);
-                                                                              }
+                                                </Grid>
 
-                                                                          });
-
-                                                                      picker.build().setVisible(true);
-                                                                  }}
-                                                    >
-
-                                                        <Button variant="outlined">
-                                                            Select
-                                                        </Button>
-
-                                                    </GooglePicker>
-                                                </div>
-                                            </div>
-
-                                        </Grid>
+                                            </Grid>
+                                        </div>
                                     }
 
                                 </Grid>
                             </ExpansionPanelDetails>
 
-                            <Divider/>
+                            {/*<Divider/>*/}
 
-                            <ExpansionPanelDetails>
+                            {/*<ExpansionPanelDetails>*/}
 
-                                <Grid container spacing={0}>
+                                {/*<Grid container spacing={0}>*/}
 
-                                    {/*<Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>*/}
-                                        {/*NAS configuration*/}
+                                    {/*/!*<Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>*!/*/}
+                                        {/*/!*NAS configuration*!/*/}
+                                    {/*/!*</Grid>*!/*/}
+
+
+                                    {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
+                                        {/*<FormControl fullWidth>*/}
+                                            {/*<TextField*/}
+                                                {/*label="Path to Movies"*/}
+                                                {/*id="movie-path"*/}
+                                                {/*variant="outlined"*/}
+                                                {/*value={this.state.moviesPath}*/}
+                                                {/*onChange={(event) => this.setState({moviesPath: event.target.value})}*/}
+                                            {/*/>*/}
+                                        {/*</FormControl>*/}
                                     {/*</Grid>*/}
 
+                                    {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
+                                        {/*<FormControl fullWidth>*/}
+                                            {/*<TextField*/}
+                                                {/*label="Path to Tv Shows"*/}
+                                                {/*id="tv-shows-path"*/}
+                                                {/*variant="outlined"*/}
+                                                {/*value={this.state.tvShowsPath}*/}
+                                                {/*onChange={(event) => this.setState({tvShowsPath: event.target.value})}*/}
+                                            {/*/>*/}
+                                        {/*</FormControl>*/}
+                                    {/*</Grid>*/}
 
-                                    <Grid item xs={12} style={{padding: '6px'}}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                label="Path to Movies"
-                                                id="movie-path"
-                                                variant="outlined"
-                                                value={this.state.moviesPath}
-                                                onChange={(event) => this.setState({moviesPath: event.target.value})}
-                                            />
-                                        </FormControl>
-                                    </Grid>
+                                    {/*<Grid item xs={12} sm={2} style={{padding: '6px', position: 'relative', marginRight: '1.6rem', marginTop: '1rem', textAlign: 'left'}}>*/}
+                                        {/*<FormControl className="protocolInput" variant="outlined" fullWidth style={{minWidth: '80px', margin: '0 auto', bottom: '6px'}}>*/}
+                                            {/*<Select*/}
+                                                {/*value={this.state.protocol}*/}
+                                                {/*onChange={this.handleProtocolChange}*/}
+                                                {/*input={*/}
+                                                    {/*<OutlinedInput*/}
+                                                        {/*labelWidth={0}*/}
+                                                        {/*name="protocol"*/}
+                                                        {/*id="protocol"*/}
+                                                    {/*/>*/}
+                                                {/*}>*/}
 
-                                    <Grid item xs={12} style={{padding: '6px'}}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                label="Path to Tv Shows"
-                                                id="tv-shows-path"
-                                                variant="outlined"
-                                                value={this.state.tvShowsPath}
-                                                onChange={(event) => this.setState({tvShowsPath: event.target.value})}
-                                            />
-                                        </FormControl>
-                                    </Grid>
+                                                {/*<MenuItem value={'http'}>http</MenuItem>*/}
+                                                {/*<MenuItem value={'https'}>https</MenuItem>*/}
+                                            {/*</Select>*/}
+                                            {/*/!*<FormHelperText>Protocol</FormHelperText>*!/*/}
+                                        {/*</FormControl>*/}
+                                    {/*</Grid>*/}
 
-                                    <Grid item xs={12} sm={2} style={{padding: '6px', position: 'relative', marginRight: '1.6rem', marginTop: '1rem', textAlign: 'left'}}>
-                                        <FormControl className="protocolInput" variant="outlined" fullWidth style={{minWidth: '80px', margin: '0 auto', bottom: '6px'}}>
-                                            <Select
-                                                value={this.state.protocol}
-                                                onChange={this.handleProtocolChange}
-                                                input={
-                                                    <OutlinedInput
-                                                        labelWidth={0}
-                                                        name="protocol"
-                                                        id="protocol"
-                                                    />
-                                                }>
+                                    {/*<Grid item xs={12} sm={7} style={{padding: '6px'}}>*/}
+                                        {/*<FormControl fullWidth>*/}
+                                            {/*<TextField*/}
+                                                {/*label="Host"*/}
+                                                {/*id="host"*/}
+                                                {/*variant="outlined"*/}
+                                                {/*value={this.state.host}*/}
+                                                {/*onChange={(event) => this.setState({host: event.target.value})}*/}
+                                            {/*/>*/}
+                                        {/*</FormControl>*/}
+                                    {/*</Grid>*/}
 
-                                                <MenuItem value={'http'}>http</MenuItem>
-                                                <MenuItem value={'https'}>https</MenuItem>
-                                            </Select>
-                                            {/*<FormHelperText>Protocol</FormHelperText>*/}
-                                        </FormControl>
-                                    </Grid>
+                                    {/*<Grid item xs={4} sm={2} style={{padding: '6px'}}>*/}
+                                        {/*<FormControl fullWidth>*/}
+                                            {/*<TextField*/}
+                                                {/*label="Port"*/}
+                                                {/*id="port"*/}
+                                                {/*variant="outlined"*/}
+                                                {/*value={this.state.port}*/}
+                                                {/*onChange={(event) => this.setState({port: event.target.value})}*/}
+                                            {/*/>*/}
+                                        {/*</FormControl>*/}
+                                    {/*</Grid>*/}
 
-                                    <Grid item xs={12} sm={7} style={{padding: '6px'}}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                label="Host"
-                                                id="host"
-                                                variant="outlined"
-                                                value={this.state.host}
-                                                onChange={(event) => this.setState({host: event.target.value})}
-                                            />
-                                        </FormControl>
-                                    </Grid>
+                                    {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
+                                        {/*<FormControl fullWidth>*/}
+                                            {/*<TextField*/}
+                                                {/*label="Username"*/}
+                                                {/*id="nas-username"*/}
+                                                {/*variant="outlined"*/}
+                                                {/*value={this.state.nasUsername}*/}
+                                                {/*onChange={(event) => this.setState({nasUsername: event.target.value})}*/}
+                                            {/*/>*/}
+                                        {/*</FormControl>*/}
+                                    {/*</Grid>*/}
 
-                                    <Grid item xs={4} sm={2} style={{padding: '6px'}}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                label="Port"
-                                                id="port"
-                                                variant="outlined"
-                                                value={this.state.port}
-                                                onChange={(event) => this.setState({port: event.target.value})}
-                                            />
-                                        </FormControl>
-                                    </Grid>
+                                    {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
+                                        {/*<FormControl fullWidth>*/}
+                                            {/*<TextField*/}
+                                                {/*label="Password"*/}
+                                                {/*id="nas-password"*/}
+                                                {/*type={this.state.showPassword ? 'text' : 'password'}*/}
+                                                {/*variant="outlined"*/}
+                                                {/*value={this.state.nasPassword}*/}
+                                                {/*onChange={(event) => this.setState({nasPassword: event.target.value})}*/}
+                                                {/*InputProps={{*/}
+                                                    {/*endAdornment: (*/}
+                                                        {/*<InputAdornment position="end">*/}
+                                                            {/*<IconButton*/}
+                                                                {/*aria-label="Toggle password visibility"*/}
+                                                                {/*onClick={this.handleClickShowPassword}*/}
+                                                            {/*>*/}
+                                                                {/*{this.state.showPassword ? <VisibilityOff /> : <Visibility />}*/}
+                                                            {/*</IconButton>*/}
+                                                        {/*</InputAdornment>*/}
+                                                    {/*),*/}
+                                                {/*}}*/}
+                                            {/*/>*/}
+                                        {/*</FormControl>*/}
 
-                                    <Grid item xs={12} style={{padding: '6px'}}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                label="Username"
-                                                id="nas-username"
-                                                variant="outlined"
-                                                value={this.state.nasUsername}
-                                                onChange={(event) => this.setState({nasUsername: event.target.value})}
-                                            />
-                                        </FormControl>
-                                    </Grid>
+                                    {/*</Grid>*/}
 
-                                    <Grid item xs={12} style={{padding: '6px'}}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                label="Password"
-                                                id="nas-password"
-                                                type={this.state.showPassword ? 'text' : 'password'}
-                                                variant="outlined"
-                                                value={this.state.nasPassword}
-                                                onChange={(event) => this.setState({nasPassword: event.target.value})}
-                                                InputProps={{
-                                                    endAdornment: (
-                                                        <InputAdornment position="end">
-                                                            <IconButton
-                                                                aria-label="Toggle password visibility"
-                                                                onClick={this.handleClickShowPassword}
-                                                            >
-                                                                {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
-                                                            </IconButton>
-                                                        </InputAdornment>
-                                                    ),
-                                                }}
-                                            />
-                                        </FormControl>
+                                {/*</Grid>*/}
 
-                                    </Grid>
-
-                                </Grid>
-
-                            </ExpansionPanelDetails>
+                            {/*</ExpansionPanelDetails>*/}
 
                             <Divider/>
 

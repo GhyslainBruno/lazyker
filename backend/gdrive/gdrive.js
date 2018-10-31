@@ -80,6 +80,19 @@ async function listFiles(user) {
 }
 
 /**
+ * Returns the Google Drive OAuth2Client
+ * @param user
+ * @returns {Promise<void>}
+ */
+async function getOAuth2Client(user) {
+    const {client_secret, client_id, redirect_uris} = credentials.web;
+    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[1]);
+    const token = await getAccessToken(user);
+    await oAuth2Client.setCredentials(token.val());
+    return await oAuth2Client;
+}
+
+/**
  * Retrieves token stored in database
  * @param user
  * @returns {Promise<admin.database.DataSnapshot>}
@@ -90,3 +103,4 @@ const getAccessToken = async user => {
 
 module.exports.getGDriveAccessToken = storeGDriveAccessToken;
 module.exports.listFiles = listFiles;
+module.exports.getOAuth2Client = getOAuth2Client;

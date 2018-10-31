@@ -2,6 +2,7 @@ const stringSimilarity = require('string-similarity');
 const logger = require('../logs/logger');
 const admin = require("firebase-admin");
 const db = admin.database();
+const fs = require('fs');
 const request = require('request');
 const {google} = require('googleapis');
 const realdebrid = require('../realdebrid/debrid_links');
@@ -34,24 +35,36 @@ const  startMovieDownload = async (linkFromRealdebrid, title, user) => {
                     auth: oAuth2Client
                 });
 
-                const res = await drive.files.create({
-                    resource: {
-                        name: linkFromRealdebrid[0].filename,
-                        mimeType: linkFromRealdebrid[0].mimeType,
-                        parents: [moviesGdriveFolder.val().moviesGdriveFolderId]
-                    },
-                    media: {
-                        mimeType: linkFromRealdebrid[0].mimeType,
-                        body: request(linkFromRealdebrid[0].download)
-                    }
-                }, {
-                    // Use the `onUploadProgress` event from Axios to track the
-                    // number of bytes uploaded to this point.
-                    onUploadProgress: evt => {
-                        console.log(evt);
-                    },
-                });
-                console.log(res.data);
+                // request(linkFromRealdebrid[0].download).pipe(fs.createWriteStream('foo.avi'));
+
+                request
+                    .get(linkFromRealdebrid[0].download)
+                    .on('response', async function(response) {
+
+                        const res = await drive.files.create({
+                            resource: {
+                                name: linkFromRealdebrid[0].filename,
+                                mimeType: linkFromRealdebrid[0].mimeType,
+                                parents: [moviesGdriveFolder.val().moviesGdriveFolderId]
+                            },
+                            media: {
+                                mimeType: linkFromRealdebrid[0].mimeType,
+                                body: response
+                            }
+                        }, {
+                            // Use the `onUploadProgress` event from Axios to track the
+                            // number of bytes uploaded to this point.
+                            onUploadProgress: evt => {
+                                console.log(Math.round(evt.bytesRead*100/linkFromRealdebrid[0].filesize) + ' %');
+                            },
+                        });
+                        console.log(res.data);
+
+                    })
+                    .on('error', function(error) {
+                        console.log(error);
+                    });
+
 
             } catch(error) {
                 throw error;

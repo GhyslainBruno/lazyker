@@ -33,6 +33,9 @@ module.exports = (app) => {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             await usersRef.child(user.uid).child('/settings/nas').set(req.body.nas);
             await usersRef.child(user.uid).child('/settings/qualities').set(req.body.qualities);
+            await usersRef.child(user.uid).child('/settings/storage').set(req.body.storage);
+            await usersRef.child(user.uid).child('/settings/gdrive/moviesGdriveFolder').set(req.body.gdrive.moviesGdriveFolder);
+            await usersRef.child(user.uid).child('/settings/gdrive/tvShowsGdriveFolder').set(req.body.gdrive.tvShowsGdriveFolder);
             res.send({message: 'Settings changed'});
         } catch(error) {
             res.status(500).send({message: error});
@@ -77,6 +80,21 @@ module.exports = (app) => {
             await gdrive.getGDriveAccessToken(code, user);
             res.send({
                 message: 'Connected'
+            });
+        } catch(error) {
+            res.status(500).send({message: error})
+        }
+    });
+
+    /**
+     * Removes Google Drive rest API token from DB (TODO: should also invalidate this token)
+     */
+    app.get('/api/gdrive_disconect', async (req, res) => {
+        try {
+            const user = await admin.auth().verifyIdToken(req.headers.token);
+            await usersRef.child(user.uid).child('/settings/gdrive/token').remove();
+            res.send({
+                message: 'Disconnected'
             });
         } catch(error) {
             res.status(500).send({message: error})

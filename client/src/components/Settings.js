@@ -26,6 +26,7 @@ import { auth } from '../firebase';
 import { database } from '../firebase/firebase';
 import firebase from 'firebase';
 import CheckCircle from "../../node_modules/@material-ui/icons/CheckCircle";
+import Folder from "../../node_modules/@material-ui/icons/FolderOpen";
 import CancelCircle from "../../node_modules/@material-ui/icons/CancelOutlined";
 import queryString from "qs";
 import OutlinedInput from "@material-ui/core/OutlinedInput/OutlinedInput";
@@ -67,15 +68,20 @@ class Settings extends Component {
             settingsLoading: false,
             showPassword: false,
             googleDriveConnectLoading: false,
-            storage: ''
+            storage: '',
+            gdriveToken: null,
+            moviesGdriveFolderId: null,
+            moviesGdriveFolderName: null,
+            parentMoviesGdriveFolderId: null,
+            tvShowsGdriveFolderId: null,
+            tvShowsGdriveFolderName: null,
+            parentTvShowsGdriveFolderId: null
         };
 
         props.changeNavigation('settings');
     }
 
     async componentDidMount() {
-
-        console.log(firebase.database());
 
         gapi.load('auth2', function() {
             auth2 = gapi.auth2.init({
@@ -160,6 +166,51 @@ class Settings extends Component {
             response = await response.json();
             response = response.settings;
 
+            if (response.gdrive !== undefined) {
+                if (response.gdrive.moviesGdriveFolder !== undefined) {
+                    this.setState({
+                        moviesGdriveFolderId: response.gdrive.moviesGdriveFolder.moviesGdriveFolderId,
+                        moviesGdriveFolderName: response.gdrive.moviesGdriveFolder.moviesGdriveFolderName,
+                        parentMoviesGdriveFolderId: response.gdrive.moviesGdriveFolder.parentMoviesGdriveFolderId,
+                    })
+                } else {
+                    this.setState({
+                        moviesGdriveFolderId: null,
+                        moviesGdriveFolderName: null,
+                        parentMoviesGdriveFolderId: null,
+                    })
+                }
+
+                if (response.gdrive.tvShowsGdriveFolder !== undefined) {
+                    this.setState({
+                        tvShowsGdriveFolderId: response.gdrive.tvShowsGdriveFolder.tvShowsGdriveFolderId,
+                        tvShowsGdriveFolderName: response.gdrive.tvShowsGdriveFolder.tvShowsGdriveFolderName,
+                        parentTvShowsGdriveFolderId: response.gdrive.tvShowsGdriveFolder.parentTvShowsGdriveFolderId,
+                    })
+                } else {
+                    this.setState({
+                        tvShowsGdriveFolderId: null,
+                        tvShowsGdriveFolderName: null,
+                        parentTvShowsGdriveFolderId: null,
+                    })
+                }
+
+                if (response.gdrive.token !== undefined) {
+                    this.setState({
+                        gdriveToken: response.gdrive.token
+                    })
+                } else {
+                    this.setState({
+                        gdriveToken: null
+                    })
+                }
+
+            } else {
+                this.setState({
+                    gdriveToken: null
+                })
+            }
+
             this.setState({
                 settingsLoading: false,
                 firstQuality: response.qualities.first,
@@ -176,7 +227,8 @@ class Settings extends Component {
                 realdebrid: response.hasOwnProperty('realdebrid'),
                 yggUsername: response.ygg.username,
                 yggPassword: response.ygg.password,
-                every: response.autoupdateTime
+                every: response.autoupdateTime,
+                storage: response.storage
             })
         } catch(error) {
             this.setState({snack: true, snackBarMessage: 'Error loading settings', settingsLoading: false})
@@ -215,7 +267,20 @@ class Settings extends Component {
                         username: this.state.yggUsername,
                         password: this.state.yggPassword
                     },
-                    autoupdateTime: this.state.every
+                    autoupdateTime: this.state.every,
+                    storage: this.state.storage,
+                    gdrive: {
+                        moviesGdriveFolder: {
+                            moviesGdriveFolderId: this.state.moviesGdriveFolderId,
+                            moviesGdriveFolderName: this.state.moviesGdriveFolderName,
+                            parentMoviesGdriveFolderId: this.state.parentMoviesGdriveFolderId,
+                        },
+                        tvShowsGdriveFolder: {
+                            tvShowsGdriveFolderId: this.state.tvShowsGdriveFolderId,
+                            tvShowsGdriveFolderName: this.state.tvShowsGdriveFolderName,
+                            parentTvShowsGdriveFolderId: this.state.parentTvShowsGdriveFolderId,
+                        }
+                    }
                 })
             });
 
@@ -252,8 +317,6 @@ class Settings extends Component {
 
     googleDriveConnect = async () => {
 
-        this.setState({googleDriveConnectLoading: true});
-
         const code = await auth2.grantOfflineAccess();
 
         try {
@@ -270,12 +333,26 @@ class Settings extends Component {
             });
 
             response = await response.json();
-            console.log('foo');
-            this.setState({googleDriveConnectLoading: false});
+            this.loadSettings();
         } catch (error) {
             this.setState({snack: true, snackBarMessage: 'Error connecting to Google Drive', googleDriveConnectLoading: false});
         }
 
+    };
+
+    googleDriveDisConnect = async () => {
+        try {
+            let response = await fetch('/api/gdrive_disconect', {
+                method: 'GET',
+                headers: {
+                    'token': await auth.getIdToken()
+                }
+            });
+            response = await response.json();
+            this.loadSettings();
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error while unauthorizing lazker from Google Drive', settingsLoading: false})
+        }
     };
 
     testGdriveList = async () => {
@@ -494,12 +571,24 @@ class Settings extends Component {
                                                             Authorization
                                                         </div>
                                                         <div style={{flex: '1'}}>
-                                                            <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                            {
+                                                                this.state.gdriveToken !== null ?
+                                                                    <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                                    :
+                                                                    <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
+                                                            }
                                                         </div>
                                                         <div style={{flex: '1'}}>
-                                                            <Button variant="outlined" onClick={this.googleDriveConnect}>
-                                                                Authorize
-                                                            </Button>
+                                                            {
+                                                                this.state.gdriveToken !== null ?
+                                                                    <Button variant="outlined" onClick={this.googleDriveDisConnect}>
+                                                                        Unauthorize
+                                                                    </Button>
+                                                                    :
+                                                                    <Button variant="outlined" onClick={this.googleDriveConnect}>
+                                                                        Authorize
+                                                                    </Button>
+                                                            }
                                                         </div>
                                                     </div>
 
@@ -508,7 +597,19 @@ class Settings extends Component {
                                                             Movies Folder
                                                         </div>
                                                         <div style={{flex: '1', marginTop: '10px'}}>
-                                                            <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                            {
+                                                                this.state.moviesGdriveFolderName !== null ?
+                                                                    <Chip
+                                                                        label={this.state.moviesGdriveFolderName}
+                                                                        onDelete={() => this.setState({
+                                                                            moviesGdriveFolderId: null,
+                                                                            moviesGdriveFolderName: null,
+                                                                            parentMoviesGdriveFolderId: null,
+                                                                        })}
+                                                                    />
+                                                                    :
+                                                                    <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
+                                                            }
                                                         </div>
                                                         <div style={{flex: '1', marginTop: '10px'}}>
                                                             {/* To get more details about Google Picker : https://github.com/sdoomz/react-google-picker (in demo specifically) */}
@@ -537,7 +638,11 @@ class Settings extends Component {
                                                                                   .setCallback((data)=>{
 
                                                                                       if (data.action === 'picked') {
-                                                                                          console.log('File id picked : ' + data.docs[0].id);
+                                                                                          this.setState({
+                                                                                              moviesGdriveFolderId: data.docs[0].id,
+                                                                                              moviesGdriveFolderName: data.docs[0].name,
+                                                                                              parentMoviesGdriveFolderId: data.docs[0].parentId
+                                                                                          });
                                                                                       }
 
                                                                                   });
@@ -546,9 +651,9 @@ class Settings extends Component {
                                                                           }}
                                                             >
 
-                                                                <Button variant="outlined">
-                                                                    Select
-                                                                </Button>
+                                                                <IconButton>
+                                                                    <Folder/>
+                                                                </IconButton>
 
                                                             </GooglePicker>
                                                         </div>
@@ -559,7 +664,19 @@ class Settings extends Component {
                                                             Tv Shows Folder
                                                         </div>
                                                         <div style={{flex: '1', marginTop: '10px'}}>
-                                                            <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                            {
+                                                                this.state.tvShowsGdriveFolderName !== null ?
+                                                                    <Chip
+                                                                        label={this.state.tvShowsGdriveFolderName}
+                                                                        onDelete={() => this.setState({
+                                                                            tvShowsGdriveFolderId: null,
+                                                                            tvShowsGdriveFolderName: null,
+                                                                            parentTvShowsGdriveFolderId: null
+                                                                        })}
+                                                                    />
+                                                                    :
+                                                                    <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
+                                                            }
                                                         </div>
                                                         <div style={{flex: '1', marginTop: '10px'}}>
                                                             {/* To get more details about Google Picker : https://github.com/sdoomz/react-google-picker (in demo specifically) */}
@@ -588,7 +705,11 @@ class Settings extends Component {
                                                                                   .setCallback((data)=>{
 
                                                                                       if (data.action === 'picked') {
-                                                                                          console.log('File id picked : ' + data.docs[0].id);
+                                                                                          this.setState({
+                                                                                              tvShowsGdriveFolderId: data.docs[0].id,
+                                                                                              tvShowsGdriveFolderName: data.docs[0].name,
+                                                                                              parentTvShowsGdriveFolderId: data.docs[0].parentId
+                                                                                          })
                                                                                       }
 
                                                                                   });
@@ -597,9 +718,9 @@ class Settings extends Component {
                                                                           }}
                                                             >
 
-                                                                <Button variant="outlined">
-                                                                    Select
-                                                                </Button>
+                                                                <IconButton>
+                                                                    <Folder/>
+                                                                </IconButton>
 
                                                             </GooglePicker>
                                                         </div>

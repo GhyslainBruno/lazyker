@@ -31,6 +31,8 @@ import Clear from '@material-ui/icons/ClearAll';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import Torrents from './downloads/Torrents';
 import * as auth from "../firebase/auth";
+import firebase from 'firebase';
+const usersRef = firebase.database().ref('/users');
 
 
 
@@ -47,7 +49,8 @@ class Downloads extends Component {
             moviesInProgressLoading: false,
             currentDownloadsLoading: false,
             showRemoveDialog: false,
-            downloadTaskIdToRemove: null
+            downloadTaskIdToRemove: null,
+            storage: null
         };
 
         props.changeNavigation('downloads');
@@ -56,62 +59,79 @@ class Downloads extends Component {
 
     /**
      * Resume a particular download
-     * @param downloadId
+     * @param download
      * @returns {Promise<void>}
      */
-    resumeDownload = async (downloadId) => {
-        this.setState({currentDownloadsLoading: true, currentDownloads: null});
+    resumeDownload = async (download) => {
+
         try {
-            let response = await fetch('/api/resume_download', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'token': await auth.getIdToken()
-                },
-                body: JSON.stringify({
-                    id: downloadId
-                })
-            });
+            switch (this.state.storage) {
+                case 'gdrive':
+                    await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).update({
+                        event: 'resume'
+                    });
+                    this.setState({snack: true, snackBarMessage: 'Resumed'});
+                    break;
+                case 'nas':
+                    this.setState({currentDownloadsLoading: true, currentDownloads: null});
+                    let response = await fetch('/api/resume_download', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'token': await auth.getIdToken()
+                        },
+                        body: JSON.stringify({
+                            id: download.id
+                        })
+                    });
 
-            response = await response.json();
-
-            this.setState({snack: true, snackBarMessage: 'Resumed'});
-
+                    response = await response.json();
+                    this.setState({snack: true, snackBarMessage: 'Resumed'});
+                    await this.loadCurrentDownloads();
+                    break;
+            }
         } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error'});
+            this.setState({snack: true, snackBarMessage: 'Error resuming this download'});
         }
-        await this.loadCurrentDownloads();
     };
 
     /**
      * Pause a particular download
-     * @param downloadId
+     * @param download
      * @returns {Promise<void>}
      */
-    pauseDownload = async (downloadId) => {
-        this.setState({currentDownloadsLoading: true, currentDownloads: null});
+    pauseDownload = async (download) => {
         try {
-            let response = await fetch('/api/pause_download', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'token': await auth.getIdToken()
-                },
-                body: JSON.stringify({
-                    id: downloadId
-                })
-            });
-
-            response = await response.json();
-
-            this.setState({snack: true, snackBarMessage: 'Paused'});
-
+            switch (this.state.storage) {
+                case 'gdrive':
+                    await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).update({
+                        event: 'pause'
+                    });
+                    this.setState({snack: true, snackBarMessage: 'Paused'});
+                    break;
+                case 'nas':
+                    this.setState({currentDownloadsLoading: true, currentDownloads: null});
+                    let response = await fetch('/api/pause_download', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'token': await auth.getIdToken()
+                        },
+                        body: JSON.stringify({
+                            id: download.id
+                        })
+                    });
+                    response = await response.json();
+                    this.setState({snack: true, snackBarMessage: 'Paused'});
+                    await this.loadCurrentDownloads();
+                    break;
+            }
         } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error'});
+            this.setState({snack: true, snackBarMessage: 'Error pausing this download'});
         }
-        await this.loadCurrentDownloads();
+
     };
 
     /**
@@ -119,33 +139,40 @@ class Downloads extends Component {
      * @returns {Promise<void>}
      */
     removeDownload = async () => {
-
         this.closeRemoveDialog();
+        const download = this.state.downloadTaskIdToRemove;
 
-        const downloadId = this.state.downloadTaskIdToRemove;
-
-        this.setState({currentDownloadsLoading: true, currentDownloads: null});
         try {
-            let response = await fetch('/api/remove_download', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'token': await auth.getIdToken()
-                },
-                body: JSON.stringify({
-                    id: downloadId
-                })
-            });
+            switch (this.state.storage) {
+                case 'gdrive':
+                    await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).update({
+                        event: 'destroy'
+                    });
+                    this.setState({snack: true, snackBarMessage: 'Removed'});
+                    break;
+                case 'nas':
+                    let response = await fetch('/api/remove_download', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'token': await auth.getIdToken()
+                        },
+                        body: JSON.stringify({
+                            id: download.id
+                        })
+                    });
 
-            response = await response.json();
+                    response = await response.json();
 
-            this.setState({snack: true, snackBarMessage: 'Removed'});
-
+                    this.setState({snack: true, snackBarMessage: 'Removed'});
+                    await this.loadCurrentDownloads();
+                    break;
+            }
         } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error'});
+            this.setState({snack: true, snackBarMessage: 'Error removing this download'});
         }
-        await this.loadCurrentDownloads();
+
     };
 
     /**
@@ -153,7 +180,7 @@ class Downloads extends Component {
      * @param event
      * @returns {Promise<void>}
      */
-    clearDownloads = async (event) => {
+     clearDownloads = async (event) => {
         const downloadsToRemove = this.state.currentDownloads.tasks.filter(dl => dl.status === "finished").map(dl => dl.id).join(',');
 
         if (downloadsToRemove.length > 0) {
@@ -210,23 +237,54 @@ class Downloads extends Component {
         this.setState({currentDownloadsLoading: true, currentDownloads: null});
 
         try {
-            let response = await fetch('/api/current_downloads', {
-                method: 'GET',
-                headers: {
-                    'token': await auth.getIdToken()
-                }
-            });
-            const downloadsStates = await response.json();
+            const storage = await firebase.database().ref('/users').child(await auth.getUid()).child('/settings/storage').once('value');
 
-            if (downloadsStates.message) {
-                this.setState({currentDownloads: null, snack: true, snackBarMessage: 'error', currentDownloadsLoading: false})
-            } else {
-                this.setState({currentDownloads: downloadsStates.currentDownloads, currentDownloadsLoading: false})
+            this.setState({storage: storage.val()});
+
+            switch (storage.val()) {
+
+                case 'gdrive':
+                    firebase.database().ref('/users').child(await auth.getUid()).child('/settings/downloads').on('value', snapshot => {
+
+                        const downloads = [];
+                        snapshot.forEach(download => {
+                            downloads.push(download.val());
+                        });
+
+                        this.setState({
+                            currentDownloads: downloads
+                        })
+                    });
+
+                    this.setState({
+                        currentDownloadsLoading: false
+                    });
+                    break;
+                case 'nas' :
+                    let response = await fetch('/api/current_downloads', {
+                        method: 'GET',
+                        headers: {
+                            'token': await auth.getIdToken()
+                        }
+                    });
+                    const downloadsStates = await response.json();
+
+                    if (downloadsStates.message) {
+                        this.setState({currentDownloads: null, snack: true, snackBarMessage: 'error', currentDownloadsLoading: false})
+                    } else {
+                        this.setState({currentDownloads: downloadsStates.currentDownloads, currentDownloadsLoading: false})
+                    }
+                    break;
             }
-            
+
+            // firebase.database().ref('/users').child(await auth.getUid()).child('/settings/storage').on('value', snapshot => {
+            //     console.log('new storage = ' + snapshot.val());
+            // })
+
         } catch(error) {
             this.setState({snack: true, snackBarMessage: 'Error while loading downloads', currentDownloadsLoading: false});
         }
+
     };
 
     /**
@@ -362,13 +420,13 @@ class Downloads extends Component {
 
                             <CircularProgress style={this.state.currentDownloadsLoading ? {display: 'inline-block'} : {display: 'none'}} />
 
-                            {this.state.currentDownloads !== null ? this.state.currentDownloads.tasks.length > 0 ? this.state.currentDownloads.tasks.map(currentDownload => {
+                            {this.state.currentDownloads !== null ? this.state.currentDownloads.length > 0 ? this.state.currentDownloads.map(currentDownload => {
                                 return (
                                     <div>
                                         <div style={{display: 'inline-flex', width: '100%', textAlign: 'left', padding: '5px'}}>
 
                                             <div className="titleDownload">
-                                                <p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{currentDownload.additional.detail.destination}</p>
+                                                <p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{currentDownload.destination}</p>
                                             </div>
 
                                             <div style={{width: '8%', paddingTop: '12px'}}>
@@ -401,21 +459,22 @@ class Downloads extends Component {
 
                                             <div style={{textAlign: 'center'}} className="buttonsDownload">
                                                 <IconButton style={{padding: '5px'}} disabled={currentDownload.status !== 'paused'}>
-                                                    <PlayCircle onClick={() => this.resumeDownload(currentDownload.id)}/>
+                                                    <PlayCircle onClick={() => this.resumeDownload(currentDownload)}/>
                                                 </IconButton>
 
                                                 <IconButton style={{padding: '5px'}} disabled={currentDownload.status !== 'finishing' && currentDownload.status !== 'extracting' && currentDownload.status !== 'downloading'}>
-                                                    <PauseCircle onClick={() => this.pauseDownload(currentDownload.id)}/>
+                                                    <PauseCircle onClick={() => this.pauseDownload(currentDownload)}/>
                                                 </IconButton>
 
                                                 <IconButton style={{padding: '5px'}}>
-                                                    <RemoveCircle  onClick={() => this.showRemoveDialog(currentDownload.id)}/>
+                                                    <RemoveCircle  onClick={() => this.showRemoveDialog(currentDownload)}/>
                                                 </IconButton>
                                             </div>
+
                                         </div>
 
                                         <div style={{paddingRight: '5px', paddingLeft: '5px'}}>
-                                            <LinearProgress variant="determinate" value={Math.round((1-((currentDownload.size - currentDownload.additional.transfer.size_downloaded) / currentDownload.size))*100)} />
+                                            <LinearProgress variant="determinate" value={Math.round(currentDownload.size_downloaded*100 / currentDownload.size)} />
                                         </div>
 
                                     </div>
@@ -433,11 +492,17 @@ class Downloads extends Component {
 
                     </ExpansionPanelDetails>
 
-                    {this.state.currentDownloads !== null ? this.state.currentDownloads.tasks.length > 0 ?
+                    {this.state.currentDownloads !== null ? this.state.currentDownloads.length > 0 ?
 
-                        <ExpansionPanelActions>
-                            <Button size="small"><Clear onClick={(event) => this.clearDownloads(event)}/></Button>
-                        </ExpansionPanelActions>
+                        <div>
+                            {this.state.storage === 'nas' ?
+                                <ExpansionPanelActions>
+                                    <Button size="small"><Clear onClick={(event) => this.clearDownloads(event)}/></Button>
+                                </ExpansionPanelActions>
+                                :
+                                null
+                            }
+                        </div>
 
                         :
 

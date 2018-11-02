@@ -51,7 +51,8 @@ const getMovieQualities = async function getMovieQualities(moviePath, title) {
     qualitiesToReturn.push({
         quality: qualityLangString[0],
         lang: qualityLangString[1],
-        url: moviePath.substr(moviePath.lastIndexOf('/'), moviePath.length)
+        url: moviePath.substr(moviePath.lastIndexOf('/'), moviePath.length),
+        provider: providerName
     });
 
     return {

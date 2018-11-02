@@ -2,9 +2,13 @@ const stringSimilarity = require('string-similarity');
 const logger = require('../logs/logger');
 const admin = require("firebase-admin");
 const db = admin.database();
+const fs = require('fs');
+const request = require('request');
+const {google} = require('googleapis');
 const realdebrid = require('../realdebrid/debrid_links');
 const connector = require('./Connector');
 const usersRef = db.ref("/users");
+const gdrive = require('../gdrive/gdrive');
 
 /**
  * Starts a movie download
@@ -13,7 +17,7 @@ const usersRef = db.ref("/users");
  * @param user
  * @returns {Promise<void>}
  */
-const  startMovieDownload = async (linkFromRealdebrid, title, user) => {
+const startMovieDownload = async (linkFromRealdebrid, title, user) => {
 
     try {
         const syno = await connector.getConnection(user);
@@ -320,9 +324,9 @@ const removeDownload = (syno, downloadId) => {
  * @param user
  * @returns {Promise<void>}
  */
-const startRealdebridTorrentDownload = async (torrent, name, user) => {
+const startRealdebridTorrentDownload = async (unrestrictedLink, name, user) => {
     try {
-        const unrestrictedLink = await realdebrid.unrestricLinkNoDB(torrent.links[0], user);
+        // const unrestrictedLink = await realdebrid.unrestricLinkNoDB(torrent.links[0], user);
         return await startMovieDownloadFromRealdebridTorrent(unrestrictedLink, name, user);
     } catch(error) {
         throw error

@@ -1,7 +1,8 @@
-// const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const rp = require('request-promise');
 const pmap = require('p-map');
+const cloudscraper = require('../../utils/cloudscrapper/Cloudscrapper');
 
 /**
  * get an host object an returns unprotected links for the host given
@@ -17,7 +18,7 @@ const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links) {
         if (links.length > 1) {
 
             const linksToReturn = await pmap(links, async link => {
-                return await unprotectLink(page, link);
+                return await unprotectLinkWithPuppeteer(page, link);
             }, {concurrency: 1});
 
 
@@ -27,7 +28,7 @@ const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links) {
         } else {
 
             const linkToReturn = [];
-            linkToReturn.push(await unprotectLink(page, links[0]));
+            linkToReturn.push(await unprotectLinkWithPuppeteer(page, links[0]));
             browser.close();
             return linkToReturn
         }

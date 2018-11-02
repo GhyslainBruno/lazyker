@@ -60,7 +60,7 @@ const getUnrestrictedLinks = async function(links, user) {
 
 
     } catch (error) {
-        logger.info(error);
+        logger.info(error, user);
         throw error
     }
 };

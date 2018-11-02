@@ -21,7 +21,13 @@ async function storeGDriveAccessToken(code, user) {
         // Getting credentials of the app from a .json file
         const {client_secret, client_id, redirect_uris} = credentials.web;
 
-        const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[1]);
+        let redirectUrl = '';
+        if (process.env.NODE_ENV === 'production') {
+            redirectUrl = redirect_uris[0];
+        } else {
+            redirectUrl = redirect_uris[1];
+        }
+        const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirectUrl);
 
         // Getting Gdrive token from the single time code emitted from front end
         const response = await oAuth2Client.getToken(code);

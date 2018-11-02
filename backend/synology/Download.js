@@ -17,90 +17,35 @@ const gdrive = require('../gdrive/gdrive');
  * @param user
  * @returns {Promise<void>}
  */
-const  startMovieDownload = async (linkFromRealdebrid, title, user) => {
+const startMovieDownload = async (linkFromRealdebrid, title, user) => {
 
-    const storage = await usersRef.child(user.uid).child('/settings/storage').once('value');
+    try {
+        const syno = await connector.getConnection(user);
 
-    switch (storage.val()) {
+        // Get all current downloads in downloadStation
+        const currentDownloads = await getCurrentDownloads(syno);
 
-        case 'gdrive':
+        // const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
+        // const inProgressMovies = snapshot.val();
 
-            try {
+        let moviesPath = await usersRef.child(user.uid).child('/settings/nas/moviesPath').once('value');
+        moviesPath = moviesPath.val();
 
-                const oAuth2Client = await gdrive.getOAuth2Client(user);
-                const moviesGdriveFolder = await usersRef.child(user.uid).child('/settings/gdrive/moviesGdriveFolder').once('value');
+        // If no download in the folder wanted is present --> start download
+        if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === moviesPath + '/' + title).length === 0) {
 
-                const drive = google.drive({
-                    version: 'v3',
-                    auth: oAuth2Client
-                });
+            let directoryToStartDownload = await createMovieDir(title, syno, moviesPath);
+            directoryToStartDownload = directoryToStartDownload.replace(/^\//,'');
 
-                // request(linkFromRealdebrid[0].download).pipe(fs.createWriteStream('foo.avi'));
-
-                request
-                    .get(linkFromRealdebrid[0].download)
-                    .on('response', async function(response) {
-
-                        const res = await drive.files.create({
-                            resource: {
-                                name: linkFromRealdebrid[0].filename,
-                                mimeType: linkFromRealdebrid[0].mimeType,
-                                parents: [moviesGdriveFolder.val().moviesGdriveFolderId]
-                            },
-                            media: {
-                                mimeType: linkFromRealdebrid[0].mimeType,
-                                body: response
-                            }
-                        }, {
-                            // Use the `onUploadProgress` event from Axios to track the
-                            // number of bytes uploaded to this point.
-                            onUploadProgress: evt => {
-                                console.log(Math.round(evt.bytesRead*100/linkFromRealdebrid[0].filesize) + ' %');
-                            },
-                        });
-                        console.log(res.data);
-
-                    })
-                    .on('error', function(error) {
-                        console.log(error);
-                    });
+            //   Then --> start download task
+            await createMovieDownload(linkFromRealdebrid[0], syno, directoryToStartDownload, user, title);
 
 
-            } catch(error) {
-                throw error;
-            }
-
-            break;
-        case 'nas' :
-            try {
-                const syno = await connector.getConnection(user);
-
-                // Get all current downloads in downloadStation
-                const currentDownloads = await getCurrentDownloads(syno);
-
-                // const snapshot = await usersRef.child(user.uid).child('/movies').equalTo(title).once('value');
-                // const inProgressMovies = snapshot.val();
-
-                let moviesPath = await usersRef.child(user.uid).child('/settings/nas/moviesPath').once('value');
-                moviesPath = moviesPath.val();
-
-                // If no download in the folder wanted is present --> start download
-                if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === moviesPath + '/' + title).length === 0) {
-
-                    let directoryToStartDownload = await createMovieDir(title, syno, moviesPath);
-                    directoryToStartDownload = directoryToStartDownload.replace(/^\//,'');
-
-                    //   Then --> start download task
-                    await createMovieDownload(linkFromRealdebrid[0], syno, directoryToStartDownload, user, title);
-
-
-                } else {
-                    logger.info('Movie already in download', user)
-                }
-            } catch(error) {
-                throw error;
-            }
-            break;
+        } else {
+            logger.info('Movie already in download', user)
+        }
+    } catch(error) {
+        throw error;
     }
 
 };
@@ -379,9 +324,9 @@ const removeDownload = (syno, downloadId) => {
  * @param user
  * @returns {Promise<void>}
  */
-const startRealdebridTorrentDownload = async (torrent, name, user) => {
+const startRealdebridTorrentDownload = async (unrestrictedLink, name, user) => {
     try {
-        const unrestrictedLink = await realdebrid.unrestricLinkNoDB(torrent.links[0], user);
+        // const unrestrictedLink = await realdebrid.unrestricLinkNoDB(torrent.links[0], user);
         return await startMovieDownloadFromRealdebridTorrent(unrestrictedLink, name, user);
     } catch(error) {
         throw error

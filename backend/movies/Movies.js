@@ -5,7 +5,8 @@ const dlprotectlol = require('../scappers/zonetelechargementlol/dlprotect1co');
 const dlprotect = require('../scappers/zonetelechargement/dlprotect1com');
 const edprotect = require('../scappers/extremedownload/edprotect');
 const realdebrid = require('../realdebrid/debrid_links');
-const download = require('../synology/Download');
+// const download = require('../synology/Download');
+const download = require('../downloads/downloader');
 const logger = require('../logs/logger');
 const pMap = require('p-map');
 const ygg = require('./torrents/ygg/ygg');
@@ -221,7 +222,7 @@ const unprotectLinks = async (links, provider) => {
             return await dlprotect.getUnprotectedLinks(links);
             break;
         case 'zonetelechargement':
-            return await dlprotect.getUnprotectedLinks(links);
+            return await dlprotect.getUnprotectedLinksWithPuppeteer(links);
             break;
         case 'extremedownload':
             return await edprotect.getUnprotectedLinks(links);

@@ -44,7 +44,11 @@ const getRealUrl = async () => {
         const response = await rp(options);
         console.log(response)
     } catch(error) {
-        urlToReturn = error.response.headers.location
+        if (error.response === undefined) {
+            throw error
+        } else {
+            urlToReturn = error.response.headers.location
+        }
     }
 
     return urlToReturn

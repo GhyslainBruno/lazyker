@@ -11,7 +11,15 @@ const cloudscraper = require('../../utils/cloudscrapper/Cloudscrapper');
  */
 const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links) {
 
-    const browser = await puppeteer.launch({headless: false, timeout: 60000});
+    let launchBrowserProperties = {};
+
+    if (process.env.NODE_ENV === 'production') {
+        launchBrowserProperties = {headless: false, timeout: 60000, executablePath: '/usr/bin/chromium-browser'}
+    } else {
+        launchBrowserProperties = {headless: false, timeout: 60000}
+    }
+
+    const browser = await puppeteer.launch(launchBrowserProperties);
     const page = await browser.newPage();
 
     try {

@@ -4,7 +4,7 @@ const Logging = require('@google-cloud/logging');
 const projectId = 'lazyker-568c4';
 // Creates a client
 const logging = new Logging({
-    keyFilename: './backend/lazyker-1eebc13a0386.json',
+    keyFilename: './backend/logs/lazyker-1eebc13a0386.json',
     projectId: projectId,
 });
 

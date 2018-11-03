@@ -166,70 +166,135 @@ class Settings extends Component {
             response = await response.json();
             response = response.settings;
 
-            if (response.gdrive !== undefined) {
-                if (response.gdrive.moviesGdriveFolder !== undefined) {
-                    this.setState({
-                        moviesGdriveFolderId: response.gdrive.moviesGdriveFolder.moviesGdriveFolderId,
-                        moviesGdriveFolderName: response.gdrive.moviesGdriveFolder.moviesGdriveFolderName,
-                        parentMoviesGdriveFolderId: response.gdrive.moviesGdriveFolder.parentMoviesGdriveFolderId,
-                    })
-                } else {
-                    this.setState({
-                        moviesGdriveFolderId: null,
-                        moviesGdriveFolderName: null,
-                        parentMoviesGdriveFolderId: null,
-                    })
-                }
+            if (response === null) {
+                this.setState({
+                    snack: true,
+                    snackBarMessage: 'Please configure lazyker',
+                    settingsLoading: false,
 
-                if (response.gdrive.tvShowsGdriveFolder !== undefined) {
-                    this.setState({
-                        tvShowsGdriveFolderId: response.gdrive.tvShowsGdriveFolder.tvShowsGdriveFolderId,
-                        tvShowsGdriveFolderName: response.gdrive.tvShowsGdriveFolder.tvShowsGdriveFolderName,
-                        parentTvShowsGdriveFolderId: response.gdrive.tvShowsGdriveFolder.parentTvShowsGdriveFolderId,
-                    })
-                } else {
-                    this.setState({
-                        tvShowsGdriveFolderId: null,
-                        tvShowsGdriveFolderName: null,
-                        parentTvShowsGdriveFolderId: null,
-                    })
-                }
+                    firstQuality: null,
+                    secondQuality: null,
+                    thirdQuality: null,
+                    realdebrid: false,
+                    h265: false,
+                    moviesPath: '',
+                    tvShowsPath: '',
+                    host: '',
+                    port: '',
+                    nasUsername: '',
+                    nasPassword: '',
+                    protocol: 'http',
+                    storage: '',
+                    gdriveToken: null,
+                    moviesGdriveFolderId: null,
+                    moviesGdriveFolderName: null,
+                    parentMoviesGdriveFolderId: null,
+                    tvShowsGdriveFolderId: null,
+                    tvShowsGdriveFolderName: null,
+                    parentTvShowsGdriveFolderId: null
+                })
+            } else {
 
-                if (response.gdrive.token !== undefined) {
-                    this.setState({
-                        gdriveToken: response.gdrive.token
-                    })
+                if (response.gdrive !== undefined) {
+                    if (response.gdrive.moviesGdriveFolder !== undefined) {
+                        this.setState({
+                            moviesGdriveFolderId: response.gdrive.moviesGdriveFolder.moviesGdriveFolderId,
+                            moviesGdriveFolderName: response.gdrive.moviesGdriveFolder.moviesGdriveFolderName,
+                            parentMoviesGdriveFolderId: response.gdrive.moviesGdriveFolder.parentMoviesGdriveFolderId,
+                        })
+                    } else {
+                        this.setState({
+                            moviesGdriveFolderId: null,
+                            moviesGdriveFolderName: null,
+                            parentMoviesGdriveFolderId: null,
+                        })
+                    }
+
+                    if (response.gdrive.tvShowsGdriveFolder !== undefined) {
+                        this.setState({
+                            tvShowsGdriveFolderId: response.gdrive.tvShowsGdriveFolder.tvShowsGdriveFolderId,
+                            tvShowsGdriveFolderName: response.gdrive.tvShowsGdriveFolder.tvShowsGdriveFolderName,
+                            parentTvShowsGdriveFolderId: response.gdrive.tvShowsGdriveFolder.parentTvShowsGdriveFolderId,
+                        })
+                    } else {
+                        this.setState({
+                            tvShowsGdriveFolderId: null,
+                            tvShowsGdriveFolderName: null,
+                            parentTvShowsGdriveFolderId: null,
+                        })
+                    }
+
+                    if (response.gdrive.token !== undefined) {
+                        this.setState({
+                            gdriveToken: response.gdrive.token
+                        })
+                    } else {
+                        this.setState({
+                            gdriveToken: null
+                        })
+                    }
+
                 } else {
                     this.setState({
                         gdriveToken: null
                     })
                 }
 
-            } else {
+                if (response.qualities !== undefined) {
+                    this.setState({
+                        firstQuality: response.qualities.first,
+                        secondQuality: response.qualities.second,
+                        thirdQuality: response.qualities.third,
+                        h265: response.qualities.h265
+                    })
+                } else {
+                    this.setState({
+                        firstQuality: null,
+                        secondQuality: null,
+                        thirdQuality: null,
+                        h265: null
+                    })
+                }
+
+                if (response.nas !== undefined) {
+                    this.setState({
+                        moviesPath: response.nas.moviesPath,
+                        tvShowsPath: response.nas.tvShowsPath,
+                        protocol: response.nas.protocol,
+                        host: response.nas.host,
+                        port: response.nas.port,
+                        nasUsername: response.nas.account,
+                        nasPassword: response.nas.password
+                    })
+                } else {
+                    this.setState({
+                        moviesPath: null,
+                        tvShowsPath: null,
+                        protocol: null,
+                        host: null,
+                        port: null,
+                        nasUsername: null,
+                        nasPassword: null
+                    })
+                }
+
+                if (response.hasOwnProperty('storage')) {
+                    this.setState({
+                        storage: response.storage
+                    });
+                } else {
+                    this.setState({
+                        storage: null
+                    });
+                }
+
                 this.setState({
-                    gdriveToken: null
-                })
+                    realdebrid: response.hasOwnProperty('realdebrid'),
+                    settingsLoading: false,
+                });
+
             }
 
-            this.setState({
-                settingsLoading: false,
-                firstQuality: response.qualities.first,
-                secondQuality: response.qualities.second,
-                thirdQuality: response.qualities.third,
-                h265: response.qualities.h265,
-                moviesPath: response.nas.moviesPath,
-                tvShowsPath: response.nas.tvShowsPath,
-                protocol: response.nas.protocol,
-                host: response.nas.host,
-                port: response.nas.port,
-                nasUsername: response.nas.account,
-                nasPassword: response.nas.password,
-                realdebrid: response.hasOwnProperty('realdebrid'),
-                yggUsername: response.ygg.username,
-                yggPassword: response.ygg.password,
-                every: response.autoupdateTime,
-                storage: response.storage
-            })
         } catch(error) {
             this.setState({snack: true, snackBarMessage: 'Error loading settings', settingsLoading: false})
         }
@@ -263,10 +328,10 @@ class Settings extends Component {
                         account: this.state.nasUsername,
                         password: this.state.nasPassword
                     },
-                    ygg: {
-                        username: this.state.yggUsername,
-                        password: this.state.yggPassword
-                    },
+                    // ygg: {
+                    //     username: this.state.yggUsername,
+                    //     password: this.state.yggPassword
+                    // },
                     autoupdateTime: this.state.every,
                     storage: this.state.storage,
                     gdrive: {
@@ -332,6 +397,8 @@ class Settings extends Component {
                 })
             });
 
+            await this.setSettings();
+
             response = await response.json();
             this.loadSettings();
         } catch (error) {
@@ -381,7 +448,8 @@ class Settings extends Component {
 
     realdebridConnect = async () => {
         try {
-            let response = await fetch('https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=http%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foo', {
+
+            let response = await fetch('https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=http%3A%2F%2Flocalhost%3A3000/api/link_rd&response_type=code&state=foo', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -411,7 +479,7 @@ class Settings extends Component {
 
     render() {
 
-        const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=http%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foobar';
+        const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=http%3A%2F%2Flocalhost%3A3000/api/link_rd&response_type=code&state=foobar';
 
         return (
             <div style={{width: '100%'}}>
@@ -567,32 +635,6 @@ class Settings extends Component {
                                                 <Grid item xs={12} style={{padding: '6px'}}>
 
                                                     <div style={{display: 'flex'}}>
-                                                        <div style={{flex: '1'}}>
-                                                            Authorization
-                                                        </div>
-                                                        <div style={{flex: '1'}}>
-                                                            {
-                                                                this.state.gdriveToken !== null ?
-                                                                    <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
-                                                                    :
-                                                                    <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
-                                                            }
-                                                        </div>
-                                                        <div style={{flex: '1'}}>
-                                                            {
-                                                                this.state.gdriveToken !== null ?
-                                                                    <Button variant="outlined" onClick={this.googleDriveDisConnect}>
-                                                                        Unauthorize
-                                                                    </Button>
-                                                                    :
-                                                                    <Button variant="outlined" onClick={this.googleDriveConnect}>
-                                                                        Authorize
-                                                                    </Button>
-                                                            }
-                                                        </div>
-                                                    </div>
-
-                                                    <div style={{display: 'flex'}}>
                                                         <div style={{flex: '1', marginTop: '10px'}}>
                                                             Movies Folder
                                                         </div>
@@ -723,6 +765,32 @@ class Settings extends Component {
                                                                 </IconButton>
 
                                                             </GooglePicker>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style={{display: 'flex'}}>
+                                                        <div style={{flex: '1'}}>
+                                                            Authorization
+                                                        </div>
+                                                        <div style={{flex: '1'}}>
+                                                            {
+                                                                this.state.gdriveToken !== null ?
+                                                                    <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                                                    :
+                                                                    <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
+                                                            }
+                                                        </div>
+                                                        <div style={{flex: '1'}}>
+                                                            {
+                                                                this.state.gdriveToken !== null ?
+                                                                    <Button variant="outlined" onClick={this.googleDriveDisConnect}>
+                                                                        Unauthorize
+                                                                    </Button>
+                                                                    :
+                                                                    <Button variant="outlined" onClick={this.googleDriveConnect}>
+                                                                        Authorize
+                                                                    </Button>
+                                                            }
                                                         </div>
                                                     </div>
 

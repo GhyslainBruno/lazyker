@@ -27,6 +27,8 @@ import { database } from '../firebase/firebase';
 import firebase from 'firebase';
 import CheckCircle from "../../node_modules/@material-ui/icons/CheckCircle";
 import Folder from "../../node_modules/@material-ui/icons/FolderOpen";
+import Link from "../../node_modules/@material-ui/icons/Link";
+import LinkOff from "../../node_modules/@material-ui/icons/LinkOff";
 import CancelCircle from "../../node_modules/@material-ui/icons/CancelOutlined";
 import queryString from "qs";
 import OutlinedInput from "@material-ui/core/OutlinedInput/OutlinedInput";
@@ -636,7 +638,7 @@ class Settings extends Component {
 
                                                     <div style={{display: 'flex'}}>
                                                         <div style={{flex: '1', marginTop: '10px'}}>
-                                                            Movies Folder
+                                                            Movies
                                                         </div>
                                                         <div style={{flex: '1', marginTop: '10px'}}>
                                                             {
@@ -703,7 +705,7 @@ class Settings extends Component {
 
                                                     <div style={{display: 'flex'}}>
                                                         <div style={{flex: '1', marginTop: '10px'}}>
-                                                            Tv Shows Folder
+                                                            Shows
                                                         </div>
                                                         <div style={{flex: '1', marginTop: '10px'}}>
                                                             {
@@ -770,7 +772,7 @@ class Settings extends Component {
 
                                                     <div style={{display: 'flex'}}>
                                                         <div style={{flex: '1'}}>
-                                                            Authorization
+                                                            Link
                                                         </div>
                                                         <div style={{flex: '1'}}>
                                                             {
@@ -783,13 +785,13 @@ class Settings extends Component {
                                                         <div style={{flex: '1'}}>
                                                             {
                                                                 this.state.gdriveToken !== null ?
-                                                                    <Button variant="outlined" onClick={this.googleDriveDisConnect}>
-                                                                        Unauthorize
-                                                                    </Button>
+                                                                    <IconButton onClick={this.googleDriveDisConnect}>
+                                                                        <LinkOff/>
+                                                                    </IconButton>
                                                                     :
-                                                                    <Button variant="outlined" onClick={this.googleDriveConnect}>
-                                                                        Authorize
-                                                                    </Button>
+                                                                    <IconButton onClick={this.googleDriveConnect}>
+                                                                        <Link/>
+                                                                    </IconButton>
                                                             }
                                                         </div>
                                                     </div>

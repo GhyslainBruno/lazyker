@@ -181,33 +181,52 @@ class Downloads extends Component {
      * @returns {Promise<void>}
      */
      clearDownloads = async (event) => {
-        const downloadsToRemove = this.state.currentDownloads.tasks.filter(dl => dl.status === "finished").map(dl => dl.id).join(',');
 
-        if (downloadsToRemove.length > 0) {
-            this.setState({currentDownloadsLoading: true, currentDownloads: null});
+         try {
+             switch (this.state.storage) {
+                 case 'gdrive':
+                     const finishedDownloads = await usersRef.child(await auth.getUid()).child('/settings/downloads').orderByChild("status").equalTo('finished').once('value');
 
-            try {
-                let response = await fetch('/api/remove_download', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'token': await auth.getIdToken()
-                    },
-                    body: JSON.stringify({
-                        id: downloadsToRemove
-                    })
-                });
+                     finishedDownloads.forEach(async finishedDownload => {
+                         usersRef.child(await auth.getUid()).child('/settings/downloads').child(finishedDownload.val().id).remove();
+                     });
 
-                response = await response.json();
+                     console.log(finishedDownloads);
+                     break;
+                 case 'nas':
+                     const downloadsToRemove = this.state.currentDownloads.tasks.filter(dl => dl.status === "finished").map(dl => dl.id).join(',');
 
-                this.setState({snack: true, snackBarMessage: 'Removed'});
+                     if (downloadsToRemove.length > 0) {
+                         this.setState({currentDownloadsLoading: true, currentDownloads: null});
 
-            } catch(error) {
-                this.setState({snack: true, snackBarMessage: 'Error'});
-            }
-            await this.loadCurrentDownloads();
-        }
+                         try {
+                             let response = await fetch('/api/remove_download', {
+                                 method: 'POST',
+                                 headers: {
+                                     'Accept': 'application/json',
+                                     'Content-Type': 'application/json',
+                                     'token': await auth.getIdToken()
+                                 },
+                                 body: JSON.stringify({
+                                     id: downloadsToRemove
+                                 })
+                             });
+
+                             response = await response.json();
+
+                             this.setState({snack: true, snackBarMessage: 'Removed'});
+
+                         } catch(error) {
+                             this.setState({snack: true, snackBarMessage: 'Error'});
+                         }
+                         await this.loadCurrentDownloads();
+                     }
+                     break;
+             }
+         } catch(error) {
+
+         }
+
     };
 
     /**
@@ -494,15 +513,9 @@ class Downloads extends Component {
 
                     {this.state.currentDownloads !== null ? this.state.currentDownloads.length > 0 ?
 
-                        <div>
-                            {this.state.storage === 'nas' ?
-                                <ExpansionPanelActions>
-                                    <Button size="small"><Clear onClick={(event) => this.clearDownloads(event)}/></Button>
-                                </ExpansionPanelActions>
-                                :
-                                null
-                            }
-                        </div>
+                        <ExpansionPanelActions>
+                            <Button size="small"><Clear onClick={(event) => this.clearDownloads(event)}/></Button>
+                        </ExpansionPanelActions>
 
                         :
 

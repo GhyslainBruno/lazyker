@@ -9,8 +9,11 @@ const gdrive = require('../gdrive/gdrive');
 const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
 const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
 
+// Passing all google drive current downloads for every users to error when the app suddenly restarts
 try {
-    gdrive.setAllgdriveDownloadsInError();
+    if (process.env.NODE_ENV === 'production') {
+        gdrive.setAllgdriveDownloadsInError();
+    }
 } catch(error) {
     throw error;
 }

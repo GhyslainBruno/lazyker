@@ -155,7 +155,9 @@ const downloadMovieFile = async (link, user, title) => {
 
             let lastEvent = '';
 
-            usersRef.child(user.uid).child('/settings/downloads/' + downloadKey + '/event').on('value', async snapshot => {
+            const downloadEventReference = usersRef.child(user.uid).child('/settings/downloads/' + downloadKey + '/event');
+
+            downloadEventReference.on('value', async snapshot => {
                 if (snapshot.val() === 'pause') {
                     response.pause();
                     await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
@@ -203,6 +205,8 @@ const downloadMovieFile = async (link, user, title) => {
             });
 
             if (lastEvent !== 'destroy') {
+                // Detaching event listener (to avoid memory leak)
+                downloadEventReference.off();
                 await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
             }
 

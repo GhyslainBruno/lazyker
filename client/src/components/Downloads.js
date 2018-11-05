@@ -145,9 +145,15 @@ class Downloads extends Component {
         try {
             switch (this.state.storage) {
                 case 'gdrive':
-                    await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).update({
-                        event: 'destroy'
-                    });
+
+                    if (download.status === 'error') {
+                        await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).remove();
+                    } else {
+                        await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).update({
+                            event: 'destroy'
+                        });
+                    }
+
                     this.setState({snack: true, snackBarMessage: 'Removed'});
                     break;
                 case 'nas':

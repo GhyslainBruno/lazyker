@@ -244,7 +244,26 @@ const createMovieFolder = async (drive, parentFolderId, user, title) => {
 
 };
 
+/**
+ * Passes all Google Drive downloads in error - ! Use ONLY at first launch of the app, at boot !
+ */
+const setAllgdriveDownloadsInError = async () => {
+    const users = await usersRef.once('value');
+
+    users.forEach(async user => {
+        const downloads = await usersRef.child(user.key).child('/settings/downloads').once('value');
+
+        downloads.forEach(async download => {
+            await usersRef.child(user.key).child('/settings/downloads').child(download.key).update({
+                status: 'error'
+            })
+        });
+
+    })
+};
+
 module.exports.getGDriveAccessToken = storeGDriveAccessToken;
 module.exports.listFiles = listFiles;
 module.exports.getOAuth2Client = getOAuth2Client;
 module.exports.downloadMovieFile = downloadMovieFile;
+module.exports.setAllgdriveDownloadsInError = setAllgdriveDownloadsInError;

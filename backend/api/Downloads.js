@@ -4,9 +4,16 @@ const db = admin.database();
 const usersRef = db.ref("/users");
 const downloader = require('../synology/Download');
 const synoConnector = require('../synology/Connector');
+const gdrive = require('../gdrive/gdrive');
 
 const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
 const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
+
+try {
+    gdrive.setAllgdriveDownloadsInError();
+} catch(error) {
+    throw error;
+}
 
 module.exports = (app) => {
 

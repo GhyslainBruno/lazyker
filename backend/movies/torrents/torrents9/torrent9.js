@@ -1,7 +1,7 @@
 const cheerio = require('cheerio');
 const rp  = require('request-promise');
 const logger = require('../../../logs/logger');
-const Torrent9RootUrl = 'https://ww2.torrent9.blue';
+const Torrent9RootUrl = 'https://ww1.torrent9.ph';
 const realdebrid = require('../../../realdebrid/debrid_links');
 
 /**

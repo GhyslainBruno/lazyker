@@ -235,7 +235,9 @@ async function mainFunction() {
     } catch (error) {
 
         // TODO: handle all errors possible
-        logger.info(error.message)
+        // TODO: get a user to user logger here
+        // logger.info(error.message)
+        console.error(error)
     }
 }
 
@@ -244,11 +246,16 @@ async function mainFunction() {
  */
 mainFunction()
     .then(function(data) {
-        logger.info('Auto Update done - terminated normally');
+        // TODO: get a user to user logger here
+        // logger.info('Auto Update done - terminated normally');
+        console.log('Auto Update done - terminated normally')
     })
     .catch(error => {
-        logger.info('Auto Update done - terminated with ERROR(S):');
-        logger.info(error);
+        // TODO: get a user to user logger here
+        // logger.info('Auto Update done - terminated with ERROR(S):');
+        console.log('Auto Update done - terminated with ERROR(S):');
+        // logger.info(error);
+        console.error(error);
         if (typeof process.send === "function") {
             process.send(error);
         }

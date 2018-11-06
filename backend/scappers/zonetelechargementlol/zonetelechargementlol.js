@@ -112,7 +112,8 @@ const getUrls = async function getUrls(title) {
         return {title: title, provider: providerName, results: resultsToReturn};
 
     } catch(error) {
-        logger.info(error);
+        // TODO: get a user to user logger here
+        // logger.info(error);
         browser.close();
         throw error;
     }

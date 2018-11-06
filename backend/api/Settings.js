@@ -50,7 +50,7 @@ module.exports = (app) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const code = req.query.code;
-            await realdebrid.connectUser(code, user.uid);
+            await realdebrid.connectUser(code, user);
             res.send({message: 'Connected'});
         } catch(error) {
             res.status(500).send({message: error});

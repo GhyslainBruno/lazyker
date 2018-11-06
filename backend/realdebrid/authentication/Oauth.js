@@ -13,7 +13,10 @@ const usersRef = db.ref("/users");
  * @param user
  * @returns {Promise<void>}
  */
-connectUser = async (code, uid) => {
+connectUser = async (code, user) => {
+
+    const uid = user.uid;
+
     const options = {
         method: 'POST',
         uri: authUrlRealDebrid,
@@ -32,7 +35,7 @@ connectUser = async (code, uid) => {
         await usersRef.child(uid).child('/settings/realdebrid/token').set(token);
         return token
     } catch(error) {
-        logger.info('Realdebrid connection ERROR - ' + error);
+        logger.info('Realdebrid connection ERROR - ' + error, user);
     }
 };
 

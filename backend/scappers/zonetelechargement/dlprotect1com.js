@@ -16,7 +16,7 @@ const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links) {
     if (process.env.NODE_ENV === 'production') {
         launchBrowserProperties = {headless: false, timeout: 60000, executablePath: '/usr/bin/chromium-browser'}
     } else {
-        launchBrowserProperties = {headless: false, timeout: 60000}
+        launchBrowserProperties = {headless: true, timeout: 60000}
     }
 
     const browser = await puppeteer.launch(launchBrowserProperties);

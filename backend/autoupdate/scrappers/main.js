@@ -26,7 +26,8 @@ const getLink = async (show, user, qualities) => {
         return getLighterLink(links);
 
     } catch(error) {
-        logger.info(error);
+        // TODO: get a user to user logger here
+        // logger.info(error);
         throw error;
     }
 };

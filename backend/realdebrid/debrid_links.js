@@ -25,8 +25,8 @@ const rdAuth = require('./authentication/Oauth');
  * @param user
  * @returns {Promise<void>}
  */
-const connectUser = async (code, uid) => {
-    return await rdAuth.connectUser(code, uid);
+const connectUser = async (code, user) => {
+    return await rdAuth.connectUser(code, user);
 };
 
 /**
@@ -38,7 +38,7 @@ const connectUser = async (code, uid) => {
 const getUnrestrictedLinks = async function(links, user) {
     try {
 
-        const token = await getRealdebridAuthToken(user.uid);
+        const token = await getRealdebridAuthToken(user);
 
         const regexes = await getRegexes(token);
 
@@ -75,7 +75,7 @@ const getBetterLink = async function(links, user) {
 
     try {
 
-        const token = await getRealdebridAuthToken(user.uid);
+        const token = await getRealdebridAuthToken(user);
 
         const regexes = await getRegexes(token);
 
@@ -95,18 +95,19 @@ const getBetterLink = async function(links, user) {
         }
 
     } catch (error) {
-        logger.info(error)
+        logger.info(error, user)
     }
 };
 
 /**
  * Returns a RealDebrid authentication token to use in (almost) every RealDebrid requests
- * @param uid (from firebase --> userId)
+ * @param user
  * @returns {Promise<any>}
  */
-async function getRealdebridAuthToken(uid) {
+async function getRealdebridAuthToken(user) {
 
     try {
+        const uid = user.uid;
         let token = await usersRef.child(uid).child('/settings/realdebrid/token').once('value');
         token = token.val();
 
@@ -144,7 +145,7 @@ async function getRealdebridAuthToken(uid) {
                     await usersRef.child(uid).child('/settings/realdebrid/token').set(newToken);
                     return newToken
                 } catch(error) {
-                    logger.info('Realdebrid Auth ERROR - ' + erorr)
+                    logger.info('Realdebrid Auth ERROR - ' + erorr, user);
                 }
             }
         }
@@ -177,7 +178,7 @@ async function getRealdebridAuthToken(uid) {
             //     logger.info(error)
             // }
 
-            logger.info('ERROR : please connect to "Realdebrid" debrider first --> Go to Settings');
+            logger.info('ERROR : please connect to "Realdebrid" debrider first --> Go to Settings', user);
             throw new Error('Realdebrid connection needed');
         }
 
@@ -470,7 +471,7 @@ async function unrestricLink(link, token) {
  */
 async function unrestricLinkNoDB(link, user) {
 
-    const token = await getRealdebridAuthToken(user.uid);
+    const token = await getRealdebridAuthToken(user);
 
     const options = {
         method: 'POST',
@@ -546,7 +547,7 @@ const addMagnetLinkToRealdebrid = async (magnetLink, user) => {
 
     try {
 
-        const token = await getRealdebridAuthToken(user.uid);
+        const token = await getRealdebridAuthToken(user);
 
         const options = {
             method: 'POST',
@@ -565,7 +566,8 @@ const addMagnetLinkToRealdebrid = async (magnetLink, user) => {
         return await rp(options);
 
     } catch(error) {
-        logger.info(error);
+        // TODO: get a user to user logger here
+        // logger.info(error);
         throw error;
     }
 };
@@ -579,7 +581,7 @@ const addMagnetLinkToRealdebrid = async (magnetLink, user) => {
 const selectAllTorrentFiles = async (torrentId, user) => {
     try {
 
-        const token = await getRealdebridAuthToken(user.uid);
+        const token = await getRealdebridAuthToken(user);
 
         const options = {
             method: 'POST',
@@ -608,7 +610,7 @@ const selectAllTorrentFiles = async (torrentId, user) => {
 const getTorrents = async (user) => {
     try {
 
-        const token = await getRealdebridAuthToken(user.uid);
+        const token = await getRealdebridAuthToken(user);
 
         const options = {
             method: 'GET',
@@ -624,7 +626,8 @@ const getTorrents = async (user) => {
         // TODO: remove some useless "key: value" pairs of torrents object before returning
         return torrents;
     } catch(error) {
-        logger.info(error);
+        // TODO: get a user to user logger here
+        // logger.info(error);
         throw error;
     }
 };
@@ -636,7 +639,7 @@ const getTorrents = async (user) => {
 const deleteTorrent = async (torrentId, user) => {
     try {
 
-        const token = await getRealdebridAuthToken(user.uid);
+        const token = await getRealdebridAuthToken(user);
 
         const options = {
             method: 'DELETE',
@@ -651,7 +654,8 @@ const deleteTorrent = async (torrentId, user) => {
 
         return null;
     } catch(error) {
-        logger.info(error);
+        // TODO: get a user to user logger here
+        // logger.info(error);
         throw error;
     }
 };

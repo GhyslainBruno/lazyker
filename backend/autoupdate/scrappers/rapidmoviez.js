@@ -27,7 +27,9 @@ const getLink = async function getLink(show, user, qualities) {
 
 
     } catch(error) {
-        logger.info(error)
+        // TODO: get a user to user logger here
+        // logger.info(error)
+        throw error
     }
 };
 

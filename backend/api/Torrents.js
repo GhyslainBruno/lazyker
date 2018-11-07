@@ -59,7 +59,7 @@ module.exports = (app) => {
             });
         } catch(error) {
             res.status(500).send({
-                message: error
+                message: JSON.parse(JSON.stringify(error))
             })
         }
     });

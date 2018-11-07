@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const logger = require('../../logs/logger');
 const cheerio = require('cheerio');
 const rp = require('request-promise');
 const pmap = require('p-map');
@@ -7,14 +8,15 @@ const cloudscraper = require('../../utils/cloudscrapper/Cloudscrapper');
 /**
  * get an host object an returns unprotected links for the host given
  * @param links
+ * @param user
  * @returns {Promise<Array>}
  */
-const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links) {
+const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links, user) {
 
     let launchBrowserProperties = {};
 
     if (process.env.NODE_ENV === 'production') {
-        launchBrowserProperties = {headless: false, timeout: 60000, executablePath: '/usr/bin/chromium-browser'}
+        launchBrowserProperties = {headless: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser'}
     } else {
         launchBrowserProperties = {headless: true, timeout: 60000}
     }
@@ -26,7 +28,7 @@ const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links) {
         if (links.length > 1) {
 
             const linksToReturn = await pmap(links, async link => {
-                return await unprotectLinkWithPuppeteer(page, link);
+                return await unprotectLinkWithPuppeteer(page, link, user);
             }, {concurrency: 1});
 
 
@@ -36,12 +38,12 @@ const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links) {
         } else {
 
             const linkToReturn = [];
-            linkToReturn.push(await unprotectLinkWithPuppeteer(page, links[0]));
+            linkToReturn.push(await unprotectLinkWithPuppeteer(page, links[0]), user);
             browser.close();
             return linkToReturn
         }
     } catch (error) {
-        console.log(error)
+        logger.info(error, user)
     }
 };
 
@@ -68,14 +70,14 @@ const getUnprotectedLinks = async function unprotectLinks(links) {
 };
 
 
-
 /**
  * Unprotect a link dlprotect --> host link
  * @param page
  * @param link
+ * @param user
  * @returns {Promise<*>}
  */
-const unprotectLinkWithPuppeteer = async (page, link) => {
+const unprotectLinkWithPuppeteer = async (page, link, user) => {
     try {
 
         await page.goto(link, {timeout: 60000});
@@ -87,6 +89,7 @@ const unprotectLinkWithPuppeteer = async (page, link) => {
         return $('.lienet > a')[0].attribs.href;
 
     } catch(error) {
+        logger.info(error, user);
         return error
     }
 };
@@ -107,6 +110,7 @@ const unprotectLink = async (link) => {
 
         return $('.lienet > a')[0].attribs.href;
     } catch (error) {
+        logger.info(error, user);
         return error
     }
 };

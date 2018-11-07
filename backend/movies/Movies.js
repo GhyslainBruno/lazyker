@@ -185,7 +185,7 @@ const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
         for (let host in premiumHostsOrdered) {
             try {
 
-                linkToDownload = await realdebrid.getUnrestrictedLinks(await unprotectLinks(premiumHostsOrdered[host].links, provider), user);
+                linkToDownload = await realdebrid.getUnrestrictedLinks(await unprotectLinks(premiumHostsOrdered[host].links, provider, user), user);
 
                 if (linkToDownload !== '' && linkToDownload !== undefined) {
                     break;
@@ -216,13 +216,13 @@ const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
 
 };
 
-const unprotectLinks = async (links, provider) => {
+const unprotectLinks = async (links, provider, user) => {
     switch (provider) {
         case 'zonetelechargementlol':
             return await dlprotect.getUnprotectedLinks(links);
             break;
         case 'zonetelechargement':
-            return await dlprotect.getUnprotectedLinksWithPuppeteer(links);
+            return await dlprotect.getUnprotectedLinksWithPuppeteer(links, user);
             break;
         case 'extremedownload':
             return await edprotect.getUnprotectedLinks(links);

@@ -18,7 +18,7 @@ const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links, us
     if (process.env.NODE_ENV === 'production') {
         launchBrowserProperties = {headless: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser'}
     } else {
-        launchBrowserProperties = {headless: true, timeout: 60000}
+        launchBrowserProperties = {headless: false, timeout: 60000}
     }
 
     const browser = await puppeteer.launch(launchBrowserProperties);
@@ -37,8 +37,11 @@ const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links, us
 
         } else {
 
-            const linkToReturn = [];
+            let linkToReturn = [];
             linkToReturn.push(await unprotectLinkWithPuppeteer(page, links[0]), user);
+
+            // TODO: understand why an "undefined" link is pushed inside the array sometimes...
+            linkToReturn = linkToReturn.filter(link => link !== undefined);
             browser.close();
             return linkToReturn
         }

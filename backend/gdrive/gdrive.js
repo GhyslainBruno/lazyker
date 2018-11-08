@@ -36,7 +36,11 @@ async function storeGDriveAccessToken(code, user) {
         await usersRef.child(user.uid).child('/settings/gdrive/token').set(response.tokens);
 
     } catch (error) {
-        logger.info("ERROR - Getting Google Drive access", user);
+        if (error.message) {
+          logger.info("ERROR - Getting Google Drive access - " + error.message, user);
+        } else {
+          logger.info("ERROR - Getting Google Drive access", user);
+        }
     }
 
 }

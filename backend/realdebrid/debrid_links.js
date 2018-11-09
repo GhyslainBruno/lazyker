@@ -455,7 +455,8 @@ async function unrestricLink(link, token) {
             Authorization: 'Bearer ' + token.access_token
         },
         formData: {
-            link: link
+            link: link,
+            remote: 1
         },
         json: true
     };
@@ -480,7 +481,8 @@ async function unrestricLinkNoDB(link, user) {
             Authorization: 'Bearer ' + token.access_token
         },
         formData: {
-            link: link
+            link: link,
+            remote: 1
         },
         json: true
     };

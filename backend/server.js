@@ -77,7 +77,7 @@ https.createServer({
     cert: fs.readFileSync(path.join(__dirname, 'fullchain.pem'))
 }, app)
     .listen(80, function () {
-        console.log('Example app listening on port 80! Go to https://localhost/')
+        console.log('Listening on port 80 ! Go to https://localhost:80/')
     });
 
 

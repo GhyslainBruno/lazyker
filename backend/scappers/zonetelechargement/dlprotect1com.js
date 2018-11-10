@@ -38,10 +38,10 @@ const getUnprotectedLinksWithPuppeteer = async function unprotectLinks(links, us
         } else {
 
             let linkToReturn = [];
-            linkToReturn.push(await unprotectLinkWithPuppeteer(page, links[0]), user);
+            linkToReturn.push(await unprotectLinkWithPuppeteer(page, links[0], user));
 
             // TODO: understand why an "undefined" link is pushed inside the array sometimes...
-            linkToReturn = linkToReturn.filter(link => link !== undefined);
+            // linkToReturn = linkToReturn.filter(link => link !== undefined);
             browser.close();
             return linkToReturn
         }

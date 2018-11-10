@@ -5,6 +5,7 @@
 * Build the image : ```docker build -t ghyslainbruno/lazyker .```
 * Push the image on DockerHub : ```docker push ghyslainbruno/lazyker```
 * Run the Docker image as a container : ```docker run -p 8081:8081 -d ghyslainbruno/lazyker```
+* Remove the container : ```docker rm $(docker stop $(docker ps | grep lazyker | awk '{print $1}'))```
 * Deploy the application to [now](https://zeit.co/) service: `now`
 * Deploy with [heroku](https://dashboard.heroku.com/apps/lazyker): 
   * `heroku container:push web -a lazyker`

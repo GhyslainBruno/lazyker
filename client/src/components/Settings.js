@@ -89,7 +89,7 @@ class Settings extends Component {
             auth2 = gapi.auth2.init({
                 discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
                 clientId: '348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com',
-                scope: 'https://www.googleapis.com/auth/drive.readonly'
+                scope: 'https://www.googleapis.com/auth/drive'
             });
         });
 

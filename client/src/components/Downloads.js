@@ -148,6 +148,8 @@ class Downloads extends Component {
 
                     if (download.status === 'error') {
                         await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).remove();
+                    } else if (download.status === 'finished') {
+                        await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).remove();
                     } else {
                         await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).update({
                             event: 'destroy'

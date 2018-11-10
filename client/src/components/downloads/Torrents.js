@@ -144,7 +144,7 @@ class Torrents extends React.Component {
             });
             response = await response.json();
             if (response.message !== 'ok') {
-                this.props.displaySnackMessage('Error downloading this Realdebrid torrent');
+                this.props.displaySnackMessage(response.message);
                 this.setState({torrentsLoading: false});
                 this.loadTorrents();
             } else {
@@ -154,7 +154,7 @@ class Torrents extends React.Component {
 
         } catch(error) {
             this.setState({torrentsLoading: false});
-            this.props.displaySnackMessage('Error downloading this Realdebrid torrent');
+            this.props.displaySnackMessage(error.message);
             this.loadTorrents();
         }
     };

@@ -58,9 +58,16 @@ module.exports = (app) => {
                 message: 'ok'
             });
         } catch(error) {
-            res.status(500).send({
-                message: JSON.parse(JSON.stringify(error))
-            })
+
+            if (error.message && error.code) {
+                res.status(error.code).send({
+                    message: error.message
+                });
+            } else {
+                res.send({
+                    message: 'Unknown error'
+                })
+            }
         }
     });
 

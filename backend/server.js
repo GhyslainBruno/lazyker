@@ -1,5 +1,8 @@
 const admin = require('firebase-admin');
 const serviceAccount = require("./lazyker-568c4-firebase-adminsdk-b7xs7-03f3744551");
+const https = require('https');
+const fs = require('fs');
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://lazyker-568c4.firebaseio.com"
@@ -65,8 +68,16 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-const server = app.listen(process.env.PORT || 80, () => {
-    console.log('Server is up...')
-});
+// const server = app.listen(process.env.PORT || 8081, () => {
+//     console.log('Server is up...')
+// });
+
+https.createServer({
+    key: fs.readFileSync(path.join(__dirname, 'privkey.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'fullchain.pem'))
+}, app)
+    .listen(8081, function () {
+        console.log('Example app listening on port 8081! Go to https://localhost:8081/')
+    });
 
 

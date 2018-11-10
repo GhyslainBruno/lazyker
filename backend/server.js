@@ -76,8 +76,8 @@ https.createServer({
     key: fs.readFileSync(path.join(__dirname, 'privkey.pem')),
     cert: fs.readFileSync(path.join(__dirname, 'fullchain.pem'))
 }, app)
-    .listen(8081, function () {
-        console.log('Example app listening on port 8081! Go to https://localhost:8081/')
+    .listen(80, function () {
+        console.log('Example app listening on port 80! Go to https://localhost/')
     });
 
 

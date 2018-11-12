@@ -402,6 +402,7 @@ class Shows extends Component {
                               id="show_title_to_search"
                               value={this.state.showTitleToSearch}
                               placeholder="TV Show title"
+                              type="search"
                               onChange={evt => this.updateShowTitleToSearch(evt)}
                               disableUnderline={true}
                               style={{width: '80%'}}

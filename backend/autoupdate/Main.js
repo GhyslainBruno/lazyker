@@ -29,36 +29,85 @@ const startUpdate = async user => {
 
         /**
          * 1 - Get Tv Shows path from Firebase database
+         * Returns : string
          */
         const tvShowsPath = await database.getTvShowsPath(user);
 
         /**
          * 2 - Get storage instance - only Synology for now
+         * Returs : Storage instance (TODO check structure of object)
          */
         const storageInstance = await storage.getConnection(user);
 
         /**
          * 3 - Get all the tv shows from storage (nas, for now, but unlimited drives should come "soon") - First getting tv shows path
+         * Returns :
+         * {
+         *     total: int,
+         *     offset: int, (not mandatory)
+         *     files: [
+         *         {
+         *             isdir: bool, TODO check if mandatory
+         *             name: string,
+         *             path: string
+         *         }
+         *     ]
+         * }
          */
         const showsFromFiles = await storage.getFilesList(tvShowsPath, storageInstance);
 
         /**
          * 4 - Get all the "autoUpdate" tv shows from Firebase database
+         * Returns : (coming from firebase, so using objects and not arrays)
+         * {
+         *      (tmdb ID)
+         *      id: {
+         *         autoUpdate: bool,
+         *         episode: bool,
+         *         id: int,
+         *         lang: string,
+         *         posterPath: string,
+         *         title: string
+         *     }
+         * }
          */
         const showsToUpdate = await database.getTvShowsToUpdateFromDatabase(user);
 
         /**
          *  5 - Filter the files list (fro storage) with shows from DB
+         *  Returns :
+         *     [
+         *         {
+         *             isdir: bool, TODO check if mandatory
+         *             name: string,
+         *             path: string
+         *         }
+         *     ]
          */
         const showsToUpdateFromFiles = await storage.getTvShowsToUpdateFromFiles(showsFromFiles, showsToUpdate, tvShowsPath);
 
         /**
          * 6 - For Each Tv Show: find last season/episode numbers
+         * Returns :
+         * Array [{
+         *     isdir: bool (from nas, TODO check if mandatory)
+         *     lastSeason : int
+         *     lastEpisode : int
+         *     name: string
+         *     path: string
+         * }]
          */
         let lastEpisodes = await storage.getLastEpisodes(showsToUpdateFromFiles, storageInstance);
 
         /**
          * 7 - get the qualities wanted by the user for Tv Shows
+         * Returns :
+         * {
+         *     first: string,
+         *     second: string,
+         *     third: string,
+         *     h265: bool
+         * }
          */
         const qualitiesWanted = await database.getQualitiesWanted(user);
 

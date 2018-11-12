@@ -92,6 +92,10 @@ async function getLastEpisodes(shows, storageInstance) {
  */
 const getTvShowsToUpdateFromFiles = async (showsFromFiles, showsFromDb, tvShowsPath) => {
 
+    if (showsFromDb === null) throw Error("No Tv Shows specified in Database");
+    if (showsFromFiles === null) throw Error("No Tv Shows to update in storage");
+    if (tvShowsPath === null) throw Error("No Tv Shows path specified in settings");
+
     try {
         const showsFromFilesToUpdate = [];
         Object.keys(showsFromDb).forEach(showFromDbId => {

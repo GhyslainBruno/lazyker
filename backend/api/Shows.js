@@ -3,6 +3,7 @@ const rp = require('request-promise');
 const db = admin.database();
 const usersRef = db.ref("/users");
 const pMap = require('p-map');
+const logger = require('../logs/logger');
 
 const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
 const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
@@ -161,11 +162,35 @@ module.exports = (app) => {
         try {
 
             res.send({message: 'Auto-update started'});
-            const snapshot = await usersRef.child('/').once('value');
+
+            // Only keeping 'nas' users for now to autoupdate tvShows
+            const snapshot = await usersRef.child('/').orderByChild('/settings/storage').equalTo('nas').once('value');
             const users = snapshot.val();
 
-            await pMap(Object.keys(users), async uid => {
-                autoupdate.startUpdate(await admin.auth().getUser(uid));
+            // Qtarting auto update with users who only use NAS storage & have entered values into the mandatory variables
+            const usersToUpdateTvShows = Object.keys(users).filter(user => {
+
+                if (users[user].settings.qualities.first !== undefined &&
+                    users[user].settings.nas.account !== undefined &&
+                    users[user].settings.nas.password !== undefined &&
+                    users[user].settings.nas.port !== undefined &&
+                    users[user].settings.nas.protocol !== undefined &&
+                    users[user].settings.nas.host !== undefined &&
+                    users[user].settings.nas.tvShowsPath !== undefined) {
+
+                    return users[user]
+
+                }
+            });
+
+            await pMap(usersToUpdateTvShows, async uid => {
+
+                try {
+                    await autoupdate.startUpdate(await admin.auth().getUser(uid));
+                } catch(error) {
+                    await logger.info(error.message, await admin.auth().getUser(uid));
+                }
+
             }, {concurency: 1});
 
         } catch(error) {

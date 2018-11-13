@@ -42,7 +42,6 @@ const getRealUrl = async () => {
 
     try {
         const response = await rp(options);
-        console.log(response)
     } catch(error) {
         if (error.response === undefined) {
             throw error

@@ -83,7 +83,6 @@ async function listFiles(user) {
         //     }
         // });
 
-        console.log('foo');
     } catch (error) {
         console.log(error);
     }

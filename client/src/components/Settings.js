@@ -437,7 +437,6 @@ class Settings extends Component {
             });
 
             response = await response.json();
-            console.log('foo');
         } catch (error) {
             this.setState({snack: true, snackBarMessage: 'Error listing files from Google Drive'});
         }

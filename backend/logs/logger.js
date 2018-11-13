@@ -33,7 +33,7 @@ const info = async (textToLog, user) => {
         .then(() => {
             return null
         })
-        .catch(err => {
+        .catch(error => {
             throw error
         });
 };

@@ -4,7 +4,7 @@ const dlprotect = require('./dlprotect1com');
 const logger = require('../../logs/logger');
 
 
-const ZTRootUrl = 'https://www.zone-telechargement1.org/';
+const ZTRootUrl = 'https://www.annuaire-telechargement.com/';
 
 const providerName = 'zonetelechargement';
 

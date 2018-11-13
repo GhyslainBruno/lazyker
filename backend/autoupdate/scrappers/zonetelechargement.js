@@ -12,7 +12,7 @@ const usersRef = db.ref("/users");
 
 // let cf = new CloudflareBypasser();
 
-const ZTRootUrl = 'https://www.zone-telechargement1.org/';
+const ZTRootUrl = 'https://www.annuaire-telechargement.com/';
 
 /**
  * Returns the real URL used by the website - anytime
@@ -65,7 +65,7 @@ const getLink = async (show, user, qualities) => {
 
         const lang = await getLangWantedForThisTvShow(show, user);
 
-        const hostLinksWithQuality = await getHostsWithQualities(show, qualities, showUrl, lang);
+        const hostLinksWithQuality = await getHostsWithQualities(show, qualities, showUrl, lang, user);
 
         return await realdebrid.getBetterLink(hostLinksWithQuality, user);
 
@@ -142,9 +142,10 @@ const getTvShowPage = async (title) => {
  * @param qualities
  * @param showUrl
  * @param langWanted
- * @returns {Promise<void>}
+ * @param user
+ * @returns {Promise<Array>}
  */
-const getHostsWithQualities = async (show, qualities, showUrl, langWanted) => {
+const getHostsWithQualities = async (show, qualities, showUrl, langWanted, user) => {
     try {
         const options = {
             method: 'GET',
@@ -252,7 +253,7 @@ const getHostsWithQualities = async (show, qualities, showUrl, langWanted) => {
                 const dlProtectLinksForThisEpisodeClean = dlProtectLinksForThisEpisode.map(item => item.children[0].attribs.href);
 
                 if (dlProtectLinksForThisEpisodeClean.length > 0) {
-                    const unProtectedLinks = await dlProtect.getUnprotectedLinks(dlProtectLinksForThisEpisodeClean);
+                    const unProtectedLinks = await dlProtect.getUnprotectedLinksWithPuppeteer(dlProtectLinksForThisEpisodeClean, user);
                     hostLinksToReturn[quality] = hostLinksToReturn[quality].concat(unProtectedLinks) ;
                 }
 

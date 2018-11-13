@@ -73,9 +73,9 @@ module.exports = (app) => {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const currentDownloads = await downloader.getCurrentDownloads(await synoConnector.getConnection(user));
 
-            currentDownloads.tasks.map(download => {
+            currentDownloads.tasks.map((download, index) => {
                 download.size_downloaded = download.additional.transfer.size_downloaded;
-                download.destination = currentDownloads.tasks[0].additional.detail.destination;
+                download.destination = currentDownloads.tasks[index].additional.detail.destination;
             });
 
             res.send({

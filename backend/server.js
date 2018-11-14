@@ -68,16 +68,18 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-const server = app.listen(process.env.PORT || 80, () => {
-    console.log('Server is up...')
-});
+const portUsed = 443;
 
-// https.createServer({
-//     key: fs.readFileSync(path.join(__dirname, 'privkey.pem')),
-//     cert: fs.readFileSync(path.join(__dirname, 'fullchain.pem'))
-// }, app)
-//     .listen(8081, function () {
-//         console.log('Listening on port 80 ! Go to https://localhost:8081/')
-//     });
+// const server = app.listen(process.env.PORT || 8081, () => {
+//     console.log('Server is up...')
+// });
+
+https.createServer({
+    key: fs.readFileSync(path.join(__dirname, 'privkey.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'fullchain.pem'))
+}, app)
+    .listen(portUsed, function () {
+        console.log('Listening on port ' + portUsed + ' ! Go to https://localhost:' + portUsed)
+    });
 
 

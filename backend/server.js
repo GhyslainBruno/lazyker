@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const serviceAccount = require("./lazyker-568c4-firebase-adminsdk-b7xs7-03f3744551");
 const https = require('https');
+// const http = require('http');
 const fs = require('fs');
 
 admin.initializeApp({
@@ -70,9 +71,18 @@ if (process.env.NODE_ENV === 'production') {
 
 const portUsed = 443;
 
-// const server = app.listen(process.env.PORT || 8081, () => {
-//     console.log('Server is up...')
-// });
+// Redirect from http port 80 to https
+const httpApp = express();
+
+httpApp.get('*', (req, res) => {
+    res.redirect('https://' + req.headers.host + req.url);
+
+    // Or, if you don't want to automatically detect the domain name from the request header, you can hard code it:
+    // res.redirect('https://example.com' + req.url);
+});
+httpApp.listen(80, () => {
+    console.log('Http server (for https redirections) is up...')
+});
 
 https.createServer({
     key: fs.readFileSync(path.join(__dirname, 'privkey.pem')),

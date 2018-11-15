@@ -4,7 +4,7 @@
 
 * Build the image : ```docker build -t ghyslainbruno/lazyker .```
 * Push the image on DockerHub : ```docker push ghyslainbruno/lazyker```
-* Run the Docker image as a container : ```docker run -p 80:80 -d ghyslainbruno/lazyker```
+* Run the Docker image as a container : ```docker run -p 80:80 -p 443:443 -d ghyslainbruno/lazyker```
 * Remove the container : ```docker rm $(docker stop $(docker ps | grep lazyker | awk '{print $1}'))```
 * Remove all docker images : ``docker rmi $(docker images -a | awk '{print $3}')``
 * Deploy the application to [now](https://zeit.co/) service: `now`

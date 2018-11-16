@@ -12,6 +12,7 @@ const usersRef = db.ref("/users");
 /**
  * Gets and stores a Google Drive access token from single time code in database
  * @param code
+ * @param user
  * @returns {Promise<void>}
  */
 async function storeGDriveAccessToken(code, user) {

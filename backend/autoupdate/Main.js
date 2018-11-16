@@ -113,6 +113,30 @@ const startUpdate = async user => {
 
         /**
          * 8 - For Each Tv Show: call scraper(s) with the last season/episode numbers | Add, for each tvShow, a property "unrestrictedLink"
+         * Returns :
+         * [
+         *      {
+         *          isdir: bool,
+         *          lastEpisode: string, (2 numbers, ex: 08)
+         *          lastSeason: string, (same as lastEpisode)
+         *          name: string,
+         *          path: string,
+         *          (realdebrid unrestrict link)
+         *          unrestrictLink: {
+         *              chunks: int,
+         *              crc: int,
+         *              download: string, (real downloadable link)
+         *              filename: string,
+         *              filesize: int, (bytes)
+         *              host: string,
+         *              host_icon: string,
+         *              id: string,
+         *              link: string, (host link)
+         *              mimType: string,
+         *              streamable: int (0 or 1 --> same as bool)
+         *          }
+         *      }
+         * ]
          */
         lastEpisodes = await scrapers.findNewEpisodes(lastEpisodes, user, qualitiesWanted);
 

@@ -5,4 +5,5 @@ export const HOME = '/home';
 export const MOVIES = '/movies';
 export const ACCOUNT = '/account';
 export const PASSWORD_FORGET = '/pw-forget';
+export const PRIVACY = '/privacy_policy';
 

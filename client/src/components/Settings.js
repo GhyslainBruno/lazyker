@@ -36,6 +36,8 @@ import InputAdornment from "@material-ui/core/InputAdornment/InputAdornment";
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import * as routes from '../constants/routes';
+import { Link as RouterLink } from 'react-router-dom';
 
 import GooglePicker from 'react-google-picker';
 
@@ -1242,6 +1244,10 @@ class Settings extends Component {
                 </ExpansionPanel>
 
                 <SignOutButton />
+
+                <div style={{textAlign: 'center', marginTop: '20px'}}>
+                    <RouterLink style={{color: 'red'}} to={routes.PRIVACY}>Privacy policies</RouterLink>
+                </div>
 
             </div>
         )

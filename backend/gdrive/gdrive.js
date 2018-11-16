@@ -47,7 +47,7 @@ async function storeGDriveAccessToken(code, user) {
 }
 
 /**
- * Lists gdrive files
+ * Lists gdrive files - unused for now
  * @param user
  * @returns {Promise<void>}
  */

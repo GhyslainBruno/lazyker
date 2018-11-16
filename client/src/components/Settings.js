@@ -678,6 +678,8 @@ class Settings extends Component {
 
                                                                               const picker = new window.google.picker.PickerBuilder()
                                                                                   .addView(docsView)
+                                                                                  .setSize(1051,650)
+                                                                                  .setTitle('Select movie folder')
                                                                                   .setOAuthToken(oauthToken)
                                                                                   .setDeveloperKey('AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0')
                                                                                   .setCallback((data)=>{
@@ -745,6 +747,8 @@ class Settings extends Component {
 
                                                                               const picker = new window.google.picker.PickerBuilder()
                                                                                   .addView(docsView)
+                                                                                  .setSize(1051,650)
+                                                                                  .setTitle('Select Tv Shows folder')
                                                                                   .setOAuthToken(oauthToken)
                                                                                   .setDeveloperKey('AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0')
                                                                                   .setCallback((data)=>{

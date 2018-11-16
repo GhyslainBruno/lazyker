@@ -485,7 +485,7 @@ class Settings extends Component {
         const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Fdedibox.ghyslain.xyz/api/link_rd&response_type=code&state=foobar';
 
         return (
-            <div style={{width: '100%'}}>
+            <div style={{width: '100%', marginBottom: '10vh'}}>
 
                 <Snackbar
                     open={this.state.snack}

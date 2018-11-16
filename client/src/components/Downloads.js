@@ -355,7 +355,7 @@ class Downloads extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{marginBottom: '10vh'}}>
 
                 <Snackbar
 

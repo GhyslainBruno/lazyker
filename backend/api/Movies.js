@@ -214,7 +214,7 @@ module.exports = (app) => {
             // Using youtube as a trailer provider
             const optionsTrailer = {
                 method: 'GET',
-                uri: 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=' + movieInfo.title + '&type=video&key=' + youtubeAPIKey,
+                uri: 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=' + movieInfo.title + ' official trailer' + '&type=video&key=' + youtubeAPIKey,
                 json: true
             };
 

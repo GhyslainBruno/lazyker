@@ -1204,7 +1204,7 @@ class Settings extends Component {
                         <Typography>Output</Typography>
                     </ExpansionPanelSummary>
 
-                    <ExpansionPanelDetails>
+                    <ExpansionPanelDetails style={{maxHeight: '50vh', overflow: 'auto'}}>
                         <div style={this.state.loading ? {display: 'inline-block', width: '100%', textAlign: 'center'} : {display: 'none'}}>
                             <CircularProgress />
                         </div>

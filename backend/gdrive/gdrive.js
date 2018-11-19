@@ -1,7 +1,7 @@
 const admin = require("firebase-admin");
 const {google} = require('googleapis');
 const logger = require('../logs/logger');
-const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
+// const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
 const request = require('request');
 const credentials = require("./client_secret_348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com");
 

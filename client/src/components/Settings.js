@@ -661,7 +661,7 @@ class Settings extends Component {
                                                             {/* Google Picker API must be enabled in Google developer console */}
                                                             <GooglePicker clientId={'348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com'}
                                                                           developerKey={'AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0'}
-                                                                          scope={['https://www.googleapis.com/auth/drive.readonly']}
+                                                                          scope={['https://www.googleapis.com/auth/drive']}
                                                                           onChange={data => console.log('on change:', data)}
                                                                           onAuthFailed={data => console.log('on auth failed:', data)}
                                                                           multiselect={false}
@@ -730,7 +730,7 @@ class Settings extends Component {
                                                             {/* Google Picker API must be enabled in Google developer console */}
                                                             <GooglePicker clientId={'348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com'}
                                                                           developerKey={'AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0'}
-                                                                          scope={['https://www.googleapis.com/auth/drive.readonly']}
+                                                                          scope={['https://www.googleapis.com/auth/drive']}
                                                                           onChange={data => console.log('on change:', data)}
                                                                           onAuthFailed={data => console.log('on auth failed:', data)}
                                                                           multiselect={false}

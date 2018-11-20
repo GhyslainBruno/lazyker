@@ -15,7 +15,7 @@ const getLink = async (show, user, qualities) => {
     try {
 
         const providersPromises = [
-            rapidmoviez.getLink(show, user, qualities),
+            // rapidmoviez.getLink(show, user, qualities),
             zonetelechargement.getLink(show, user, qualities)
         ];
 
@@ -28,7 +28,12 @@ const getLink = async (show, user, qualities) => {
     } catch(error) {
         // TODO: get a user to user logger here
         // logger.info(error);
-        throw error;
+        // throw error;
+        if (error.error.message) {
+            throw new Error(error.error.message);
+        } else {
+            throw new Error('Unable to find links for the show - ' + show.title);
+        }
     }
 };
 

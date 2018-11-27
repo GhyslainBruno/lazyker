@@ -365,7 +365,8 @@ isValid = async (link, token, hostStatus) => {
             if (response.supported === 1) {
                 for (let hostNumber in Object.keys(hostStatus)) {
                     if (link.match(Object.keys(hostStatus)[hostNumber])) {
-                        return hostStatus[Object.keys(hostStatus)[hostNumber]].status === "up";
+                        // return hostStatus[Object.keys(hostStatus)[hostNumber]].status === "up";
+                        return hostStatus[Object.keys(hostStatus)[hostNumber]].supported === 1;
                     }
                 }
                 return false

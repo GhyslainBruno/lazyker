@@ -1,4 +1,5 @@
 import firebase from 'firebase/app';
+import firebaseMessaging from 'firebase';
 import 'firebase/auth';
 import database from 'firebase/database';
 
@@ -14,6 +15,26 @@ const config = {
 // Similar to a singleton pattern
 if (!firebase.apps.length) {
     firebase.initializeApp(config);
+
+    // navigator.serviceWorker
+    //     .register('src/registerServiceWorker.js')
+    //     .then((registration) => {
+    //         firebaseMessaging.messaging().useServiceWorker(registration);
+    //     });
+
+    const messaging = firebaseMessaging.messaging();
+
+    messaging.requestPermission()
+        .then( () => {
+            console.log('have persmission');
+            return messaging.getToken();
+        })
+        .then(token => {
+            console.log(token);
+        })
+        .catch(error => {
+            console.log(error);
+        })
 }
 
 // Export the auth firebase api

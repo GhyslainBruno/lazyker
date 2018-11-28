@@ -12,6 +12,11 @@
   * `heroku container:push web -a lazyker`
   * `heroku container:release web -a lazyker`
   * `heroku open -a lazyker`
+  
+* **Debug in a Docker container**
+  * Starting server in production mode (in dockefile, last command) : ```CMD ["node", "--inspect=0.0.0.0:9229", "--debug-brk", "backend/server.js"]```
+  * ```docker run -p 80:80 -p 443:443 -p 9229:9229 -d ghyslainbruno/lazyker```
+  * Then use chrome://inspect in chrome to debug the whole app from chrome dev tools
 
 *Rem: an image for Raspberry pi 2B is also available, but generally not fully updated* 
 

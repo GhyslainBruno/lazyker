@@ -184,7 +184,7 @@ const downloadMovieFile = async (link, user, title) => {
                 }
             });
 
-            const res = await drive.files.create({
+            await drive.files.create({
                 resource: {
                     name: link.filename,
                     mimeType: link.mimeType,
@@ -209,10 +209,11 @@ const downloadMovieFile = async (link, user, title) => {
             });
 
             if (lastEvent !== 'destroy') {
-                // Detaching event listener (to avoid memory leak)
-                downloadEventReference.off();
                 await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
             }
+
+            // Detaching event listener (to avoid memory leak)
+            downloadEventReference.off();
 
         })
         .on('error', async error => {

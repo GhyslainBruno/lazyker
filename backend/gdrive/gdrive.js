@@ -9,6 +9,10 @@ const credentials = require("./client_secret_348584284-25m9u9qbgmapjd3vtt5oaai7m
 const db = admin.database();
 const usersRef = db.ref("/users");
 
+// Trying to increase the maxBodyLength from follow-redirects lib to avoid error thrown with large files uploads
+const followRedirects = require('follow-redirects');
+followRedirects.maxBodyLength = 50 * 1024 * 1024; // 20 MB
+
 /**
  * Gets and stores a Google Drive access token from single time code in database
  * @param code
@@ -206,6 +210,15 @@ const downloadMovieFile = async (link, user, title) => {
                         await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({size_downloaded: evt.bytesRead});
                     }
                 },
+            }, (err, file) => {
+                if (err) {
+                    // Handle error
+                    console.error(err);
+                    logger.info("ERROR - Downloading movie " + err.message, user);
+                } else {
+                    console.log("Uploaded: " + file.data.id);
+                    logger.info("Movie downloaded - " + file, user);
+                }
             });
 
             if (lastEvent !== 'destroy') {

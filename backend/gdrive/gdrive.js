@@ -217,16 +217,20 @@ const downloadMovieFile = async (link, user, title) => {
                     logger.info("ERROR - Downloading movie " + err.message, user);
                 } else {
                     console.log("Uploaded: " + file.data.id);
-                    logger.info("Movie downloaded - " + file, user);
+                    logger.info("End of download - " + file, user);
                 }
             });
 
-            if (lastEvent !== 'destroy') {
+            if (lastEvent !== 'destroy' && lastEvent !== "") {
                 await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
+                // Detaching event listener (to avoid memory leak)
+                downloadEventReference.off();
             }
 
-            // Detaching event listener (to avoid memory leak)
-            downloadEventReference.off();
+            // if (lastEvent === 'destroy' || lastEvent !== "") {
+            //     await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
+            // }
+
 
         })
         .on('error', async error => {

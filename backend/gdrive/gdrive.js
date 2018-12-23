@@ -11,7 +11,7 @@ const usersRef = db.ref("/users");
 
 // Trying to increase the maxBodyLength from follow-redirects lib to avoid error thrown with large files uploads
 const followRedirects = require('follow-redirects');
-followRedirects.maxBodyLength = 50 * 1024 * 1024; // 20 MB
+followRedirects.maxBodyLength = 500 * 1024 * 1024; // 500 MB
 
 /**
  * Gets and stores a Google Drive access token from single time code in database

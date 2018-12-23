@@ -12,7 +12,7 @@ const usersRef = db.ref("/users");
 // Trying to increase maxBodyLength to avoid this type of error
 google.options({
     // All requests made with this object will use these settings unless overridden.
-    maxContentLength: 52428890
+    maxContentLength: 1000 * 1024 * 1024
 });
 
 /**

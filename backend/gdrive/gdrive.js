@@ -9,9 +9,11 @@ const credentials = require("./client_secret_348584284-25m9u9qbgmapjd3vtt5oaai7m
 const db = admin.database();
 const usersRef = db.ref("/users");
 
-// Trying to increase the maxBodyLength from follow-redirects lib to avoid error thrown with large files uploads
-const followRedirects = require('follow-redirects');
-followRedirects.maxBodyLength = 500 * 1024 * 1024; // 500 MB
+// Trying to increase maxBodyLength to avoid this type of error
+google.options({
+    // All requests made with this object will use these settings unless overridden.
+    maxContentLength: 52428890
+});
 
 /**
  * Gets and stores a Google Drive access token from single time code in database
@@ -210,14 +212,16 @@ const downloadMovieFile = async (link, user, title) => {
                         await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({size_downloaded: evt.bytesRead});
                     }
                 },
-            }, (err, file) => {
+            }, async (err, file) => {
                 if (err) {
                     // Handle error
                     console.error(err);
-                    logger.info("ERROR - Downloading movie " + err.message, user);
+                    await logger.info("ERROR - Downloading movie " + err.message, user);
+                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'error'});
                 } else {
                     console.log("Uploaded: " + file.data.id);
-                    logger.info("End of download - " + file, user);
+                    await logger.info("End of download - " + file, user);
+                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
                 }
             });
 

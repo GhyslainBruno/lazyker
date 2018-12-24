@@ -22,19 +22,20 @@ if (!firebase.apps.length) {
     //         firebaseMessaging.messaging().useServiceWorker(registration);
     //     });
 
-    const messaging = firebaseMessaging.messaging();
-
-    messaging.requestPermission()
-        .then( () => {
-            console.log('have persmission');
-            return messaging.getToken();
-        })
-        .then(token => {
-            console.log(token);
-        })
-        .catch(error => {
-            console.log(error);
-        })
+    // Commenting this part for using lazyker on iOS
+    // const messaging = firebaseMessaging.messaging();
+    //
+    // messaging.requestPermission()
+    //     .then( () => {
+    //         console.log('have persmission');
+    //         return messaging.getToken();
+    //     })
+    //     .then(token => {
+    //         console.log(token);
+    //     })
+    //     .catch(error => {
+    //         console.log(error);
+    //     })
 }
 
 // Export the auth firebase api

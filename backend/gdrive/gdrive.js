@@ -10,10 +10,10 @@ const db = admin.database();
 const usersRef = db.ref("/users");
 
 // Trying to increase maxBodyLength to avoid this type of error
-google.options({
-    // All requests made with this object will use these settings unless overridden.
-    maxContentLength: 1000 * 1024 * 1024
-});
+// google.options({
+//     // All requests made with this object will use these settings unless overridden.
+//     maxContentLength: 1000 * 1024 * 1024
+// });
 
 /**
  * Gets and stores a Google Drive access token from single time code in database
@@ -200,6 +200,9 @@ const downloadMovieFile = async (link, user, title) => {
                     mimeType: link.mimeType,
                     body: response
                 }
+            }, {
+                maxContentLength: 1000 * 1024 * 1024,
+                maxBodyLength: 1000 * 1024 * 1024,
             }, {
                 // Use the `onUploadProgress` event from Axios to track the
                 // number of bytes uploaded to this point.

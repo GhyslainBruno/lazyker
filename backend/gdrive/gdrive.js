@@ -201,9 +201,8 @@ const downloadMovieFile = async (link, user, title) => {
                     body: response
                 }
             }, {
-                maxContentLength: 1000 * 1024 * 1024,
-                maxBodyLength: 1000 * 1024 * 1024,
-            }, {
+                maxContentLength: 100000 * 1024 * 1024,
+                maxBodyLength: 100000 * 1024 * 1024,
                 // Use the `onUploadProgress` event from Axios to track the
                 // number of bytes uploaded to this point.
                 onUploadProgress: async evt => {

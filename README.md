@@ -2,6 +2,7 @@
 
 ### With Docker ([ghyslainbruno/lazyker](https://hub.docker.com/r/ghyslainbruno/lazyker/))
 
+* Restart on dedibox : ```docker rm $(docker stop $(docker ps | grep lazyker | awk '{print $1}')) && docker build -t ghyslainbruno/lazyker . && docker run -p 80:80 -p 443:443 -d ghyslainbruno/lazyker```
 * Build the image : ```docker build -t ghyslainbruno/lazyker .```
 * Push the image on DockerHub : ```docker push ghyslainbruno/lazyker```
 * Run the Docker image as a container : ```docker run -p 80:80 -p 443:443 -d ghyslainbruno/lazyker```

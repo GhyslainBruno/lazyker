@@ -150,6 +150,10 @@ const downloadMovieFile = async (link, user, title) => {
     // Creating (initializing) the download into database
     const downloadKey = await usersRef.child(user.uid).child('/settings/downloads').push().key;
 
+    // time to use to calculate the speed of downloading => uploading media
+    let timeBefore = Date.now();
+    let bytesUploaded = 0;
+
     request
         .get(link.download)
         .on('response', async function(response) {
@@ -211,11 +215,21 @@ const downloadMovieFile = async (link, user, title) => {
                 // number of bytes uploaded to this point.
                 onUploadProgress: async evt => {
 
+                    // Getting the time interval in seconds between 2 chunks received
+                    const deltaTime = (Date.now() - timeBefore) / 1000;
+                    timeBefore = Date.now();
+
+                    // 1 bytes = 1 octet = 8 bits => 1mo = 1e6 octet
+                    const chunkSize = (evt.bytesRead - bytesUploaded) / 1000000;
+                    bytesUploaded = evt.bytesRead;
+
+                    // Should be in Mega Octets / seconds (Mo/s)
+                    const speed = chunkSize / deltaTime;
                     const percentage = Math.round(evt.bytesRead*100/link.filesize);
 
                     if (percentage > percentageUploaded) {
                         percentageUploaded = percentage;
-                        await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({size_downloaded: evt.bytesRead});
+                        await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({size_downloaded: evt.bytesRead, speed: speed});
                     }
                 },
             }, async (err, file) => {

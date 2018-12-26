@@ -162,6 +162,7 @@ const downloadMovieFile = async (link, user, title) => {
                 status: 'downloading',
                 size: link.filesize,
                 size_downloaded: 0,
+                speed: 0,
                 title: title,
                 destination: movieFolderCreated.name,
                 id: downloadKey,
@@ -226,6 +227,8 @@ const downloadMovieFile = async (link, user, title) => {
                     // Should be in Mega Octets / seconds (Mo/s)
                     const speed = chunkSize / deltaTime;
                     const percentage = Math.round(evt.bytesRead*100/link.filesize);
+
+                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({speed: speed});
 
                     if (percentage > percentageUploaded) {
                         percentageUploaded = percentage;

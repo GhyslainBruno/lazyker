@@ -484,6 +484,10 @@ class Downloads extends Component {
                                                     </div>
                                             </div>
 
+                                            <div>
+                                                <p>{currentDownload.speed.toFixed(1)} Mo/s</p>
+                                            </div>
+
                                             <div style={{textAlign: 'center'}} className="buttonsDownload">
                                                 <IconButton style={{padding: '5px'}} disabled={currentDownload.status !== 'paused'}>
                                                     <PlayCircle onClick={() => this.resumeDownload(currentDownload)}/>

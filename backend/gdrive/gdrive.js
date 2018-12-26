@@ -202,9 +202,12 @@ const downloadMovieFile = async (link, user, title) => {
                     resumable: true
                 }
             }, {
+                // Use the `onUploadProgress` event from Axios to track the
                 // maxContentLength: 5000 * 1024 * 1024,
                 // maxBodyLength: 5000 * 1024 * 1024,
-                // Use the `onUploadProgress` event from Axios to track the
+                // Trying to set this property to avoid maxContentLength error :
+                // https://github.com/googleapis/google-api-nodejs-client/issues/1354
+                maxRedirects: 0,
                 // number of bytes uploaded to this point.
                 onUploadProgress: async evt => {
 

@@ -154,8 +154,49 @@ const downloadMovieFile = async (link, user, title) => {
     let timeBefore = Date.now();
     let bytesUploaded = 0;
 
+    /**
+     * FROM HERE - Starting using chunks to upload media "by hand"
+     */
+    // const token = await getAccessToken(user);
+    const host = 'www.googleapis.com';
+    const api = '/upload/drive/v3/files';
+
+    const metadata = {
+        mimeType: link.mimeType,
+        name: link.filename,
+        parents: [movieFolderCreated.id]
+    };
+
+    const options = {
+        url: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable',
+        header: {
+            'Authorization': 'Bearer ' + oAuth2Client.credentials.access_token,
+        },
+        body: JSON.stringify(metadata)
+    };
+
+    // Initialize the upload
+    request
+        .post(options, (err, res, body) => {
+            if (!err) {
+                throw err
+            } else {
+                console.log(res);
+                console.log(body);
+            }
+        });
+
+    /**
+     * UNTIL HERE
+     */
+
     request
         .get(link.download)
+        .on('data', async data => {
+
+            // Send data here
+            console.log(data);
+        })
         .on('response', async function(response) {
 
             await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
@@ -195,58 +236,58 @@ const downloadMovieFile = async (link, user, title) => {
                 }
             });
 
-            await drive.files.create({
-                resource: {
-                    name: link.filename,
-                    mimeType: link.mimeType,
-                    parents: [movieFolderCreated.id]
-                },
-                media: {
-                    mimeType: link.mimeType,
-                    body: response,
-                    resumable: true
-                }
-            }, {
-                // Use the `onUploadProgress` event from Axios to track the
-                // maxContentLength: 5000 * 1024 * 1024,
-                // maxBodyLength: 5000 * 1024 * 1024,
-                // Trying to set this property to avoid maxContentLength error :
-                // https://github.com/googleapis/google-api-nodejs-client/issues/1354
-                maxRedirects: 0,
-                // number of bytes uploaded to this point.
-                onUploadProgress: async evt => {
-
-                    // Getting the time interval in seconds between 2 chunks received
-                    const deltaTime = (Date.now() - timeBefore) / 1000;
-                    timeBefore = Date.now();
-
-                    // 1 bytes = 1 octet = 8 bits => 1mo = 1e6 octet
-                    const chunkSize = (evt.bytesRead - bytesUploaded) / 1000000;
-                    bytesUploaded = evt.bytesRead;
-
-                    // Should be in Mega Octets / seconds (Mo/s)
-                    const speed = chunkSize / deltaTime;
-                    const percentage = Math.round(evt.bytesRead*100/link.filesize);
-
-                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({speed: speed});
-
-                    if (percentage > percentageUploaded) {
-                        percentageUploaded = percentage;
-                        await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({size_downloaded: evt.bytesRead, speed: speed});
-                    }
-                },
-            }, async (err, file) => {
-                if (err) {
-                    // Handle error
-                    console.error(err);
-                    await logger.info("ERROR - Downloading movie " + err.message, user);
-                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'error'});
-                } else {
-                    console.log("Uploaded: " + file.data.id);
-                    await logger.info("End of download - " + file, user);
-                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
-                }
-            });
+            // await drive.files.create({
+            //     resource: {
+            //         name: link.filename,
+            //         mimeType: link.mimeType,
+            //         parents: [movieFolderCreated.id]
+            //     },
+            //     media: {
+            //         mimeType: link.mimeType,
+            //         body: response,
+            //         resumable: true
+            //     }
+            // }, {
+            //     // Use the `onUploadProgress` event from Axios to track the
+            //     // maxContentLength: 5000 * 1024 * 1024,
+            //     // maxBodyLength: 5000 * 1024 * 1024,
+            //     // Trying to set this property to avoid maxContentLength error :
+            //     // https://github.com/googleapis/google-api-nodejs-client/issues/1354
+            //     maxRedirects: 0,
+            //     // number of bytes uploaded to this point.
+            //     onUploadProgress: async evt => {
+            //
+            //         // Getting the time interval in seconds between 2 chunks received
+            //         const deltaTime = (Date.now() - timeBefore) / 1000;
+            //         timeBefore = Date.now();
+            //
+            //         // 1 bytes = 1 octet = 8 bits => 1mo = 1e6 octet
+            //         const chunkSize = (evt.bytesRead - bytesUploaded) / 1000000;
+            //         bytesUploaded = evt.bytesRead;
+            //
+            //         // Should be in Mega Octets / seconds (Mo/s)
+            //         const speed = chunkSize / deltaTime;
+            //         const percentage = Math.round(evt.bytesRead*100/link.filesize);
+            //
+            //         await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({speed: speed});
+            //
+            //         if (percentage > percentageUploaded) {
+            //             percentageUploaded = percentage;
+            //             await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({size_downloaded: evt.bytesRead, speed: speed});
+            //         }
+            //     },
+            // }, async (err, file) => {
+            //     if (err) {
+            //         // Handle error
+            //         console.error(err);
+            //         await logger.info("ERROR - Downloading movie " + err.message, user);
+            //         await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'error'});
+            //     } else {
+            //         console.log("Uploaded: " + file.data.id);
+            //         await logger.info("End of download - " + file, user);
+            //         await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
+            //     }
+            // });
 
             if (lastEvent !== 'destroy' && lastEvent !== "") {
                 await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});

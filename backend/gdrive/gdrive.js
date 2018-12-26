@@ -202,8 +202,8 @@ const downloadMovieFile = async (link, user, title) => {
                     resumable: true
                 }
             }, {
-                maxContentLength: 5000 * 1024 * 1024,
-                maxBodyLength: 5000 * 1024 * 1024,
+                // maxContentLength: 5000 * 1024 * 1024,
+                // maxBodyLength: 5000 * 1024 * 1024,
                 // Use the `onUploadProgress` event from Axios to track the
                 // number of bytes uploaded to this point.
                 onUploadProgress: async evt => {
@@ -234,13 +234,9 @@ const downloadMovieFile = async (link, user, title) => {
                 downloadEventReference.off();
             }
 
-            // if (lastEvent === 'destroy' || lastEvent !== "") {
-            //     await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
-            // }
-
-
         })
         .on('error', async error => {
+            await logger.info("ERROR - " + error, user);
             await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'error'});
         });
 };
@@ -276,18 +272,22 @@ const createMovieFolder = async (drive, parentFolderId, user, title) => {
 /**
  * Passes all Google Drive downloads in error - ! Use ONLY at first launch of the app, at boot !
  */
-const setAllgdriveDownloadsInError = async () => {
-    const users = await usersRef.once('value');
+const setAllGdriveDownloadsInError = async () => {
+    let users = await usersRef.once('value');
+    users = users.val();
 
-    users.forEach(async user => {
-        const downloads = await usersRef.child(user.key).child('/settings/downloads').once('value');
+    Object.keys(users).forEach(async userKey => {
+        const downloads = users[userKey].settings.downloads;
 
-        downloads.forEach(async download => {
-            await usersRef.child(user.key).child('/settings/downloads').child(download.key).update({
-                status: 'error'
-            })
-        });
-
+        if (downloads !== undefined) {
+            if (Object.keys(downloads).length > 0) {
+                Object.keys(downloads).map(async downloadKey => {
+                    await usersRef.child(userKey).child('/settings/downloads').child(downloadKey).update({
+                        status: 'error'
+                    })
+                })
+            }
+        }
     })
 };
 
@@ -295,4 +295,4 @@ module.exports.getGDriveAccessToken = storeGDriveAccessToken;
 module.exports.listFiles = listFiles;
 module.exports.getOAuth2Client = getOAuth2Client;
 module.exports.downloadMovieFile = downloadMovieFile;
-module.exports.setAllgdriveDownloadsInError = setAllgdriveDownloadsInError;
+module.exports.setAllgdriveDownloadsInError = setAllGdriveDownloadsInError;

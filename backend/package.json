@@ -19,6 +19,7 @@
     "express": "^4.16.3",
     "firebase-admin": "^6.0.0",
     "googleapis": "^36.0.0",
+    "got": "^9.5.0",
     "jest": "^23.6.0",
     "lodash": "^4.17.5",
     "p-filter": "^1.0.0",

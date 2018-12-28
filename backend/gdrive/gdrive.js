@@ -1,6 +1,7 @@
 const admin = require("firebase-admin");
 const {google} = require('googleapis');
 const logger = require('../logs/logger');
+const got = require('got');
 // const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
 const request = require('request');
 const credentials = require("./client_secret_348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com");
@@ -168,138 +169,101 @@ const downloadMovieFile = async (link, user, title) => {
     };
 
     const options = {
-        url: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable',
-        header: {
+        // url: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable',
+        headers: {
             'Authorization': 'Bearer ' + oAuth2Client.credentials.access_token,
+            'Content-Type': 'application/json; charset=UTF-8',
+            // Find a way to know the length of the init request - doc said it is mandatory
+            // 'Content-Length': new Buffer(JSON.stringify(self.metadata)).length,
+            'X-Upload-Content-Length': link.filesize,
+            'X-Upload-Content-Type': link.link.mimeType
         },
         body: JSON.stringify(metadata)
     };
 
-    // Initialize the upload
-    request
-        .post(options, (err, res, body) => {
-            if (!err) {
-                throw err
-            } else {
-                console.log(res);
-                console.log(body);
-            }
-        });
+    // Initialize the upload - getting an url where to put chunks to
+    try {
+        const response = await got('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', options);
+        const urlToPut = response.headers.location;
+
+
+        request
+            .get(link.download)
+            .on('data', async data => {
+
+                await got.put(urlToPut, {
+                    headers: {
+                        'Content-Length': link.filesize
+                    },
+                    body: data
+                });
+                // Send data here
+                console.log(data);
+            })
+            .on('response', async function(response) {
+
+                await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
+                    status: 'downloading',
+                    size: link.filesize,
+                    size_downloaded: 0,
+                    speed: 0,
+                    title: title,
+                    destination: movieFolderCreated.name,
+                    id: downloadKey,
+                });
+
+                let lastEvent = '';
+
+                const downloadEventReference = usersRef.child(user.uid).child('/settings/downloads/' + downloadKey + '/event');
+
+                downloadEventReference.on('value', async snapshot => {
+                    if (snapshot.val() === 'pause') {
+                        response.pause();
+                        await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
+                            status: 'paused'
+                        });
+                    }
+
+                    // TODO here destroy folder created for the download IF the download is not done
+                    if (snapshot.val() === 'destroy') {
+                        response.destroy();
+                        lastEvent = 'destroy';
+                        await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).remove();
+                    }
+
+                    if (snapshot.val() === 'resume') {
+                        response.resume();
+                        await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
+                            status: 'downloading'
+                        });
+                    }
+                });
+
+                if (lastEvent !== 'destroy' && lastEvent !== "") {
+                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
+                    // Detaching event listener (to avoid memory leak)
+                    downloadEventReference.off();
+                }
+
+            })
+            .on('end', endInfo => {
+                console.log(endInfo);
+            })
+            .on('finish', endInfo => {
+                console.log(endInfo);
+            })
+            .on('error', async error => {
+                await logger.info("ERROR - " + error, user);
+                await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'error'});
+            });
+
+    } catch(error) {
+        console.log(error);
+    }
 
     /**
      * UNTIL HERE
      */
-
-    request
-        .get(link.download)
-        .on('data', async data => {
-
-            // Send data here
-            console.log(data);
-        })
-        .on('response', async function(response) {
-
-            await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
-                status: 'downloading',
-                size: link.filesize,
-                size_downloaded: 0,
-                speed: 0,
-                title: title,
-                destination: movieFolderCreated.name,
-                id: downloadKey,
-            });
-
-            let lastEvent = '';
-
-            const downloadEventReference = usersRef.child(user.uid).child('/settings/downloads/' + downloadKey + '/event');
-
-            downloadEventReference.on('value', async snapshot => {
-                if (snapshot.val() === 'pause') {
-                    response.pause();
-                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
-                        status: 'paused'
-                    });
-                }
-
-                // TODO here destroy folder created for the download IF the download is not done
-                if (snapshot.val() === 'destroy') {
-                    response.destroy();
-                    lastEvent = 'destroy';
-                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).remove();
-                }
-
-                if (snapshot.val() === 'resume') {
-                    response.resume();
-                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
-                        status: 'downloading'
-                    });
-                }
-            });
-
-            // await drive.files.create({
-            //     resource: {
-            //         name: link.filename,
-            //         mimeType: link.mimeType,
-            //         parents: [movieFolderCreated.id]
-            //     },
-            //     media: {
-            //         mimeType: link.mimeType,
-            //         body: response,
-            //         resumable: true
-            //     }
-            // }, {
-            //     // Use the `onUploadProgress` event from Axios to track the
-            //     // maxContentLength: 5000 * 1024 * 1024,
-            //     // maxBodyLength: 5000 * 1024 * 1024,
-            //     // Trying to set this property to avoid maxContentLength error :
-            //     // https://github.com/googleapis/google-api-nodejs-client/issues/1354
-            //     maxRedirects: 0,
-            //     // number of bytes uploaded to this point.
-            //     onUploadProgress: async evt => {
-            //
-            //         // Getting the time interval in seconds between 2 chunks received
-            //         const deltaTime = (Date.now() - timeBefore) / 1000;
-            //         timeBefore = Date.now();
-            //
-            //         // 1 bytes = 1 octet = 8 bits => 1mo = 1e6 octet
-            //         const chunkSize = (evt.bytesRead - bytesUploaded) / 1000000;
-            //         bytesUploaded = evt.bytesRead;
-            //
-            //         // Should be in Mega Octets / seconds (Mo/s)
-            //         const speed = chunkSize / deltaTime;
-            //         const percentage = Math.round(evt.bytesRead*100/link.filesize);
-            //
-            //         await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({speed: speed});
-            //
-            //         if (percentage > percentageUploaded) {
-            //             percentageUploaded = percentage;
-            //             await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({size_downloaded: evt.bytesRead, speed: speed});
-            //         }
-            //     },
-            // }, async (err, file) => {
-            //     if (err) {
-            //         // Handle error
-            //         console.error(err);
-            //         await logger.info("ERROR - Downloading movie " + err.message, user);
-            //         await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'error'});
-            //     } else {
-            //         console.log("Uploaded: " + file.data.id);
-            //         await logger.info("End of download - " + file, user);
-            //         await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
-            //     }
-            // });
-
-            if (lastEvent !== 'destroy' && lastEvent !== "") {
-                await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
-                // Detaching event listener (to avoid memory leak)
-                downloadEventReference.off();
-            }
-
-        })
-        .on('error', async error => {
-            await logger.info("ERROR - " + error, user);
-            await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'error'});
-        });
 };
 
 /**

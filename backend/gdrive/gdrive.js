@@ -45,9 +45,9 @@ async function storeGDriveAccessToken(code, user) {
 
     } catch (error) {
         if (error.message) {
-          logger.info("ERROR - Getting Google Drive access - " + error.message, user);
+            logger.info("ERROR - Getting Google Drive access - " + error.message, user);
         } else {
-          logger.info("ERROR - Getting Google Drive access", user);
+            logger.info("ERROR - Getting Google Drive access", user);
         }
     }
 
@@ -139,7 +139,6 @@ const downloadMovieFile = async (link, user, title) => {
 
     const oAuth2Client = await getOAuth2Client(user);
     const moviesGdriveFolder = await usersRef.child(user.uid).child('/settings/gdrive/moviesGdriveFolder').once('value');
-    let percentageUploaded = 0;
 
     const drive = google.drive({
         version: 'v3',
@@ -151,17 +150,6 @@ const downloadMovieFile = async (link, user, title) => {
     // Creating (initializing) the download into database
     const downloadKey = await usersRef.child(user.uid).child('/settings/downloads').push().key;
 
-    // time to use to calculate the speed of downloading => uploading media
-    let timeBefore = Date.now();
-    let bytesUploaded = 0;
-
-    /**
-     * FROM HERE - Starting using chunks to upload media "by hand"
-     */
-    // const token = await getAccessToken(user);
-    const host = 'www.googleapis.com';
-    const api = '/upload/drive/v3/files';
-
     const metadata = {
         mimeType: link.mimeType,
         name: link.filename,
@@ -169,7 +157,6 @@ const downloadMovieFile = async (link, user, title) => {
     };
 
     const options = {
-        // url: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable',
         headers: {
             'Authorization': 'Bearer ' + oAuth2Client.credentials.access_token,
             'Content-Type': 'application/json; charset=UTF-8',
@@ -185,85 +172,123 @@ const downloadMovieFile = async (link, user, title) => {
     try {
         const response = await got('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', options);
         const urlToPut = response.headers.location;
+        let percentageUploaded = 0;
 
+        // time to use to calculate the speed of downloading => uploading media
+        let timeBefore = Date.now();
+        let bytesUploaded = 0;
+        let lastChunkSize = 0;
+        let speed = 0;
 
-        request
-            .get(link.download)
-            .on('data', async data => {
+        // Updating speed value every 5 seconds
+        // TODO use 1024 instead of 1000 when it is needed
+        const updateSpeed = setInterval(() => {
 
-                await got.put(urlToPut, {
-                    headers: {
-                        'Content-Length': link.filesize
-                    },
-                    body: data
-                });
-                // Send data here
-                console.log(data);
-            })
-            .on('response', async function(response) {
+            // Getting the time interval in seconds between 2 chunks received
+            const deltaTime = (Date.now() - timeBefore) / 1000;
+            timeBefore = Date.now();
 
-                await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
-                    status: 'downloading',
-                    size: link.filesize,
-                    size_downloaded: 0,
-                    speed: 0,
-                    title: title,
-                    destination: movieFolderCreated.name,
-                    id: downloadKey,
-                });
+            // 1 byte = 1 octet = 8 bits => 1Mo = 1e6 octets = 1Mbytes
+            const chunkSize = (bytesUploaded - lastChunkSize)/ 1000000;
 
-                let lastEvent = '';
+            // Should be in Mega Octets / seconds (Mo/s)
+            // Updating speed value here
+            if (deltaTime > 0) {
+                speed = (chunkSize / deltaTime);
+            }
 
-                const downloadEventReference = usersRef.child(user.uid).child('/settings/downloads/' + downloadKey + '/event');
-
-                downloadEventReference.on('value', async snapshot => {
-                    if (snapshot.val() === 'pause') {
-                        response.pause();
-                        await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
-                            status: 'paused'
-                        });
-                    }
-
-                    // TODO here destroy folder created for the download IF the download is not done
-                    if (snapshot.val() === 'destroy') {
-                        response.destroy();
-                        lastEvent = 'destroy';
-                        await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).remove();
-                    }
-
-                    if (snapshot.val() === 'resume') {
-                        response.resume();
-                        await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
-                            status: 'downloading'
-                        });
-                    }
+            usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({speed: speed})
+                .catch(error => {
+                    throw error
                 });
 
-                if (lastEvent !== 'destroy' && lastEvent !== "") {
-                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
-                    // Detaching event listener (to avoid memory leak)
-                    downloadEventReference.off();
+            lastChunkSize = bytesUploaded;
+            bytesUploaded = 0;
+
+        }, 3000);
+
+        const downloadStream = got.stream(link.download);
+
+        // Creating download stream
+        downloadStream
+            .on('downloadProgress', async progress => {
+
+                // Updating this variable to display speed
+                bytesUploaded = progress.transferred;
+
+                // Update progress into db only if the percentage is more than 1% each time - to avoid to much requests
+                const percentage = Math.round(progress.transferred*100/link.filesize);
+                if (percentage > percentageUploaded) {
+                    percentageUploaded = percentage;
+                    // Updating progress into database
+                    await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({size_downloaded: progress.transferred});
                 }
 
-            })
-            .on('end', endInfo => {
-                console.log(endInfo);
-            })
-            .on('finish', endInfo => {
-                console.log(endInfo);
-            })
-            .on('error', async error => {
-                await logger.info("ERROR - " + error, user);
-                await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'error'});
             });
+
+        // Creating the download task into database
+        await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
+            status: 'downloading',
+            size: link.filesize,
+            size_downloaded: 0,
+            speed: 0,
+            title: title,
+            destination: movieFolderCreated.name,
+            id: downloadKey,
+        });
+
+        let lastEvent = '';
+        const downloadEventReference = usersRef.child(user.uid).child('/settings/downloads/' + downloadKey + '/event');
+
+        // Managing download task using stream events (resume, pause, destroy)
+        downloadEventReference.on('value', async snapshot => {
+
+            if (snapshot.val() === 'pause') {
+                downloadStream.pause();
+                await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
+                    status: 'paused'
+                });
+            }
+
+            if (snapshot.val() === 'destroy') {
+                downloadStream.destroy();
+                clearInterval(updateSpeed);
+                lastEvent = 'destroy';
+                await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).remove();
+                // Delete movie folder previously created if download is destroyed
+                await deleteMovieFolder(drive, movieFolderCreated);
+            }
+
+            if (snapshot.val() === 'resume') {
+                downloadStream.resume();
+                await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({
+                    status: 'downloading'
+                });
+            }
+        });
+
+        // Uploading the file to Google Drive
+        await got.put(urlToPut, {
+            headers: {
+                'Content-Length': link.filesize
+            },
+            body: downloadStream
+        });
+
+        // Removing the setInterval used to display download/upload speed
+        clearInterval(updateSpeed);
+
+        // Upload done after here
+        if (lastEvent !== 'destroy') {
+            await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
+            // Detaching event listener (to avoid memory leak)
+            downloadEventReference.off();
+        }
 
     } catch(error) {
         console.log(error);
     }
 
-    /**
-     * UNTIL HERE
-     */
 };
 
 /**
@@ -292,6 +317,25 @@ const createMovieFolder = async (drive, parentFolderId, user, title) => {
         throw error;
     }
 
+};
+
+/**
+ * Deletes a particular folder
+ * @param drive
+ * @param folder
+ * @returns {Promise<*>}
+ */
+const deleteMovieFolder = async (drive, folder) => {
+    try {
+
+        const folderDeleted = await drive.files.delete({
+            fileId: folder.id
+        });
+
+        return folderDeleted.data;
+    } catch(error) {
+        throw error;
+    }
 };
 
 /**

@@ -14,6 +14,6 @@ deploy_staging:
     name: production
     url: dedibox.ghyslain.xyz
   script:
-    - ssh ghys@dedibox.ghyslain.xyz "cd lazyker && if [ `docker ps | grep lazyker | wc -l` -gt 0 ]; then docker kill $(docker ps -q) && docker rm $(docker ps -a -q) && git pull && docker build -t ghyslainbruno/lazyker . && docker run -p 80:80 -p 443:443 -d ghyslainbruno/lazyker; else git pull && docker build -t ghyslainbruno/lazyker . && docker run -p 80:80 -p 443:443 -d ghyslainbruno/lazyker; fi"
+    - ssh ghys@dedibox.ghyslain.xyz "cd lazyker && if [ `docker ps | grep lazyker | wc -l` -gt 0 ]; then docker kill $(docker ps -q) && docker rm $(docker ps -a -q) && git pull && docker build -t ghyslainbruno/lazyker . && docker run -p 80:80 -p 443:443 --name lazyker -d ghyslainbruno/lazyker; else git pull && docker build -t ghyslainbruno/lazyker . && docker run -p 80:80 -p 443:443 --name lazyker -d ghyslainbruno/lazyker; fi"
   only:
     - dedibox

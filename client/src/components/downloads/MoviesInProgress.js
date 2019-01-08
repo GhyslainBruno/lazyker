@@ -13,6 +13,9 @@ import Delete from "@material-ui/icons/Delete";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import React from "react";
 import * as auth from "../../firebase/auth";
+import firebase from "firebase";
+
+const usersRef = firebase.database().ref('/users');
 
 class MoviesInProgress extends React.Component {
 
@@ -20,7 +23,8 @@ class MoviesInProgress extends React.Component {
     {
         super(props);
         this.state = {
-            moviesInProgress: {total: 0},
+            moviesInProgress: null,
+            total: 0,
             moviesInProgressLoading: false,
         };
     }
@@ -33,13 +37,18 @@ class MoviesInProgress extends React.Component {
 
         try {
             this.setState({moviesInProgressLoading: true});
-            let response = await fetch('/api/movies_in_progress', {
-                headers: {
-                    'token': await auth.getIdToken()
-                }
+            usersRef.child(await auth.getUid()).child('/movies').on('value', snapshot => {
+                const inProgressMovies = [];
+                snapshot.forEach(movie => {
+                    inProgressMovies.push(movie.val());
+                });
+
+                this.setState({
+                    moviesInProgress: inProgressMovies,
+                    total: inProgressMovies.length
+                })
             });
-            const moviesInProgress = await response.json();
-            this.setState({moviesInProgress: moviesInProgress, moviesInProgressLoading: false})
+            this.setState({moviesInProgressLoading: false});
         } catch(error) {
             this.setState({currentDownloads: null, snack: true, snackBarMessage: 'Error loading movies in progress', currentDownloadsLoading: false})
         }
@@ -51,22 +60,9 @@ class MoviesInProgress extends React.Component {
     removeInProgressMovie = async (movie) => {
 
         try {
-            let response = await fetch('/api/remove_in_progress_movie', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'token': await auth.getIdToken()
-                },
-                body: JSON.stringify({
-                    movie: movie
-                })
-            });
-
-            const moviesInProgress = await response.json();
-
+            // TODO trigger the kill of the spawn to stop the "in progress" state (but first to it using a spawn...)
+            await usersRef.child(await auth.getUid()).child('/movies').child(movie.id).remove();
             this.props.displaySnackMessage('Movie removed');
-            this.setState({moviesInProgress: moviesInProgress});
         } catch(error) {
             this.props.displaySnackMessage('Error removing the movie');
         }
@@ -75,7 +71,7 @@ class MoviesInProgress extends React.Component {
     render() {
         return (
 
-            <ExpansionPanel onChange={(event, expanded) => expanded ? this.loadMoviesInProgress() : this.setState({moviesInProgress: {total: 0}})}>
+            <ExpansionPanel onChange={(event, expanded) => expanded ? this.loadMoviesInProgress() : null}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>Movies in progress</Typography>
                 </ExpansionPanelSummary>
@@ -85,9 +81,7 @@ class MoviesInProgress extends React.Component {
 
                         <CircularProgress style={this.state.moviesInProgressLoading ? {display: 'inline-block'} : {display: 'none'}} />
 
-                        { this.state.moviesInProgress.total > 0 ? Object.keys(this.state.moviesInProgress.moviesInProgress).map(movieInProgress => {
-
-                                const movie = this.state.moviesInProgress.moviesInProgress[movieInProgress];
+                        { this.state.total > 0 ? this.state.moviesInProgress.map(movie => {
 
                                 return (
                                     <ListItem button>

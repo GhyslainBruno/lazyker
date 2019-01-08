@@ -323,7 +323,7 @@ class CurrentDownloads extends React.Component {
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>Current downloads</Typography>
                 </ExpansionPanelSummary>
-                <ExpansionPanelDetails style={{textAlign: 'center', padding: '0'}}>
+                <ExpansionPanelDetails style={{textAlign: 'center'}}>
 
                     <List component="nav" style={{width: '100%'}}>
 

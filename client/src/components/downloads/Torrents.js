@@ -22,6 +22,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import * as auth from "../../firebase/auth";
+import Tooltip from '@material-ui/core/Tooltip';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 function CloudDoneGreen(props) {
     return (
@@ -44,9 +46,18 @@ class Torrents extends React.Component {
             torrents: null,
             torrentsLoading: false,
             torrentIdToRemove: null,
-            showDeleteDialog: false
+            showDeleteDialog: false,
+            open: false
         };
     }
+
+    handleTooltipClose = () => {
+        this.setState({ open: false });
+    };
+
+    handleTooltipOpen = () => {
+        this.setState({ open: true });
+    };
 
     loadTorrents = async () => {
         this.setState({torrentsLoading: true, torrents: null});
@@ -193,7 +204,32 @@ class Torrents extends React.Component {
                                     <div>
                                         <div style={{display: 'inline-flex', width: '100%', textAlign: 'left', padding: '5px'}}>
                                             <div className="titleDownload">
-                                                <p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>
+
+                                                {/* Trying to use click tooltip, not functional for now */}
+                                                {/*<ClickAwayListener onClickAway={this.handleTooltipClose}>*/}
+                                                    {/*<div>*/}
+                                                        {/*<Tooltip*/}
+                                                            {/*PopperProps={{*/}
+                                                                {/*disablePortal: false,*/}
+                                                            {/*}}*/}
+                                                            {/*onClose={this.handleTooltipClose}*/}
+                                                            {/*open={this.state.open}*/}
+                                                            {/*disableFocusListener*/}
+                                                            {/*disableHoverListener*/}
+                                                            {/*disableTouchListener*/}
+                                                            {/*title={torrent.filename}*/}
+                                                        {/*>*/}
+                                                            {/*<p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} onClick={this.handleTooltipOpen}>{torrent.filename}</p>*/}
+                                                        {/*</Tooltip>*/}
+                                                    {/*</div>*/}
+                                                {/*</ClickAwayListener>*/}
+
+                                                <Tooltip title={torrent.filename}>
+                                                    <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>
+                                                </Tooltip>
+
+                                                {/* Without any tooltip - old way */}
+                                                {/*<p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>*/}
                                             </div>
 
                                             <div style={{width: '8%', paddingTop: '12px'}}>

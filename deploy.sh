@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-git pull
-
 docker build -t ghyslainbruno/lazyker .
 
 if [ ! "$(docker ps -q -f name=lazyker)" ]; then

@@ -25,6 +25,7 @@ import * as auth from "../../firebase/auth";
 import Tooltip from '@material-ui/core/Tooltip';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
+
 function CloudDoneGreen(props) {
     return (
         <CloudDone style={{color: '#4CAF50'}}/>
@@ -203,7 +204,7 @@ class Torrents extends React.Component {
 
                                     <div>
                                         <div style={{display: 'inline-flex', width: '100%', textAlign: 'left', padding: '5px'}}>
-                                            <div className="titleDownload" style={{flex: '1'}}>
+                                            <div className="torrentsTitlesDownload" style={{flex: '1'}}>
 
                                                 {/* Trying to use click tooltip, not functional for now */}
                                                 {/*<ClickAwayListener onClickAway={this.handleTooltipClose}>*/}
@@ -232,7 +233,7 @@ class Torrents extends React.Component {
                                                 {/*<p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>*/}
                                             </div>
 
-                                            <div style={{width: '8%', padding: '12px'}}>
+                                            <div style={{width: '8%', padding: '12px', textAlign: 'center'}}>
                                                 <div>
                                                     {(torrent.status === 'downloading' ||
                                                         torrent.status === 'uploading'

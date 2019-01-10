@@ -1250,12 +1250,20 @@ body {
     width: 100%; } }
 
 /* VERY Little screens */
-@media screen and (max-width: 362px) {
+@media screen and (max-width: 417px) {
   .titleDownload {
-    width: 40%; } }
+    width: 100%; } }
 
-@media screen and (min-width: 363px) {
+@media screen and (min-width: 418px) {
   .titleDownload {
+    width: 30%; } }
+
+@media screen and (max-width: 417px) {
+  .torrentsTitlesDownload {
+    width: 30%; } }
+
+@media screen and (min-width: 418px) {
+  .torrentsTitlesDownload {
     width: 30%; } }
 
 /* Trying to solved elements moving when showing dialog */

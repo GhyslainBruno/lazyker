@@ -27,6 +27,7 @@ import Dialog from "@material-ui/core/Dialog";
 import * as auth from "../../firebase/auth";
 import firebase from "firebase";
 
+
 const usersRef = firebase.database().ref('/users');
 
 class CurrentDownloads extends React.Component {
@@ -332,45 +333,47 @@ class CurrentDownloads extends React.Component {
                         {this.state.currentDownloads !== null ? this.state.currentDownloads.length > 0 ? this.state.currentDownloads.map(currentDownload => {
                                 return (
                                     <div>
-                                        <div style={{display: 'inline-flex', width: '100%', textAlign: 'left', padding: '5px'}}>
+                                        <div style={{display: 'flex', width: '100%', textAlign: 'left', padding: '5px', flexWrap: 'wrap'}}>
 
-                                            <div className="titleDownload">
+                                            {/* Title */}
+                                            <div className="titleDownload" style={{flex: '1'}}>
                                                 <p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{currentDownload.destination}</p>
                                             </div>
 
-                                            <div style={{width: '8%', paddingTop: '12px'}}>
-                                                <div>
-                                                    {currentDownload.status === 'downloading' ?
-                                                        <Download/>
+                                            {/* State icon */}
+                                            <div style={{width: '8%', padding: '12px', textAlign: 'center'}}>
+                                                {currentDownload.status === 'downloading' ?
+                                                    <Download/>
+                                                    :
+                                                    currentDownload.status === 'error' ?
+                                                        <ErrorRed/>
                                                         :
-                                                        currentDownload.status === 'error' ?
-                                                            <ErrorRed/>
+                                                        currentDownload.status === 'waiting' ?
+                                                            <Delayed/>
                                                             :
-                                                            currentDownload.status === 'waiting' ?
-                                                                <Delayed/>
+                                                            currentDownload.status === 'finished' ?
+                                                                <DoneGreen/>
                                                                 :
-                                                                currentDownload.status === 'finished' ?
-                                                                    <DoneGreen/>
+                                                                currentDownload.status === 'extracting' ?
+                                                                    <Download/>
                                                                     :
-                                                                    currentDownload.status === 'extracting' ?
-                                                                        <Download/>
+                                                                    currentDownload.status === 'paused' ?
+                                                                        <PauseFilled/>
                                                                         :
-                                                                        currentDownload.status === 'paused' ?
-                                                                            <PauseFilled/>
+                                                                        currentDownload.status === 'finishing' ?
+                                                                            <Download/>
                                                                             :
-                                                                            currentDownload.status === 'finishing' ?
-                                                                                <Download/>
-                                                                                :
-                                                                                null
-                                                    }
-                                                </div>
+                                                                            null
+                                                }
                                             </div>
 
-                                            <div>
-                                                <p>{currentDownload.speed.toFixed(1)} Mo/s</p>
+                                            {/* Speed */}
+                                            <div style={{paddingLeft: '10px', paddingRight: '10px'}}>
+                                                <p>{currentDownload.speed.toFixed(1).padStart(4, '0')} Mo/s</p>
                                             </div>
 
-                                            <div style={{textAlign: 'center'}} className="buttonsDownload">
+                                            {/* Download buttons */}
+                                            <div style={{textAlign: 'center', margin: 'auto'}} className="buttonsDownload">
                                                 <IconButton style={{padding: '5px'}} disabled={currentDownload.status !== 'paused'}>
                                                     <PlayCircle onClick={() => this.resumeDownload(currentDownload)}/>
                                                 </IconButton>
@@ -386,9 +389,10 @@ class CurrentDownloads extends React.Component {
 
                                         </div>
 
-                                        <div style={{paddingRight: '5px', paddingLeft: '5px'}}>
-                                            <LinearProgress variant="determinate" value={Math.round(currentDownload.size_downloaded*100 / currentDownload.size)} />
-                                        </div>
+                                        <LinearProgress variant="determinate" value={Math.round(currentDownload.size_downloaded*100 / currentDownload.size)} />
+                                        {/*<div style={{paddingRight: '5px', paddingLeft: '5px'}}>*/}
+                                            {/*<LinearProgress variant="determinate" value={Math.round(currentDownload.size_downloaded*100 / currentDownload.size)} />*/}
+                                        {/*</div>*/}
 
                                     </div>
                                 )

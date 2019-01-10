@@ -179,16 +179,24 @@ body {
 }
 
 /* VERY Little screens */
-@media screen and (max-width: 362px) {
-    .titleDownload {
-        width: 40%;
-    }
+.titleDownload {
+  @media screen and (max-width: 417px) {
+    width: 100%;
+  }
+
+  @media screen and (min-width: 418px) {
+    width: 30%;
+  }
 }
 
-@media screen and (min-width: 363px) {
-    .titleDownload {
-        width: 30%;
-    }
+.torrentsTitlesDownload {
+  @media screen and (max-width: 417px) {
+    width: 30%;
+  }
+
+  @media screen and (min-width: 418px) {
+    width: 30%;
+  }
 }
 
 .buttonsDownload {

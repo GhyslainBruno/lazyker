@@ -1252,15 +1252,11 @@ body {
 /* VERY Little screens */
 @media screen and (max-width: 362px) {
   .titleDownload {
-    width: 40%; }
-  .buttonsDownload {
-    width: 52%; } }
+    width: 40%; } }
 
 @media screen and (min-width: 363px) {
   .titleDownload {
-    width: 30%; }
-  .buttonsDownload {
-    width: 42%; } }
+    width: 30%; } }
 
 /* Trying to solved elements moving when showing dialog */
 /*html {*/

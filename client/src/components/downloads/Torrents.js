@@ -203,7 +203,7 @@ class Torrents extends React.Component {
 
                                     <div>
                                         <div style={{display: 'inline-flex', width: '100%', textAlign: 'left', padding: '5px'}}>
-                                            <div className="titleDownload">
+                                            <div className="titleDownload" style={{flex: '1'}}>
 
                                                 {/* Trying to use click tooltip, not functional for now */}
                                                 {/*<ClickAwayListener onClickAway={this.handleTooltipClose}>*/}
@@ -232,7 +232,7 @@ class Torrents extends React.Component {
                                                 {/*<p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>*/}
                                             </div>
 
-                                            <div style={{width: '8%', paddingTop: '12px'}}>
+                                            <div style={{width: '8%', padding: '12px'}}>
                                                 <div>
                                                     {(torrent.status === 'downloading' ||
                                                         torrent.status === 'uploading'
@@ -265,7 +265,7 @@ class Torrents extends React.Component {
                                                 </div>
                                             </div>
 
-                                            <div style={{textAlign: 'center'}} className="buttonsDownload">
+                                            <div style={{textAlign: 'center', margin: 'auto'}} className="buttonsDownload">
                                                 <IconButton style={{padding: '5px'}}>
                                                     <RemoveCircle onClick={() => this.showDeleteDialog(torrent.id)}/>
                                                 </IconButton>

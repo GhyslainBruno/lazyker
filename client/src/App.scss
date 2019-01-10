@@ -183,19 +183,22 @@ body {
     .titleDownload {
         width: 40%;
     }
-
-    .buttonsDownload {
-        width: 52%;
-    }
 }
+
 @media screen and (min-width: 363px) {
     .titleDownload {
         width: 30%;
     }
+}
 
-    .buttonsDownload {
-        width: 42%;
-    }
+.buttonsDownload {
+
+  //@media screen and (max-width: 362px) {
+  //  width: 52%;
+  //}
+  //@media screen and (min-width: 363px) {
+  //  width: 42%;
+  //}
 }
 
 

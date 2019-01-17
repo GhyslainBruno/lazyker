@@ -34,9 +34,9 @@ const getRealUrl = async () => {
  */
 const getTorrentsList = async title => {
 
-    const torrent9RealUrl = await getRealUrl();
-
     try {
+        const torrent9RealUrl = await getRealUrl();
+
         const options = {
             method: 'POST',
             uri: torrent9RealUrl + '/recherche/' + title,
@@ -86,7 +86,10 @@ const getTorrentsList = async title => {
         };
 
     } catch(error) {
-        throw error;
+        return {
+            provider: 'torrent9',
+            torrents: []
+        };
     }
 };
 

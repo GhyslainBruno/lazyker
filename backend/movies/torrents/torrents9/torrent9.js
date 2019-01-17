@@ -57,6 +57,7 @@ const getTorrentsList = async title => {
         items.map((i, result)  => {
 
             torrentsList.push({
+                provider: 'torrent9',
                 title: result.children[1].children[2].attribs.title.replace('Télécharger ', '').replace(' en Torrent', ''),
                 url: result.children[1].children[2].attribs.href,
                 size: result.children[3].children[0].data,
@@ -79,7 +80,10 @@ const getTorrentsList = async title => {
 
         });
 
-        return torrentsList;
+        return {
+            provider: 'torrent9',
+            torrents: torrentsList
+        };
 
     } catch(error) {
         throw error;

@@ -24,23 +24,61 @@ const usersRef = db.ref("/users");
  */
 const getTorrentsList = async title => {
 
-    // TODO: use more providers
-    // const torrentsList = await ygg.getTorrentsList(title);
-    const torrentsList = await torrent9.getTorrentsList(title);
+    const providersPromises = [
+        ygg.getTorrentsList(title),
+        torrent9.getTorrentsList(title)
+    ];
 
-    return torrentsList
+    return await pMap(providersPromises, async providerUrls => {
+        return providerUrls;
+    }, {concurrency: 2});
+
 };
 
 /**
  * Download torrent file aggregator
  * @param url
+ * @param provider
+ * @param title
+ * @param id
+ * @param user
  * @returns {Promise<void>}
  */
-const downloadTorrentFile = async (url, user) => {
-    // TODO: use more providers
-    const torrentsList = await torrent9.downloadTorrentFile(url, user);
+const downloadTorrentFile = async (url, provider, title, id, user) => {
 
-    return torrentsList
+    try {
+
+        switch (provider) {
+            case 'ygg':
+                await ygg.downloadTorrentFile(url, user);
+                break;
+            case 'torrent9':
+                await torrent9.downloadTorrentFile(url, user);
+                break;
+            default:
+                throw new Error('bad provider');
+        }
+
+        const inProgressMovie = snapshot.val();
+
+        if (inProgressMovie) {
+            // If several inProgressMovies with the same title, taking the first one
+            const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
+            await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).remove();
+        }
+
+    } catch(error) {
+        // Set movie in progress state to movie in error (in db)
+        const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
+        const inProgressMovie = snapshot.val();
+
+        if (inProgressMovie) {
+            // If several inProgressMovies with the same title, taking the first one
+            const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
+            await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).child('/state').set('error');
+        }
+    }
+
 };
 
 /**

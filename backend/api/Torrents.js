@@ -3,6 +3,8 @@ const admin = require("firebase-admin");
 const Movies = require('../movies/Movies');
 // const downloader = require('../synology/Download');
 const downloader = require('../downloads/downloader');
+const db = admin.database();
+const usersRef = db.ref("/users");
 
 module.exports = (app) => {
 
@@ -25,7 +27,9 @@ module.exports = (app) => {
     app.post('/api/torrents', async (req, res) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
-            await Movies.downloadTorrentFile(req.body.url, user);
+            // Putting this particular movie into "inProgress" state into firebase database
+            await usersRef.child(user.uid).child('/movies').child(req.body.id).set({title: req.body.title, state: 'finding_links', id: req.body.id});
+            Movies.downloadTorrentFile(req.body.url, req.body.provider, req.body.title, req.body.id, user);
             res.send({message: 'ok'});
         } catch(error) {
             res.status(500).send({

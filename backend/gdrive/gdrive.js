@@ -123,6 +123,7 @@ const getAccessToken = async user => {
  * Starts to download a movie file
  * @param link
  * @param user
+ * @param title
  * @returns {Promise<void>}
  */
 const downloadMovieFile = async (link, user, title) => {

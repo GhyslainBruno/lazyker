@@ -1,4 +1,5 @@
 const cheerio = require('cheerio');
+const puppeteer = require('puppeteer');
 const rp  = require('request-promise');
 const request  = require('request');
 const YGGRootUrl ='https://ww2.yggtorrent.is/';
@@ -48,6 +49,7 @@ const getTorrentsList = async title => {
 
         items.map(item => {
             torrentsList.push({
+                provider: 'ygg',
                 title: item.children[3].children[0].children[0].data.replace(/\n/g,''),
                 url: item.children[3].children[0].attribs.href,
                 size: item.children[11].children[0].data,
@@ -57,7 +59,11 @@ const getTorrentsList = async title => {
             })
         });
 
-        return torrentsList;
+
+        return {
+            provider: 'ygg',
+            torrents: torrentsList
+        };
 
     } catch(error) {
         throw error;
@@ -66,17 +72,27 @@ const getTorrentsList = async title => {
 
 /**
  * Start the download of a torrent file
- * @param title
- * @returns {Promise<void>}
+ * @param url
+ * @param user
+ * @returns {Promise<null>}
  */
-const downloadTorrentFile = async url => {
+const downloadTorrentFile = async (url, user) => {
 
-    const browser = await puppeteer.launch({headless: false, timeout: 60000});
+    let launchBrowserProperties = {};
+
+    if (process.env.NODE_ENV === 'production') {
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox']}
+    } else {
+        launchBrowserProperties = {headless: false, timeout: 60000}
+    }
+
+    let browser = {};
+
     try {
-
-        db.reload();
+        browser = await puppeteer.launch(launchBrowserProperties);
 
         // With puppeteer
+        // TODO maybe use another YGG account
         const page = await browser.newPage();
 
         await page.goto(url, {timeout: 60000});
@@ -88,11 +104,11 @@ const downloadTorrentFile = async url => {
         await page.waitForSelector("body");
         let html = await page.evaluate(body => body.innerHTML, await page.$('body'));
 
-        await page.type('input[name=id]', db.getData('/configuration/ygg/username'));
-        await page.type('input[name=pass]', db.getData('/configuration/ygg/password'));
+        await page.type('input[name=id]', 'Ghyslain');
+        await page.type('input[name=pass]', 'foobar');
 
         await page.keyboard.down('Enter');
-        await page.type('input[name=id]', db.getData('/configuration/ygg/username'));
+        await page.type('input[name=id]', 'Ghyslain');
         await page.keyboard.down('Enter');
 
         await page.waitForNavigation();
@@ -115,9 +131,9 @@ const downloadTorrentFile = async url => {
         // Removing torrent file
         await removeAllFiles(path.join(__dirname, 'torrent_temp'));
 
-        const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink);
+        const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink, user);
 
-        await realdebrid.selectAllTorrentFiles(rdTorrentInfo.id);
+        await realdebrid.selectAllTorrentFiles(rdTorrentInfo.id, user);
 
         browser.close();
 

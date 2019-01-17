@@ -64,6 +64,8 @@ class MovieInfoDialog extends React.Component {
     downloadTorrentFile = async (torrent) => {
         this.setState({movieInfoLoading: true, movieInfo: null, torrentsList: null});
 
+        const { selectedMovie } = this.props;
+
         try {
             let response = await fetch('/api/torrents', {
                 method: 'POST',
@@ -73,7 +75,10 @@ class MovieInfoDialog extends React.Component {
                     'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
-                    url: torrent.url
+                    url: torrent.url,
+                    provider: torrent.provider,
+                    title: selectedMovie.title,
+                    id: selectedMovie.id,
                 })
             });
 
@@ -82,7 +87,7 @@ class MovieInfoDialog extends React.Component {
             if (response.message !== 'ok') {
                 this.props.displaySnackMessage('Error while downloading torrent file');
             } else {
-                this.props.displaySnackMessage('Torrent added - check status in downloads');
+                this.props.displaySnackMessage('Torrent added - check progress in downloads');
             }
 
             this.setState({movieInfoLoading: false});
@@ -300,15 +305,35 @@ class MovieInfoDialog extends React.Component {
 
                                     <List component="nav">
 
-                                        {this.state.torrentsList.map(torrent => {
+                                        {this.state.torrentsList.map(provider => {
                                             return (
-                                                <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
-                                                    <ListItem button style={{overflow: 'hidden'}}>
-                                                        <ListItemText primary={torrent.title} onClick={() => this.downloadTorrentFile(torrent)}/>
-                                                    </ListItem>
-                                                </Paper>
+                                                <div>
+                                                    <h3>
+                                                        {provider.provider}
+                                                    </h3>
+
+                                                    {
+                                                        provider.torrents.map(torrent => {
+                                                            return (
+                                                                <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
+                                                                    <ListItem button style={{overflow: 'hidden'}}>
+                                                                        <ListItemText primary={torrent.title} onClick={() => this.downloadTorrentFile(torrent)}/>
+                                                                        </ListItem>
+                                                                    </Paper>
+                                                            )})
+                                                        }
+                                                </div>
 
                                             )
+
+                                            // return (
+                                            //     <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
+                                            //         <ListItem button style={{overflow: 'hidden'}}>
+                                            //             <ListItemText primary={torrent.title} onClick={() => this.downloadTorrentFile(torrent)}/>
+                                            //         </ListItem>
+                                            //     </Paper>
+                                            //
+                                            // )
                                         })}
 
 

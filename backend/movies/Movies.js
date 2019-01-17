@@ -59,6 +59,7 @@ const downloadTorrentFile = async (url, provider, title, id, user) => {
                 throw new Error('bad provider');
         }
 
+        const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
         const inProgressMovie = snapshot.val();
 
         if (inProgressMovie) {

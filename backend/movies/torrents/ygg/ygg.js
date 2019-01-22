@@ -32,15 +32,25 @@ const _include_headers = function(body, response, resolveWithFullResponse) {
  * @returns {Promise<Array>}
  */
 const getTorrentsList = async title => {
-    try {
-        const options = {
-            method: 'GET',
-            uri: YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145&sub_category=all',
-            json: true
-        };
 
-        const response = await rp(options);
-        const $ = cheerio.load(response);
+    let launchBrowserProperties = {};
+
+    if (process.env.NODE_ENV === 'production') {
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox']}
+    } else {
+        launchBrowserProperties = {headless: false, timeout: 60000}
+    }
+
+    let browser = {};
+
+    try {
+        browser = await puppeteer.launch(launchBrowserProperties);
+        const page = await browser.newPage();
+        await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145&sub_category=all', {timeout: 60000});
+        await page.waitFor(5000);
+        await page.waitForSelector("body");
+        const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
+        const $ = cheerio.load(html);
 
         const tableRows = $('tr');
         const items = tableRows.splice(7, tableRows.length);
@@ -59,6 +69,7 @@ const getTorrentsList = async title => {
             })
         });
 
+        browser.close();
 
         return {
             provider: 'ygg',
@@ -66,6 +77,7 @@ const getTorrentsList = async title => {
         };
 
     } catch(error) {
+        browser.close();
         throw error;
     }
 };

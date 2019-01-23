@@ -451,9 +451,8 @@ class MovieInfoDialog extends React.Component {
                                         <div>
                                             <Chip
                                                 clickable="true"
-                                                onClick={() => this.searchProvidersMovie(this.state.movieInfo.title)}
-                                                // onClick={() => this.props.displaySnackMessage('Not ready yet')}
-
+                                                // onClick={() => this.searchProvidersMovie(this.state.movieInfo.title)}
+                                                onClick={() => this.props.displaySnackMessage('Not ready yet')}
                                                 avatar={
                                                     <Avatar
                                                         style={{backgroundColor: "#9b0101"}}>

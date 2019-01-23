@@ -313,7 +313,8 @@ class Movies extends Component {
                                 value={this.state.movieTitleToSearch}
                                 onClick={this.getMoviesGenres}
                                 placeholder="Movie title"
-                                type="search"
+                                autoComplete="off"
+                                // type="search"
                                 onChange={evt => this.updateMovieTitleToSearch(evt)}
                                 onBlur={evt => this.searchBarLostFocus(evt)}
                                 disableUnderline={true}

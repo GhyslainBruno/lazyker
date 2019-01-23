@@ -25,6 +25,7 @@ import screenfull from "screenfull";
 import {findDOMNode} from "react-dom";
 import Slide from "@material-ui/core/Slide";
 import * as auth from "../../firebase/auth";
+import Link from "react-router-dom/es/Link";
 
 const styles = {
     outlinedChip : {
@@ -189,9 +190,16 @@ class MovieInfoDialog extends React.Component {
 
     // Get movie info at rendering
     componentDidMount() {
+        // const test = qs.parse(this.props.location);
+        // console.log(test);
+        // console.log(this.props);
         this.setState({showInfoDialog: this.props.showInfoDialog});
         this.getMovieInfo(this.props.selectedMovie);
     };
+
+    componentWillMount() {
+        console.log(this.props);
+    }
 
     // Transition used to display dialog (usefull ?)
     Transition = (props) => {
@@ -274,13 +282,24 @@ class MovieInfoDialog extends React.Component {
 
                     <DialogContent style={{padding: '0'}}>
 
-                        <Button
-                            onClick={() => closeDialog()}
-                            variant="fab"
-                            mini
-                            style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>
-                            <Close />
-                        </Button>
+                        {/*<Button*/}
+                            {/*onClick={() => closeDialog()}*/}
+                            {/*variant="fab"*/}
+                            {/*mini*/}
+                            {/*style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>*/}
+                            {/*<Close />*/}
+                        {/*</Button>*/}
+
+                        <Link to={{pathname: '/movies', search: `?genre=${this.props.genreSelected.id}`}} style={{ textDecoration: 'none', color: 'white' }}>
+                            <Button
+                                onClick={() => closeDialog()}
+                                variant="fab"
+                                mini
+                                style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>
+                                <Close />
+                            </Button>
+                        </Link>
+
 
                         <Button
                             onClick={() => this.getMovieInfo(this.props.selectedMovie)}

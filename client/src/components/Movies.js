@@ -16,9 +16,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Close from '@material-ui/icons/Close';
 import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
+import * as qs from 'query-string';
 import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import MovieInfoDialog from './movies/MovieInfoDialog';
+import Link from "react-router-dom/es/Link";
 
 const styles = {
 
@@ -54,7 +56,7 @@ class Movies extends Component {
             oldScroll: 0,
             movieGenres: null,
             movieGenresLoading: true,
-            moviesGenre: '',
+            moviesGenre: {name: 'Popular', id: 'popular'},
             showInfoDialog: false,
         };
 
@@ -72,7 +74,7 @@ class Movies extends Component {
                 movieTitleToSearch: '',
                 pageNumber: 1,
                 movieGenres: null,
-                moviesGenre: {name: 'Popular'}
+                moviesGenre: {name: 'Popular', id: 'popular'}
         });
         await this.getMovies();
     };
@@ -128,62 +130,125 @@ class Movies extends Component {
     // };
 
     getMovies = async () => {
-        const page = this.state.pageNumber;
-        this.setState({isInSearchView: false, providersMovies: null, qualities: null, infiniteLoading: true});
 
-        try {
+        if (!this.props.match.params.id) {
+            const page = this.state.pageNumber;
+            this.setState({isInSearchView: false, providersMovies: null, qualities: null, infiniteLoading: true});
 
-            let genre  = '';
+            try {
 
-            switch (this.state.moviesGenre.name) {
-                case 'Popular':
-                    genre = 'popular';
-                    break;
-                // case 'Latest':
-                //     genre = 'latest';
-                //     break;
-                case 'Now Playing':
-                    genre = 'now_playing';
-                    break;
-                case 'Top Rated':
-                    genre = 'top_rated';
-                    break;
-                case 'Upcoming':
-                    genre = 'upcoming';
-                    break;
-                default :
-                    genre = this.state.moviesGenre.id;
+                let genre  = '';
+
+                const genreName = this.state.moviesGenre.name;
+
+                switch (genreName) {
+                    case 'Popular':
+                        genre = 'popular';
+                        break;
+                    case 'Now Playing':
+                        genre = 'now_playing';
+                        break;
+                    case 'Top Rated':
+                        genre = 'top_rated';
+                        break;
+                    case 'Upcoming':
+                        genre = 'upcoming';
+                        break;
+                    default :
+                        genre = this.state.moviesGenre.id;
+
+                        let movieGenresFromTMDB = await fetch('/api/movies_genres');
+                        movieGenresFromTMDB =  await movieGenresFromTMDB.json();
+                        const goodGenreFromTMDB = movieGenresFromTMDB.find(tmdbGenre => tmdbGenre.id === parseInt(genre));
+                        this.setState({moviesGenre: goodGenreFromTMDB});
+                }
+
+                this.props.history.push(`/movies?genre=${genre}`);
+
+                let movies = await fetch('/api/movies?page=' + page + '&genre=' + genre);
+                movies =  await movies.json();
+
+                let tmdbMovies = [];
+
+                if (this.state.tmdbMovies === null) {
+                    tmdbMovies = movies;
+                } else {
+                    tmdbMovies = this.state.tmdbMovies.concat(movies);
+                }
+
+                tmdbMovies = tmdbMovies.filter(el => el !== null);
+
+                this.setState({tmdbMovies: tmdbMovies, pageNumber: page + 1, infiniteLoading: false});
+
+            } catch(error) {
+                this.setState({snack: true, snackBarMessage: 'Error getting movies', infiniteLoading: false, tmdbMovies: null})
             }
-
-            let movies = await fetch('/api/movies?page=' + page + '&genre=' + genre);
-            movies =  await movies.json();
-
-            let tmdbMovies = [];
-
-            if (this.state.tmdbMovies === null) {
-                tmdbMovies = movies;
-            } else {
-                tmdbMovies = this.state.tmdbMovies.concat(movies);
-            }
-
-            tmdbMovies = tmdbMovies.filter(el => el !== null);
-
-            this.setState({tmdbMovies: tmdbMovies, pageNumber: page + 1, infiniteLoading: false});
-
-        } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error getting movies', infiniteLoading: false, tmdbMovies: null})
         }
+
     };
 
     componentDidMount() {
 
-        this.setState({moviesGenre: {name: 'Popular'}}, () => {
-            window.addEventListener('scroll', this.handleOnScroll);
+        const urlParams = qs.parse(this.props.location.search);
 
-            this.getMovies();
-        });
+        if (urlParams.genre) {
 
+            let genre = {
+                id: urlParams.genre
+            };
+
+            switch (genre.id) {
+                case 'popular':
+                    genre.name = 'Popular';
+                    break;
+                case 'now_playing':
+                    genre.name = 'Now Playing';
+                    break;
+                case 'top_rated':
+                    genre.name = 'Top Rated';
+                    break;
+                case 'upcoming':
+                    genre.name = 'Upcoming';
+                    break;
+                default :
+                    genre.name = genre.id;
+            }
+
+            this.setState({moviesGenre: genre}, () => {
+                window.addEventListener('scroll', this.handleOnScroll);
+                this.getMovies();
+
+                const movie = {};
+                movie.id = this.props.match.params.id;
+
+                if (movie.id) {
+                    this.displayMovieInfo(movie);
+                }
+            });
+        } else {
+            this.setState({moviesGenre: {name: 'Popular', id: 'popular'}}, () => {
+                window.addEventListener('scroll', this.handleOnScroll);
+                this.getMovies();
+
+                const movie = {};
+                movie.id = this.props.match.params.id;
+
+                if (movie.id) {
+                    this.displayMovieInfo(movie);
+                }
+            });
+        }
     }
+
+    // componentWillMount() {
+    //
+    //     const movie = {};
+    //     movie.id = this.props.match.params.id;
+    //
+    //     if (movie.id) {
+    //         this.displayMovieInfo(movie);
+    //     }
+    // }
 
     componentWillUnmount = () => {
         window.removeEventListener('scroll', this.handleOnScroll);
@@ -260,6 +325,7 @@ class Movies extends Component {
     };
 
     closeInfoDialog = () => {
+        this.props.history.push('/movies');
         this.setState({showInfoDialog: false});
     };
 
@@ -280,6 +346,7 @@ class Movies extends Component {
                 {/* Movie dialog info extracted */}
                 {this.state.showInfoDialog ?
                     <MovieInfoDialog
+                        genreSelected={this.state.moviesGenre}
                         selectedMovie={this.state.selectedMovie}
                         showInfoDialog={this.state.showInfoDialog}
                         closeDialog={this.closeInfoDialog}
@@ -320,7 +387,6 @@ class Movies extends Component {
                                 disableUnderline={true}
                                 style={{width: '80%'}}
                                 onKeyPress={(event) => {this.onEnterKeyPressed(event)}}
-                                onblur={() => alert('foo')}
                             />
 
                             <IconButton>
@@ -341,7 +407,7 @@ class Movies extends Component {
                         {
                             this.state.movieGenres !== null ? this.state.movieGenres.map(movieGenre => {
                                 return (
-                                    <Chip label={movieGenre.name} style={styles.outlinedChip} className="movieGenre" clickable="true" onClick={() => this.searchMovieGenre(movieGenre)} />
+                                    <Chip label={movieGenre.name} style={styles.outlinedChip} className="movieGenre" clickable={true} onClick={() => this.searchMovieGenre(movieGenre)} />
                                     )
                             })
                                 :
@@ -351,10 +417,10 @@ class Movies extends Component {
                     </Paper>
 
                     <div style={{paddingTop: '10px', paddingBottom: '10px'}}>
-                        <Chip label="Now Playing" style={this.state.moviesGenre.name === 'Now Playing' ? styles.selectedChip : styles.outlinedChip} clickable="true" onClick={() => this.searchMovieGenre({name: "Now Playing"})}/>
-                        <Chip label="Popular" style={this.state.moviesGenre.name === 'Popular' ? styles.selectedChip : styles.outlinedChip} clickable="true" onClick={() => this.searchMovieGenre({name: "Popular"})} />
-                        <Chip label="Top Rated" style={this.state.moviesGenre.name === 'Top Rated' ? styles.selectedChip : styles.outlinedChip} clickable="true" onClick={() => this.searchMovieGenre({name: "Top Rated"})} />
-                        <Chip label="Upcoming" style={this.state.moviesGenre.name === 'Upcoming' ? styles.selectedChip : styles.outlinedChip} clickable="true" onClick={() => this.searchMovieGenre({name: "Upcoming"})} />
+                        <Chip label="Now Playing" style={this.state.moviesGenre.name === 'Now Playing' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Now Playing", id: "now_playing"})}/>
+                        <Chip label="Popular" style={this.state.moviesGenre.name === 'Popular' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Popular", id: "popular"})} />
+                        <Chip label="Top Rated" style={this.state.moviesGenre.name === 'Top Rated' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Top Rated", id: "top_rated"})} />
+                        <Chip label="Upcoming" style={this.state.moviesGenre.name === 'Upcoming' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Upcoming", id: "upcoming"})} />
                     </div>
 
 
@@ -385,25 +451,28 @@ class Movies extends Component {
 
                                     <Grid item xs={4} style={{padding: '6px'}}>
 
-                                        <Card>
+                                        <Link to={{pathname: `/movies/${movie.id}`, search: `?genre=${this.state.moviesGenre.id}`}} style={{ textDecoration: 'none', color: 'white' }}>
+                                            <Card>
 
-                                            <CardMedia
-                                                onClick={() => this.displayMovieInfo(movie)}
-                                                style={{paddingTop: '150%', cursor: 'pointer', WebkitTapHighlightColor: 'transparent'}}
-                                                image={"https://image.tmdb.org/t/p/w500" + movie.posterPath}
-                                                title={movie.title}
-                                                clickable="true"
-                                            />
+                                                <CardMedia
+                                                    // onClick={() => this.displayMovieInfo(movie)}
+                                                    style={{paddingTop: '150%', cursor: 'pointer', WebkitTapHighlightColor: 'transparent'}}
+                                                    image={"https://image.tmdb.org/t/p/w500" + movie.posterPath}
+                                                    title={movie.title}
+                                                    clickable="true"
+                                                />
 
-                                            <CardContent>
-                                                <div>
-                                                    <Star style={{fontSize: '18', verticalAlign: 'bottom'}}/>
-                                                    {movie.note}
-                                                </div>
+                                                <CardContent>
+                                                    <div>
+                                                        <Star style={{fontSize: '18', verticalAlign: 'bottom'}}/>
+                                                        {movie.note}
+                                                    </div>
 
-                                            </CardContent>
+                                                </CardContent>
 
-                                        </Card>
+                                            </Card>
+                                        </Link>
+
                                     </Grid>
 
                                 )

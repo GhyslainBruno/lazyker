@@ -69,7 +69,8 @@ class App extends Component {
                             this.state.authUser ?
                                 <div className="mainApp mui-fixed">
                                     <Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation}/>}/>
-                                    <Route exact path='/movies' render={() => <Movies changeNavigation={this.changeNavigation} />}/>
+                                    <Route exact path='/movies/:id' render={(props) => <Movies changeNavigation={this.changeNavigation} {...props} />}/>
+                                    <Route exact path='/movies' render={(props) => <Movies changeNavigation={this.changeNavigation} {...props} />}/>
                                     <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
                                     <Route exact path='/settings' render={() => <Settings changeNavigation={this.changeNavigation}/>}/>
                                     <Route exact path='/privacy_policy' render={() => <Privacy/>}/>

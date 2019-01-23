@@ -5,21 +5,10 @@ const request  = require('request');
 const YGGRootUrl ='https://ww2.yggtorrent.is/';
 const logger = require('../../../logs/logger');
 const fs = require('fs');
-// const tough = require('tough-cookie');
-// const puppeteer = require('puppeteer');
 const path = require('path');
 const torrentToMagnet = require('torrent-to-magnet');
 const parseTorrent = require('parse-torrent');
 const realdebrid = require('../../../realdebrid/debrid_links');
-
-/**
- * ! WARNING ! File not functional for now !!
- * @param body
- * @param response
- * @param resolveWithFullResponse
- * @returns {{headers: *, data: *, fullResponse: *}}
- * @private
- */
 
 // Used to read headers responses in requests
 const _include_headers = function(body, response, resolveWithFullResponse) {

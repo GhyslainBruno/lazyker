@@ -14,6 +14,7 @@ import green from '@material-ui/core/colors/green';
 import {SignUpForm} from "./components/SignUp";
 import {SignInForm} from "./components/SignIn";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Redirect from "react-router-dom/es/Redirect";
 
 const theme = createMuiTheme({
     palette: {
@@ -74,7 +75,8 @@ class App extends Component {
                                     <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
                                     <Route exact path='/settings' render={() => <Settings changeNavigation={this.changeNavigation}/>}/>
                                     <Route exact path='/privacy_policy' render={() => <Privacy/>}/>
-                                    <Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>
+                                    {/*<Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>*/}
+                                    <Route exact path='/' render={() => <Redirect to="/movies?genre=popular" />}/>
                                     <Route path='/api/link_rd' render={(props)=> <Settings changeNavigation={this.changeNavigation} {...props} />}/>
                                     <Route path='/' render={() => <Navigation navigation={this.state.navigation} authUser={this.state.authUser} />}/>
                                 </div>

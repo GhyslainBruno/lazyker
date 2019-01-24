@@ -85,7 +85,13 @@ class MoviesInProgress extends React.Component {
 
                                 return (
                                     <ListItem button>
-                                        <ListItemText primary={movie.title}/>
+                                        <ListItemText primary={
+                                            <React.Fragment>
+                                            <Typography component="span" style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} color="textPrimary">
+                                                {movie.title}
+                                            </Typography>
+                                        </React.Fragment>
+                                        }/>
 
                                         <ListItemSecondaryAction>
                                             {movie.state === 'error' ?

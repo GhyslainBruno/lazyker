@@ -47,7 +47,8 @@ class MovieInfoDialog extends React.Component {
             torrentsList: null,
             providersMovies: null,
             qualities: null,
-            isInTorrentOrDdl: false
+            isInTorrentOrDdl: false,
+            movieTitle: null
         };
     }
 
@@ -63,6 +64,9 @@ class MovieInfoDialog extends React.Component {
 
     // Start the download of a torrent file (in realdebrid)
     downloadTorrentFile = async (torrent) => {
+        // const movieTitle = this.state.movieInfo.title;
+        // console.log(this.state.movieInfo);
+
         this.setState({movieInfoLoading: true, movieInfo: null, torrentsList: null});
 
         const { selectedMovie } = this.props;
@@ -78,7 +82,7 @@ class MovieInfoDialog extends React.Component {
                 body: JSON.stringify({
                     url: torrent.url,
                     provider: torrent.provider,
-                    title: selectedMovie.title,
+                    title: this.state.movieTitle,
                     id: selectedMovie.id,
                 })
             });
@@ -92,7 +96,10 @@ class MovieInfoDialog extends React.Component {
             }
 
             this.setState({movieInfoLoading: false});
-            this.props.closeDialog();
+
+            setTimeout(() => {
+                this.props.closeDialog();
+            }, 2000);
 
         } catch(error) {
             this.props.displaySnackMessage('Error while downloading torrent file');
@@ -219,7 +226,7 @@ class MovieInfoDialog extends React.Component {
             movieInfo =  await movieInfo.json();
 
             if (!movieInfo.error) {
-                this.setState({movieInfo: movieInfo, movieInfoLoading: false});
+                this.setState({movieInfo: movieInfo, movieInfoLoading: false, movieTitle: movieInfo.title});
             } else {
                 this.props.displaySnackMessage('Error getting infos');
                 this.setState({movieInfo: null, movieInfoLoading: false});

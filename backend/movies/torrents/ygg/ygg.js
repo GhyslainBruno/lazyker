@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 const rp  = require('request-promise');
 const request  = require('request');
-const YGGRootUrl ='https://ww2.yggtorrent.is/';
+const YGGRootUrl ='https://www2.yggtorrent.gg/';
 const logger = require('../../../logs/logger');
 const fs = require('fs');
 const path = require('path');
@@ -36,7 +36,7 @@ const getTorrentsList = async title => {
         browser = await puppeteer.launch(launchBrowserProperties);
         const page = await browser.newPage();
         await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145&sub_category=all', {timeout: 60000});
-        await page.waitFor(5000);
+        // await page.waitFor(5000);
         await page.waitForSelector("body");
         const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
         const $ = cheerio.load(html);
@@ -82,9 +82,9 @@ const downloadTorrentFile = async (url, user) => {
     let launchBrowserProperties = {};
 
     if (process.env.NODE_ENV === 'production') {
-        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox']}
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage']}
     } else {
-        launchBrowserProperties = {headless: false, timeout: 60000}
+        launchBrowserProperties = {headless: false, timeout: 60000, args: ['--disable-dev-shm-usage']}
     }
 
     let browser = {};
@@ -103,7 +103,9 @@ const downloadTorrentFile = async (url, user) => {
         await page.waitForSelector("a.butt");
         await page.click("a.butt");
         await page.waitForSelector("body");
-        let html = await page.evaluate(body => body.innerHTML, await page.$('body'));
+        await page.click("a.butt");
+        await page.waitForSelector("body");
+        // let html = await page.evaluate(body => body.innerHTML, await page.$('body'));
 
         await page.type('input[name=id]', 'Ghyslain');
         await page.type('input[name=pass]', 'foobar');
@@ -154,7 +156,7 @@ const downloadTorrentFile = async (url, user) => {
     } catch(error) {
 
         await removeAllFiles(path.join(__dirname, 'torrent_temp'));
-
+        await logger.info(error, user);
         browser.close();
         throw error;
     }

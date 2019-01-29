@@ -36,7 +36,7 @@ const getTorrentsList = async title => {
         browser = await puppeteer.launch(launchBrowserProperties);
         const page = await browser.newPage();
         await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145&sub_category=all', {timeout: 60000});
-        // await page.waitFor(5000);
+        await page.waitFor(5000);
         await page.waitForSelector("body");
         const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
         const $ = cheerio.load(html);

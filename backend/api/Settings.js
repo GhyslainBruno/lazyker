@@ -103,6 +103,7 @@ module.exports = (app) => {
 
     /**
      * Gets and stores a Gdrive access token to database from single use client token
+     * Not used for now (used in client - but only for test purposes
      */
     app.get('/api/gdrive_list', async (req, res) => {
         try {

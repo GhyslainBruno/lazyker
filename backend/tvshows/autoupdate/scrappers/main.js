@@ -1,7 +1,8 @@
-const rapidmoviez = require('./rapidmoviez');
-const zonetelechargement = require('./zonetelechargement');
+const rapidmoviez = require('./ddl/rapidmoviez');
+const zonetelechargement = require('./ddl/zonetelechargement');
+const ygg = require('./torrent/ygg');
 const pMap = require('p-map');
-const logger = require('../../logs/logger');
+const logger = require('../../../logs/logger');
 
 /**
  * Returns an only one link
@@ -16,14 +17,16 @@ const getLink = async (show, user, qualities) => {
 
         const providersPromises = [
             // rapidmoviez.getLink(show, user, qualities),
-            zonetelechargement.getLink(show, user, qualities)
+            // zonetelechargement.getLink(show, user, qualities),
+            // Not using DDL anymore and only torrent (see if it's a good idea)
+            ygg.getLink(show, user, qualities)
         ];
 
         const links = await pMap(providersPromises, link => {
             return link
         }, {concurency: 1});
 
-        return getLighterLink(links);
+        return downloadBetterTorrent(links);
 
     } catch(error) {
         // TODO: get a user to user logger here
@@ -42,16 +45,18 @@ const getLink = async (show, user, qualities) => {
  * @param links
  * @returns {*}
  */
-const getLighterLink = (links) => {
+const downloadBetterTorrent = (links) => {
 
     links = links.filter(link => link !== null);
     links = links.filter(link => link !== undefined);
 
-    if (links.length > 0) {
-        return links.find(link => link.filesize === Math.min.apply(Math, links.map(link => link.filesize)));
-    } else {
-        return null
-    }
+
+
+    // if (links.length > 0) {
+    //     return links.find(link => link.filesize === Math.min.apply(Math, links.map(link => link.filesize)));
+    // } else {
+    //     return null
+    // }
 };
 
 module.exports.getLink = getLink;

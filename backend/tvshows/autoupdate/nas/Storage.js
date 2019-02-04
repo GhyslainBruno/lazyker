@@ -1,8 +1,8 @@
-const filesList = require('../synology/FilesList');
-const synology = require('../synology/Connector');
+const filesList = require('../../../synology/FilesList');
+const synology = require('../../../synology/Connector');
 const stringSimilarity = require('string-similarity');
 const pMap = require('p-map');
-const dsmCommunication = require('../synology/Download');
+const dsmCommunication = require('../../../synology/Download');
 
 /**
  * Get FilesList from storage

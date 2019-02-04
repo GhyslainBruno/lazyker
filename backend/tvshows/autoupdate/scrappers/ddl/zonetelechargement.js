@@ -2,12 +2,13 @@ const cheerio = require('cheerio');
 const rp  = require('request-promise');
 const stringSimilarity = require('string-similarity');
 const pMap = require('p-map');
-const dlProtect = require('../../scappers/zonetelechargement/dlprotect1com');
-const realdebrid = require('../../realdebrid/debrid_links');
-const logger = require('../../logs/logger');
+const dlProtect = require('../../../../scappers/zonetelechargement/dlprotect1com');
+const realdebrid = require('../../../../realdebrid/debrid_links');
+const logger = require('../../../../logs/logger');
 const admin = require("firebase-admin");
 const db = admin.database();
 const usersRef = db.ref("/users");
+const database = require('../../common/Database');
 // const CloudflareBypasser = require('cloudflare-bypasser');
 
 // let cf = new CloudflareBypasser();
@@ -62,7 +63,7 @@ const getLink = async (show, user, qualities) => {
 
         // const qualities = await getQualities(database);
 
-        const lang = await getLangWantedForThisTvShow(show, user);
+        const lang = await database.getLangWantedForThisTvShow(show, user);
 
         const hostLinksWithQuality = await getHostsWithQualities(show, qualities, showUrl, lang, user);
 
@@ -267,24 +268,7 @@ const getHostsWithQualities = async (show, qualities, showUrl, langWanted, user)
 
 };
 
-/**
- * Return the lang ("fr" or "vostfr") for a particular tv show, present in database
- * @param show
- * @param user
- * @returns {Promise<*>}
- */
-const getLangWantedForThisTvShow = async (show, user) => {
 
-    const showsSnapshot = await usersRef.child(user.uid).child('/shows').once('value');
-    const shows = showsSnapshot.val();
-
-    const showTitleWantedToUpdateFromDb = stringSimilarity.findBestMatch(show.name, Object.keys(shows).map(showId => shows[showId].title)).bestMatch.target;
-
-    const showsOrdered = await usersRef.child(user.uid).child('/shows').orderByChild("title").equalTo(showTitleWantedToUpdateFromDb).once('value');
-    const showsWanted = showsOrdered.val();
-    return showsWanted[Object.keys(showsWanted)[0]].lang;
-
-};
 
 /**
  * Returns qualities in same format as other scrappers

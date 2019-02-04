@@ -8,7 +8,8 @@ const logger = require('../logs/logger');
 const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
 const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
 
-const autoupdate = require('../autoupdate/Main');
+const autoupdateNAS = require('../tvshows/autoupdate/nas/Main');
+const autoupdateGdrive = require('../tvshows/autoupdate/gdrive/Main');
 
 module.exports = (app) => {
 
@@ -163,35 +164,42 @@ module.exports = (app) => {
 
             res.send({message: 'Auto-update started'});
 
-            // Only keeping 'nas' users for now to autoupdate tvShows
-            const snapshot = await usersRef.child('/').orderByChild('/settings/storage').equalTo('nas').once('value');
-            const users = snapshot.val();
+            // TODO handle gdrive or nas depending on settings selection
+            await autoupdateGdrive.startUpdate(await admin.auth().getUser("TFbtVsqJfPMpUhsoWh7ETYMipqY2"));
 
-            // Qtarting auto update with users who only use NAS storage & have entered values into the mandatory variables
-            const usersToUpdateTvShows = Object.keys(users).filter(user => {
+            // // Only keeping 'nas' users for now to autoupdate tvShows
+            // const snapshot = await usersRef.child('/').orderByChild('/settings/storage').equalTo('nas').once('value');
+            // const users = snapshot.val();
 
-                if (users[user].settings.qualities.first !== undefined &&
-                    users[user].settings.nas.account !== undefined &&
-                    users[user].settings.nas.password !== undefined &&
-                    users[user].settings.nas.port !== undefined &&
-                    users[user].settings.nas.protocol !== undefined &&
-                    users[user].settings.nas.host !== undefined &&
-                    users[user].settings.nas.tvShowsPath !== undefined) {
+            // Starting auto update with users who only use NAS storage & have entered values into the mandatory variables
+            // const usersToUpdateTvShows = Object.keys(users).filter(user => {
+            //
+            //     if (users[user].settings.qualities.first !== undefined &&
+            //         users[user].settings.nas.account !== undefined &&
+            //         users[user].settings.nas.password !== undefined &&
+            //         users[user].settings.nas.port !== undefined &&
+            //         users[user].settings.nas.protocol !== undefined &&
+            //         users[user].settings.nas.host !== undefined &&
+            //         users[user].settings.nas.tvShowsPath !== undefined) {
+            //
+            //         return users[user]
+            //
+            //     }
+            // });
 
-                    return users[user]
-
-                }
-            });
-
-            await pMap(usersToUpdateTvShows, async uid => {
-
-                try {
-                    await autoupdate.startUpdate(await admin.auth().getUser(uid));
-                } catch(error) {
-                    await logger.info(error.message, await admin.auth().getUser(uid));
-                }
-
-            }, {concurency: 1});
+            // await pMap(usersToUpdateTvShows, async uid => {
+            //
+            //     try {
+            //         // NAS way
+            //         // await autoupdate.startUpdate(await admin.auth().getUser(uid));
+            //
+            //         // Gdrive way
+            //         await autoupdate.startUpdate(await admin.auth().getUser("TFbtVsqJfPMpUhsoWh7ETYMipqY2"));
+            //     } catch(error) {
+            //         await logger.info(error.message, await admin.auth().getUser(uid));
+            //     }
+            //
+            // }, {concurency: 1});
 
         } catch(error) {
             await logger.info(error.message, user);

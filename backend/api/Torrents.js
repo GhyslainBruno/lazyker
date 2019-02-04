@@ -72,7 +72,7 @@ module.exports = (app) => {
     });
 
     /**
-     * Get straming links for a particular realdebrid torrent
+     * Get streaming links for a particular realdebrid torrent
      */
     app.post('/api/streaming_torrent', async (req, res) => {
         try {
@@ -102,6 +102,7 @@ module.exports = (app) => {
     app.delete('/api/realdebrid_torrents', async (req, res) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
+            await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();
             await realdebrid.deleteTorrent(req.query.torrentId, user);
             res.send({
                 message: 'ok'

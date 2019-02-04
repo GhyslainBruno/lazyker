@@ -544,9 +544,10 @@ async function getLighterLink(links) {
  * Adds magnet link to realdebrid service - returns id of torrent
  * @param magnetLink
  * @param user
+ * @param infos
  * @returns {Promise<void>}
  */
-const addMagnetLinkToRealdebrid = async (magnetLink, user) => {
+const addMagnetLinkToRealdebrid = async (magnetLink, user, infos) => {
 
     try {
 
@@ -566,11 +567,18 @@ const addMagnetLinkToRealdebrid = async (magnetLink, user) => {
             json: true
         };
 
-        return await rp(options);
+        const rdTorrentInfo = await rp(options);
+
+        rdTorrentInfo.mediaInfos = infos;
+
+        // Adding in db torrent's information to be able to create a directory (for the download) with a proper name
+        // (not only using torrent name for that)
+        await usersRef.child(user.uid).child(`/torrentsDownloaded/${rdTorrentInfo.id}`).set(rdTorrentInfo);
+
+        return rdTorrentInfo;
 
     } catch(error) {
-        // TODO: get a user to user logger here
-        // logger.info(error);
+        await logger.info(error, user);
         throw error;
     }
 };

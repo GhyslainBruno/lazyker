@@ -1,8 +1,8 @@
 const cheerio = require('cheerio');
 const rp  = require('request-promise');
-const logger = require('../../../logs/logger');
+const logger = require('../../logs/logger');
 const Torrent9RootUrl = 'https://www.torrent9.ch';
-const realdebrid = require('../../../realdebrid/debrid_links');
+const realdebrid = require('../../realdebrid/debrid_links');
 
 /**
  * Returns the real URL used by the website - anytime
@@ -97,9 +97,10 @@ const getTorrentsList = async title => {
  * Start the download of a torrent file
  * @param url
  * @param user
+ * @param infos
  * @returns {Promise<null>}
  */
-const downloadTorrentFile = async (url, user) => {
+const downloadTorrentFile = async (url, user, infos) => {
 
     try {
 
@@ -118,7 +119,7 @@ const downloadTorrentFile = async (url, user) => {
         const magnetLink = $('a.btn.btn-danger.download')[1].attribs.href;
 
         // Adding torrent to realdebrid service
-        const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink, user);
+        const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink, user, infos);
         await realdebrid.selectAllTorrentFiles(rdTorrentInfo.id, user);
 
         return null;

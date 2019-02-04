@@ -3,12 +3,15 @@ const puppeteer = require('puppeteer');
 const rp  = require('request-promise');
 const request  = require('request');
 const YGGRootUrl ='https://www2.yggtorrent.gg/';
-const logger = require('../../../logs/logger');
+const logger = require('../../logs/logger');
 const fs = require('fs');
 const path = require('path');
 const torrentToMagnet = require('torrent-to-magnet');
 const parseTorrent = require('parse-torrent');
-const realdebrid = require('../../../realdebrid/debrid_links');
+const realdebrid = require('../../realdebrid/debrid_links');
+const admin = require('firebase-admin');
+const db = admin.database();
+const usersRef = db.ref("/users");
 
 // Used to read headers responses in requests
 const _include_headers = function(body, response, resolveWithFullResponse) {
@@ -35,8 +38,8 @@ const getTorrentsList = async title => {
     try {
         browser = await puppeteer.launch(launchBrowserProperties);
         const page = await browser.newPage();
-        await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145&sub_category=all', {timeout: 60000});
-        await page.waitFor(5000);
+        await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=', {timeout: 60000});
+        await page.waitFor(6000);
         await page.waitForSelector("body");
         const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
         const $ = cheerio.load(html);
@@ -72,12 +75,13 @@ const getTorrentsList = async title => {
 };
 
 /**
- * Start the download of a torrent file
+ * Start the download of a torrent file -> to magnetLink -> deletes torrent file -> add to realdebrid service
  * @param url
  * @param user
+ * @param infos
  * @returns {Promise<null>}
  */
-const downloadTorrentFile = async (url, user) => {
+const downloadTorrentFile = async (url, user, infos) => {
 
     let launchBrowserProperties = {};
 
@@ -134,7 +138,7 @@ const downloadTorrentFile = async (url, user) => {
         // Removing torrent file
         await removeAllFiles(path.join(__dirname, 'torrent_temp'));
 
-        const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink, user);
+        const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink, user, infos);
 
         await realdebrid.selectAllTorrentFiles(rdTorrentInfo.id, user);
 

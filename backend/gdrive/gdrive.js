@@ -10,12 +10,6 @@ const credentials = require("./client_secret_348584284-25m9u9qbgmapjd3vtt5oaai7m
 const db = admin.database();
 const usersRef = db.ref("/users");
 
-// Trying to increase maxBodyLength to avoid this type of error
-// google.options({
-//     // All requests made with this object will use these settings unless overridden.
-//     maxContentLength: 1000 * 1024 * 1024
-// });
-
 /**
  * Gets and stores a Google Drive access token from single time code in database
  * @param code
@@ -54,15 +48,22 @@ async function storeGDriveAccessToken(code, user) {
 }
 
 /**
- * Lists gdrive files - unused for now
+ * Lists gdrive files
  * @param user
- * @returns {Promise<void>}
+ * @param parent
+ * @param query
+ * @returns {Promise<*>}
  */
-async function listFiles(user) {
+async function getFilesList(user, parent, query = `'${parent.tvShowsGdriveFolderId || parent.id}' in parents`) {
 
     const params = {
-        pageSize: 100,
-
+        // Using this to specify only folders
+        // mimeType: 'application/vnd.google-apps.folder',
+        // Getting some examples of search queries here https://developers.google.com/drive/api/v3/search-parameters
+        // If a query is specified -> using it, using this one otherwise
+        orderBy: 'name',
+        q: query
+        // parents: [parent.tvShowsGdriveFolderId]
     };
 
     const {client_secret, client_id, redirect_uris} = credentials.web;
@@ -74,28 +75,48 @@ async function listFiles(user) {
 
     try {
         const files = await drive.files.list(params);
-
-        // drive.files.list({
-        //     pageSize: 10,
-        //     fields: 'nextPageToken, files(id, name)',
-        // }, (err, res) => {
-        //     if (err) return console.log('The API returned an error: ' + err);
-        //     const files = res.data.files;
-        //     if (files.length) {
-        //         console.log('Files:');
-        //         files.map((file) => {
-        //             console.log(`${file.name} (${file.id})`);
-        //         });
-        //     } else {
-        //         console.log('No files found.');
-        //     }
-        // });
-
+        return files.data.files
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 
 }
+module.exports.getFilesList = getFilesList;
+
+/**
+ * Returns true if the folder doesn't contain any child / false otherwise
+ * @param user
+ * @param folder
+ * @returns {Promise<boolean>}
+ */
+isFolderEmpty = async (user, folder) => {
+    const files = await getFilesList(user, folder);
+    return files.length === 0;
+};
+module.exports.isFolderEmpty = isFolderEmpty;
+
+/**
+ * eturns true if the parent folder contains the file / false otherwise
+ * @param user
+ * @param parent
+ * @param childFolderTitle
+ * @returns {Promise<boolean>}
+ */
+doesFolderContainsThisFolder = async (user, parent, childFolderTitle) => {
+    const files = await getFilesList(user, parent, `mimeType = 'application/vnd.google-apps.folder' and name contains '${childFolderTitle}' and '${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`);
+    return files.length > 0
+};
+
+/**
+ * Returns a folder by specifying its parent and its title
+ * @param user
+ * @param parent
+ * @param childFolderTitle
+ * @returns {Promise<*>}
+ */
+getFolder = async (user, parent, childFolderTitle) => {
+    return await getFilesList(user, parent, `mimeType = 'application/vnd.google-apps.folder' and name contains '${childFolderTitle}' and '${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`);
+};
 
 /**
  * Returns the Google Drive OAuth2Client
@@ -124,9 +145,12 @@ const getAccessToken = async user => {
  * @param link
  * @param user
  * @param title
+ * @param torrentInfos
  * @returns {Promise<void>}
  */
-const downloadMovieFile = async (link, user, title) => {
+const downloadMovieFile = async (link, user, title, torrentInfos) => {
+
+    let fileTitle = title;
 
     // Removing in progress movie in database
     const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
@@ -134,19 +158,39 @@ const downloadMovieFile = async (link, user, title) => {
 
     if (inProgressMovie) {
         // If several inProgressMovies with the same title, taking the first one
-        const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
-        await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).remove();
+        const firstInProgressMovieCorresponding =  inProgressMovie[Object.keys(inProgressMovie)[0]];
+        await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorresponding.id).remove();
     }
 
     const oAuth2Client = await getOAuth2Client(user);
-    const moviesGdriveFolder = await usersRef.child(user.uid).child('/settings/gdrive/moviesGdriveFolder').once('value');
 
     const drive = google.drive({
         version: 'v3',
         auth: oAuth2Client
     });
 
-    const movieFolderCreated = await createMovieFolder(drive, moviesGdriveFolder.val().moviesGdriveFolderId, user, title);
+    let folderCreated = {};
+
+    if (torrentInfos) {
+        if (torrentInfos.mediaInfos) {
+            if (torrentInfos.mediaInfos.isShow) {
+                const tvShowsGdriveFolder = await usersRef.child(user.uid).child('/settings/gdrive/tvShowsGdriveFolder').once('value');
+                folderCreated = await createShowEpisodeFolder(drive, tvShowsGdriveFolder.val(), user, torrentInfos.mediaInfos);
+            } else {
+                const moviesGdriveFolder = await usersRef.child(user.uid).child('/settings/gdrive/moviesGdriveFolder').once('value');
+                folderCreated = await createFolder(drive, moviesGdriveFolder.val(), torrentInfos.mediaInfos.title);
+                fileTitle = torrentInfos.mediaInfos.title;
+            }
+        } else {
+            const moviesGdriveFolder = await usersRef.child(user.uid).child('/settings/gdrive/moviesGdriveFolder').once('value');
+            folderCreated = await createFolder(drive, moviesGdriveFolder.val(), title);
+        }
+    } else {
+        const moviesGdriveFolder = await usersRef.child(user.uid).child('/settings/gdrive/moviesGdriveFolder').once('value');
+        folderCreated = await createFolder(drive, moviesGdriveFolder.val(), title);
+    }
+
+
 
     // Creating (initializing) the download into database
     const downloadKey = await usersRef.child(user.uid).child('/settings/downloads').push().key;
@@ -154,7 +198,7 @@ const downloadMovieFile = async (link, user, title) => {
     const metadata = {
         mimeType: link.mimeType,
         name: link.filename,
-        parents: [movieFolderCreated.id]
+        parents: [folderCreated.id]
     };
 
     const options = {
@@ -164,7 +208,7 @@ const downloadMovieFile = async (link, user, title) => {
             // Find a way to know the length of the init request - doc said it is mandatory
             // 'Content-Length': new Buffer(JSON.stringify(self.metadata)).length,
             'X-Upload-Content-Length': link.filesize,
-            'X-Upload-Content-Type': link.link.mimeType
+            'X-Upload-Content-Type': link.mimeType
         },
         body: JSON.stringify(metadata)
     };
@@ -233,8 +277,8 @@ const downloadMovieFile = async (link, user, title) => {
             size: link.filesize,
             size_downloaded: 0,
             speed: 0,
-            title: title,
-            destination: movieFolderCreated.name,
+            title: fileTitle,
+            destination: folderCreated.name,
             id: downloadKey,
         });
 
@@ -257,7 +301,7 @@ const downloadMovieFile = async (link, user, title) => {
                 lastEvent = 'destroy';
                 await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).remove();
                 // Delete movie folder previously created if download is destroyed
-                await deleteMovieFolder(drive, movieFolderCreated);
+                await deleteMovieFolder(drive, folderCreated);
             }
 
             if (snapshot.val() === 'resume') {
@@ -293,20 +337,19 @@ const downloadMovieFile = async (link, user, title) => {
 };
 
 /**
- * Creates a movie folder in Google Drive, return id of folder
+ * Creates a folder in Google Drive, return id of folder
  * @param drive
- * @param parentFolderId
- * @param user
- * @param title
+ * @param parentFolder
+ * @param newFolderName
  * @returns {Promise<*>}
  */
-const createMovieFolder = async (drive, parentFolderId, user, title) => {
+const createFolder = async (drive, parentFolder, newFolderName) => {
 
     try {
         const fileMetadata = {
-            name: title,
+            name: newFolderName,
             mimeType: 'application/vnd.google-apps.folder',
-            parents: [parentFolderId]
+            parents: [parentFolder.moviesGdriveFolderId || parentFolder.id]
         };
 
         const folderCreated = await drive.files.create({
@@ -318,6 +361,72 @@ const createMovieFolder = async (drive, parentFolderId, user, title) => {
         throw error;
     }
 
+};
+
+/**
+ * Creates a folder for the episode of the tv show wanted (with parents) => returns an id
+ * @param drive
+ * @param parent
+ * @param user
+ * @param mediaInfos
+ * @returns {Promise<void>}
+ */
+const createShowEpisodeFolder = async (drive, parent, user, mediaInfos) => {
+    try {
+
+        // const test = await doesFolderContainsThisFolder(user, parent, `'${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}'`);
+
+        // Does the tv shows root folder contains a folder with the title of the tv show ? (if true -> use it otherwise create it and use it
+        if (await doesFolderContainsThisFolder(user, parent, `${mediaInfos.name}`)) {
+
+            // Does tv show folder contains a season folder (as is : "season 09) ? if true -> use it, otherwise, create it and use it
+            let tvShowFolder = await getFolder(user, parent, `${mediaInfos.name}`);
+            tvShowFolder = tvShowFolder[0];
+            if (await doesFolderContainsThisFolder(user, tvShowFolder, `season ${mediaInfos.lastSeason}`)) {
+
+                // Does tv shpw folder contains a folder of the form "Vikings S05E20" ? If so -> use it, otherwise create it and use it
+                let seasonFolder = await getFolder(user, tvShowFolder, `season ${mediaInfos.lastSeason}`);
+                seasonFolder = seasonFolder[0];
+                if (await doesFolderContainsThisFolder(user, seasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`)) {
+
+                    // Returning episode folder
+                    const episodeFolder = await getFolder(user, seasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`)
+                    return episodeFolder[0];
+
+                } else {
+
+                    // Creating new episode folder and returning it
+                    return await createFolder(drive, seasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
+
+                }
+
+            } else {
+
+                // Creating new season folder
+                const newSeasonFolder = createFolder(drive, tvShowFolder, `season ${mediaInfos.lastSeason}`);
+
+                // Creating new episode folder and returning it
+                return await createFolder(drive, newSeasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
+
+            }
+
+        } else {
+            // Here it means that th shows root folder doesn't even contain tv show folder
+
+            // Creating a new folder for this tv show
+            const newShowFolder = createFolder(drive, parent, `${mediaInfos.name}`);
+
+            // Creating a new season folder for this tv show
+            const newSeasonFolder = createFolder(drive, newShowFolder, `season ${mediaInfos.lastSeason}`);
+
+            // Creating a new episode folder for this season fir this tv show and returning it
+            return createFolder(drive, newSeasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
+
+        }
+
+    } catch(error) {
+        throw error;
+    }
 };
 
 /**
@@ -362,7 +471,6 @@ const setAllGdriveDownloadsInError = async () => {
 };
 
 module.exports.getGDriveAccessToken = storeGDriveAccessToken;
-module.exports.listFiles = listFiles;
 module.exports.getOAuth2Client = getOAuth2Client;
 module.exports.downloadMovieFile = downloadMovieFile;
 module.exports.setAllgdriveDownloadsInError = setAllGdriveDownloadsInError;

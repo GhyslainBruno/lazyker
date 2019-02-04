@@ -53,7 +53,7 @@ class MovieInfoDialog extends React.Component {
     }
 
     /**
-     * Clears all the torrents / DDL results
+     * Clears all the torrents / ddl results
      */
     clearTorrentsOrDdl = () => {
         this.setState({
@@ -108,7 +108,7 @@ class MovieInfoDialog extends React.Component {
         }
     };
 
-    // Find available qualities for a particular DDL provider
+    // Find available qualities for a particular ddl provider
     findProviderQualities = async (title, qualityWanted, provider) => {
         this.setState({providersMovies: null, movieInfoLoading: true});
 
@@ -160,7 +160,7 @@ class MovieInfoDialog extends React.Component {
         }
     };
 
-    // Search movies in DDL providers
+    // Search movies in ddl providers
     searchProvidersMovie = async (title) => {
 
         window.removeEventListener('scroll', this.handleOnScroll);
@@ -372,7 +372,7 @@ class MovieInfoDialog extends React.Component {
                             }
 
 
-                            {/*URL for DDL*/}
+                            {/*URL for ddl*/}
                             {this.state.providersMovies !== undefined ?
                                 this.state.providersMovies !== null  ?
                                     this.state.providersMovies[0].results.length > 0 ?

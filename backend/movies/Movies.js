@@ -9,8 +9,8 @@ const realdebrid = require('../realdebrid/debrid_links');
 const download = require('../downloads/downloader');
 const logger = require('../logs/logger');
 const pMap = require('p-map');
-const ygg = require('./torrents/ygg/ygg');
-const torrent9 = require('./torrents/torrents9/torrent9');
+const ygg = require('../scappers/ygg/ygg');
+const torrent9 = require('../scappers/torrents9/torrent9');
 
 // Using firebase
 const admin = require("firebase-admin");
@@ -50,10 +50,10 @@ const downloadTorrentFile = async (url, provider, title, id, user) => {
 
         switch (provider) {
             case 'ygg':
-                await ygg.downloadTorrentFile(url, user);
+                await ygg.downloadTorrentFile(url, user, {title: title, isShow: false});
                 break;
             case 'torrent9':
-                await torrent9.downloadTorrentFile(url, user);
+                await torrent9.downloadTorrentFile(url, user, {title: title, isShow: false});
                 break;
             default:
                 throw new Error('bad provider');

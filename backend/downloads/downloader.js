@@ -19,6 +19,8 @@ const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
         const unrestrictedLink = await realdebrid.unrestricLinkNoDB(torrent.links[0], user);
         const storage = await usersRef.child(user.uid).child('/settings/storage').once('value');
 
+        const torrentInfos = await usersRef.child(user.uid).child(`/torrentsDownloaded/${torrent.id}`).once('value');
+
         // Sending response here because of the process when uploading files to google drive (an await is blocking the thread)
         // TODO find a more elegant way to do that
         res.send({
@@ -27,7 +29,7 @@ const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
         switch (storage.val()) {
 
             case 'gdrive':
-                await gdrive.downloadMovieFile(unrestrictedLink, user, name);
+                await gdrive.downloadMovieFile(unrestrictedLink, user, name, torrentInfos.val());
                 break;
 
             case 'nas' :

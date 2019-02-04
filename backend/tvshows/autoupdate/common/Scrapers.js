@@ -1,6 +1,6 @@
 const pMap = require('p-map');
-const showsScrapers = require('./scrappers/main');
-const logger = require('../logs/logger');
+const showsScrapers = require('../scrappers/main');
+const logger = require('../../../logs/logger');
 
 /**
  * Find new Tv Shows episodes

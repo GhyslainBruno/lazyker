@@ -1,7 +1,7 @@
 const storage = require('./Storage');
-const database = require('./Database');
-const scrapers = require('./Scrapers');
-const logger = require('../logs/logger');
+const database = require('../common/Database');
+const scrapers = require('../common/Scrapers');
+const logger = require('../../../logs/logger');
 
 /**
  * Update steps :

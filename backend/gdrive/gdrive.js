@@ -355,7 +355,7 @@ const createFolder = async (drive, parentFolder, newFolderName) => {
         const fileMetadata = {
             name: newFolderName,
             mimeType: 'application/vnd.google-apps.folder',
-            parents: [parentFolder.moviesGdriveFolderId || parentFolder.id]
+            parents: [parentFolder.moviesGdriveFolderId || parentFolder.id || parentFolder.tvShowsGdriveFolderId]
         };
 
         const folderCreated = await drive.files.create({
@@ -409,7 +409,7 @@ const createShowEpisodeFolder = async (drive, parent, user, mediaInfos) => {
             } else {
 
                 // Creating new season folder
-                const newSeasonFolder = createFolder(drive, tvShowFolder, `season ${mediaInfos.lastSeason}`);
+                const newSeasonFolder = await createFolder(drive, tvShowFolder, `season ${mediaInfos.lastSeason}`);
 
                 // Creating new episode folder and returning it
                 return await createFolder(drive, newSeasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
@@ -420,13 +420,13 @@ const createShowEpisodeFolder = async (drive, parent, user, mediaInfos) => {
             // Here it means that th shows root folder doesn't even contain tv show folder
 
             // Creating a new folder for this tv show
-            const newShowFolder = createFolder(drive, parent, `${mediaInfos.name}`);
+            const newShowFolder = await createFolder(drive, parent, `${mediaInfos.name}`);
 
             // Creating a new season folder for this tv show
-            const newSeasonFolder = createFolder(drive, newShowFolder, `season ${mediaInfos.lastSeason}`);
+            const newSeasonFolder = await createFolder(drive, newShowFolder, `season ${mediaInfos.lastSeason}`);
 
             // Creating a new episode folder for this season fir this tv show and returning it
-            return createFolder(drive, newSeasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
+            return await createFolder(drive, newSeasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
 
         }
 

@@ -4,6 +4,11 @@ import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -41,6 +46,10 @@ import Badge from '@material-ui/core/Badge';
 import Slide from '@material-ui/core/Slide';
 import '../App.scss';
 import * as auth from "../firebase/auth";
+import Paper from "@material-ui/core/Paper";
+import OutlinedInput from "@material-ui/core/OutlinedInput/OutlinedInput";
+
+
 
 
 function Transition(props) {
@@ -71,7 +80,13 @@ class Shows extends Component {
           infoShow: null,
           // showLang: null,
           showToDisplayInfo: null,
-          openShowDownloadDialog: false
+          openShowDownloadDialog: false,
+          showToDownload: null,
+          episodeTorrentsLoading: false,
+          episodeTorrents: null,
+          seasonNumber: null,
+          episodeNumber: null,
+          qualityEpisode: null
 
       };
 
@@ -225,9 +240,19 @@ class Shows extends Component {
 
     onEnterKeyPressed = (event) => {
         if (event.keyCode || event.which === 13) {
-            this.searchShow()
+
+            this.searchShow();
+
         }
     };
+
+    // onEnterKeyPressedInShowDownload = (event) => {
+    //     if (event.keyCode || event.which === 13) {
+    //
+    //         this.searchShowEpisodeTorrents();
+    //
+    //     }
+    // };
 
     // Removing a tv show from database
     removeShow = async () => {
@@ -278,7 +303,14 @@ class Shows extends Component {
      * Closes the dialog with downloads parts
      * */
     closeShowDownloadDialog = () => {
-        this.setState({openShowDownloadDialog: false});
+        this.setState({
+            openShowDownloadDialog: false,
+            episodeTorrents: null,
+            showToDownload: null,
+            episodeNumber: null,
+            seasonNumber: null,
+            episodeTorrentsLoading: false,
+            qualityEpisode: null});
     };
 
     clearTitle = () => {
@@ -323,6 +355,94 @@ class Shows extends Component {
         }
     };
 
+    // Util function for download show dialog textField - deprecated since not using any textField for that right now
+    handleChange = search => event => {
+        this.setState({
+            [search]: event.target.value,
+        });
+    };
+
+    // Function triggered to fetch tv show episode available torrents
+    searchShowEpisodeTorrents = async () => {
+
+        this.setState({episodeTorrentsLoading: true, episodeTorrents: null});
+
+        try {
+            // add  ${this.state.qualityEpisode} to use quality
+            let response = await fetch(`/api/torrents?title=${this.state.showToDownload.title} S${this.state.seasonNumber}E${this.state.episodeNumber}`, {
+                method: 'GET'
+            });
+
+            const torrents = await response.json();
+
+            this.setState({episodeTorrentsLoading: false, episodeTorrents: torrents});
+        } catch(error) {
+            this.props.displaySnackMessage('Error while getting episode torrents');
+            this.setState({episodeTorrentsLoading: false})
+        }
+
+    };
+
+    // Starts the download of the torrent for this episode of this tv show wanted
+    downloadEpisodeTorrent = async torrent => {
+
+        this.setState({episodeTorrentsLoading: true, episodeTorrents: null});
+
+        try {
+            let response = await fetch('/api/episode_torrents', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                },
+                body: JSON.stringify({
+                    url: torrent.url,
+                    provider: torrent.provider,
+                    title: torrent.title,
+                    mediaInfos: {
+                        lastSeason: this.state.seasonNumber,
+                        lastEpisode: this.state.episodeNumber,
+                        name: this.state.showToDownload.title,
+                        isShow: true
+                    },
+                    id: torrent.title,
+                })
+            });
+
+            response = await response.json();
+
+            if (response.message !== 'ok') {
+                this.setState({snackBarMessage: 'Error while downloading torrent file', snack: true});
+            } else {
+                this.setState({snackBarMessage: 'Torrent added - check progress in downloads', snack: true});
+            }
+
+            this.setState({movieInfoLoading: false});
+
+            setTimeout(() => {
+                this.closeShowDownloadDialog();
+            }, 2000);
+
+        } catch(error) {
+            this.setState({snackBarMessage: 'Error while downloading torrent file', snack: true, movieInfoLoading: false});
+            this.closeShowDownloadDialog();
+        }
+
+    };
+
+    handlerSeasonNumberChange = event => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
+    handlerEpisodeNumberChange = event => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
+    handlerQualityEpisodeChange = event => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
   render() {
 
         if (this.state.shows != null) {
@@ -352,8 +472,169 @@ class Shows extends Component {
                       <Close />
                   </Button>
 
+                  <div className="movieInfoDialog">
 
-                  <div>foo</div>
+                      <h1 style={{textAlign: 'center'}}>{this.state.showToDownload ? this.state.showToDownload.title : null}</h1>
+
+                      <Grid container spacing={0}>
+
+                          <Grid item xs={12} style={{padding: '6px', color: 'white'}}>
+                              Select the episode wanted
+                          </Grid>
+
+                          <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
+                              <FormControl style={{minWidth: '80px'}} variant="outlined">
+                                  <Select
+                                      value={this.state.seasonNumber}
+                                      onChange={this.handlerSeasonNumberChange}
+                                      input={
+                                          <OutlinedInput
+                                              labelWidth={this.state.labelWidth}
+                                              name="seasonNumber"
+                                              id="season-number"
+                                          />
+                                      }>
+
+                                      <MenuItem value={'01'}>01</MenuItem>
+                                      <MenuItem value={'02'}>02</MenuItem>
+                                      <MenuItem value={'03'}>03</MenuItem>
+                                      <MenuItem value={'04'}>04</MenuItem>
+                                      <MenuItem value={'05'}>05</MenuItem>
+                                      <MenuItem value={'06'}>06</MenuItem>
+                                      <MenuItem value={'07'}>07</MenuItem>
+                                      <MenuItem value={'08'}>08</MenuItem>
+                                      <MenuItem value={'09'}>09</MenuItem>
+                                      <MenuItem value={'10'}>10</MenuItem>
+                                      <MenuItem value={'11'}>11</MenuItem>
+                                      <MenuItem value={'12'}>12</MenuItem>
+                                      <MenuItem value={'13'}>13</MenuItem>
+                                      <MenuItem value={'14'}>14</MenuItem>
+                                      <MenuItem value={'15'}>15</MenuItem>
+                                      <MenuItem value={'16'}>16</MenuItem>
+                                      <MenuItem value={'17'}>17</MenuItem>
+                                      <MenuItem value={'18'}>18</MenuItem>
+                                      <MenuItem value={'19'}>19</MenuItem>
+                                      <MenuItem value={'20'}>20</MenuItem>
+                                  </Select>
+                                  <FormHelperText>Season number</FormHelperText>
+                              </FormControl>
+                          </Grid>
+
+                          <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
+                              <FormControl style={{minWidth: '80px'}} variant="outlined">
+                                  <Select
+                                      value={this.state.episodeNumber}
+                                      onChange={this.handlerEpisodeNumberChange}
+                                      input={
+                                          <OutlinedInput
+                                              labelWidth={this.state.labelWidth}
+                                              name="episodeNumber"
+                                              id="episode-number"
+                                          />
+                                      }>
+
+                                      <MenuItem value={'01'}>01</MenuItem>
+                                      <MenuItem value={'02'}>02</MenuItem>
+                                      <MenuItem value={'03'}>03</MenuItem>
+                                      <MenuItem value={'04'}>04</MenuItem>
+                                      <MenuItem value={'05'}>05</MenuItem>
+                                      <MenuItem value={'06'}>06</MenuItem>
+                                      <MenuItem value={'07'}>07</MenuItem>
+                                      <MenuItem value={'08'}>08</MenuItem>
+                                      <MenuItem value={'09'}>09</MenuItem>
+                                      <MenuItem value={'10'}>10</MenuItem>
+                                      <MenuItem value={'11'}>11</MenuItem>
+                                      <MenuItem value={'12'}>12</MenuItem>
+                                      <MenuItem value={'13'}>13</MenuItem>
+                                      <MenuItem value={'14'}>14</MenuItem>
+                                      <MenuItem value={'15'}>15</MenuItem>
+                                      <MenuItem value={'16'}>16</MenuItem>
+                                      <MenuItem value={'17'}>17</MenuItem>
+                                      <MenuItem value={'18'}>18</MenuItem>
+                                      <MenuItem value={'19'}>19</MenuItem>
+                                      <MenuItem value={'20'}>20</MenuItem>
+                                  </Select>
+                                  <FormHelperText>Episode number</FormHelperText>
+                              </FormControl>
+                          </Grid>
+
+                          {/*// Quality selector - not used for now*/}
+                          {/*<Grid item xs={4} style={{padding: '6px'}}>*/}
+                              {/*<FormControl style={{minWidth: '80px'}} variant="outlined">*/}
+                                  {/*<Select*/}
+                                      {/*disabled*/}
+                                      {/*value={this.state.qualityEpisode}*/}
+                                      {/*onChange={this.handlerQualityEpisodeChange}*/}
+                                      {/*input={*/}
+                                          {/*<OutlinedInput*/}
+                                              {/*labelWidth={this.state.labelWidth}*/}
+                                              {/*name="qualityEpisode"*/}
+                                              {/*id="quality-episode"*/}
+                                          {/*/>*/}
+                                      {/*}>*/}
+
+                                      {/*<MenuItem value="">*/}
+                                          {/*<em>None</em>*/}
+                                      {/*</MenuItem>*/}
+                                      {/*<MenuItem value={'hdtv'}>HDTV</MenuItem>*/}
+                                      {/*<MenuItem value={'720'}>720p</MenuItem>*/}
+                                      {/*<MenuItem value={'1080'}>1080p</MenuItem>*/}
+                                      {/*<MenuItem value={'multi'}>Multi</MenuItem>*/}
+                                      {/*<MenuItem value={'vf'}>VF</MenuItem>*/}
+                                      {/*<MenuItem value={'vostfr'}>VOSTFR</MenuItem>*/}
+
+                                  {/*</Select>*/}
+                                  {/*<FormHelperText>Quality</FormHelperText>*/}
+                              {/*</FormControl>*/}
+                          {/*</Grid>*/}
+
+                      </Grid>
+
+                      <div style={{width: '100%', textAlign: 'center'}}>
+                          <IconButton>
+                              <Search onClick={() => this.searchShowEpisodeTorrents()}/>
+                          </IconButton>
+                      </div>
+
+                      <div style={{textAlign: 'center'}}>
+                          <CircularProgress style={this.state.episodeTorrentsLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
+                      </div>
+
+
+                      {
+                          this.state.episodeTorrents !== null ?
+
+                              <List component="nav">
+                                  {this.state.episodeTorrents.map(provider => {
+                                      return (
+                                          <div>
+                                              <h3 style={{textAlign: 'center'}}>
+                                                  {provider.provider}
+                                              </h3>
+
+                                              {
+                                                  provider.torrents.length !== 0 ?
+                                                      provider.torrents.map(torrent => {
+                                                          return (
+                                                              <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
+                                                                  <ListItem button style={{overflow: 'hidden'}}>
+                                                                      <ListItemText primary={torrent.title} onClick={() => this.downloadEpisodeTorrent(torrent)}/>
+                                                                  </ListItem>
+                                                              </Paper>
+                                                          )})
+                                                      :
+                                                      <div style={{textAlign: 'center'}}>No torrent found</div>
+
+                                              }
+                                          </div>
+                                      )
+                                  })}
+                              </List>
+                              :
+                               null
+                      }
+                  </div>
+
               </Dialog>
 
               <Dialog
@@ -474,7 +755,7 @@ class Shows extends Component {
                                   style={{paddingTop: '150%', position: 'relative'}}
                                   image={"https://image.tmdb.org/t/p/w500" + show.posterPath}
                                   title={show.title}
-                                  onClick={() => this.setState({openShowDownloadDialog: true})}
+                                  onClick={() => this.setState({openShowDownloadDialog: true, showToDownload: show})}
                               >
                                   <Badge
                                       style={show.episode ? {position: 'absolute', top: '0', right: '0', marginRight: '10%', marginTop: '10%'} : {display: 'none'}}

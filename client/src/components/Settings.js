@@ -134,6 +134,8 @@ class Settings extends Component {
 
     clearLogs = async () => {
         try {
+            this.setState({output: [], loading: true});
+
             let response = await fetch('/api/logs', {
                 method: 'DELETE',
                 headers: {

@@ -54,7 +54,7 @@ async function storeGDriveAccessToken(code, user) {
  * @param query
  * @returns {Promise<*>}
  */
-async function getFilesList(user, parent, query = `'${parent.tvShowsGdriveFolderId || parent.id}' in parents`) {
+async function getFilesList(user, parent, query = `'${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`) {
 
     const params = {
         // Using this to specify only folders
@@ -331,7 +331,13 @@ const downloadMovieFile = async (link, user, title, torrentInfos) => {
         }
 
     } catch(error) {
-        console.log(error);
+
+        if (error.statusCode === 401) {
+            await logger.info(error.message + ' - try to relink lazyker to you google drive account in settings', user);
+        } else {
+            await logger.info(error.message, user);
+        }
+
     }
 
 };

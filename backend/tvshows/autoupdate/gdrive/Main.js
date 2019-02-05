@@ -113,7 +113,7 @@ const startUpdate = async user => {
          * TODO
          */
 
-        console.log('autoupdate done');
+        await logger.info('Autoupdate done', user);
 
     } catch (error) {
         await logger.info(error.message, user);

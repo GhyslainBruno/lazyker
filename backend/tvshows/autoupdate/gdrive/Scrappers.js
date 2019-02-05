@@ -25,6 +25,8 @@ const downloadTorrentsToDebrider = async (lastEpisodesFromStorage, user, qualiti
                 await ygg.downloadTorrent(torrentPageUrl, user, show);
             } else {
 
+                await logger.info(`${show.name} S${show.lastSeason}E${show.lastEpisode} - no new episode found -> looking for next season`, user);
+
                 // If no torrent url found previously -> looking for a new episode in a new season
                 show.lastSeason = (parseInt(show.lastSeason) + 1).toString().padStart(2, '0');
                 show.lastEpisode = '01';
@@ -34,7 +36,7 @@ const downloadTorrentsToDebrider = async (lastEpisodesFromStorage, user, qualiti
                 if (torrentPageUrlNewSeason !== null) {
                     await ygg.downloadTorrent(torrentPageUrl, user, show);
                 } else {
-                    console.log('no new episode found');
+                    await logger.info(`${show.name} S${show.lastSeason}E${show.lastEpisode} - no new episode found`, user);
                 }
             }
 

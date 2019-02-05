@@ -38,11 +38,14 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import Badge from '@material-ui/core/Badge';
-
-
+import Slide from '@material-ui/core/Slide';
 import '../App.scss';
 import * as auth from "../firebase/auth";
 
+
+function Transition(props) {
+    return <Slide direction="up" {...props} />;
+}
 
 
 class Shows extends Component {
@@ -67,7 +70,8 @@ class Shows extends Component {
           loading: false,
           infoShow: null,
           // showLang: null,
-          showToDisplayInfo: null
+          showToDisplayInfo: null,
+          openShowDownloadDialog: false
 
       };
 
@@ -270,6 +274,13 @@ class Shows extends Component {
         this.setState({snack: true, snackBarMessage: show.title + ' updated'})
     };
 
+    /**
+     * Closes the dialog with downloads parts
+     * */
+    closeShowDownloadDialog = () => {
+        this.setState({openShowDownloadDialog: false});
+    };
+
     clearTitle = () => {
         this.setState({showTitleToSearch: ''})
     };
@@ -325,6 +336,25 @@ class Shows extends Component {
                   autoHideDuration={2000}
                   message={this.state.snackBarMessage}
               />
+
+              <Dialog
+                  fullScreen
+                  open={this.state.openShowDownloadDialog}
+                  onClose={this.handleClose}
+                  TransitionComponent={Transition}
+              >
+
+                  <Button
+                      onClick={() => this.closeShowDownloadDialog()}
+                      variant="fab"
+                      mini
+                      style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>
+                      <Close />
+                  </Button>
+
+
+                  <div>foo</div>
+              </Dialog>
 
               <Dialog
                   open={this.state.showDialog}
@@ -444,6 +474,7 @@ class Shows extends Component {
                                   style={{paddingTop: '150%', position: 'relative'}}
                                   image={"https://image.tmdb.org/t/p/w500" + show.posterPath}
                                   title={show.title}
+                                  onClick={() => this.setState({openShowDownloadDialog: true})}
                               >
                                   <Badge
                                       style={show.episode ? {position: 'absolute', top: '0', right: '0', marginRight: '10%', marginTop: '10%'} : {display: 'none'}}

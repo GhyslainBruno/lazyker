@@ -11,7 +11,6 @@ const usersRef = db.ref("/users");
  * @param torrent
  * @param name
  * @param user
- * @param res
  * @returns {Promise<void>}
  */
 const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
@@ -23,19 +22,23 @@ const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
 
         // Sending response here because of the process when uploading files to google drive (an await is blocking the thread)
         // TODO find a more elegant way to do that
-        res.send({
-            message: 'ok'
-        });
+
         switch (storage.val()) {
 
             case 'gdrive':
-                await gdrive.downloadMovieFile(unrestrictedLink, user, name, torrentInfos.val());
+                await gdrive.downloadMovieFile(unrestrictedLink, user, name, torrentInfos.val(), res);
                 break;
 
             case 'nas' :
+
+                // TODO add res in here otherwise NAS won't be supported anymore
                 await synology.startRealdebridTorrentDownload(unrestrictedLink, name, user);
                 break;
         }
+
+        // res.send({
+        //     message: 'ok'
+        // });
 
     } catch(error) {
         throw error

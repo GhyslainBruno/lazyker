@@ -103,7 +103,7 @@ module.exports.isFolderEmpty = isFolderEmpty;
  * @returns {Promise<boolean>}
  */
 doesFolderContainsThisFolder = async (user, parent, childFolderTitle) => {
-    const files = await getFilesList(user, parent, `mimeType = 'application/vnd.google-apps.folder' and name contains '${childFolderTitle}' and '${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`);
+    const files = await getFilesList(user, parent, `mimeType = 'application/vnd.google-apps.folder' and name contains '${childFolderTitle.replace(/[']/g, '\\$&')}' and '${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`);
     return files.length > 0
 };
 
@@ -115,7 +115,7 @@ doesFolderContainsThisFolder = async (user, parent, childFolderTitle) => {
  * @returns {Promise<*>}
  */
 getFolder = async (user, parent, childFolderTitle) => {
-    return await getFilesList(user, parent, `mimeType = 'application/vnd.google-apps.folder' and name contains '${childFolderTitle}' and '${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`);
+    return await getFilesList(user, parent, `mimeType = 'application/vnd.google-apps.folder' and name contains '${childFolderTitle.replace(/[']/g, '\\$&')}' and '${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`);
 };
 
 /**
@@ -148,7 +148,7 @@ const getAccessToken = async user => {
  * @param torrentInfos
  * @returns {Promise<void>}
  */
-const downloadMovieFile = async (link, user, title, torrentInfos) => {
+const downloadMovieFile = async (link, user, title, torrentInfos, res) => {
 
     let fileTitle = title;
 
@@ -189,8 +189,6 @@ const downloadMovieFile = async (link, user, title, torrentInfos) => {
         const moviesGdriveFolder = await usersRef.child(user.uid).child('/settings/gdrive/moviesGdriveFolder').once('value');
         folderCreated = await createFolder(drive, moviesGdriveFolder.val(), title);
     }
-
-
 
     // Creating (initializing) the download into database
     const downloadKey = await usersRef.child(user.uid).child('/settings/downloads').push().key;
@@ -310,6 +308,10 @@ const downloadMovieFile = async (link, user, title, torrentInfos) => {
                     status: 'downloading'
                 });
             }
+        });
+
+        res.send({
+            message: 'ok'
         });
 
         // Uploading the file to Google Drive

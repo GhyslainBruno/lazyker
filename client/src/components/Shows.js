@@ -86,7 +86,8 @@ class Shows extends Component {
           episodeTorrents: null,
           seasonNumber: null,
           episodeNumber: null,
-          qualityEpisode: null
+          qualityEpisode: null,
+          showInfoLoading: false
 
       };
 
@@ -300,6 +301,41 @@ class Shows extends Component {
     };
 
     /**
+     * Opens the dialog with downloads parts - and fetch episodes numbers
+     */
+    openShowDownloadDialog = async show => {
+
+        try {
+
+            this.setState({openShowDownloadDialog: true, showToDownload: show, showInfoLoading: true});
+
+            const response = await fetch('/api/show/' + show.id, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                }
+            });
+
+            const showInfo = await response.json();
+
+            this.setState({
+                showLastSeasonsNumber: showInfo.show.lastSeason,
+                showLastEpisodesNumber: showInfo.show.lastEpisode,
+                showInfoLoading: false
+            });
+
+
+        } catch (error) {
+            this.setState({
+                showInfoLoading: false
+            });
+        }
+
+    };
+
+    /**
      * Closes the dialog with downloads parts
      * */
     closeShowDownloadDialog = () => {
@@ -443,7 +479,27 @@ class Shows extends Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
-  render() {
+    createSeasonsNumbersTable = () => {
+        let table = [];
+
+        for (let i = 0; i < this.state.showLastSeasonsNumber; i++) {
+            table.push(<MenuItem value={i + 1}>{i + 1}</MenuItem>);
+        }
+
+        return table
+    };
+
+    createEpisodesNumbersTable = () => {
+        let table = [];
+
+        for (let i = 0; i < this.state.showLastEpisodesNumber; i++) {
+            table.push(<MenuItem value={i + 1}>{i + 1}</MenuItem>);
+        }
+
+        return table
+    };
+
+    render() {
 
         if (this.state.shows != null) {
           return (
@@ -476,105 +532,83 @@ class Shows extends Component {
 
                       <h1 style={{textAlign: 'center'}}>{this.state.showToDownload ? this.state.showToDownload.title : null}</h1>
 
-                      <Grid container spacing={0}>
+                      {
+                          this.state.showInfoLoading ?
 
-                          <Grid item xs={12} style={{padding: '6px', color: 'white'}}>
-                              Select the episode wanted
-                          </Grid>
+                              <div style={{textAlign: 'center'}}>
+                                  <CircularProgress style={this.state.showInfoLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
+                              </div>
 
-                          <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
-                              <FormControl style={{minWidth: '80px'}} variant="outlined">
-                                  <Select
-                                      value={this.state.seasonNumber}
-                                      onChange={this.handlerSeasonNumberChange}
-                                      input={
-                                          <OutlinedInput
-                                              labelWidth={this.state.labelWidth}
-                                              name="seasonNumber"
-                                              id="season-number"
-                                          />
-                                      }>
+                              :
 
-                                      <MenuItem value={'01'}>01</MenuItem>
-                                      <MenuItem value={'02'}>02</MenuItem>
-                                      <MenuItem value={'03'}>03</MenuItem>
-                                      <MenuItem value={'04'}>04</MenuItem>
-                                      <MenuItem value={'05'}>05</MenuItem>
-                                      <MenuItem value={'06'}>06</MenuItem>
-                                      <MenuItem value={'07'}>07</MenuItem>
-                                      <MenuItem value={'08'}>08</MenuItem>
-                                      <MenuItem value={'09'}>09</MenuItem>
-                                      <MenuItem value={'10'}>10</MenuItem>
-                                      <MenuItem value={'11'}>11</MenuItem>
-                                      <MenuItem value={'12'}>12</MenuItem>
-                                      <MenuItem value={'13'}>13</MenuItem>
-                                      <MenuItem value={'14'}>14</MenuItem>
-                                      <MenuItem value={'15'}>15</MenuItem>
-                                      <MenuItem value={'16'}>16</MenuItem>
-                                      <MenuItem value={'17'}>17</MenuItem>
-                                      <MenuItem value={'18'}>18</MenuItem>
-                                      <MenuItem value={'19'}>19</MenuItem>
-                                      <MenuItem value={'20'}>20</MenuItem>
-                                  </Select>
-                                  <FormHelperText>Season number</FormHelperText>
-                              </FormControl>
-                          </Grid>
+                              <div>
+                                  <Grid container spacing={0}>
 
-                          <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
-                              <FormControl style={{minWidth: '80px'}} variant="outlined">
-                                  <Select
-                                      value={this.state.episodeNumber}
-                                      onChange={this.handlerEpisodeNumberChange}
-                                      input={
-                                          <OutlinedInput
-                                              labelWidth={this.state.labelWidth}
-                                              name="episodeNumber"
-                                              id="episode-number"
-                                          />
-                                      }>
+                                      <Grid item xs={12} style={{padding: '6px', color: 'white'}}>
+                                          Select the episode wanted
+                                      </Grid>
 
-                                      <MenuItem value={'01'}>01</MenuItem>
-                                      <MenuItem value={'02'}>02</MenuItem>
-                                      <MenuItem value={'03'}>03</MenuItem>
-                                      <MenuItem value={'04'}>04</MenuItem>
-                                      <MenuItem value={'05'}>05</MenuItem>
-                                      <MenuItem value={'06'}>06</MenuItem>
-                                      <MenuItem value={'07'}>07</MenuItem>
-                                      <MenuItem value={'08'}>08</MenuItem>
-                                      <MenuItem value={'09'}>09</MenuItem>
-                                      <MenuItem value={'10'}>10</MenuItem>
-                                      <MenuItem value={'11'}>11</MenuItem>
-                                      <MenuItem value={'12'}>12</MenuItem>
-                                      <MenuItem value={'13'}>13</MenuItem>
-                                      <MenuItem value={'14'}>14</MenuItem>
-                                      <MenuItem value={'15'}>15</MenuItem>
-                                      <MenuItem value={'16'}>16</MenuItem>
-                                      <MenuItem value={'17'}>17</MenuItem>
-                                      <MenuItem value={'18'}>18</MenuItem>
-                                      <MenuItem value={'19'}>19</MenuItem>
-                                      <MenuItem value={'20'}>20</MenuItem>
-                                  </Select>
-                                  <FormHelperText>Episode number</FormHelperText>
-                              </FormControl>
-                          </Grid>
+                                      <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
+                                          <FormControl style={{minWidth: '80px'}} variant="outlined">
+                                              <Select
+                                                  value={this.state.seasonNumber}
+                                                  onChange={this.handlerSeasonNumberChange}
+                                                  input={
+                                                      <OutlinedInput
+                                                          labelWidth={this.state.labelWidth}
+                                                          name="seasonNumber"
+                                                          id="season-number"
+                                                      />
+                                                  }>
 
-                          {/*// Quality selector - not used for now*/}
-                          {/*<Grid item xs={4} style={{padding: '6px'}}>*/}
-                              {/*<FormControl style={{minWidth: '80px'}} variant="outlined">*/}
-                                  {/*<Select*/}
+                                                  {
+                                                      this.createSeasonsNumbersTable()
+                                                  }
+
+                                              </Select>
+                                              <FormHelperText>Season number</FormHelperText>
+                                          </FormControl>
+                                      </Grid>
+
+                                      <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
+                                          <FormControl style={{minWidth: '80px'}} variant="outlined">
+                                              <Select
+                                                  value={this.state.episodeNumber}
+                                                  onChange={this.handlerEpisodeNumberChange}
+                                                  input={
+                                                      <OutlinedInput
+                                                          labelWidth={this.state.labelWidth}
+                                                          name="episodeNumber"
+                                                          id="episode-number"
+                                                      />
+                                                  }>
+
+                                                  {
+                                                      this.createEpisodesNumbersTable()
+                                                  }
+
+                                              </Select>
+                                              <FormHelperText>Episode number</FormHelperText>
+                                          </FormControl>
+                                      </Grid>
+
+                                      {/*// Quality selector - not used for now*/}
+                                      {/*<Grid item xs={4} style={{padding: '6px'}}>*/}
+                                      {/*<FormControl style={{minWidth: '80px'}} variant="outlined">*/}
+                                      {/*<Select*/}
                                       {/*disabled*/}
                                       {/*value={this.state.qualityEpisode}*/}
                                       {/*onChange={this.handlerQualityEpisodeChange}*/}
                                       {/*input={*/}
-                                          {/*<OutlinedInput*/}
-                                              {/*labelWidth={this.state.labelWidth}*/}
-                                              {/*name="qualityEpisode"*/}
-                                              {/*id="quality-episode"*/}
-                                          {/*/>*/}
+                                      {/*<OutlinedInput*/}
+                                      {/*labelWidth={this.state.labelWidth}*/}
+                                      {/*name="qualityEpisode"*/}
+                                      {/*id="quality-episode"*/}
+                                      {/*/>*/}
                                       {/*}>*/}
 
                                       {/*<MenuItem value="">*/}
-                                          {/*<em>None</em>*/}
+                                      {/*<em>None</em>*/}
                                       {/*</MenuItem>*/}
                                       {/*<MenuItem value={'hdtv'}>HDTV</MenuItem>*/}
                                       {/*<MenuItem value={'720'}>720p</MenuItem>*/}
@@ -583,56 +617,61 @@ class Shows extends Component {
                                       {/*<MenuItem value={'vf'}>VF</MenuItem>*/}
                                       {/*<MenuItem value={'vostfr'}>VOSTFR</MenuItem>*/}
 
-                                  {/*</Select>*/}
-                                  {/*<FormHelperText>Quality</FormHelperText>*/}
-                              {/*</FormControl>*/}
-                          {/*</Grid>*/}
+                                      {/*</Select>*/}
+                                      {/*<FormHelperText>Quality</FormHelperText>*/}
+                                      {/*</FormControl>*/}
+                                      {/*</Grid>*/}
 
-                      </Grid>
+                                  </Grid>
 
-                      <div style={{width: '100%', textAlign: 'center'}}>
-                          <IconButton>
-                              <Search onClick={() => this.searchShowEpisodeTorrents()}/>
-                          </IconButton>
-                      </div>
+                                  <div style={{width: '100%', textAlign: 'center'}}>
+                                      <IconButton>
+                                          <Search onClick={() => this.searchShowEpisodeTorrents()}/>
+                                      </IconButton>
+                                  </div>
 
-                      <div style={{textAlign: 'center'}}>
-                          <CircularProgress style={this.state.episodeTorrentsLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
-                      </div>
+                                  <div style={{textAlign: 'center'}}>
+                                      <CircularProgress style={this.state.episodeTorrentsLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
+                                  </div>
 
 
-                      {
-                          this.state.episodeTorrents !== null ?
+                                  {
+                                      this.state.episodeTorrents !== null ?
 
-                              <List component="nav">
-                                  {this.state.episodeTorrents.map(provider => {
-                                      return (
-                                          <div>
-                                              <h3 style={{textAlign: 'center'}}>
-                                                  {provider.provider}
-                                              </h3>
+                                          <List component="nav">
+                                              {this.state.episodeTorrents.map(provider => {
+                                                  return (
+                                                      <div>
+                                                          <h3 style={{textAlign: 'center'}}>
+                                                              {provider.provider}
+                                                          </h3>
 
-                                              {
-                                                  provider.torrents.length !== 0 ?
-                                                      provider.torrents.map(torrent => {
-                                                          return (
-                                                              <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
-                                                                  <ListItem button style={{overflow: 'hidden'}}>
-                                                                      <ListItemText primary={torrent.title} onClick={() => this.downloadEpisodeTorrent(torrent)}/>
-                                                                  </ListItem>
-                                                              </Paper>
-                                                          )})
-                                                      :
-                                                      <div style={{textAlign: 'center'}}>No torrent found</div>
+                                                          {
+                                                              provider.torrents.length !== 0 ?
+                                                                  provider.torrents.map(torrent => {
+                                                                      return (
+                                                                          <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
+                                                                              <ListItem button style={{overflow: 'hidden'}}>
+                                                                                  <ListItemText primary={torrent.title} onClick={() => this.downloadEpisodeTorrent(torrent)}/>
+                                                                              </ListItem>
+                                                                          </Paper>
+                                                                      )})
+                                                                  :
+                                                                  <div style={{textAlign: 'center'}}>No torrent found</div>
 
-                                              }
-                                          </div>
-                                      )
-                                  })}
-                              </List>
-                              :
-                               null
+                                                          }
+                                                      </div>
+                                                  )
+                                              })}
+                                          </List>
+                                          :
+                                          null
+                                  }
+                              </div>
+
                       }
+
+
                   </div>
 
               </Dialog>
@@ -755,7 +794,8 @@ class Shows extends Component {
                                   style={{paddingTop: '150%', position: 'relative'}}
                                   image={"https://image.tmdb.org/t/p/w500" + show.posterPath}
                                   title={show.title}
-                                  onClick={() => this.setState({openShowDownloadDialog: true, showToDownload: show})}
+                                  onClick={() => this.openShowDownloadDialog(show)}
+                                  clickable="true"
                               >
                                   <Badge
                                       style={show.episode ? {position: 'absolute', top: '0', right: '0', marginRight: '10%', marginTop: '10%'} : {display: 'none'}}

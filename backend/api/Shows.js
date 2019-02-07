@@ -65,6 +65,41 @@ module.exports = (app) => {
     });
 
     /**
+     * Get tv show info
+     */
+    app.get('/api/show/:id', async (req, res) => {
+
+        const showId = req.params.id;
+
+        const options = {
+            method: 'GET',
+            uri: 'https://api.themoviedb.org/3/tv/' + showId + '?api_key=' + tmdbApiKey + '&language=en-US',
+            json: true
+        };
+
+        try {
+            let results = await rp(options);
+
+            const lastSeasonInformations = results.seasons.filter(season => season.season_number === Math.max.apply(Math, results.seasons.map(function(o) { return o.season_number; })))[0];
+
+            const show = {
+                lastSeason:  lastSeasonInformations.season_number,
+                lastEpisode:  lastSeasonInformations.episode_count,
+                id: parseInt(showId)
+            };
+
+            res.send({
+                message: 'ok',
+                show: show
+            })
+        }
+        catch(error) {
+            res.send(error)
+        }
+
+    });
+
+    /**
      * Update a tv show
      */
     app.put('/api/show', async (req, res) => {

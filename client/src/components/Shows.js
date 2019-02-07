@@ -483,7 +483,10 @@ class Shows extends Component {
         let table = [];
 
         for (let i = 0; i < this.state.showLastSeasonsNumber; i++) {
-            table.push(<MenuItem value={i + 1}>{i + 1}</MenuItem>);
+
+            const number = parseInt(i + 1).toString().padStart(2, '0');
+
+            table.push(<MenuItem value={number}>{number}</MenuItem>);
         }
 
         return table
@@ -493,7 +496,11 @@ class Shows extends Component {
         let table = [];
 
         for (let i = 0; i < this.state.showLastEpisodesNumber; i++) {
-            table.push(<MenuItem value={i + 1}>{i + 1}</MenuItem>);
+
+            const number = parseInt(i + 1).toString().padStart(2, '0');
+
+
+            table.push(<MenuItem value={number}>{number}</MenuItem>);
         }
 
         return table
@@ -544,11 +551,11 @@ class Shows extends Component {
                               <div>
                                   <Grid container spacing={0}>
 
-                                      <Grid item xs={12} style={{padding: '6px', color: 'white'}}>
+                                      <Grid item xs={12} style={{padding: '6px', color: 'white', textAlign: 'center'}}>
                                           Select the episode wanted
                                       </Grid>
 
-                                      <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
+                                      <Grid item xs={5} style={{padding: '6px', textAlign: 'center'}}>
                                           <FormControl style={{minWidth: '80px'}} variant="outlined">
                                               <Select
                                                   value={this.state.seasonNumber}
@@ -570,7 +577,7 @@ class Shows extends Component {
                                           </FormControl>
                                       </Grid>
 
-                                      <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
+                                      <Grid item xs={5} style={{padding: '6px', textAlign: 'center'}}>
                                           <FormControl style={{minWidth: '80px'}} variant="outlined">
                                               <Select
                                                   value={this.state.episodeNumber}
@@ -622,13 +629,19 @@ class Shows extends Component {
                                       {/*</FormControl>*/}
                                       {/*</Grid>*/}
 
+                                      <Grid item xs={1}>
+                                          <IconButton>
+                                              <Search onClick={() => this.searchShowEpisodeTorrents()}/>
+                                          </IconButton>
+                                      </Grid>
+
                                   </Grid>
 
-                                  <div style={{width: '100%', textAlign: 'center'}}>
-                                      <IconButton>
-                                          <Search onClick={() => this.searchShowEpisodeTorrents()}/>
-                                      </IconButton>
-                                  </div>
+                                  {/*<div style={{width: '100%', textAlign: 'center'}}>*/}
+                                      {/*<IconButton>*/}
+                                          {/*<Search onClick={() => this.searchShowEpisodeTorrents()}/>*/}
+                                      {/*</IconButton>*/}
+                                  {/*</div>*/}
 
                                   <div style={{textAlign: 'center'}}>
                                       <CircularProgress style={this.state.episodeTorrentsLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>

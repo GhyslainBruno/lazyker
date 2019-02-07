@@ -86,7 +86,7 @@ httpApp.listen(80, () => {
 
 https.createServer({
     key: fs.readFileSync(path.join(__dirname, 'privkey.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'fullchain.pem'))
+    cert: fs.readFileSync(path.join(__dirname, 'cert.pem'))
 }, app)
     .listen(portUsed, function () {
         console.log('Listening on port ' + portUsed + ' ! Go to https://localhost:' + portUsed)

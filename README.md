@@ -51,4 +51,18 @@ Can, for now, be build in dev / prod mode :
   
 
 **Careful : in Settings component, a callback url for OAuth realdebrid authentication is set to lazyker.herokuapp.com**
+
+## To get SSL certificate
+- Connect to ssh server
+- run ````docker stop lazyker```` to let the 80 port accessible to certbot program
+- sudo /path/to/certbot-auto certonly (for interactive session)
+- choose standalone (1) ->  it will generate a webserver in order to make the challenge
+- write down the domain names (it all can be in one sentence...)
+- the certificates should be placed in /etc/letsencrypt/(domainname)
+- copy them into an accessible folder : 
+  - run ```sudo cp /etc/letsencrypt/live/dedibox.ghyslain.xyz/privkey.pem certificates/privkey.pem```
+  - run ```sudo cp /etc/letsencrypt/live/dedibox.ghyslain.xyz/cert.pem certificates/cert.pem```
+- then (for now) take the new certificates and commit it to the project
+
+--> Later : automatize certificates renewals and share the volume with docker lazyker container (in order to not doing anything anymore)
   

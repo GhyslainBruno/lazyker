@@ -125,7 +125,6 @@ class Shows extends Component {
 
   };
 
-
     // Loading shows from database
     loadShowsInDb = async () => {
         this.setState({loading: true, shows: [], showTitleToSearch: ''});
@@ -454,14 +453,14 @@ class Shows extends Component {
                 this.setState({snackBarMessage: 'Torrent added - check progress in downloads', snack: true});
             }
 
-            this.setState({movieInfoLoading: false});
+            this.setState({episodeTorrentsLoading: false});
 
             setTimeout(() => {
                 this.closeShowDownloadDialog();
             }, 2000);
 
         } catch(error) {
-            this.setState({snackBarMessage: 'Error while downloading torrent file', snack: true, movieInfoLoading: false});
+            this.setState({snackBarMessage: 'Error while downloading torrent file', snack: true, episodeTorrentsLoading: false});
             this.closeShowDownloadDialog();
         }
 
@@ -555,7 +554,7 @@ class Shows extends Component {
                                           Select the episode wanted
                                       </Grid>
 
-                                      <Grid item xs={5} style={{padding: '6px', textAlign: 'center'}}>
+                                      <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
                                           <FormControl style={{minWidth: '80px'}} variant="outlined">
                                               <Select
                                                   value={this.state.seasonNumber}
@@ -577,7 +576,7 @@ class Shows extends Component {
                                           </FormControl>
                                       </Grid>
 
-                                      <Grid item xs={5} style={{padding: '6px', textAlign: 'center'}}>
+                                      <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
                                           <FormControl style={{minWidth: '80px'}} variant="outlined">
                                               <Select
                                                   value={this.state.episodeNumber}
@@ -629,19 +628,19 @@ class Shows extends Component {
                                       {/*</FormControl>*/}
                                       {/*</Grid>*/}
 
-                                      <Grid item xs={1}>
-                                          <IconButton>
-                                              <Search onClick={() => this.searchShowEpisodeTorrents()}/>
-                                          </IconButton>
-                                      </Grid>
+                                      {/*<Grid item xs={1}>*/}
+                                          {/*<IconButton>*/}
+                                              {/*<Search onClick={() => this.searchShowEpisodeTorrents()}/>*/}
+                                          {/*</IconButton>*/}
+                                      {/*</Grid>*/}
 
                                   </Grid>
 
-                                  {/*<div style={{width: '100%', textAlign: 'center'}}>*/}
-                                      {/*<IconButton>*/}
-                                          {/*<Search onClick={() => this.searchShowEpisodeTorrents()}/>*/}
-                                      {/*</IconButton>*/}
-                                  {/*</div>*/}
+                                  <div style={{width: '100%', textAlign: 'center'}}>
+                                      <IconButton>
+                                          <Search onClick={() => this.searchShowEpisodeTorrents()}/>
+                                      </IconButton>
+                                  </div>
 
                                   <div style={{textAlign: 'center'}}>
                                       <CircularProgress style={this.state.episodeTorrentsLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>

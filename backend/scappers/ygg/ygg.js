@@ -30,7 +30,7 @@ const getTorrentsList = async title => {
     if (process.env.NODE_ENV === 'production') {
         launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox']}
     } else {
-        launchBrowserProperties = {headless: false, timeout: 60000}
+        launchBrowserProperties = {headless: false, timeout: 70000}
     }
 
     let browser = {};
@@ -39,7 +39,7 @@ const getTorrentsList = async title => {
         browser = await puppeteer.launch(launchBrowserProperties);
         const page = await browser.newPage();
         await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=', {timeout: 60000});
-        await page.waitFor(6000);
+        await page.waitFor(7000);
         await page.waitForSelector("body");
         const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
         const $ = cheerio.load(html);
@@ -86,9 +86,9 @@ const downloadTorrentFile = async (url, user, infos) => {
     let launchBrowserProperties = {};
 
     if (process.env.NODE_ENV === 'production') {
-        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage']}
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 70000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage']}
     } else {
-        launchBrowserProperties = {headless: false, timeout: 60000, args: ['--disable-dev-shm-usage']}
+        launchBrowserProperties = {headless: false, timeout: 70000, args: ['--disable-dev-shm-usage']}
     }
 
     let browser = {};
@@ -100,7 +100,7 @@ const downloadTorrentFile = async (url, user, infos) => {
         // TODO maybe use another YGG account
         const page = await browser.newPage();
 
-        await page.goto(url, {timeout: 60000});
+        await page.goto(url, {timeout: 70000});
 
         await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.join(__dirname, '/torrent_temp')});
 
@@ -122,7 +122,7 @@ const downloadTorrentFile = async (url, user, infos) => {
         await page.waitForSelector("a.butt");
         await page.click("a.butt");
 
-        await page.waitFor(3000);
+        await page.waitFor(7000);
 
         // Get the torrent fileName
         const torrentFileName = await getTorrentFileName();

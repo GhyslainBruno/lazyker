@@ -48,7 +48,7 @@ module.exports = (app) => {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             // Putting this particular movie into "inProgress" state into firebase database
             // await usersRef.child(user.uid).child('/movies').child(req.body.id).set({title: req.body.title, state: 'finding_links', id: req.body.id});
-            TvShows.downloadEpisodeTorrentFile(req.body.url, req.body.provider, req.body.mediaInfos, req.body.id, user);
+            await TvShows.downloadEpisodeTorrentFile(req.body.url, req.body.provider, req.body.mediaInfos, req.body.id, user);
             res.send({message: 'ok'});
         } catch(error) {
             res.status(500).send({

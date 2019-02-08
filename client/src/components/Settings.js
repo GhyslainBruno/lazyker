@@ -121,15 +121,20 @@ class Settings extends Component {
     };
 
     loadOutput = async () => {
-        this.setState({output: [], loading: true});
-        let response = await fetch('/api/logs', {
-            method: 'GET',
-            headers: {
-                'token': await auth.getIdToken()
-            }
-        });
-        response = await response.json();
-        this.setState({ output: response.map(el => {return {text: el.textPayload, time: el.timestamp.seconds * 1000}}) , loading: false})
+        try {
+            this.setState({output: [], loading: true});
+            let response = await fetch('/api/logs', {
+                method: 'GET',
+                headers: {
+                    'token': await auth.getIdToken()
+                }
+            });
+            response = await response.json();
+            this.setState({ output: response.map(el => {return {text: el.textPayload, time: el.timestamp.seconds * 1000}}) , loading: false})
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error fetching logs', output: [], loading: false})
+        }
+
     };
 
     clearLogs = async () => {

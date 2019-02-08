@@ -281,6 +281,7 @@ class CurrentDownloads extends React.Component {
             // })
 
         } catch(error) {
+            this.setState({currentDownloadsLoading: false, currentDownloads: null});
             this.props.displaySnackMessage('Error while loading downloads');
         }
 

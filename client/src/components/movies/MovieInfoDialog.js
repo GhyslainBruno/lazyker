@@ -324,51 +324,51 @@ class MovieInfoDialog extends React.Component {
 
                             {/*Torrents list*/}
                             {this.state.torrentsList !== null ?
-                                this.state.torrentsList.length > 0 ?
                                 <div className="movieInfoDialog">
 
                                     <h2>Torrents</h2>
 
                                     <List component="nav">
 
-                                        {this.state.torrentsList.map(provider => {
-                                            return (
-                                                <div>
-                                                    <h3>
-                                                        {provider.provider}
-                                                    </h3>
+                                        {
+                                            this.state.torrentsList.map(provider => {
+                                                return (
+                                                    <div>
+                                                        <h3>
+                                                            {provider.provider}
+                                                        </h3>
 
-                                                    {
-                                                        provider.torrents.map(torrent => {
-                                                            return (
-                                                                <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
-                                                                    <ListItem button style={{overflow: 'hidden'}}>
-                                                                        <ListItemText primary={torrent.title} onClick={() => this.downloadTorrentFile(torrent)}/>
-                                                                        </ListItem>
-                                                                    </Paper>
-                                                            )})
+                                                        {
+                                                            provider.torrents.length > 0 ?
+
+                                                                provider.torrents.map(torrent => {
+                                                                    return (
+                                                                        <Paper elevation={1} style={{
+                                                                            margin: '5px',
+                                                                            backgroundColor: '#757575'
+                                                                        }}>
+                                                                            <ListItem button
+                                                                                      style={{overflow: 'hidden'}}>
+                                                                                <ListItemText primary={torrent.title}
+                                                                                              onClick={() => this.downloadTorrentFile(torrent)}/>
+                                                                            </ListItem>
+                                                                        </Paper>
+                                                                    )
+                                                                })
+                                                                :
+                                                                <div style={{
+                                                                    fontSize: '0.9rem',
+                                                                    color: 'grey'
+                                                                }}>no torrents found</div>
                                                         }
-                                                </div>
-
-                                            )
-
-                                            // return (
-                                            //     <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
-                                            //         <ListItem button style={{overflow: 'hidden'}}>
-                                            //             <ListItemText primary={torrent.title} onClick={() => this.downloadTorrentFile(torrent)}/>
-                                            //         </ListItem>
-                                            //     </Paper>
-                                            //
-                                            // )
-                                        })}
-
-
+                                                    </div>
+                                                )
+                                            })}
                                     </List>
                                 </div>
+
                                 :
-                                    <div style={{paddingTop: '20rem', fontSize: '0.9rem', color: 'grey'}}>no torrents found</div>
-                                :
-                                null
+                                    null
                             }
 
 

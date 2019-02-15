@@ -669,7 +669,11 @@ class Shows extends Component {
                                                                           </Paper>
                                                                       )})
                                                                   :
-                                                                  <div style={{textAlign: 'center'}}>No torrent found</div>
+                                                                  <div style={{
+                                                                      fontSize: '0.9rem',
+                                                                      color: 'grey',
+                                                                      textAlign: 'center'
+                                                                  }}>No torrent found</div>
 
                                                           }
                                                       </div>

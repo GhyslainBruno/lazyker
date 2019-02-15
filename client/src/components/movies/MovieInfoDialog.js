@@ -26,6 +26,8 @@ import {findDOMNode} from "react-dom";
 import Slide from "@material-ui/core/Slide";
 import * as auth from "../../firebase/auth";
 import Link from "react-router-dom/es/Link";
+import Fab from '@material-ui/core/Fab';
+
 
 const styles = {
     outlinedChip : {
@@ -297,15 +299,30 @@ class MovieInfoDialog extends React.Component {
                             {/*<Close />*/}
                         {/*</Button>*/}
 
-                        <Link to={{pathname: '/movies', search: `?genre=${this.props.genreSelected.id}`}} style={{ textDecoration: 'none', color: 'white' }}>
-                            <Button
-                                onClick={() => closeDialog()}
-                                variant="fab"
-                                mini
-                                style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>
-                                <Close />
-                            </Button>
-                        </Link>
+                        {/*<Link to={{pathname: '/movies', search: `?genre=${this.props.genreSelected.id}`}} style={{ textDecoration: 'none', color: 'white' }}>*/}
+                            {/*<Button*/}
+                                {/*onClick={() => closeDialog()}*/}
+                                {/*variant="fab"*/}
+                                {/*mini*/}
+                                {/*style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>*/}
+                                {/*<Close />*/}
+                            {/*</Button>*/}
+                        {/*</Link>*/}
+
+                        <Fab
+                            size="small"
+                            style={{
+                                position: 'absolute',
+                                zIndex: '1',
+                                right: '5px',
+                                top: '5px',
+                                backgroundColor: '#757575',
+                                color: "white"
+                            }}
+                            component={Link}
+                            to={{pathname: '/movies', search: `?genre=${this.props.genreSelected.id}`}}>
+                            <Close/>
+                        </Fab>
 
 
                         <Button

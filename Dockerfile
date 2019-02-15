@@ -56,7 +56,7 @@ WORKDIR /lazyker/app/
 RUN rm -rf client
 
 ENV NODE_ENV=production
-EXPOSE 80
+EXPOSE 80 443
 
 # Starting server in production mode
 CMD ["node","backend/server.js"]

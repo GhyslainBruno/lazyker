@@ -1,5 +1,29 @@
 # Lazyker
 
+## Project description
+This project is a [PWA](https://developers.google.com/web/progressive-web-apps/) (Progressive Web App) with which a user can :
+* Download Movies & Tv Shows episodes to his personnal storage (NAS Synology or Google Drive folder)
+* Stay upToDate with the tv shows he wants by downloading new episodes
+* It scrapes several provider websites (only torrent for now, DDL has already been developed but is not fully stable for now), here is the list : 
+  * Torrents : 
+    * <s>[Ygg](https://www.torrent9.tw/)</s> (not fully available for now)
+    * [Torrent9](https://www.yggtorrent.gg/)
+  * <s>DDL</s> : 
+    * <s>[Extreme download](https://www1.extreme-download.me/)</s>
+    * <s>[Annuaire telechargement](https://vwvvv.annuaire-telechargement.com/)</s>
+    * <s>[Zone telechargement](https://ww12.zone-telechargement.lol/)</s>
+* It uses a debrider service (only **Realdebrid** for now, but some others later)
+* Manage downloads from a dedicated UI
+* Check whether there was an error or not in a dedicated console output* Some other features
+   
+
+#####Some other features should be developed soon. To know what's coming, you can report to the issue dashboard of this project
+
+### Lazyker URL : https://dedibox.ghyslain.xyz (the project)
+#### SonarQube: http://sonarqube.ghyslain.xyz/projects (code analysis and quality report)
+ 
+# Cheat sheet for personnal use 
+
 ### With Docker ([ghyslainbruno/lazyker](https://hub.docker.com/r/ghyslainbruno/lazyker/))
 
 * Restart on dedibox : ```docker rm $(docker stop $(docker ps | grep lazyker | awk '{print $1}')) && docker build -t ghyslainbruno/lazyker . && docker run -p 80:80 -p 443:443 -d ghyslainbruno/lazyker```

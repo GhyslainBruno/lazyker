@@ -21,7 +21,7 @@ fi
 
 # Run sonarqube analysis on backend part
 cd backend && \
-docker run -ti -v $(pwd):/root/src --link sonarqube newtmitch/sonar-scanner sonar-scanner \
+docker run -v $(pwd):/root/src --link sonarqube newtmitch/sonar-scanner sonar-scanner \
   -Dsonar.projectKey=lazyker-back \
   -Dsonar.projectName=Lazyker_Back \
   -Dsonar.sources=. \
@@ -31,7 +31,7 @@ docker run -ti -v $(pwd):/root/src --link sonarqube newtmitch/sonar-scanner sona
 # Run sonarqube analysis on frontend part
 cd .. && \
 cd client && \
-docker run -ti -v $(pwd):/root/src --link sonarqube newtmitch/sonar-scanner sonar-scanner \
+docker run -v $(pwd):/root/src --link sonarqube newtmitch/sonar-scanner sonar-scanner \
   -Dsonar.projectKey=lazyker-front \
   -Dsonar.projectName=Lazyker_Front \
   -Dsonar.sources=. \

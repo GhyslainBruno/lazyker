@@ -15,12 +15,32 @@ This project is a [PWA](https://developers.google.com/web/progressive-web-apps/)
 * It uses a debrider service (only **Realdebrid** for now, but some others later)
 * Manage downloads from a dedicated UI
 * Check whether there was an error or not in a dedicated console output* Some other features
-   
 
-#####Some other features should be developed soon. To know what's coming, you can report to the issue dashboard of this project
+#### Some other features should be developed soon. To know what's coming, you can report to the issues dashboard of this project
 
-### Lazyker URL : https://dedibox.ghyslain.xyz (the project)
-#### SonarQube: http://sonarqube.ghyslain.xyz/projects (code analysis and quality report)
+## When Lazyker came in my developer journey - Aug 2018  
+I started working on this project right after Cryptopus. 
+
+I'm currently still working on this project, when I find some time to do so. 
+
+## What I learned with Lazyker
+As previously said, I started working on Lazyker right after Cryptopus, so I knew that i had to use a real stack.
+Lazyker is a project with which I learned a lot. 
+
+Indeed, this project allowed me to practice : 
+* Async / Await
+* SSL
+* QA
+* Nginx reverse proxy
+* Google Drive API
+* Docker 
+* Continuous integration
+* React JS framework (that's whith this project that I knew I wanted to use React to build things)
+
+And probably many more I'm forgetting.  
+
+### Lazyker : https://dedibox.ghyslain.xyz (the project)
+#### SonarQube : http://sonarqube.ghyslain.xyz/projects (code analysis and quality report)
  
 # Cheat sheet for personnal use 
 

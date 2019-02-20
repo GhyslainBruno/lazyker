@@ -8,7 +8,17 @@ before_script:
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     
-deploy_staging:
+stages:
+  - test
+  - deploy    
+
+test: 
+  script:
+    - cd backend
+    - npm i
+    - npm test
+
+deploy:
   type: deploy
   environment:
     name: production

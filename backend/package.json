@@ -31,6 +31,7 @@
     "request-promise": "^4.2.2",
     "semver": "^5.5.1",
     "string-similarity": "^1.2.0",
+    "supertest": "^3.4.2",
     "syno": "^2.1.0",
     "torrent-to-magnet": "^1.0.1"
   },

@@ -92,4 +92,6 @@ https.createServer({
         console.log('Listening on port ' + portUsed + ' ! Go to https://localhost:' + portUsed)
     });
 
+module.exports = app;
+
 

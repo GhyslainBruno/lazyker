@@ -1,5 +1,3 @@
-image: trion/ng-cli-karma
-
 before_script:
   - apt-get update -qq
   - apt-get install -qq git
@@ -9,18 +7,8 @@ before_script:
   - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 --decode)
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    
-stages:
-  - test
-  - deploy    
 
-test: 
-  script:
-    - cd backend
-    - npm i
-    - npm test
-
-deploy:
+deploy_stage:
   type: deploy
   environment:
     name: production

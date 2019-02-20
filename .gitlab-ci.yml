@@ -15,7 +15,7 @@ stages:
   - deploy    
 
 test: 
-  image: node:9-alpine
+  service: node:9-alpine
   script:
     - cd backend
     - npm i

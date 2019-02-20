@@ -1,5 +1,3 @@
-image: node:9-alpine
-
 before_script:
   - apt-get update -qq
   - apt-get install -qq git
@@ -15,6 +13,7 @@ stages:
   - deploy    
 
 test: 
+  image: node:9-alpine
   script:
     - cd backend
     - npm i

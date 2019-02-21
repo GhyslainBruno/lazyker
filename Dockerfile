@@ -38,6 +38,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ### End of trying
 
 RUN npm install --silent
+RUN npm test
 
 WORKDIR /lazyker/app/client
 RUN npm install --silent

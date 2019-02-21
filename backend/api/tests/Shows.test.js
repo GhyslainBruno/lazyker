@@ -1,8 +1,8 @@
 const request = require('supertest');
 const app = require('../../server');
 
-describe('Test the root path', () => {
-    test('It should response the GET method', (done) => {
+describe('Shows list', () => {
+    test('It should response the GET method with a list of tv shows for the test user', (done) => {
         request(app)
             .get('/api/shows')
             // Test token - corresponds to the foobar@yopmail.com -> foobar account

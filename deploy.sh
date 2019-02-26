@@ -23,13 +23,14 @@ fi
 cd backend && \
 docker run -v $(pwd):/root/src --link sonarqube newtmitch/sonar-scanner sonar-scanner \
   -Dsonar.projectKey=lazyker-back \
-  -Dsonar.projectName=Lazyker_Back \
+  -Dsonar.projectName='Lazyker Back' \
   -Dsonar.sources=. \
   -Dsonar.tests=. \
-  -Dsonar.test.inclusions=api/tests/*.test.js \
-  -Dsonar.javascript.lcov.reportPaths=coverage/jest/lcov.info \
-  -Dsonar.testExecutionReportPaths=coverage/jest/clover.xml \
-  -Dsonar.host.url=http://sonarqube.ghyslain.xyz:9000 \
+  -Dsonar.test.inclusions='**/*.test.js' \
+  -Dsonar.exclusions='**/node_modules/**,**/coverage/**,**/*.json/**,**/*.pem/**,**/*.xml/**' \
+  -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+  -Dsonar.testExecutionReportPaths=test-report.xml \
+  -Dsonar.host.url='http://sonarqube.ghyslain.xyz:9000' \
   -Dsonar.login=c37d841c739531680ebf8c1f874012806bd01da7 && \
 
 # Run sonarqube analysis on frontend part

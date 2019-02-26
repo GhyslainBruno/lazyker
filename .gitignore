@@ -4,4 +4,7 @@ backend/coverage/
 backend/client_build/
 client/build/
 client/node_modules
+backend/test-report.xml
+backend/.scannerwork
+
 

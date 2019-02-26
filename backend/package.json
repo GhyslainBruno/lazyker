@@ -10,7 +10,7 @@
     "testResultsProcessor": "jest-sonar-reporter"
   },
   "scripts": {
-    "test": "node_modules/jest/bin/jest.js --coverage --detectOpenHandles"
+    "test": "node_modules/jest/bin/jest.js --config jest.config.js --forceExit"
   },
   "author": "BRUNO Ghyslain",
   "license": "MIT",

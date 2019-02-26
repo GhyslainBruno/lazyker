@@ -19,6 +19,9 @@ if [ ! "$(docker ps -q -f name=lazyker)" ]; then
      docker run -p 8080:80 -p 443:443 -v /home/ghys/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
 fi
 
+# Running backend tests - editing report file -> in the running container
+docker exec -it lazyker /bin/sh -c "cd backend;npm test Cloudscrapper;pwd=`pwd` && sed -i -e \"s|\/lazyker\/app\/backend|\/root\/src|g\" coverage/lcov.info"
+
 # Run sonarqube analysis on backend part
 cd backend && \
 docker run -v $(pwd):/root/src --link sonarqube newtmitch/sonar-scanner sonar-scanner \

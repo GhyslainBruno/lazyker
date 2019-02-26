@@ -50,7 +50,7 @@ COPY . /lazyker/app/
 WORKDIR /lazyker/app/backend
 
 # Running tests & coverage
-RUN npm test Shows
+RUN npm test Cloudscrapper
 
 # Changing absolute paths in coverage/lcov.info file to be matched with the ones in the sonar-scanner docker container used to run the sonar scanner
 RUN pwd=`pwd` && sed -e "s|\(${pwd}\)|\/root\/src|g" coverage/lcov.info

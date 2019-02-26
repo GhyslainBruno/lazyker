@@ -11,12 +11,12 @@ if [ ! "$(docker ps -q -f name=lazyker)" ]; then
     # run your container
     #docker run -d --name <name> my-docker-image
     echo 'Running new version of lazyker container'
-    docker run -p 8080:80 -p 443:443 -v /home/ghys/lazyker/backend/coverage:/lazyker/app/backend:coverage --name lazyker -d ghyslainbruno/lazyker
+    docker run -p 8080:80 -p 443:443 -v /home/ghys/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
     else
      echo 'Lazyker container already running - removing and updating and running new one...'
      docker kill lazyker
      docker rm lazyker
-     docker run -p 8080:80 -p 443:443 --name lazyker -d ghyslainbruno/lazyker
+     docker run -p 8080:80 -p 443:443 -v /home/ghys/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
 fi
 
 # Run sonarqube analysis on backend part
@@ -29,7 +29,7 @@ docker run -v $(pwd):/root/src --link sonarqube newtmitch/sonar-scanner sonar-sc
   -Dsonar.test.inclusions='**/*.test.js' \
   -Dsonar.exclusions='**/node_modules/**,**/coverage/**,**/*.json/**,**/*.pem/**,**/*.xml/**' \
   -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-  -Dsonar.testExecutionReportPaths=test-report.xml \
+  -Dsonar.testExecutionReportPaths=coverage/test-report.xml \
   -Dsonar.host.url='http://sonarqube.ghyslain.xyz:9000' \
   -Dsonar.login=c37d841c739531680ebf8c1f874012806bd01da7 && \
 
@@ -38,7 +38,7 @@ cd .. && \
 cd client && \
 docker run -v $(pwd):/root/src --link sonarqube newtmitch/sonar-scanner sonar-scanner \
   -Dsonar.projectKey=lazyker-front \
-  -Dsonar.projectName=Lazyker_Front \
+  -Dsonar.projectName='Lazyker Front' \
   -Dsonar.sources=. \
   -Dsonar.host.url=http://sonarqube.ghyslain.xyz:9000 \
   -Dsonar.login=c37d841c739531680ebf8c1f874012806bd01da7 && \

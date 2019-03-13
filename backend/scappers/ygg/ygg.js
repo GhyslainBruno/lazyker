@@ -13,7 +13,14 @@ const admin = require('firebase-admin');
 const db = admin.database();
 const usersRef = db.ref("/users");
 
-// Used to read headers responses in requests
+/**
+ *  Used to read headers responses in requests
+ * @param body
+ * @param response
+ * @param resolveWithFullResponse
+ * @returns {{headers: *, data: *, fullResponse: *}}
+ * @private
+ */
 const _include_headers = function(body, response, resolveWithFullResponse) {
     return {'headers': response.headers, 'data': body, 'fullResponse': resolveWithFullResponse};
 };
@@ -129,6 +136,10 @@ const downloadTorrentFile = async (url, user, infos) => {
 
         // Parse torrent file to get info
         const torrentInfos = parseTorrent(fs.readFileSync(__dirname + '/torrent_temp/' + torrentFileName));
+
+        // TODO understand why having some "announces" in infos of a torrent is a bad thing...
+        // For now, without flushing [announces] - torrent adding using magnet link don't work in realdebrid...
+        torrentInfos.announce = [];
 
         // Create magnet link using torrent file infos
         const magnetLink = parseTorrent.toMagnetURI(

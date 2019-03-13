@@ -1,8 +1,12 @@
 const cheerio = require('cheerio');
 const rp  = require('request-promise');
+const fs = require('fs');
+const path = require('path');
 const logger = require('../../logs/logger');
-const Torrent9RootUrl = 'https://www.torrent9.ch';
+const Torrent9RootUrl = 'https://www.torrent9.vg';
 const realdebrid = require('../../realdebrid/debrid_links');
+const puppeteer = require('puppeteer');
+const parseTorrent = require('parse-torrent');
 
 /**
  * Returns the real URL used by the website - anytime
@@ -34,21 +38,24 @@ const getRealUrl = async () => {
  */
 const getTorrentsList = async title => {
 
+    let launchBrowserProperties = {};
+
+    if (process.env.NODE_ENV === 'production') {
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox']}
+    } else {
+        launchBrowserProperties = {headless: false, timeout: 70000}
+    }
+
+    let browser = {};
+
     try {
-        const torrent9RealUrl = await getRealUrl();
-
-        const options = {
-            method: 'POST',
-            uri: torrent9RealUrl + '/recherche/' + title,
-            json: true,
-            formData: {
-                "torrentSearch" : title
-            },
-            followAllRedirects: true
-        };
-
-        const response = await rp(options);
-        const $ = cheerio.load(response);
+        browser = await puppeteer.launch(launchBrowserProperties);
+        const page = await browser.newPage();
+        await page.goto(Torrent9RootUrl + '/recherche/' + title, {timeout: 60000});
+        await page.waitFor(8000);
+        await page.waitForSelector("body");
+        const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
+        const $ = cheerio.load(html);
 
         const items = $('.table-responsive > .table > tbody > tr');
 
@@ -65,20 +72,9 @@ const getTorrentsList = async title => {
                 leech: result.children[7].children[0].data
             })
 
-            // const element = cheerio.load(result);
-            //
-            // // Return elements which are only movies
-            // if (element('i')[0].attribs.class === 'fa fa-video-camera') {
-            //     torrentsList.push({
-            //         title: element('a')[0].attribs.title.replace('Télécharger ', '').replace(' en Torrent', ''),
-            //         url: torrent9RealUrl + element('a')[0].attribs.href,
-            //         size: element('td')[1].children[0].data,
-            //         seed: element('td')[2].children[0].children[0].data,
-            //         leech: element('td')[3].children[0].data
-            //     })
-            // }
-
         });
+
+        browser.close();
 
         return {
             provider: 'torrent9',
@@ -86,11 +82,10 @@ const getTorrentsList = async title => {
         };
 
     } catch(error) {
-        return {
-            provider: 'torrent9',
-            torrents: []
-        };
+        browser.close();
+        throw error;
     }
+
 };
 
 /**
@@ -102,31 +97,101 @@ const getTorrentsList = async title => {
  */
 const downloadTorrentFile = async (url, user, infos) => {
 
+    let launchBrowserProperties = {};
+
+    if (process.env.NODE_ENV === 'production') {
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 70000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage']}
+    } else {
+        launchBrowserProperties = {headless: false, timeout: 70000, args: ['--disable-dev-shm-usage']}
+    }
+
+    let browser = {};
+
     try {
+        browser = await puppeteer.launch(launchBrowserProperties);
 
-        const torrent9RealBaseUrl = await getRealUrl();
+        const page = await browser.newPage();
+        await page.goto(Torrent9RootUrl + url, {timeout: 70000});
+        await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.join(__dirname, '/torrent_temp')});
 
-        const options = {
-            method: 'GET',
-            uri: torrent9RealBaseUrl + url,
-            json: true,
-            followAllRedirects: true
-        };
+        await page.waitFor(7000);
+        await page.waitForSelector("a.btn.btn-danger.download");
+        await page.click("a.btn.btn-danger.download");
 
-        const response = await rp(options);
-        const $ = cheerio.load(response);
+        await page.waitFor(7000);
 
-        const magnetLink = $('a.btn.btn-danger.download')[1].attribs.href;
+        // TODO extract this logic - which is commun to every torrent provider code - in a util part
+        // Get the torrent fileName
+        const torrentFileName = await getTorrentFileName();
 
-        // Adding torrent to realdebrid service
+        // Parse torrent file to get info
+        const torrentInfos = parseTorrent(fs.readFileSync(__dirname + '/torrent_temp/' + torrentFileName));
+
+        // TODO understand why having some "announces" in infos of a torrent is a bad thing...
+        // For now, without flushing [announces] - torrent adding using magnet link don't work in realdebrid...
+        torrentInfos.announce = [];
+
+        // Create magnet link using torrent file infos
+        const magnetLink = parseTorrent.toMagnetURI(
+            torrentInfos
+        );
+
+        // Removing torrent file
+        await removeAllFiles(path.join(__dirname, 'torrent_temp'));
+
         const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink, user, infos);
+
         await realdebrid.selectAllTorrentFiles(rdTorrentInfo.id, user);
+
+        browser.close();
 
         return null;
 
     } catch(error) {
+
+        await logger.info(error, user);
+        browser.close();
         throw error;
     }
+};
+
+/**
+ * Removes all files of a particular directory (to use in torrent_temp directory)
+ * @param directory
+ * @returns {Promise<any>}
+ */
+const removeAllFiles = directory => {
+    return new Promise((resolve, reject) => {
+        fs.readdir(directory, (err, files) => {
+            if (err) reject(err);
+
+            for (const file of files) {
+                fs.unlink(path.join(directory, file), err => {
+                    if (err) reject(err);
+                });
+            }
+            resolve();
+        });
+    })
+};
+
+/**
+ * Returns the torrent fileName (of the first torrent file found) ! CAREFULL ! In /torrent_temp/ folder an only one torrent file should exist
+ * @param path
+ * @returns {Promise<any>}
+ */
+const getTorrentFileName = () => {
+    return new Promise(function(resolve, reject) {
+        fs.readdir(__dirname + '/torrent_temp/', (err, files) => {
+            if (!err) {
+                files.forEach(file => {
+                    resolve(file);
+                });
+            } else {
+                reject(err);
+            }
+        });
+    })
 };
 
 module.exports.getTorrentsList = getTorrentsList;

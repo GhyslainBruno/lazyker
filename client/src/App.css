@@ -1195,7 +1195,7 @@
       margin: 0 auto; } }
 
 .mainApp {
-  height: 100vh; }
+  height: 80vh; }
 
 body {
   font-family: Roboto, sans-serif;
@@ -1208,7 +1208,9 @@ body {
   @media screen and (min-width: 840px) {
     body {
       width: 40%;
-      margin: 0 auto;
+      margin-top: 8px;
+      margin-right: auto;
+      margin-left: auto;
       padding-right: 0 !important; } }
 
 .bottomNav {

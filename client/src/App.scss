@@ -99,7 +99,7 @@ $mdc-theme-on-secondary: red;
 }
 
 .mainApp {
-  height: 100vh;
+  height: 80vh;
 }
 
 body {
@@ -112,7 +112,9 @@ body {
   }
   @media screen and (min-width: $break-large) {
     width: 40%;
-    margin: 0 auto;
+    margin-top: 8px;
+    margin-right: auto;
+    margin-left: auto;
     padding-right: 0 !important;
   }
 }

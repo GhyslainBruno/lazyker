@@ -60,7 +60,8 @@ class App extends Component {
                         this.state.userLoading ?
 
                             <div className="mainApp mui-fixed" >
-                                <div style={{width: '100%', marginTop: '50vh', textAlign: 'center'}}>
+                                {/*<div style={{width: '100%', marginTop: '50vh', textAlign: 'center'}}>*/}
+                                <div style={{position: 'absolute', top: '50%', left: '50%'}}>
                                     <CircularProgress style={this.state.userLoading ? {display: 'inline-block'} : {display: 'none'}}/>
                                 </div>
                             </div>

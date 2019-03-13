@@ -83,8 +83,9 @@ module.exports = (app) => {
             const lastSeasonInformations = results.seasons.filter(season => season.season_number === Math.max.apply(Math, results.seasons.map(function(o) { return o.season_number; })))[0];
 
             const show = {
-                lastSeason:  lastSeasonInformations.season_number,
-                lastEpisode:  lastSeasonInformations.episode_count,
+                // lastSeason:  lastSeasonInformations.season_number,
+                // lastEpisode:  lastSeasonInformations.episode_count,
+                seasonsEpisodesNumbers: results.seasons,
                 id: parseInt(showId)
             };
 

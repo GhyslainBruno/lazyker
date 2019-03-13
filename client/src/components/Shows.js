@@ -320,8 +320,7 @@ class Shows extends Component {
             const showInfo = await response.json();
 
             this.setState({
-                showLastSeasonsNumber: showInfo.show.lastSeason,
-                showLastEpisodesNumber: showInfo.show.lastEpisode,
+                seasonsEpisodesNumbers: showInfo.show.seasonsEpisodesNumbers,
                 showInfoLoading: false
             });
 
@@ -481,28 +480,39 @@ class Shows extends Component {
     createSeasonsNumbersTable = () => {
         let table = [];
 
-        for (let i = 0; i < this.state.showLastSeasonsNumber; i++) {
+        if (this.state.seasonsEpisodesNumbers) {
+            const seasonsNumber = this.state.seasonsEpisodesNumbers.filter(season => season.season_number === Math.max.apply(Math, this.state.seasonsEpisodesNumbers.map(function(o) { return o.season_number; })))[0].season_number;
 
-            const number = parseInt(i + 1).toString().padStart(2, '0');
+            for (let i = 0; i < seasonsNumber; i++) {
 
-            table.push(<MenuItem value={number}>{number}</MenuItem>);
+                const number = parseInt(i + 1).toString().padStart(2, '0');
+
+                table.push(<MenuItem value={number}>{number}</MenuItem>);
+            }
+
+            return table
         }
 
-        return table
     };
 
     createEpisodesNumbersTable = () => {
         let table = [];
 
-        for (let i = 0; i < this.state.showLastEpisodesNumber; i++) {
+        if (this.state.seasonsEpisodesNumbers && this.state.seasonNumber) {
 
-            const number = parseInt(i + 1).toString().padStart(2, '0');
+            const episodesNumber = this.state.seasonsEpisodesNumbers.filter(season => season.season_number === parseInt(this.state.seasonNumber))[0].episode_count;
+
+            for (let i = 0; i < episodesNumber; i++) {
+
+                const number = parseInt(i + 1).toString().padStart(2, '0');
 
 
-            table.push(<MenuItem value={number}>{number}</MenuItem>);
+                table.push(<MenuItem value={number}>{number}</MenuItem>);
+            }
+
+            return table
         }
 
-        return table
     };
 
     render() {

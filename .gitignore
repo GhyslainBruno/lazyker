@@ -6,5 +6,6 @@ client/build/
 client/node_modules
 backend/test-report.xml
 backend/.scannerwork
+client/.scannerwork
 
 

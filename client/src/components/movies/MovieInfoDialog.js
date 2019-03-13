@@ -491,20 +491,20 @@ class MovieInfoDialog extends React.Component {
                                                 style={{margin: '5px', position: 'relative', top: '50%', backgroundColor: "red"}}/>
                                         </div>
 
-                                        <div>
-                                            <Chip
-                                                clickable="true"
-                                                // onClick={() => this.searchProvidersMovie(this.state.movieInfo.title)}
-                                                onClick={() => this.props.displaySnackMessage('Not ready yet')}
-                                                avatar={
-                                                    <Avatar
-                                                        style={{backgroundColor: "#9b0101"}}>
-                                                        <Download />
-                                                    </Avatar>
-                                                }
-                                                label="Direct Download"
-                                                style={{margin: '5px', position: 'relative', top: '50%', backgroundColor: "red"}}/>
-                                        </div>
+                                        {/*<div>*/}
+                                            {/*<Chip*/}
+                                                {/*clickable="true"*/}
+                                                {/*// onClick={() => this.searchProvidersMovie(this.state.movieInfo.title)}*/}
+                                                {/*onClick={() => this.props.displaySnackMessage('Not ready yet')}*/}
+                                                {/*avatar={*/}
+                                                    {/*<Avatar*/}
+                                                        {/*style={{backgroundColor: "#9b0101"}}>*/}
+                                                        {/*<Download />*/}
+                                                    {/*</Avatar>*/}
+                                                {/*}*/}
+                                                {/*label="Direct Download"*/}
+                                                {/*style={{margin: '5px', position: 'relative', top: '50%', backgroundColor: "red"}}/>*/}
+                                        {/*</div>*/}
                                     </div>
 
 

@@ -146,6 +146,7 @@ const getAccessToken = async user => {
  * @param user
  * @param title
  * @param torrentInfos
+ * @param res
  * @returns {Promise<void>}
  */
 const downloadMovieFile = async (link, user, title, torrentInfos, res) => {
@@ -199,9 +200,12 @@ const downloadMovieFile = async (link, user, title, torrentInfos, res) => {
         parents: [folderCreated.id]
     };
 
+    // Get a valid access token using stored token - nodejs google drive api handles an automatic refresh since a refresh token + expiry date is delivered in setCredentials https://github.com/googleapis/google-api-nodejs-client#first-example
+    const validAccessToken = await oAuth2Client.getAccessToken();
+
     const options = {
         headers: {
-            'Authorization': 'Bearer ' + oAuth2Client.credentials.access_token,
+            'Authorization': 'Bearer ' + validAccessToken.token,
             'Content-Type': 'application/json; charset=UTF-8',
             // Find a way to know the length of the init request - doc said it is mandatory
             // 'Content-Length': new Buffer(JSON.stringify(self.metadata)).length,
@@ -335,6 +339,9 @@ const downloadMovieFile = async (link, user, title, torrentInfos, res) => {
     } catch(error) {
 
         if (error.statusCode === 401) {
+            res.status(401).send({
+                message: 'Error with authorization - check console'
+            });
             await logger.info(error.message + ' - try to relink lazyker to you google drive account in settings', user);
         } else {
             await logger.info(error.message, user);

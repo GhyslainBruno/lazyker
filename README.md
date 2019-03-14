@@ -4,9 +4,9 @@
 This project is a [PWA](https://developers.google.com/web/progressive-web-apps/) (Progressive Web App) with which a user can :
 * Download Movies & Tv Shows episodes to his personnal storage (NAS Synology or Google Drive folder)
 * Stay upToDate with the tv shows he wants by downloading new episodes
-* It scrapes several provider websites (only torrent for now, DDL has already been developed but is not fully stable for now), here is the list : 
+* It scrapes several provider websites (only **torrent** for now, DDL has already been developed but is not fully stable for now, so I decided not to use it), here is the list : 
   * Torrents : 
-    * <s>[Ygg](https://www.torrent9.tw/)</s> (not fully available for now)
+    * [Ygg](https://www.torrent9.tw/)
     * [Torrent9](https://www.yggtorrent.gg/)
   * <s>DDL</s> : 
     * <s>[Extreme download](https://www1.extreme-download.me/)</s>

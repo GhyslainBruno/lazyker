@@ -178,7 +178,7 @@ async function getRealdebridAuthToken(user) {
             //     logger.info(error)
             // }
 
-            logger.info('ERROR : please connect to "Realdebrid" debrider first --> Go to Settings', user);
+            logger.info('ERROR : please connect to "Realdebrid" debrider first --> Go to Settings > Configuration and click "connect" to use your Realdebrid account', user);
             throw new Error('Realdebrid connection needed');
         }
 

@@ -70,8 +70,15 @@ class Torrents extends React.Component {
                     'token': await auth.getIdToken()
                 }
             });
-            const torrents = await response.json();
-            this.setState({torrents: torrents, torrentsLoading: false})
+
+            if (response.status === 200) {
+                const torrents = await response.json();
+                this.setState({torrents: torrents, torrentsLoading: false});
+            } else {
+                this.setState({torrents: [], torrentsLoading: false});
+                this.props.displaySnackMessage('Error : Link your Debrider account -> Settings > Configuration');
+            }
+
         } catch(error) {
             this.props.displaySnackMessage('Error getting Realdebrid torrents');
             this.setState({torrentsLoading: false});

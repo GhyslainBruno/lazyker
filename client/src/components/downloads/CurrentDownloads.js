@@ -274,6 +274,14 @@ class CurrentDownloads extends React.Component {
                         this.setState({currentDownloads: downloadsStates.currentDownloads, currentDownloadsLoading: false})
                     }
                     break;
+
+                default :
+                    this.props.displaySnackMessage('Error : No Storage selected (go to Settings > Configuration)');
+                    this.setState({
+                        currentDownloads: [],
+                        currentDownloadsLoading: false
+                    });
+                    break;
             }
 
             // firebase.database().ref('/users').child(await auth.getUid()).child('/settings/storage').on('value', snapshot => {

@@ -82,7 +82,27 @@ module.exports = (app) => {
                 res.status(error.code).send({
                     message: error.message
                 });
-            } else {
+            } else if (error.message) {
+                if (error.message === "Cannot read property 'moviesGdriveFolderId' of null") {
+                    res.send({
+                        message: 'Error : Please a folder for your Movies - Settings > Configuration'
+                    })
+                }
+
+                if (error.message === "Cannot read property 'tvShowsGdriveFolderId' of null") {
+                    res.send({
+                        message: 'Error : Please a folder for your Tv Shows - Settings > Configuration'
+                    })
+                }
+
+                if (error.message === "Cannot read property 'access_token' of null") {
+                    res.send({
+                        message: 'Error : Please link your Google Drive account - Settings > Configuration > click link icon'
+                    })
+                }
+
+            }
+            else {
                 res.send({
                     message: 'Unknown error'
                 })

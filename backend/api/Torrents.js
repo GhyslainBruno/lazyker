@@ -85,13 +85,13 @@ module.exports = (app) => {
             } else if (error.message) {
                 if (error.message === "Cannot read property 'moviesGdriveFolderId' of null") {
                     res.send({
-                        message: 'Error : Please a folder for your Movies - Settings > Configuration'
+                        message: 'Error : Please select a folder for your Movies - Settings > Configuration'
                     })
                 }
 
                 if (error.message === "Cannot read property 'tvShowsGdriveFolderId' of null") {
                     res.send({
-                        message: 'Error : Please a folder for your Tv Shows - Settings > Configuration'
+                        message: 'Error : Please select a folder for your Tv Shows - Settings > Configuration'
                     })
                 }
 

@@ -1151,31 +1151,12 @@
   to {
     transform: rotate(360deg); } }
 
-.authField:not(.mdc-text-field--disabled) .mdc-notched-outline__idle {
-  border-color: white; }
+.authFieldEmail {
+  margin-top: 15px !important; }
 
-.authField:not(.mdc-text-field--disabled) .mdc-notched-outline__path {
-  stroke: white; }
-
-.authField:not(.mdc-text-field--disabled) .mdc-text-field__input {
-  color: white; }
-
-.authField:not(.mdc-text-field--disabled) .mdc-floating-label {
-  color: white; }
-
-.authField:not(.mdc-text-field--disabled) .mdc-text-field__input::placeholder {
-  color: white; }
-
-.authField .mdc-text-field__input {
-  caret-color: white; }
-
-.authField:not(.mdc-text-field--disabled):not(.mdc-text-field--focused) .mdc-text-field__input:hover ~ .mdc-notched-outline__idle,
-.authField:not(.mdc-text-field--disabled):not(.mdc-text-field--focused) .mdc-text-field__icon:hover ~ .mdc-notched-outline__idle {
-  border-color: white; }
-
-.authField:not(.mdc-text-field--disabled):not(.mdc-text-field--focused) .mdc-text-field__input:hover ~ .mdc-notched-outline .mdc-notched-outline__path,
-.authField:not(.mdc-text-field--disabled):not(.mdc-text-field--focused) .mdc-text-field__icon:hover ~ .mdc-notched-outline .mdc-notched-outline__path {
-  stroke: white; }
+.authFieldPassword {
+  margin-top: 15px !important;
+  margin-bottom: 15px !important; }
 
 .signOutBtn {
   margin-top: 10px; }

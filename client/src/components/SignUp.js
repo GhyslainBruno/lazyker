@@ -3,7 +3,12 @@ import { Link, withRouter } from 'react-router-dom';
 import { auth } from '../firebase';
 
 import * as routes from '../constants/routes';
-import TextField, {Input} from "@material/react-text-field";
+import {Input} from "@material/react-text-field";
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import IconButton from "@material-ui/core/IconButton";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import Button from "@material/react-button";
 import Paper from "@material-ui/core/Paper/Paper";
 import { SignInLink } from './SignIn';
@@ -19,6 +24,7 @@ const INITIAL_STATE = {
     passwordOne: '',
     passwordTwo: '',
     error: null,
+    showPassword: false
 };
 
 const byPropKey = (propertyName, value) => () => ({
@@ -82,43 +88,67 @@ class SignUpForm extends Component {
 
                     <div>
                         <TextField
-                            className="authField"
-                            outlined={true}
+                            className="authFieldEmail"
+                            variant="outlined"
                             label='Email'
                             style={{width: '100%'}}
+                            value={email}
+                            type="text"
+                            onChange={event => this.setState(byPropKey('email', event.target.value))}
                         >
-                            <Input
-                                value={email}
-                                type="text"
-                                onChange={event => this.setState(byPropKey('email', event.target.value))}/>
+
                         </TextField>
                     </div>
 
                     <div>
                         <TextField
-                            className="authField"
-                            outlined={true}
+                            className="authFieldPassword"
+                            variant="outlined"
                             label='Password'
+                            type={this.state.showPassword ? 'text' : 'password'}
                             style={{width: '100%'}}
+                            value={passwordOne}
+                            onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="Toggle password visibility"
+                                            onClick={() => this.setState(state => ({ showPassword: !state.showPassword }))}
+                                        >
+                                            {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
                         >
-                            <Input
-                                value={passwordOne}
-                                type="password"
-                                onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}/>
+
                         </TextField>
                     </div>
 
                     <div>
                         <TextField
-                            className="authField"
-                            outlined={true}
+                            className="authFieldPassword"
+                            variant="outlined"
                             label='Confirm password'
+                            type={this.state.showPassword ? 'text' : 'password'}
                             style={{width: '100%'}}
+                            value={passwordTwo}
+                            onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="Toggle password visibility"
+                                            onClick={() => this.setState(state => ({ showPassword: !state.showPassword }))}
+                                        >
+                                            {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
                         >
-                            <Input
-                                value={passwordTwo}
-                                type="password"
-                                onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}/>
+
                         </TextField>
                     </div>
 

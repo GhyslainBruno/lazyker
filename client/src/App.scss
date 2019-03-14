@@ -66,12 +66,13 @@ $mdc-theme-on-secondary: red;
   to { transform: rotate(360deg); }
 }
 
-.authField {
-  @include mdc-text-field-outline-color(white);
-  @include mdc-text-field-ink-color(white);
-  @include mdc-text-field-label-color(white);
-  @include mdc-text-field-caret-color(white);
-@include mdc-text-field-hover-outline-color(white);
+.authFieldEmail {
+  margin-top: 15px !important;
+}
+
+.authFieldPassword {
+  margin-top: 15px !important;
+  margin-bottom: 15px !important;
 }
 
 .signInBtn {

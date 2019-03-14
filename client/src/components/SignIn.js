@@ -7,17 +7,22 @@ import * as routes from '../constants/routes';
 
 // Trying the new material spec
 import Button from '@material/react-button/dist';
-import TextField, {HelperText, Input} from '@material/react-text-field';
+import {HelperText, Input} from '@material/react-text-field';
 import Paper from '@material-ui/core/Paper';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {GoogleProvider, Providers} from "./SignInProviders";
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import IconButton from "@material-ui/core/IconButton";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
 
 const SignInPage = ({ history }) =>
     <div>
         {/*<h1>SignIn</h1>*/}
         <SignInForm history={history} />
         {/*<SignUpLink />*/}
-    </div>
+    </div>;
 
 const byPropKey = (propertyName, value) => () => ({
     [propertyName]: value,
@@ -26,6 +31,7 @@ const byPropKey = (propertyName, value) => () => ({
 const INITIAL_STATE = {
     email: '',
     password: '',
+    showPassword: false,
     signInLoading: false,
     error: null,
 };
@@ -34,7 +40,9 @@ class SignInForm extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { ...INITIAL_STATE };
+        this.state = {
+            ...INITIAL_STATE
+        };
     }
 
     onSubmit = (event) => {
@@ -87,27 +95,40 @@ class SignInForm extends Component {
 
                     <div>
                         <TextField
-                            className="authField"
-                            outlined={true}
+                            className="authFieldEmail"
+                            variant="outlined"
                             label='Email'
                             style={{width: '100%'}}
+                            value={email}
+                            onChange={event => this.setState(byPropKey('email', event.target.value))}
                         >
-                            <Input
-                                value={email}
-                                onChange={event => this.setState(byPropKey('email', event.target.value))}/>
+
                         </TextField>
                     </div>
 
                     <div>
                         <TextField
-                            className="authField"
-                            outlined={true}
+                            className="authFieldPassword"
                             label='Password'
+                            type={this.state.showPassword ? 'text' : 'password'}
+                            variant="outlined"
                             style={{width: '100%'}}
+                            value={password}
+                            onChange={event => this.setState(byPropKey('password', event.target.value))}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="Toggle password visibility"
+                                            onClick={() => this.setState(state => ({ showPassword: !state.showPassword }))}
+                                        >
+                                            {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
                         >
-                            <Input
-                                value={password}
-                                onChange={event => this.setState(byPropKey('password', event.target.value))}/>
+
                         </TextField>
                     </div>
 

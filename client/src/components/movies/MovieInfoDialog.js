@@ -206,9 +206,9 @@ class MovieInfoDialog extends React.Component {
         this.getMovieInfo(this.props.selectedMovie);
     };
 
-    componentWillMount() {
-        console.log(this.props);
-    }
+    // componentWillMount() {
+    //     console.log(this.props);
+    // }
 
     // Transition used to display dialog (usefull ?)
     Transition = (props) => {
@@ -335,7 +335,7 @@ class MovieInfoDialog extends React.Component {
 
                         <div style={{textAlign: 'center'}}>
 
-                            <div style={this.state.movieInfoLoading ? {display: 'inline-block', paddingTop: '22rem'} : {display: 'none'}}>
+                            <div style={this.state.movieInfoLoading ? {position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'} : {display: 'none'}}>
                                 <CircularProgress/>
                             </div>
 

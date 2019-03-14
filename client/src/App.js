@@ -83,7 +83,7 @@ class App extends Component {
                                 </div>
                                 :
                                 <div className="mainApp mui-fixed" style={{paddingBottom: '80px'}}>
-                                    <Route exact path='/signup' render={() =><SignUpForm />}/>
+                                    <Route exact path='/signup' render={(props) =><SignUpForm {...props}/>}/>
                                     <Route exact path='/privacy_policy' render={() => <Privacy/>}/>
                                     <Route path={/^(?!.*(signup|privacy_policy)).*$/} render={() =><SignInForm />}/>
                                 </div>

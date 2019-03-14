@@ -39,8 +39,9 @@ Indeed, this project allowed me to practice :
 
 And probably many more I'm forgetting.  
 
-### Lazyker : https://dedibox.ghyslain.xyz (the project)
+### <u>Lazyker</u> : https://dedibox.ghyslain.xyz (<u>the project</u>)
 #### SonarQube : http://sonarqube.ghyslain.xyz/projects (code analysis and quality report)
+#### Issues / Features board : https://gitlab.com/ghyslainbruno/lazyker/boards/781495
  
 # Cheat sheet for personnal use 
 

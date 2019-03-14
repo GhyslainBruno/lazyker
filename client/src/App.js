@@ -13,6 +13,7 @@ import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
 import {SignUpForm} from "./components/SignUp";
 import {SignInForm} from "./components/SignIn";
+import PasswordReset from "./components/authentication/PasswordReset";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Redirect from "react-router-dom/es/Redirect";
 
@@ -78,14 +79,16 @@ class App extends Component {
                                     <Route exact path='/privacy_policy' render={() => <Privacy/>}/>
                                     {/*<Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>*/}
                                     <Route exact path='/' render={() => <Redirect to="/movies?genre=popular" />}/>
+                                    <Route exact path='/signin' render={() => <Redirect to="/movies?genre=popular" />}/>
                                     <Route path='/api/link_rd' render={(props)=> <Settings changeNavigation={this.changeNavigation} {...props} />}/>
                                     <Route path='/' render={() => <Navigation navigation={this.state.navigation} authUser={this.state.authUser} />}/>
                                 </div>
                                 :
                                 <div className="mainApp mui-fixed" style={{paddingBottom: '80px'}}>
                                     <Route exact path='/signup' render={(props) =><SignUpForm {...props}/>}/>
+                                    <Route exact path='/pw-forget' render={() =><PasswordReset />}/>
                                     <Route exact path='/privacy_policy' render={() => <Privacy/>}/>
-                                    <Route path={/^(?!.*(signup|privacy_policy)).*$/} render={() =><SignInForm />}/>
+                                    <Route path={/^(?!.*(pw-forget|signup|privacy_policy)).*$/} render={() =><SignInForm />}/>
                                 </div>
 
                     }

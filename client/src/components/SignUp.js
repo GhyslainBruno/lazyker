@@ -24,7 +24,8 @@ const INITIAL_STATE = {
     passwordOne: '',
     passwordTwo: '',
     error: null,
-    showPassword: false
+    showPassword: false,
+    signUpLoading: false
 };
 
 const byPropKey = (propertyName, value) => () => ({
@@ -39,6 +40,9 @@ class SignUpForm extends Component {
     }
 
     onSubmit = (event) => {
+
+        this.setState({signUpLoading: true});
+
         const {
             email,
             passwordOne,
@@ -56,6 +60,7 @@ class SignUpForm extends Component {
             })
             .catch(error => {
                 this.setState(byPropKey('error', error));
+                this.setState({ signUpLoading: false });
             });
 
         event.preventDefault();
@@ -68,6 +73,7 @@ class SignUpForm extends Component {
             passwordOne,
             passwordTwo,
             error,
+            signUpLoading
         } = this.state;
 
         const isInvalid =
@@ -93,7 +99,8 @@ class SignUpForm extends Component {
                             label='Email'
                             style={{width: '100%'}}
                             value={email}
-                            type="text"
+                            type="email"
+                            autoComplete="email"
                             onChange={event => this.setState(byPropKey('email', event.target.value))}
                         >
 
@@ -128,7 +135,7 @@ class SignUpForm extends Component {
 
                     <div>
                         <TextField
-                            className="authFieldPassword"
+                            className="authFieldConfirmPassword"
                             variant="outlined"
                             label='Confirm password'
                             type={this.state.showPassword ? 'text' : 'password'}
@@ -157,16 +164,20 @@ class SignUpForm extends Component {
                             className="signUpBtn"
                             outlined={false}
                             unelevated={true}
-                            disabled={isInvalid}
+                            disabled={isInvalid || signUpLoading}
                             type="submit">
-                            Create
+                            {this.state.signUpLoading ?
+                                <b>Loading</b>
+                                :
+                                <b>Sign Up</b>
+                            }
                         </Button>
 
                         <SignInLink />
 
                     </div>
 
-                    { error && <p>{error.message}</p> }
+                    { error && <p style={{color: '#f98e8d'}}>{error.message}</p> }
                 </form>
             </Paper>
         );
@@ -175,9 +186,9 @@ class SignUpForm extends Component {
 
 const SignUpLink = () =>
     <p>
-        Don't have an account?
+        Don't have an account ?
         {' '}
-        <Link style={{color: 'red'}} to={routes.SIGN_UP}>Sign Up</Link>
+        <Link style={{color: '#f98e8d'}} to={routes.SIGN_UP}>Sign Up</Link>
     </p>;
 
 export default withRouter(SignUpPage);

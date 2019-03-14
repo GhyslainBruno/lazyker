@@ -97,6 +97,8 @@ class SignInForm extends Component {
                         <TextField
                             className="authFieldEmail"
                             variant="outlined"
+                            type="email"
+                            autoComplete="email"
                             label='Email'
                             style={{width: '100%'}}
                             value={email}
@@ -111,6 +113,7 @@ class SignInForm extends Component {
                             className="authFieldPassword"
                             label='Password'
                             type={this.state.showPassword ? 'text' : 'password'}
+                            autoComplete="current-password"
                             variant="outlined"
                             style={{width: '100%'}}
                             value={password}
@@ -148,13 +151,15 @@ class SignInForm extends Component {
 
                         <SignUpLink />
 
+                        <ResetPassword />
+
                     </div>
 
                     <Divider/>
 
                     <Providers/>
 
-                    { error && <p>{error.message}</p> }
+                    { error && <p style={{color: '#f98e8d'}}>{error.message}</p> }
                 </form>
             </Paper>
 
@@ -165,9 +170,16 @@ class SignInForm extends Component {
 
 const SignInLink = () =>
     <p>
-        Already have an account?
+        Already have an account ?
         {' '}
-        <Link style={{color: 'red'}} to={routes.SIGN_IN}>Sign In</Link>
+        <Link style={{color: '#f98e8d'}} to={routes.SIGN_IN}>Sign In</Link>
+    </p>;
+
+const ResetPassword = () =>
+    <p>
+        Forgot your password ?
+        {' '}
+        <Link style={{color: '#f98e8d'}} to={routes.PASSWORD_FORGET}>Reset password</Link>
     </p>;
 
 export default withRouter(SignInPage);

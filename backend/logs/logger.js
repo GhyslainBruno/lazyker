@@ -15,27 +15,31 @@ const logging = new Logging({
  * @returns {Promise<void>}
  */
 const info = async (textToLog, user) => {
-    // The name of the log to write to
-    const logName = user.uid;
-    // Selects the log to write to
-    const log = logging.log(logName);
 
-    // The data to write to the log
-    const text = textToLog;
-    // The metadata associated with the entry
-    const metadata = {resource: {type: 'global'}};
-    // Prepares a log entry
-    const entry = log.entry(metadata, text);
+    if (textToLog !== '') {
+        // The name of the log to write to
+        const logName = user.uid;
+        // Selects the log to write to
+        const log = logging.log(logName);
 
-    // Writes the log entry
-    log
-        .write(entry)
-        .then(() => {
-            return null
-        })
-        .catch(error => {
-            throw error
-        });
+        // The data to write to the log
+        const text = textToLog;
+        // The metadata associated with the entry
+        const metadata = {resource: {type: 'global'}};
+        // Prepares a log entry
+        const entry = log.entry(metadata, text);
+
+        // Writes the log entry
+        log
+            .write(entry)
+            .then(() => {
+                return null
+            })
+            .catch(error => {
+                throw error
+            });
+    }
+
 };
 
 /**

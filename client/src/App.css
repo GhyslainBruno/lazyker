@@ -1166,7 +1166,8 @@
 
 .signInCard {
   position: relative;
-  top: 30%;
+  top: 50%;
+  transform: translate(0%, -50%);
   margin: 5px;
   padding: 20px;
   background-color: #757575 !important; }
@@ -1179,7 +1180,10 @@
       margin: 0 auto; } }
 
 .mainApp {
-  height: 80vh; }
+  height: 100%; }
+
+#root {
+  height: 98vh; }
 
 body {
   font-family: Roboto, sans-serif;

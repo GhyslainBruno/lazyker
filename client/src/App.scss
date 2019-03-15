@@ -90,7 +90,8 @@ $mdc-theme-on-secondary: red;
 
 .signInCard {
   position: relative;
-  top: 30%;
+  top: 50%;
+  transform: translate(0%, -50%);
   margin: 5px;
   padding: 20px;
   background-color: #757575 !important;
@@ -104,7 +105,11 @@ $mdc-theme-on-secondary: red;
 }
 
 .mainApp {
-  height: 80vh;
+  height: 100%;
+}
+
+#root {
+  height: 98vh;
 }
 
 body {

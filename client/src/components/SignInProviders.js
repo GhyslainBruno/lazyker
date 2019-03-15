@@ -2,10 +2,13 @@ import React  from 'react';
 import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import { auth } from '../firebase';
+import Fab from "@material-ui/core/Fab";
+import Chip from "@material-ui/core/Chip";
 
 const Providers = () =>
     <div style={{textAlign: 'center'}}>
         <GoogleProvider />
+        <FacebookProvider />
     </div>;
 
 const GoogleIcon = props => {
@@ -46,11 +49,44 @@ const GoogleIcon = props => {
     )
 };
 
+const FacebookIcon = props => {
+    return (
+        <SvgIcon
+            viewBox="0 0 112.196 112.196"
+            width="80px"
+            height="80px"
+            style={{marginRight: '10px'}}
+        >
+
+            <g>
+                {/*<path style={{fill: '#F78F8F'}} d="M7.134,21.949C13.741,9.941,26.294,2.5,40,2.5c9.285,0,18.177,3.438,25.099,9.693l-9.123,9.123   C51.582,17.562,45.927,15.5,40,15.5c-9.693,0-18.396,5.655-22.351,14.461L7.134,21.949z"/>*/}
+                {/*<path style={{fill: '#475993'}} d="M353.701,0H55.087C24.665,0,0.002,24.662,0.002,55.085v298.616c0,30.423,24.662,55.085,55.085,55.085h147.275l0.251-146.078h-37.951c-4.932,0-8.935-3.988-8.954-8.92l-0.182-47.087c-0.019-4.959,3.996-8.989,8.955-8.989h37.882v-45.498c0-52.8,32.247-81.55,79.348-81.55h38.65c4.945,0,8.955,4.009,8.955,8.955v39.704c0,4.944-4.007,8.952-8.95,8.955l-23.719,0.011c-25.615,0-30.575,12.172-30.575,30.035v39.389h56.285c5.363,0,9.524,4.683,8.892,10.009l-5.581,47.087c-0.534,4.506-4.355,7.901-8.892,7.901h-50.453l-0.251,146.078h87.631c30.422,0,55.084-24.662,55.084-55.084V55.085C408.786,24.662,384.124,0,353.701,0z"/>*/}
+                <circle style= {{fill: '#3B5998' }} cx="56.098" cy="56.098" r="56.098"/>
+                <path style= {{fill: '#FFFFFF'}} d="M70.201,58.294h-10.01v36.672H45.025V58.294h-7.213V45.406h7.213v-8.34c0-5.964,2.833-15.303,15.301-15.303L71.56,21.81v12.51h-8.151c-1.337,0-3.217,0.668-3.217,3.513v7.585h11.334L70.201,58.294z"/>
+            </g>
+
+        </SvgIcon>
+    )
+};
 
 const GoogleProvider = () =>
-    <Button variant="outlined" style={{marginTop: '20px', width: '100%'}} onClick={auth.signInWithGoogle}>
-        <GoogleIcon />
-        Google
+    <Button variant="outlined" style={{marginTop: '20px', width: '100%', display: 'flex'}} onClick={auth.signInWithGoogle}>
+        <div style={{width: '30%', flex: 1, marginTop: '5px'}}>
+            <GoogleIcon />
+        </div>
+        <div style={{width: '40%', textAlign: 'center', marginLeft: '-20%', flex: 5}}>
+            Google
+        </div>
+    </Button>;
+
+const FacebookProvider = () =>
+    <Button variant="outlined" style={{marginTop: '20px', width: '100%', display: 'flex'}} onClick={auth.signInWithFacebook}>
+        <div style={{width: '30%', flex: 1, marginTop: '5px'}}>
+            <FacebookIcon />
+        </div>
+        <div style={{width: '40%', textAlign: 'center', marginLeft: '-20%', flex: 5}}>
+            Facebook
+        </div>
     </Button>;
 
     export {

@@ -16,7 +16,22 @@ This project is a [PWA](https://developers.google.com/web/progressive-web-apps/)
 * Manage downloads from a dedicated UI
 * Check whether there was an error or not in a dedicated console output* Some other features
 
-#### Some other features should be developed soon. To know what's coming, you can report to the issues dashboard of this project
+## State of features
+
+| Feature |      State    |
+| -------- | :------: |
+| Add a torrent into debrider's seedbox service |  :white_check_mark: |
+| Download torrent file into Google Drive user's storage | :white_check_mark: |
+| Download torrent file into Synology NAS user's storage | :white_check_mark: |
+| Add torrent file from movies | :white_check_mark: |
+| Add torrent file from Tv Shows | :white_check_mark: |
+| Search movies from title / genres | :white_check_mark: |
+| Manage downloads into Google Drive user's storage | :white_check_mark: |
+| Manage downloads into Synology NAS user's storage | :white_check_mark: |
+| Display a console output to user | :white_check_mark: |
+| Auto update Tv Shows new episodes aired  | :red_circle: |
+
+#### Some other features should be developed soon. To know what's coming, you can report to the [issues dashboard of this project](https://gitlab.com/ghyslainbruno/lazyker/boards/781495)
 
 ## When Lazyker came in my developer journey - Aug 2018  
 I started working on this project right after Cryptopus. 

@@ -87,20 +87,19 @@ module.exports = (app) => {
                     res.send({
                         message: 'Error : Please select a folder for your Movies - Settings > Configuration'
                     })
-                }
-
-                if (error.message === "Cannot read property 'tvShowsGdriveFolderId' of null") {
+                } else if (error.message === "Cannot read property 'tvShowsGdriveFolderId' of null") {
                     res.send({
                         message: 'Error : Please select a folder for your Tv Shows - Settings > Configuration'
-                    })
-                }
-
-                if (error.message === "Cannot read property 'access_token' of null") {
+                    });
+                } else if (error.message === "Cannot read property 'access_token' of null") {
                     res.send({
                         message: 'Error : Please link your Google Drive account - Settings > Configuration > click link icon'
-                    })
+                    });
+                } else {
+                    res.send({
+                        message: error.message
+                    });
                 }
-
             }
             else {
                 res.send({

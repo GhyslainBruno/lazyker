@@ -483,7 +483,7 @@ async function unrestricLinkNoDB(link, user) {
         },
         formData: {
             link: link,
-            remote: 0
+            remote: 1
         },
         json: true
     };

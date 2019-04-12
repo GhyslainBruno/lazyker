@@ -37,7 +37,12 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 #USER pptruser
 ### End of trying
 
-RUN npm install
+RUN apk add --no-cache --virtual .gyp \
+        python \
+        make \
+        g++ \
+    && npm install \
+    && apk del .gyp
 
 WORKDIR /lazyker/app/client
 RUN npm install

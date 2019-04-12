@@ -5,7 +5,8 @@ before_script:
   - 'which ssh-agent || ( apt-get install -qq openssh-client )'
   - eval $(ssh-agent -s)
 #  - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 --decode)
-  - ssh-add <(echo "$SSH_PRIVATE_KEY_ODROID" | base64 --decode)
+#  - Odroid part
+  - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 --decode)
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 

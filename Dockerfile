@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM arm64v8/node:8.11.3-alpine
 
 # Create app directory and use it as the working directory
 RUN mkdir -p /lazyker/app/client && mkdir -p /lazyker/app/backend
@@ -19,7 +19,10 @@ RUN apk update && apk upgrade && \
       nss@edge \
       freetype@edge \
       harfbuzz@edge \
-      ttf-freefont@edge
+      ttf-freefont@edge \
+      python \
+      make \
+      g++ 
 
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
@@ -37,12 +40,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 #USER pptruser
 ### End of trying
 
-RUN apk add --no-cache --virtual .gyp \
-        python \
-        make \
-        g++ \
-    && npm install \
-    && apk del .gyp
+RUN npm install --loglevel verbose
 
 WORKDIR /lazyker/app/client
 RUN npm install

@@ -5,15 +5,26 @@ before_script:
   - 'which ssh-agent || ( apt-get install -qq openssh-client )'
   - eval $(ssh-agent -s)
   - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 --decode)
+  - ssh-add <(echo "$SSH_PRIVATE_KEY_ODROID" | base64 --decode)
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-deploy_stage:
+deploy_dedibox:
   type: deploy
   environment:
     name: production
     url: dedibox.ghyslain.xyz
   script:
     - ssh ghys@dedibox.ghyslain.xyz "cd lazyker && git pull && ./deploy.sh"
+  only:
+    - dedibox
+
+deploy_odroid:
+  type: deploy
+  environment:
+    name: production
+    url: dedibox.ghyslain.xyz
+  script:
+    - ssh pi@dedibox.ghyslain.xyz "cd lazyker && git pull && ./deploy.sh"
   only:
     - dedibox

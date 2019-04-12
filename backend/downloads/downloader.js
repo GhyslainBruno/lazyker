@@ -5,6 +5,7 @@ const admin = require("firebase-admin");
 const nas = require('../synology/Download');
 const db = admin.database();
 const usersRef = db.ref("/users");
+const pMap = require('p-map');
 
 /**
  * Start the download of a torrent file already downloaded in realdebrid service
@@ -15,30 +16,30 @@ const usersRef = db.ref("/users");
  */
 const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
     try {
-        const unrestrictedLink = await realdebrid.unrestricLinkNoDB(torrent.links[0], user);
-        const storage = await usersRef.child(user.uid).child('/settings/storage').once('value');
 
-        const torrentInfos = await usersRef.child(user.uid).child(`/torrentsDownloaded/${torrent.id}`).once('value');
+        await pMap(torrent.links, async link => {
+            // Here, if several links  in the torrent -> torrent.links.length > 1
+            const unrestrictedLink = await realdebrid.unrestricLinkNoDB(link, user);
+            const storage = await usersRef.child(user.uid).child('/settings/storage').once('value');
 
-        // Sending response here because of the process when uploading files to google drive (an await is blocking the thread)
-        // TODO find a more elegant way to do that
+            const torrentInfos = await usersRef.child(user.uid).child(`/torrentsDownloaded/${torrent.id}`).once('value');
 
-        switch (storage.val()) {
+            // Sending response here because of the process when uploading files to google drive (an await is blocking the thread)
+            // TODO find a more elegant way to do that
 
-            case 'gdrive':
-                await gdrive.downloadMovieFile(unrestrictedLink, user, name, torrentInfos.val(), res);
-                break;
+            switch (storage.val()) {
 
-            case 'nas' :
+                case 'gdrive':
+                    await gdrive.downloadMovieFile(unrestrictedLink, user, name, torrentInfos.val(), res);
+                    break;
 
-                // TODO add res in here otherwise NAS won't be supported anymore
-                await synology.startRealdebridTorrentDownload(unrestrictedLink, name, user);
-                break;
-        }
+                case 'nas' :
 
-        // res.send({
-        //     message: 'ok'
-        // });
+                    // TODO add res in here otherwise NAS won't be supported anymore
+                    await synology.startRealdebridTorrentDownload(unrestrictedLink, name, user);
+                    break;
+            }
+        }, {concurrency: 10});
 
     } catch(error) {
         throw error

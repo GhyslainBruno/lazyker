@@ -9,8 +9,11 @@ before_script:
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
+stages:
+  - deploy
+
 deploy_dedibox:
-  type: deploy
+  stage: deploy
   environment:
     name: production
     url: dedibox.ghyslain.xyz
@@ -20,11 +23,11 @@ deploy_dedibox:
     - dedibox
 
 deploy_odroid:
-  type: deploy
+  stage: deploy
   environment:
     name: production
     url: dedibox.ghyslain.xyz
   script:
     - ssh pi@dedibox.ghyslain.xyz "cd lazyker && git pull && ./deploy.sh"
   only:
-    - dedibox
+    - architecture-arm

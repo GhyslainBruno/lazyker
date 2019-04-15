@@ -403,7 +403,19 @@ class Shows extends Component {
 
         try {
             // add  ${this.state.qualityEpisode} to use quality
-            let response = await fetch(`/api/torrents?title=${this.state.showToDownload.title} S${this.state.seasonNumber}E${this.state.episodeNumber}`, {
+            let searchString = '';
+
+            if (this.state.seasonNumber) {
+                searchString = `${this.state.showToDownload.title} S${this.state.seasonNumber}`;
+            } else {
+                searchString = `${this.state.showToDownload.title}`;
+            }
+
+            if (this.state.seasonNumber && this.state.episodeNumber) {
+                searchString = `${this.state.showToDownload.title} S${this.state.seasonNumber}E${this.state.episodeNumber}`;
+            }
+
+            let response = await fetch(`/api/torrents?title=${searchString}`, {
                 method: 'GET'
             });
 
@@ -479,6 +491,7 @@ class Shows extends Component {
 
     createSeasonsNumbersTable = () => {
         let table = [];
+        table.push(<MenuItem value={null}>{""}</MenuItem>);
 
         if (this.state.seasonsEpisodesNumbers) {
             const seasonsNumber = this.state.seasonsEpisodesNumbers.filter(season => season.season_number === Math.max.apply(Math, this.state.seasonsEpisodesNumbers.map(function(o) { return o.season_number; })))[0].season_number;
@@ -497,6 +510,7 @@ class Shows extends Component {
 
     createEpisodesNumbersTable = () => {
         let table = [];
+        table.push(<MenuItem value={null}>{""}</MenuItem>);
 
         if (this.state.seasonsEpisodesNumbers && this.state.seasonNumber) {
 

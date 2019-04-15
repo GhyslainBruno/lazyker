@@ -6,7 +6,7 @@ before_script:
   - eval $(ssh-agent -s)
 #  - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 --decode)
 #  - Odroid part
-#  - private key must be b64 encoded
+#  - private key must be b64 encoded https://www.base64encode.org/ and include "---begin rsa"... and "--- end rsa..."
   - ssh-add <(echo "$SSH_PRIVATE_KEY_ODROID" | base64 --decode)
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
@@ -30,6 +30,6 @@ deploy_odroid:
     name: production
     url: dedibox.ghyslain.xyz
   script:
-    - ssh pi@dedibox.ghyslain.xyz "cd lazyker && git pull && ./deploy.sh"
+    - ssh -p 8081 pi@dedibox.ghyslain.xyz "cd lazyker && git pull && ./deploy.sh"
   only:
     - architecture-arm

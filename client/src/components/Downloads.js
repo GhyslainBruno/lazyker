@@ -43,13 +43,13 @@ class Downloads extends Component {
                         displaySnackMessage={this.displaySnackMessage}
                     />
 
-                    {/* Current Downloads  */}
-                    <CurrentDownloads
+                    {/* Torrents */}
+                    <Torrents
                         displaySnackMessage={this.displaySnackMessage}
                     />
 
-                    {/* Torrents */}
-                    <Torrents
+                    {/* Current Downloads  */}
+                    <CurrentDownloads
                         displaySnackMessage={this.displaySnackMessage}
                     />
                 </div>

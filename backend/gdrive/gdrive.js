@@ -2,6 +2,7 @@ const admin = require("firebase-admin");
 const {google} = require('googleapis');
 const logger = require('../logs/logger');
 const got = require('got');
+const utils = require('../utils/downloads/MultipleDownloads');
 // const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
 const request = require('request');
 const credentials = require("./client_secret_348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com");
@@ -146,10 +147,11 @@ const getAccessToken = async user => {
  * @param user
  * @param title
  * @param torrentInfos
+ * @param unrestrictedLink
  * @param res
  * @returns {Promise<void>}
  */
-const downloadMovieFile = async (link, user, title, torrentInfos, res) => {
+const downloadMovieFile = async (link, user, title, torrentInfos, unrestrictedLink, res) => {
 
     let fileTitle = title;
 
@@ -176,7 +178,7 @@ const downloadMovieFile = async (link, user, title, torrentInfos, res) => {
         if (torrentInfos.mediaInfos) {
             if (torrentInfos.mediaInfos.isShow) {
                 const tvShowsGdriveFolder = await usersRef.child(user.uid).child('/settings/gdrive/tvShowsGdriveFolder').once('value');
-                folderCreated = await createShowEpisodeFolder(drive, tvShowsGdriveFolder.val(), user, torrentInfos.mediaInfos);
+                folderCreated = await createShowEpisodeFolder(drive, tvShowsGdriveFolder.val(), user, torrentInfos.mediaInfos, unrestrictedLink);
             } else {
                 const moviesGdriveFolder = await usersRef.child(user.uid).child('/settings/gdrive/moviesGdriveFolder').once('value');
                 folderCreated = await createFolder(drive, moviesGdriveFolder.val(), torrentInfos.mediaInfos.title);
@@ -314,9 +316,13 @@ const downloadMovieFile = async (link, user, title, torrentInfos, res) => {
             }
         });
 
-        res.send({
-            message: 'ok'
-        });
+        if (utils.isFirstTime()) {
+            utils.checkPassage();
+            res.send({
+                message: 'ok'
+            });
+        }
+
 
         // Uploading the file to Google Drive
         await got.put(urlToPut, {
@@ -386,7 +392,7 @@ const createFolder = async (drive, parentFolder, newFolderName) => {
  * @param mediaInfos
  * @returns {Promise<void>}
  */
-const createShowEpisodeFolder = async (drive, parent, user, mediaInfos) => {
+const createShowEpisodeFolder = async (drive, parent, user, mediaInfos, unrestrictedLink) => {
     try {
 
         // const test = await doesFolderContainsThisFolder(user, parent, `'${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}'`);
@@ -410,8 +416,13 @@ const createShowEpisodeFolder = async (drive, parent, user, mediaInfos) => {
 
                 } else {
 
-                    // Creating new episode folder and returning it
-                    return await createFolder(drive, seasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
+                    if (mediaInfos.lastEpisode) {
+                        // Creating new episode folder and returning it
+                        return await createFolder(drive, seasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
+                    } else {
+                        // Creating new episode folder and returning it - when no episode number is found (typically a multiple torrent files from realdebrid) -> using filename without extension
+                        return await createFolder(drive, seasonFolder, `${unrestrictedLink.filename.match(/(.*)\.[^.]+$/)[1]}`);
+                    }
 
                 }
 
@@ -420,8 +431,13 @@ const createShowEpisodeFolder = async (drive, parent, user, mediaInfos) => {
                 // Creating new season folder
                 const newSeasonFolder = await createFolder(drive, tvShowFolder, `season ${mediaInfos.lastSeason}`);
 
-                // Creating new episode folder and returning it
-                return await createFolder(drive, newSeasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
+                if (mediaInfos.lastEpisode) {
+                    // Creating new episode folder and returning it
+                    return await createFolder(drive, newSeasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
+                } else {
+                    // Creating new episode folder and returning it - when no episode number is found (typically a multiple torrent files from realdebrid) -> using filename without extension
+                    return await createFolder(drive, newSeasonFolder, `${unrestrictedLink.filename.match(/(.*)\.[^.]+$/)[1]}`);
+                }
 
             }
 
@@ -434,8 +450,13 @@ const createShowEpisodeFolder = async (drive, parent, user, mediaInfos) => {
             // Creating a new season folder for this tv show
             const newSeasonFolder = await createFolder(drive, newShowFolder, `season ${mediaInfos.lastSeason}`);
 
-            // Creating a new episode folder for this season fir this tv show and returning it
-            return await createFolder(drive, newSeasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
+            if (mediaInfos.lastEpisode) {
+                // Creating new episode folder and returning it
+                return await createFolder(drive, newSeasonFolder, `${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}`);
+            } else {
+                // Creating new episode folder and returning it - when no episode number is found (typically a multiple torrent files from realdebrid) -> using filename without extension
+                return await createFolder(drive, newSeasonFolder, `${unrestrictedLink.filename.match(/(.*)\.[^.]+$/)[1]}`);
+            }
 
         }
 

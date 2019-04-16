@@ -6,6 +6,7 @@ const nas = require('../synology/Download');
 const db = admin.database();
 const usersRef = db.ref("/users");
 const pMap = require('p-map');
+const utils = require('../utils/downloads/MultipleDownloads');
 
 /**
  * Start the download of a torrent file already downloaded in realdebrid service
@@ -16,6 +17,8 @@ const pMap = require('p-map');
  */
 const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
     try {
+
+        utils.initPassage();
 
         await pMap(torrent.links, async link => {
             // Here, if several links  in the torrent -> torrent.links.length > 1
@@ -30,7 +33,7 @@ const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
             switch (storage.val()) {
 
                 case 'gdrive':
-                    await gdrive.downloadMovieFile(unrestrictedLink, user, name, torrentInfos.val(), res);
+                    await gdrive.downloadMovieFile(unrestrictedLink, user, name, torrentInfos.val(), unrestrictedLink, res);
                     break;
 
                 case 'nas' :

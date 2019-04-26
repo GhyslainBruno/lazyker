@@ -90,18 +90,25 @@ const getTorrentsList = async title => {
  */
 const downloadTorrentFile = async (url, user, infos) => {
 
+    const width = 960;
+    const height = 1280;
+
     let launchBrowserProperties = {};
 
     if (process.env.NODE_ENV === 'production') {
-        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 70000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage']}
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 70000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`]}
     } else {
-        launchBrowserProperties = {headless: false, timeout: 70000, args: ['--disable-dev-shm-usage']}
+        launchBrowserProperties = {headless: false, timeout: 70000, args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`]}
     }
 
     let browser = {};
 
     try {
         browser = await puppeteer.launch(launchBrowserProperties);
+
+        // browser.addListener('targetcreated', async target => {
+        //     console.log(target);
+        // });
 
         // With puppeteer
         // TODO maybe use another YGG account
@@ -111,12 +118,14 @@ const downloadTorrentFile = async (url, user, infos) => {
 
         await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.join(__dirname, '/torrent_temp')});
 
-        await page.waitForSelector("a.butt");
-        await page.click("a.butt");
-        await page.waitForSelector("body");
-        await page.click("a.butt");
-        await page.waitForSelector("body");
+        await page.setViewport({ width, height });
+
+        const pages = await browser.pages();
+        await pages[0].close();
+
         // let html = await page.evaluate(body => body.innerHTML, await page.$('body'));
+        await page.waitForSelector("body");
+        await page.click("a.butt");
 
         await page.type('input[name=id]', 'Ghyslain');
         await page.type('input[name=pass]', 'foobar');
@@ -175,6 +184,19 @@ const downloadTorrentFile = async (url, user, infos) => {
         browser.close();
         throw error;
     }
+};
+
+const closeAdTabs = async browser => {
+    const pages = await browser.pages();
+    let pageNumber = 0;
+    pages.forEach(page => {
+
+        if (pageNumber > 0) {
+            page.close();
+        }
+
+        pageNumber++;
+    })
 };
 
 /**

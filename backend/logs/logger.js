@@ -23,7 +23,13 @@ const info = async (textToLog, user) => {
         const log = logging.log(logName);
 
         // The data to write to the log
-        const text = textToLog;
+        let text = "";
+        if (textToLog.message) {
+            text = textToLog.message
+        } else {
+            text = textToLog
+        }
+
         // The metadata associated with the entry
         const metadata = {resource: {type: 'global'}};
         // Prepares a log entry

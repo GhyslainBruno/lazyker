@@ -61,7 +61,7 @@ class MoviesInProgress extends React.Component {
 
         try {
             // TODO trigger the kill of the spawn to stop the "in progress" state (but first to it using a spawn...)
-            await usersRef.child(await auth.getUid()).child('/movies').child(movie.id).remove();
+            await usersRef.child(await auth.getUid()).child('/movies').child(movie.id.replace(/\./g, '').replace(/#/g, '').replace(/\$/g, '').replace(/\[/g, '').replace(/]/g, '')).remove();
             this.props.displaySnackMessage('Movie removed');
         } catch(error) {
             this.props.displaySnackMessage('Error removing the movie');
@@ -73,7 +73,7 @@ class MoviesInProgress extends React.Component {
 
             <ExpansionPanel onChange={(event, expanded) => expanded ? this.loadMoviesInProgress() : null}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>Movies in progress</Typography>
+                    <Typography>Medias in progress</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails style={{textAlign: 'center'}}>
 

@@ -390,6 +390,7 @@ const createFolder = async (drive, parentFolder, newFolderName) => {
  * @param parent
  * @param user
  * @param mediaInfos
+ * @param unrestrictedLink
  * @returns {Promise<void>}
  */
 const createShowEpisodeFolder = async (drive, parent, user, mediaInfos, unrestrictedLink) => {

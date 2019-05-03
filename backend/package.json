@@ -40,7 +40,8 @@
     "string-similarity": "^1.2.0",
     "supertest": "^3.4.2",
     "syno": "^2.1.0",
-    "torrent-to-magnet": "^1.0.1"
+    "torrent-to-magnet": "^1.0.1",
+    "wait-promise": "^0.4.1"
   },
   "pkg": {
     "assets": [

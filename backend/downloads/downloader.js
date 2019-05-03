@@ -7,12 +7,15 @@ const db = admin.database();
 const usersRef = db.ref("/users");
 const pMap = require('p-map');
 const utils = require('../utils/downloads/MultipleDownloads');
+const wait = require('wait-promise');
+const sleep = wait.sleep;
 
 /**
  * Start the download of a torrent file already downloaded in realdebrid service
  * @param torrent
  * @param name
  * @param user
+ * @param res
  * @returns {Promise<void>}
  */
 const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
@@ -30,10 +33,12 @@ const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
             // Sending response here because of the process when uploading files to google drive (an await is blocking the thread)
             // TODO find a more elegant way to do that
 
+            await sleep(1000);
             switch (storage.val()) {
 
                 case 'gdrive':
-                    await gdrive.downloadMovieFile(unrestrictedLink, user, name, torrentInfos.val(), unrestrictedLink, res);
+                    // Removed the "await" so that if many links have to be downloaded, no need to wait for the "packet" return
+                    gdrive.downloadMovieFile(unrestrictedLink, user, name, torrentInfos.val(), unrestrictedLink, res);
                     break;
 
                 case 'nas' :
@@ -42,7 +47,7 @@ const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
                     await synology.startRealdebridTorrentDownload(unrestrictedLink, name, user);
                     break;
             }
-        }, {concurrency: 10});
+        }, {concurrency: 1});
 
     } catch(error) {
         throw error

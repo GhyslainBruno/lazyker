@@ -40,10 +40,10 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 #USER pptruser
 ### End of trying
 
-RUN npm install --loglevel verbose
+RUN npm install --silent
 
 WORKDIR /lazyker/app/client
-RUN npm install
+RUN npm install --silent
 
 WORKDIR /lazyker/app
 

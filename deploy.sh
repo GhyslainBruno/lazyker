@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Cleaning device before building the whole thing - needed only on tiny devices...
-docker system prune --all --force
+#docker system prune --all --force
 
 docker build -t ghyslainbruno/lazyker .
 

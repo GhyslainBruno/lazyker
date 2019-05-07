@@ -35,7 +35,7 @@ const getTorrentsList = async title => {
     let launchBrowserProperties = {};
 
     if (process.env.NODE_ENV === 'production') {
-        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox']}
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
     } else {
         launchBrowserProperties = {headless: false, timeout: 70000}
     }
@@ -96,7 +96,7 @@ const downloadTorrentFile = async (url, user, infos) => {
     let launchBrowserProperties = {};
 
     if (process.env.NODE_ENV === 'production') {
-        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 70000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`]}
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 70000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`, '--disable-gpu']}
     } else {
         launchBrowserProperties = {headless: false, timeout: 70000, args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`]}
     }

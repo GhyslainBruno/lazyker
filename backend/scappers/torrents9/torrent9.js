@@ -41,7 +41,7 @@ const getTorrentsList = async title => {
     let launchBrowserProperties = {};
 
     if (process.env.NODE_ENV === 'production') {
-        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox']}
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage']}
     } else {
         launchBrowserProperties = {headless: false, timeout: 70000}
     }

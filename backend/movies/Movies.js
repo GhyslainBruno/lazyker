@@ -26,7 +26,7 @@ const getTorrentsList = async title => {
 
     const providersPromises = [
         ygg.getTorrentsList(title),
-        torrent9.getTorrentsList(title)
+        // torrent9.getTorrentsList(title)
     ];
 
     return await pMap(providersPromises, async providerUrls => {

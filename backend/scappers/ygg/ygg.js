@@ -43,19 +43,28 @@ const getTorrentsList = async title => {
     let browser = {};
 
     try {
+        console.log(1);
         browser = await puppeteer.launch(launchBrowserProperties);
+        console.log(2);
         const page = await browser.newPage();
+        console.log(3);
         await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=', {timeout: 60000});
+        console.log(4);
         await page.waitFor(7000);
+        console.log(5);
         await page.waitForSelector("body");
+        console.log(6);
         const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
+        console.log(7);
         const $ = cheerio.load(html);
+        console.log(8);
 
         const tableRows = $('tr');
         const items = tableRows.splice(7, tableRows.length);
 
         const torrentsList = [];
 
+        console.log(9);
         items.map(item => {
             torrentsList.push({
                 provider: 'ygg',
@@ -68,6 +77,7 @@ const getTorrentsList = async title => {
             })
         });
 
+        console.log(10);
         browser.close();
 
         return {
@@ -76,6 +86,7 @@ const getTorrentsList = async title => {
         };
 
     } catch(error) {
+        console.log(error.message);
         browser.close();
         throw error;
     }

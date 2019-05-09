@@ -1,4 +1,4 @@
-FROM arm64v8/node:10-alpine
+FROM arm64v8/node:8.11.3-alpine
 
 # Create app directory and use it as the working directory
 RUN mkdir -p /lazyker/app/client && mkdir -p /lazyker/app/backend

@@ -3,8 +3,7 @@ module.exports = {
         {
             name: "lazyker",
             script: "./backend/server.js",
-            watch: false,
-            error_file: "stderr.txt",
+            watch: true,
             env: {
                 "NODE_ENV": "production",
             }

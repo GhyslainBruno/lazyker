@@ -56,13 +56,14 @@ if [[ $1 == docker ]]; then
 else
 
     # pm2 should already be running (in sudo mode) with watch set to true -> to properly update the whole application
+    # chromium should be placed in here -> /usr/bin/chromium-browser (a simlink can do the trick if it is not)
     echo Installing without docker...
     echo Installing backend dependencies...
-    cd backend && npm install --ignore-engines && cd ..
+    cd backend && yarn install --ignore-engines && cd ..
     echo Installing frontend dependencies...
-    cd client && npm install
+    cd client && yarn install
     echo Building frontend build...
-    npm run build && cd ..
+    npm yarn build && cd ..
 
 fi
 

@@ -63,7 +63,7 @@ else
     echo Installing frontend dependencies...
     cd client && yarn install
     echo Building frontend build...
-    npm yarn build && cd ..
+    yarn run build && cd ..
 
 fi
 

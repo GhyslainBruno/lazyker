@@ -57,8 +57,12 @@ else
 
     # pm2 should already be running (in sudo mode) with watch set to true -> to properly update the whole application
     echo Installing without docker...
-    cd backend && npm install --silent && cd ..
-    cd client && npm install --silent && npm run build && cd ..
+    echo Installing backend dependencies...
+    cd backend && npm install --ignore-engines && cd ..
+    echo Installing frontend dependencies...
+    cd client && npm install
+    echo Building frontend build...
+    npm run build && cd ..
 
 fi
 

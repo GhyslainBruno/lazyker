@@ -30,6 +30,6 @@ deploy_odroid:
     name: production
     url: dedibox.ghyslain.xyz
   script:
-    - ssh -p 8081 pi@dedibox.ghyslain.xyz "cd lazyker && git pull && ./deploy.sh"
+    - ssh -p 8081 pi@dedibox.ghyslain.xyz "cd lazyker && git reset --hard && git clean -f && git pull && ./deploy.sh"
   only:
     - architecture-arm

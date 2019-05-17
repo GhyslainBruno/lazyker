@@ -221,7 +221,13 @@ body {
   //}
 }
 
+.torrentsChips::-webkit-scrollbar {
+  display: none;
+}
 
+.torrentsChips {
+  padding-top: 10px
+}
 
 /* Trying to solved elements moving when showing dialog */
 /*html {*/

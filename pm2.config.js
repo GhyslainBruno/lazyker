@@ -4,7 +4,7 @@ module.exports = {
             name: "lazyker",
             script: "./backend/server.js",
             watch: true,
-            ignore_watch : ["backend/scrappers/ygg/torrent_temp"],
+            ignore_watch : ["backend/scrappers/ygg"],
             env: {
                 "NODE_ENV": "production",
             }

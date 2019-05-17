@@ -1,4 +1,4 @@
-const yggScrapper = require('../../../../scappers/ygg/ygg');
+const yggScrapper = require('../../../../scrappers/ygg/ygg');
 const logger = require('../../../../logs/logger');
 const database = require('../../common/Database');
 

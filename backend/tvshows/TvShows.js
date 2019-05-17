@@ -1,5 +1,5 @@
-const ygg = require('../scappers/ygg/ygg');
-const torrent9 = require('../scappers/torrents9/torrent9');
+const ygg = require('../scrappers/ygg/ygg');
+const torrent9 = require('../scrappers/torrents9/torrent9');
 const admin = require("firebase-admin");
 const db = admin.database();
 const usersRef = db.ref("/users");

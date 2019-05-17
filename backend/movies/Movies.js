@@ -1,16 +1,16 @@
-const ZTScrapper = require('../scappers/zonetelechargement/zonetelechargement');
-const ZTScrapperlol = require('../scappers/zonetelechargementlol/zonetelechargementlol');
-const EDScrapper = require('../scappers/extremedownload/extremedownload');
-const dlprotectlol = require('../scappers/zonetelechargementlol/dlprotect1co');
-const dlprotect = require('../scappers/zonetelechargement/dlprotect1com');
-const edprotect = require('../scappers/extremedownload/edprotect');
+const ZTScrapper = require('../scrappers/zonetelechargement/zonetelechargement');
+const ZTScrapperlol = require('../scrappers/zonetelechargementlol/zonetelechargementlol');
+const EDScrapper = require('../scrappers/extremedownload/extremedownload');
+const dlprotectlol = require('../scrappers/zonetelechargementlol/dlprotect1co');
+const dlprotect = require('../scrappers/zonetelechargement/dlprotect1com');
+const edprotect = require('../scrappers/extremedownload/edprotect');
 const realdebrid = require('../realdebrid/debrid_links');
 // const download = require('../synology/Download');
 const download = require('../downloads/downloader');
 const logger = require('../logs/logger');
 const pMap = require('p-map');
-const ygg = require('../scappers/ygg/ygg');
-const torrent9 = require('../scappers/torrents9/torrent9');
+const ygg = require('../scrappers/ygg/ygg');
+const torrent9 = require('../scrappers/torrents9/torrent9');
 
 // Using firebase
 const admin = require("firebase-admin");

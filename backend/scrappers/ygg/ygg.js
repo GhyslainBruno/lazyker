@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 const rp  = require('request-promise');
 const request  = require('request');
-const YGGRootUrl ='https://www.yggtorrent.ch/';
+const YGGRootUrl ='https://www2.yggtorrent.ch/';
 const logger = require('../../logs/logger');
 const fs = require('fs');
 const path = require('path');
@@ -48,7 +48,7 @@ const getTorrentsList = async title => {
         console.log(2);
         const page = await browser.newPage();
         console.log(3);
-        await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=', {timeout: 60000});
+        await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145', {timeout: 60000});
         console.log(4);
         await page.waitFor(7000);
         console.log(5);

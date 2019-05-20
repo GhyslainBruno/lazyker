@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 const rp  = require('request-promise');
 const request  = require('request');
-const YGGRootUrl ='https://www2.yggtorrent.gg/';
+const YGGRootUrl ='https://www.yggtorrent.ch/';
 const logger = require('../../logs/logger');
 const fs = require('fs');
 const path = require('path');
@@ -115,6 +115,7 @@ const downloadTorrentFile = async (url, user, infos) => {
     let browser = {};
 
     try {
+        console.log(1);
         browser = await puppeteer.launch(launchBrowserProperties);
 
         // browser.addListener('targetcreated', async target => {
@@ -123,21 +124,29 @@ const downloadTorrentFile = async (url, user, infos) => {
 
         // With puppeteer
         // TODO maybe use another YGG account
+        console.log(2);
         const page = await browser.newPage();
 
+        console.log(3);
         await page.goto(url, {timeout: 70000});
 
+        console.log(4);
         await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.join(__dirname, '/torrent_temp')});
 
+        console.log(5);
         await page.setViewport({ width, height });
 
+        console.log(6);
         const pages = await browser.pages();
         await pages[0].close();
 
         // let html = await page.evaluate(body => body.innerHTML, await page.$('body'));
+        console.log(7);
         await page.waitForSelector("body");
+        console.log(8);
         await page.click("a.butt");
 
+        console.log(9);
         await page.type('input[name=id]', 'Ghyslain');
         await page.type('input[name=pass]', 'foobar');
 
@@ -145,6 +154,7 @@ const downloadTorrentFile = async (url, user, infos) => {
         await page.type('input[name=id]', 'Ghyslain');
         await page.keyboard.down('Enter');
 
+        console.log(10);
         await page.waitForNavigation();
         await page.waitForSelector("a.butt");
         await page.click("a.butt");

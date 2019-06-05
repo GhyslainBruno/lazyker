@@ -65,6 +65,25 @@ const styles = {
         margin: '5px'
     },
     // Video quality
+    multiChipFull: {
+        border: 'thin solid #ffe317',
+        backgroundColor: '#ffe317',
+        opacity: '0.7',
+        margin: '2px',
+        // color: '#ffe317'
+    },
+    h264Full: {
+        border: 'thin solid #ffa489',
+        backgroundColor: '#ffa489',
+        opacity: '0.7',
+        margin: '2px'
+    },
+    blurayFull: {
+        border: 'thin solid #b4ff56',
+        backgroundColor: '#b4ff56',
+        opacity: '0.7',
+        margin: '2px'
+    },
     multiChip: {
         border: 'thin solid #ffe317',
         backgroundColor: 'transparent',
@@ -219,6 +238,7 @@ class Shows extends Component {
           openShowDownloadDialog: false,
           showToDownload: null,
           episodeTorrentsLoading: false,
+          episodeTorrentsFull: null,
           episodeTorrents: null,
           seasonNumber: null,
           episodeNumber: null,
@@ -559,24 +579,27 @@ class Shows extends Component {
 
 
             const torrentsTaggued = torrents[0].torrents.map(torrent => {
-                torrent.multi = !!torrent.title.match(/multi/mi);
-                torrent.french = !!torrent.title.match(/french/mi);
-                torrent.vo = !!torrent.title.match(/vo/mi);
-                torrent.aac = !!torrent.title.match(/aac|ac3/mi);
-                torrent.dts = !!torrent.title.match(/dts/mi);
-                torrent.fullHd= !!torrent.title.match(/1080p/mi);
-                torrent.hd = !!torrent.title.match(/720p/mi);
-                torrent.h264 = !!torrent.title.match(/x264|h264/mi);
-                torrent.h265 = !!torrent.title.match(/x265|h265/mi);
+
+                torrent.tags = {};
+
+                torrent.tags.multi = !!torrent.title.match(/multi/mi);
+                torrent.tags.french = !!torrent.title.match(/french/mi);
+                torrent.tags.vo = !!torrent.title.match(/vo/mi);
+                torrent.tags.aac = !!torrent.title.match(/aac|ac3/mi);
+                torrent.tags.dts = !!torrent.title.match(/dts/mi);
+                torrent.tags.fullHd= !!torrent.title.match(/1080p/mi);
+                torrent.tags.hd = !!torrent.title.match(/720p/mi);
+                torrent.tags.h264 = !!torrent.title.match(/x264|h264/mi);
+                torrent.tags.h265 = !!torrent.title.match(/x265|h265/mi);
                 // torrent.bluray = !!torrent.title.match(/bluray/mi);
-                torrent.vfq = !!torrent.title.match(/vfq/mi);
-                torrent.hdlight = !!torrent.title.match(/hdlight/mi);
+                torrent.tags.vfq = !!torrent.title.match(/vfq/mi);
+                torrent.tags.hdlight = !!torrent.title.match(/hdlight/mi);
                 // torrent.ac3 = !!torrent.title.match(/ac3/mi);
-                torrent.vostfr = !!torrent.title.match(/stfr/mi);
-                torrent.bdrip = !!torrent.title.match(/bdrip/mi);
-                torrent.uhd = !!torrent.title.match(/2160p|4k|uhd/mi);
-                torrent.threeD = !!torrent.title.match(/3d/mi);
-                torrent.vf = !!torrent.title.match(/vf/mi);
+                torrent.tags.vostfr = !!torrent.title.match(/stfr/mi);
+                torrent.tags.bdrip = !!torrent.title.match(/bdrip/mi);
+                torrent.tags.uhd = !!torrent.title.match(/2160p|4k|uhd/mi);
+                torrent.tags.threeD = !!torrent.title.match(/3d/mi);
+                torrent.tags.vf = !!torrent.title.match(/vf/mi);
 
                 return torrent;
             });
@@ -589,7 +612,7 @@ class Shows extends Component {
             });
 
 
-            this.setState({episodeTorrentsLoading: false, episodeTorrents: torrentsTagguedToReturn});
+            this.setState({episodeTorrentsLoading: false, episodeTorrents: torrentsTagguedToReturn, episodeTorrentsFull: torrentsTagguedToReturn});
         } catch(error) {
             this.props.displaySnackMessage('Error while getting episode torrents');
             this.setState({episodeTorrentsLoading: false})
@@ -694,6 +717,63 @@ class Shows extends Component {
 
             return table
         }
+
+    };
+
+    filterTorrents = filter => {
+
+        this.setState({
+            [filter]: !this.state[filter]
+        }, () => {
+            const trueFilter = [];
+
+            if (this.state.uhd) {
+                trueFilter.push('uhd');
+            }
+
+            if (this.state.fullHd) {
+                trueFilter.push('fullHd');
+            }
+
+            if (this.state.hd) {
+                trueFilter.push('hd');
+            }
+
+            if (this.state.multi) {
+                trueFilter.push('multi');
+            }
+
+            const torrentsFiltered = this.state.episodeTorrentsFull[0].torrents.map(torrent => {
+
+                let shouldBeDisplayed = false;
+
+                if (trueFilter.length > 0) {
+                    trueFilter.map(filter => {
+                        if (Object.keys(torrent.tags).filter((key) => torrent.tags[key]).includes(filter)) {
+                            shouldBeDisplayed = true;
+                        }
+                    });
+                } else {
+                    shouldBeDisplayed = true;
+                }
+
+                torrent.isDisplayed = shouldBeDisplayed;
+
+                if (torrent.isDisplayed) {
+                    return torrent;
+                }
+
+            });
+
+            const torrentsTagguedToReturn = [];
+
+            torrentsTagguedToReturn.push({
+                torrents : torrentsFiltered.filter(torrent => torrent !== undefined),
+                provider: 'ygg'
+            });
+
+            this.setState({episodeTorrents: torrentsTagguedToReturn});
+        });
 
     };
 
@@ -842,133 +922,144 @@ class Shows extends Component {
                                   {
                                       this.state.episodeTorrents !== null ?
 
-                                          <List component="nav" dense>
-                                              {this.state.episodeTorrents.map(provider => {
-                                                  return (
-                                                      <div>
-                                                          <h3 style={{textAlign: 'center'}}>
-                                                              {provider.provider}
-                                                          </h3>
+                                          <div>
+                                              <div style={{textAlign: 'center'}}>
+                                                  <Chip label={'4K'} style={this.state.uhd ? styles.h264Full : styles.h264} clickable={true} onClick={() => this.filterTorrents('uhd')}/>
+                                                  <Chip label={'1080p'} style={this.state.fullHd ? styles.h264Full : styles.h264} clickable={true} onClick={() => this.filterTorrents('fullHd')}/>
+                                                  <Chip label={'720p'} style={this.state.hd ? styles.multiChipFull : styles.multiChip} clickable={true} onClick={() => this.filterTorrents('hd')}/>
+                                                  <Chip label={'Multi'} style={this.state.multi ? styles.blurayFull : styles.bluray} clickable={true} onClick={() => this.filterTorrents('multi')}/>
+                                              </div>
 
-                                                          {
-                                                              provider.torrents.length !== 0 ?
-                                                                  provider.torrents.map(torrent => {
-                                                                      return (
-                                                                          <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
+                                              <List component="nav" dense>
+                                                  {this.state.episodeTorrents.map(provider => {
+                                                      return (
+                                                          <div>
+                                                              <h3 style={{textAlign: 'center'}}>
+                                                                  {provider.provider}
+                                                              </h3>
 
-                                                                              <ListItem button
-                                                                                        style={{overflow: 'hidden'}}>
+                                                              {
+                                                                  provider.torrents.length !== 0 ?
+                                                                      provider.torrents.map(torrent => {
+                                                                          return (
+                                                                              <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
 
-
-                                                                                  <ListItemText
-
-                                                                                      style={{padding: '0'}}
-
-                                                                                      primary= {
-                                                                                          <div style={{
-                                                                                              overflow: 'hidden',
-                                                                                              textOverflow: 'ellipsis',
-                                                                                              whiteSpace: 'nowrap'
-                                                                                          }}>
-                                                                                              {torrent.title}
-                                                                                          </div>
-                                                                                      }
-
-                                                                                      secondary={
-
-                                                                                          <div style={{
-                                                                                              overflow: 'auto',
-                                                                                              whiteSpace: 'nowrap'
-                                                                                          }}
-                                                                                               className="torrentsChips">
-
-                                                                                              {/* Video quality */}
-
-                                                                                              {
-                                                                                                  torrent.threeD ? <Chip label={'3D'} style={styles.multiChip} /> : null
-                                                                                              }
-
-                                                                                              {
-                                                                                                  torrent.uhd ? <Chip label={'4k'} style={styles.h264} /> : null
-                                                                                              }
-
-                                                                                              {
-                                                                                                  torrent.fullHd ? <Chip label={'1080p'} style={styles.h264} /> : null
-                                                                                              }
-
-                                                                                              {
-                                                                                                  torrent.hd ? <Chip label={'720p'} style={styles.multiChip} /> : null
-                                                                                              }
-
-                                                                                              {
-                                                                                                  torrent.hdlight ? <Chip label={'hdlight'} style={styles.multiChip} /> : null
-                                                                                              }
-
-                                                                                              {
-                                                                                                  torrent.bdrip ? <Chip label={'bdrip'} style={styles.multiChip} /> : null
-                                                                                              }
-
-                                                                                              {
-                                                                                                  torrent.h264 ? <Chip label={'h264'} style={styles.multiChip} /> : null
-                                                                                              }
-
-                                                                                              {
-                                                                                                  torrent.h265 ? <Chip label={'h265'} style={styles.h264} /> : null
-                                                                                              }
+                                                                                  <ListItem button
+                                                                                            style={{overflow: 'hidden'}}>
 
 
-                                                                                              {/* Language */}
+                                                                                      <ListItemText
 
-                                                                                              {
-                                                                                                  torrent.multi ? <Chip label={'multi'} style={styles.bluray} /> : null
-                                                                                              }
+                                                                                          style={{padding: '0'}}
 
-                                                                                              {
-                                                                                                  torrent.vo ?  (torrent.vostfr ? <Chip label={'vostfr'} style={styles.frenchChip} /> : <Chip label={'vo'} style={styles.frenchChip} />) : null
-                                                                                              }
+                                                                                          primary= {
+                                                                                              <div style={{
+                                                                                                  overflow: 'hidden',
+                                                                                                  textOverflow: 'ellipsis',
+                                                                                                  whiteSpace: 'nowrap'
+                                                                                              }}>
+                                                                                                  {torrent.title}
+                                                                                              </div>
+                                                                                          }
 
-                                                                                              {
-                                                                                                  torrent.vf ? (torrent.vfq ? <Chip label={'vfq'} style={styles.frenchChip} /> : <Chip label={'vf'} style={styles.frenchChip} />) : null
-                                                                                              }
+                                                                                          secondary={
 
-                                                                                              {
-                                                                                                  torrent.french ? <Chip label={'french'} style={styles.frenchChip} /> : null
-                                                                                              }
+                                                                                              <div style={{
+                                                                                                  overflow: 'auto',
+                                                                                                  whiteSpace: 'nowrap'
+                                                                                              }}
+                                                                                                   className="torrentsChips">
 
-                                                                                              {/* Audio quality */}
+                                                                                                  {/* Video quality */}
 
-                                                                                              {
-                                                                                                  torrent.aac ? <Chip label={'aac'} style={styles.hdChip} /> : null
-                                                                                              }
+                                                                                                  {
+                                                                                                      torrent.tags.threeD ? <Chip label={'3D'} style={styles.multiChip} /> : null
+                                                                                                  }
 
-                                                                                              {
-                                                                                                  torrent.dts ? <Chip label={'dts'} style={styles.hdChip} /> : null
-                                                                                              }
+                                                                                                  {
+                                                                                                      torrent.tags.uhd ? <Chip label={'4k'} style={styles.h264} /> : null
+                                                                                                  }
 
-                                                                                          </div>
+                                                                                                  {
+                                                                                                      torrent.tags.fullHd ? <Chip label={'1080p'} style={styles.h264} /> : null
+                                                                                                  }
 
-                                                                                      }
+                                                                                                  {
+                                                                                                      torrent.tags.hd ? <Chip label={'720p'} style={styles.multiChip} /> : null
+                                                                                                  }
 
-                                                                                      onClick={() => this.downloadEpisodeTorrent(torrent)}/>
-                                                                              </ListItem>
+                                                                                                  {
+                                                                                                      torrent.tags.hdlight ? <Chip label={'hdlight'} style={styles.multiChip} /> : null
+                                                                                                  }
 
-                                                                              {/*<ListItem button style={{overflow: 'hidden'}}>*/}
-                                                                              {/*    <ListItemText primary={torrent.title} onClick={() => this.downloadEpisodeTorrent(torrent)}/>*/}
-                                                                              {/*</ListItem>*/}
-                                                                          </Paper>
-                                                                      )})
-                                                                  :
-                                                                  <div style={{
-                                                                      fontSize: '0.9rem',
-                                                                      color: 'grey',
-                                                                      textAlign: 'center'
-                                                                  }}>No torrent found</div>
+                                                                                                  {
+                                                                                                      torrent.tags.bdrip ? <Chip label={'bdrip'} style={styles.multiChip} /> : null
+                                                                                                  }
 
-                                                          }
-                                                      </div>
-                                                  )
-                                              })}
-                                          </List>
+                                                                                                  {
+                                                                                                      torrent.tags.h264 ? <Chip label={'h264'} style={styles.multiChip} /> : null
+                                                                                                  }
+
+                                                                                                  {
+                                                                                                      torrent.tags.h265 ? <Chip label={'h265'} style={styles.h264} /> : null
+                                                                                                  }
+
+
+                                                                                                  {/* Language */}
+
+                                                                                                  {
+                                                                                                      torrent.tags.multi ? <Chip label={'multi'} style={styles.bluray} /> : null
+                                                                                                  }
+
+                                                                                                  {
+                                                                                                      torrent.tags.vo ?  (torrent.tags.vostfr ? <Chip label={'vostfr'} style={styles.frenchChip} /> : <Chip label={'vo'} style={styles.frenchChip} />) : null
+                                                                                                  }
+
+                                                                                                  {
+                                                                                                      torrent.tags.vf ? (torrent.tags.vfq ? <Chip label={'vfq'} style={styles.frenchChip} /> : <Chip label={'vf'} style={styles.frenchChip} />) : null
+                                                                                                  }
+
+                                                                                                  {
+                                                                                                      torrent.tags.french ? <Chip label={'french'} style={styles.frenchChip} /> : null
+                                                                                                  }
+
+                                                                                                  {/* Audio quality */}
+
+                                                                                                  {
+                                                                                                      torrent.tags.aac ? <Chip label={'aac'} style={styles.hdChip} /> : null
+                                                                                                  }
+
+                                                                                                  {
+                                                                                                      torrent.tags.dts ? <Chip label={'dts'} style={styles.hdChip} /> : null
+                                                                                                  }
+
+                                                                                              </div>
+
+                                                                                          }
+
+                                                                                          onClick={() => this.downloadEpisodeTorrent(torrent)}/>
+                                                                                  </ListItem>
+
+                                                                                  {/*<ListItem button style={{overflow: 'hidden'}}>*/}
+                                                                                  {/*    <ListItemText primary={torrent.title} onClick={() => this.downloadEpisodeTorrent(torrent)}/>*/}
+                                                                                  {/*</ListItem>*/}
+                                                                              </Paper>
+                                                                          )})
+                                                                      :
+                                                                      <div style={{
+                                                                          fontSize: '0.9rem',
+                                                                          color: 'grey',
+                                                                          textAlign: 'center'
+                                                                      }}>No torrent found</div>
+
+                                                              }
+                                                          </div>
+                                                      )
+                                                  })}
+                                              </List>
+
+                                          </div>
+
                                           :
                                           null
                                   }

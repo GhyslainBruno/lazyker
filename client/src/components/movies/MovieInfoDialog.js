@@ -331,24 +331,26 @@ class MovieInfoDialog extends React.Component {
 
             const torrentsTaggued = torrents[0].torrents.map(torrent => {
 
-                torrent.multi = !!torrent.title.match(/multi/mi);
-                torrent.french = !!torrent.title.match(/french/mi);
-                torrent.vo = !!torrent.title.match(/vo/mi);
-                torrent.aac = !!torrent.title.match(/aac|ac3/mi);
-                torrent.dts = !!torrent.title.match(/dts/mi);
-                torrent.fullHd= !!torrent.title.match(/1080p/mi);
-                torrent.hd = !!torrent.title.match(/720p/mi);
-                torrent.h264 = !!torrent.title.match(/x264|h264/mi);
-                torrent.h265 = !!torrent.title.match(/x265|h265/mi);
+                torrent.tags = {};
+
+                torrent.tags.multi = !!torrent.title.match(/multi/mi);
+                torrent.tags.french = !!torrent.title.match(/french/mi);
+                torrent.tags.vo = !!torrent.title.match(/vo/mi);
+                torrent.tags.aac = !!torrent.title.match(/aac|ac3/mi);
+                torrent.tags.dts = !!torrent.title.match(/dts/mi);
+                torrent.tags.fullHd= !!torrent.title.match(/1080p/mi);
+                torrent.tags.hd = !!torrent.title.match(/720p/mi);
+                torrent.tags.h264 = !!torrent.title.match(/x264|h264/mi);
+                torrent.tags.h265 = !!torrent.title.match(/x265|h265/mi);
                 // torrent.bluray = !!torrent.title.match(/bluray/mi);
-                torrent.vfq = !!torrent.title.match(/vfq/mi);
-                torrent.hdlight = !!torrent.title.match(/hdlight/mi);
+                torrent.tags.vfq = !!torrent.title.match(/vfq/mi);
+                torrent.tags.hdlight = !!torrent.title.match(/hdlight/mi);
                 // torrent.ac3 = !!torrent.title.match(/ac3/mi);
-                torrent.vostfr = !!torrent.title.match(/stfr/mi);
-                torrent.bdrip = !!torrent.title.match(/bdrip/mi);
-                torrent.uhd = !!torrent.title.match(/2160p|4k|uhd/mi);
-                torrent.threeD = !!torrent.title.match(/3d/mi);
-                torrent.vf = !!torrent.title.match(/vf/mi);
+                torrent.tags.vostfr = !!torrent.title.match(/stfr/mi);
+                torrent.tags.bdrip = !!torrent.title.match(/bdrip/mi);
+                torrent.tags.uhd = !!torrent.title.match(/2160p|4k|uhd/mi);
+                torrent.tags.threeD = !!torrent.title.match(/3d/mi);
+                torrent.tags.vf = !!torrent.title.match(/vf/mi);
 
                 torrent.isDisplayed = true;
 
@@ -510,35 +512,48 @@ class MovieInfoDialog extends React.Component {
         this.setState({
             [filter]: !this.state[filter]
         }, () => {
-            console.log(this.state[filter]);
+            const trueFilter = [];
 
-            this.state.torrentsList[0].torrents.map(torrent => {
+            if (this.state.uhd) {
+                trueFilter.push('uhd');
+            }
 
+            if (this.state.fullHd) {
+                trueFilter.push('fullHd');
+            }
 
-                if (this.state[filter]) {
-                    if (torrent[filter]) {
-                        torrent.isDisplayed = true;
-                    } else {
-                        torrent.isDisplayed = false;
-                    }
+            if (this.state.hd) {
+                trueFilter.push('hd');
+            }
+
+            const torrentsFiltered = this.state.torrentsList[0].torrents.map(torrent => {
+
+                let shouldBeDisplayed = false;
+
+                if (trueFilter.length > 0) {
+                    trueFilter.map(filter => {
+                        if (Object.keys(torrent.tags).filter((key) => torrent.tags[key]).includes(filter)) {
+                            shouldBeDisplayed = true;
+                        }
+                    });
                 } else {
-                    if (torrent[filter]) {
-                        torrent.isDisplayed = true;
-                    } else {
-                        torrent.isDisplayed = true;
-                    }
+                    shouldBeDisplayed = true;
                 }
 
+                torrent.isDisplayed = shouldBeDisplayed;
 
-                // if (!this.state[filter] && torrent[filter] ) {
-                //     torrent.isDisplayed = true;
-                // } else if (!this.state[filter] && !torrent[filter] ) {
-                //     torrent.isDisplayed = false;
-                // } else {
-                //     torrent.isDisplayed = true;
-                // }
+                return torrent;
 
-            })
+            });
+
+            const torrentsTagguedToReturn = [];
+
+            torrentsTagguedToReturn.push({
+                torrents : torrentsFiltered,
+                provider: 'ygg'
+            });
+
+            this.setState({torrentsList: torrentsTagguedToReturn});
         });
 
     };
@@ -679,64 +694,64 @@ class MovieInfoDialog extends React.Component {
                                                                                             {/* Video quality */}
 
                                                                                             {
-                                                                                                torrent.threeD ? <Chip label={'3D'} style={styles.multiChip} /> : null
+                                                                                                torrent.tags.threeD ? <Chip label={'3D'} style={styles.multiChip} /> : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.uhd ? <Chip label={'4k'} style={styles.h264} /> : null
+                                                                                                torrent.tags.uhd ? <Chip label={'4k'} style={styles.h264} /> : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.fullHd ? <Chip label={'1080p'} style={styles.h264} /> : null
+                                                                                                torrent.tags.fullHd ? <Chip label={'1080p'} style={styles.h264} /> : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.hd ? <Chip label={'720p'} style={styles.multiChip} /> : null
+                                                                                                torrent.tags.hd ? <Chip label={'720p'} style={styles.multiChip} /> : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.hdlight ? <Chip label={'hdlight'} style={styles.multiChip} /> : null
+                                                                                                torrent.tags.hdlight ? <Chip label={'hdlight'} style={styles.multiChip} /> : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.bdrip ? <Chip label={'bdrip'} style={styles.multiChip} /> : null
+                                                                                                torrent.tags.bdrip ? <Chip label={'bdrip'} style={styles.multiChip} /> : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.h264 ? <Chip label={'h264'} style={styles.multiChip} /> : null
+                                                                                                torrent.tags.h264 ? <Chip label={'h264'} style={styles.multiChip} /> : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.h265 ? <Chip label={'h265'} style={styles.h264} /> : null
+                                                                                                torrent.tags.h265 ? <Chip label={'h265'} style={styles.h264} /> : null
                                                                                             }
 
 
                                                                                             {/* Language */}
 
                                                                                             {
-                                                                                                torrent.multi ? <Chip label={'multi'} style={styles.bluray} /> : null
+                                                                                                torrent.tags.multi ? <Chip label={'multi'} style={styles.bluray} /> : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.vo ?  (torrent.vostfr ? <Chip label={'vostfr'} style={styles.frenchChip} /> : <Chip label={'vo'} style={styles.frenchChip} />) : null
+                                                                                                torrent.tags.vo ?  (torrent.tags.vostfr ? <Chip label={'vostfr'} style={styles.frenchChip} /> : <Chip label={'vo'} style={styles.frenchChip} />) : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.vf ? (torrent.vfq ? <Chip label={'vfq'} style={styles.frenchChip} /> : <Chip label={'vf'} style={styles.frenchChip} />) : null
+                                                                                                torrent.tags.vf ? (torrent.tags.vfq ? <Chip label={'vfq'} style={styles.frenchChip} /> : <Chip label={'vf'} style={styles.frenchChip} />) : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.french ? <Chip label={'french'} style={styles.frenchChip} /> : null
+                                                                                                torrent.tags.french ? <Chip label={'french'} style={styles.frenchChip} /> : null
                                                                                             }
 
                                                                                             {/* Audio quality */}
 
                                                                                             {
-                                                                                                torrent.aac ? <Chip label={'aac'} style={styles.hdChip} /> : null
+                                                                                                torrent.tags.aac ? <Chip label={'aac'} style={styles.hdChip} /> : null
                                                                                             }
 
                                                                                             {
-                                                                                                torrent.dts ? <Chip label={'dts'} style={styles.hdChip} /> : null
+                                                                                                torrent.tags.dts ? <Chip label={'dts'} style={styles.hdChip} /> : null
                                                                                             }
 
                                                                                         </div>

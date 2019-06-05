@@ -120,6 +120,12 @@ const styles = {
         margin: '2px',
         color: '#b4ff56'
     },
+    blurayFull: {
+        border: 'thin solid #b4ff56',
+        backgroundColor: '#b4ff56',
+        opacity: '0.7',
+        margin: '2px'
+    },
     vfq: {
         border: 'thin solid #d68bff',
         backgroundColor: 'transparent',
@@ -191,6 +197,7 @@ class MovieInfoDialog extends React.Component {
             movieInfo: null,
             trailerPlaying: false,
             torrentsList: null,
+            torrentsListFull: null,
             providersMovies: null,
             qualities: null,
             isInTorrentOrDdl: false,
@@ -292,42 +299,42 @@ class MovieInfoDialog extends React.Component {
     getTorrentsList = async (movie) => {
         this.setState({movieInfoLoading: true, movieInfo: null, isInTorrentOrDdl: true});
         try {
-            // let response = await fetch('/api/torrents?title=' + movie.title, {
-            //     method: 'GET'
-            // });
-            //
-            // const torrents = await response.json();
+            let response = await fetch('/api/torrents?title=' + movie.title, {
+                method: 'GET'
+            });
 
-            const torrents = [{
-                'provider': 'ygg',
-                'torrents': [
-                    {
-                        completed: "64",
-                        leech: "0",
-                        provider: "ygg",
-                        seed: "10",
-                        size: "266.95Mo",
-                        title: "Avengers Infinity War (2018) MULTi VFQ 1080p BluRay REMUX AVC DTS.GHT (Avengers : La guerre de l'infini) vf 4k ac3",
-                        url: "https://www2.yggtorrent.ch/torrent/audio/musique/233399-alan+silvestri+avengers+infinity+war+original+motion+picture+soundtrack+2018web+mp3+320kbps"
-                    }, {
-                        completed: "35",
-                        leech: "0",
-                        provider: "ygg",
-                        seed: "9",
-                        size: "592.12Mo",
-                        title: "Alan Silvestri – Avengers: Infinity War (Original Motion Picture Soundtrack) (2018)(web.flac.16bit) ",
-                        url: "https://www2.yggtorrent.ch/torrent/audio/musique/233400-alan+silvestri+avengers+infinity+war+original+motion+picture+soundtrack+2018web+flac+16bit"
-                    }, {
-                        completed: "747",
-                        leech: "1",
-                        provider: "ygg",
-                        seed: "134",
-                        size: "1.73Go",
-                        title: "Avengers Infinity War (2018) French AAC BluRay 720p x264.GHT (Avengers:  La guerre de l'infini) vfq ac3 aac vf 1080p 4k uhd ",
-                        url: "https://www2.yggtorrent.ch/torrent/film-video/film/295275-avengers+infinity+war+2018+french+aac+bluray+720p+x264+ght+avengers+la+guerre+de+linfini"
-                    }
-                ]
-            }];
+            const torrents = await response.json();
+
+            // const torrents = [{
+            //     'provider': 'ygg',
+            //     'torrents': [
+            //         {
+            //             completed: "64",
+            //             leech: "0",
+            //             provider: "ygg",
+            //             seed: "10",
+            //             size: "266.95Mo",
+            //             title: "Avengers Infinity War (2018) MULTi VFQ 1080p BluRay REMUX AVC DTS.GHT (Avengers : La guerre de l'infini) vf 4k ac3",
+            //             url: "https://www2.yggtorrent.ch/torrent/audio/musique/233399-alan+silvestri+avengers+infinity+war+original+motion+picture+soundtrack+2018web+mp3+320kbps"
+            //         }, {
+            //             completed: "35",
+            //             leech: "0",
+            //             provider: "ygg",
+            //             seed: "9",
+            //             size: "592.12Mo",
+            //             title: "Alan Silvestri – Avengers: Infinity War (Original Motion Picture Soundtrack) (2018)(web.flac.16bit) 720p ",
+            //             url: "https://www2.yggtorrent.ch/torrent/audio/musique/233400-alan+silvestri+avengers+infinity+war+original+motion+picture+soundtrack+2018web+flac+16bit"
+            //         }, {
+            //             completed: "747",
+            //             leech: "1",
+            //             provider: "ygg",
+            //             seed: "134",
+            //             size: "1.73Go",
+            //             title: "Avengers Infinity War (2018) French AAC BluRay 720p x264.GHT (Avengers:  La guerre de l'infini) vfq ac3 aac vf 1080p 4k uhd ",
+            //             url: "https://www2.yggtorrent.ch/torrent/film-video/film/295275-avengers+infinity+war+2018+french+aac+bluray+720p+x264+ght+avengers+la+guerre+de+linfini"
+            //         }
+            //     ]
+            // }];
 
             const torrentsTaggued = torrents[0].torrents.map(torrent => {
 
@@ -365,7 +372,7 @@ class MovieInfoDialog extends React.Component {
             });
 
             // console.log('foo')
-            this.setState({movieInfoLoading: false, torrentsList: torrentsTagguedToReturn});
+            this.setState({movieInfoLoading: false, torrentsListFull: torrentsTagguedToReturn, torrentsList: torrentsTagguedToReturn});
         } catch(error) {
             this.props.displaySnackMessage('Error while getting qualities');
             this.setState({loading: false})
@@ -526,7 +533,11 @@ class MovieInfoDialog extends React.Component {
                 trueFilter.push('hd');
             }
 
-            const torrentsFiltered = this.state.torrentsList[0].torrents.map(torrent => {
+            if (this.state.multi) {
+                trueFilter.push('multi');
+            }
+
+            const torrentsFiltered = this.state.torrentsListFull[0].torrents.map(torrent => {
 
                 let shouldBeDisplayed = false;
 
@@ -542,14 +553,16 @@ class MovieInfoDialog extends React.Component {
 
                 torrent.isDisplayed = shouldBeDisplayed;
 
-                return torrent;
+                if (torrent.isDisplayed) {
+                    return torrent;
+                }
 
             });
 
             const torrentsTagguedToReturn = [];
 
             torrentsTagguedToReturn.push({
-                torrents : torrentsFiltered,
+                torrents : torrentsFiltered.filter(torrent => torrent !== undefined),
                 provider: 'ygg'
             });
 
@@ -634,6 +647,7 @@ class MovieInfoDialog extends React.Component {
                                     <Chip label={'4K'} style={this.state.uhd ? styles.h264Full : styles.h264} clickable={true} onClick={() => this.filterTorrents('uhd')}/>
                                     <Chip label={'1080p'} style={this.state.fullHd ? styles.h264Full : styles.h264} clickable={true} onClick={() => this.filterTorrents('fullHd')}/>
                                     <Chip label={'720p'} style={this.state.hd ? styles.multiChipFull : styles.multiChip} clickable={true} onClick={() => this.filterTorrents('hd')}/>
+                                    <Chip label={'Multi'} style={this.state.multi ? styles.blurayFull : styles.bluray} clickable={true} onClick={() => this.filterTorrents('multi')}/>
 
                                     <List component="nav" dense >
 

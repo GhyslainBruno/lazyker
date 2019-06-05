@@ -163,29 +163,26 @@ const downloadTorrentFile = async (url, user, infos) => {
         // Since now a click on the download buton opens a new popup window before starting the download, chromium crashes
         // see the #299 error https://github.com/GoogleChrome/puppeteer/issues/299
         // so I get the url value and fetch it normally
-        let torrentDownloadUrl = await page.evaluate((sel) => {
-            return document.getElementsByClassName(sel)[0].href;
-        }, 'butt');
+        // let torrentDownloadUrl = await page.evaluate((sel) => {
+        //     return document.getElementsByClassName(sel)[0].href;
+        // }, 'butt');
 
         // See here for the way https://stackoverflow.com/questions/48752822/request-promise-download-pdf-file
-        const optionsStart = {
-            uri: torrentDownloadUrl,
-            encoding: "binary",
-            method: 'GET'
-        };
-        await rp(optionsStart)
-            .then( async (body, data) => {
-                let writeStream = fs.createWriteStream(path.join(__dirname, '/torrent_temp/file.torrent'));
-                writeStream.write(body, 'binary');
-                writeStream.end();
-            });
+        // const optionsStart = {
+        //     uri: torrentDownloadUrl,
+        //     encoding: "binary",
+        //     method: 'GET'
+        // };
+        // await rp(optionsStart)
+        //     .then( async (body, data) => {
+        //         let writeStream = fs.createWriteStream(path.join(__dirname, '/torrent_temp/file.torrent'));
+        //         writeStream.write(body, 'binary');
+        //         writeStream.end();
+        //     });
 
         // Old way
-        // await page.goto(torrentDownloadUrl);
-        // await page.click("a.butt").catch(e => {
-        //     console.log(e)
-        // });
-        // await page.waitFor(7000);
+        await page.click("a.butt");
+        await page.waitFor(7000);
 
         // Get the torrent fileName
         const torrentFileName = await getTorrentFileName();

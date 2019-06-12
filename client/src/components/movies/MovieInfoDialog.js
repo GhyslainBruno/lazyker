@@ -299,7 +299,7 @@ class MovieInfoDialog extends React.Component {
     getTorrentsList = async (movie) => {
         this.setState({movieInfoLoading: true, movieInfo: null, isInTorrentOrDdl: true});
         try {
-            let response = await fetch('/api/torrents?title=' + movie.title, {
+            let response = await fetch('/api/torrents?title=' + movie.original_title, {
                 method: 'GET'
             });
 
@@ -874,7 +874,7 @@ class MovieInfoDialog extends React.Component {
                                         </div>
 
                                         <div style={{width: '70%', paddingLeft: '30px', textAlign: 'left'}}>
-                                            <h4 style={{color: 'white', fontSize: '1.4rem', marginTop: '15px', marginBottom: '15px'}}>{this.state.movieInfo.title}</h4>
+                                            <h4 style={{color: 'white', fontSize: '1.4rem', marginTop: '15px', marginBottom: '15px'}}>{this.state.movieInfo.original_title}</h4>
                                             <p style={{margin: '5px'}}>{this.state.movieInfo.release_date}</p>
                                             <p style={{margin: '5px'}}>{this.state.movieInfo.runtime} min</p>
                                             <p style={{margin: '5px'}}><Star style={{fontSize: '18'}}/> {this.state.movieInfo.vote_average}</p>

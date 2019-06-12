@@ -200,16 +200,27 @@ module.exports = (app) => {
             json: true
         };
 
+        const imagesRequest = {
+            method: 'GET',
+            uri: url = 'https://api.themoviedb.org/3/movie/' + id + '/images'+ '?api_key=' + tmdbApiKey,
+            json: true
+        };
+
         // Using TMDB as a trailer provider
-        // const optionsTrailer = {
-        //     method: 'GET',
-        //     uri: url = 'https://api.themoviedb.org/3/movie/' + id + '/videos' + '?api_key=' + tmdbApiKey + '&language=en-EN',
-        //     json: true
-        // };
+        const optionsTrailerTMDB = {
+            method: 'GET',
+            uri: url = 'https://api.themoviedb.org/3/movie/' + id + '/videos' + '?api_key=' + tmdbApiKey + '&language=fr-FR',
+            json: true
+        };
 
 
         try {
             let movieInfo = await rp(options);
+
+            // To avoid some differences between languages
+            movieInfo.title = movieInfo.original_title;
+
+            movieInfo.images = await rp(imagesRequest);
 
             // Using youtube as a trailer provider
             const optionsTrailer = {
@@ -220,11 +231,21 @@ module.exports = (app) => {
 
             let movieTrailer = await rp(optionsTrailer);
 
-            if (movieTrailer.items.length > 0) {
+            let movieTrailerTMDB = await rp(optionsTrailerTMDB);
+
+            if (movieTrailerTMDB.results.length > 0) {
+                movieInfo['trailer'] = 'https://www.youtube.com/watch?v=' + movieTrailerTMDB.results[0].key;
+            } else if (movieTrailer.items.length > 0) {
                 movieInfo['trailer'] = 'https://www.youtube.com/watch?v=' + movieTrailer.items[0].id.videoId;
             } else {
                 movieInfo['trailer'] = false;
             }
+
+            // if (movieTrailer.items.length > 0) {
+            //     movieInfo['trailer'] = 'https://www.youtube.com/watch?v=' + movieTrailer.items[0].id.videoId;
+            // } else {
+            //     movieInfo['trailer'] = false;
+            // }
 
             res.send(movieInfo)
         }

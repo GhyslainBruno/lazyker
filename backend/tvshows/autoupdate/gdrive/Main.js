@@ -29,17 +29,22 @@ const startUpdate = async user => {
 
         /**
          * 1 - Get Tv Shows path from Firebase database
-         * Returns : string
+         * Returns ex :
+        {
+            "parentTvShowsGdriveFolderId": string
+            "tvShowsGdriveFolderId": string
+            "tvShowsGdriveFolderName": string
+        }
          */
         const tvShowsFolder = await database.getTvShowsFolderGdrive(user);
 
         /**
-         * 2 - Get all the tv shows from storage (nas, for now, but unlimited drives should come "soon") - First getting tv shows path
+         * 2 - Get all the tv shows from storage (only working for gdrive users, in this file at least) - First getting tv shows path
          * Returns :
          * [
          *         {
          *             id: string
-         *             type: string,
+         *             kind: string,
          *             name: string
          *             mimType: string
          *         }
@@ -67,25 +72,32 @@ const startUpdate = async user => {
         /**
          *  4 - Filter the files list (from gdrive) with shows from DB
          *  Returns :
-         *     [
-         *         {
-         *
-         *             name: string,
-         *             isNew: bool (if true -> a new directory should be created later)
-         *         }
-         *     ]
+            [
+                {
+                    "kind": string,
+                    "id": "string,
+                    "name": "string,
+                    "mimeType": string,
+                    "isNew": bool
+                }
+            ]
          */
         const showsToUpdateFromFiles = await storage.getTvShowsToUpdateFromGdrive(showsFromGdrive, showsToUpdate, tvShowsFolder);
 
         /**
          * 6 - For Each Tv Show: find last season/episode numbers
          * Returns :
-         * Array [{
-         *     lastSeason : int
-         *     lastEpisode : int
-         *     name: string
-         *     path: string
-         * }]
+            [
+                {
+                    "kind": string,
+                    "id": string,
+                    "name": "string,
+                    "mimeType": string,
+                    "isNew": bool,
+                    "lastSeason": string,
+                    "lastEpisode": string
+                }
+            ]
          */
         let lastEpisodes = await storage.getLastEpisodes(user, showsToUpdateFromFiles);
 

@@ -43,28 +43,28 @@ const getTorrentsList = async title => {
     let browser = {};
 
     try {
-        console.log(1);
+        // console.log(1);
         browser = await puppeteer.launch(launchBrowserProperties);
-        console.log(2);
+        // console.log(2);
         const page = await browser.newPage();
-        console.log(3);
+        // console.log(3);
         await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145', {timeout: 60000});
-        console.log(4);
+        // console.log(4);
         await page.waitFor(7000);
-        console.log(5);
+        // console.log(5);
         await page.waitForSelector("body");
-        console.log(6);
+        // console.log(6);
         const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
-        console.log(7);
+        // console.log(7);
         const $ = cheerio.load(html);
-        console.log(8);
+        // console.log(8);
 
         const tableRows = $('tr');
         const items = tableRows.splice(7, tableRows.length);
 
         const torrentsList = [];
 
-        console.log(9);
+        // console.log(9);
         items.map(item => {
             torrentsList.push({
                 provider: 'ygg',
@@ -77,7 +77,7 @@ const getTorrentsList = async title => {
             })
         });
 
-        console.log(10);
+        // console.log(10);
         browser.close();
 
         return {
@@ -115,7 +115,7 @@ const downloadTorrentFile = async (url, user, infos) => {
     let browser = {};
 
     try {
-        console.log(1);
+        // console.log(1);
         browser = await puppeteer.launch(launchBrowserProperties);
 
         // browser.addListener('targetdestroyed', async target => {
@@ -126,29 +126,29 @@ const downloadTorrentFile = async (url, user, infos) => {
 
         // With puppeteer
         // TODO maybe use another YGG account
-        console.log(2);
+        // console.log(2);
         const page = await browser.newPage();
 
-        console.log(3);
+        // console.log(3);
         await page.goto(url, {timeout: 70000});
 
-        console.log(4);
+        // console.log(4);
         await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.join(__dirname, '/torrent_temp')});
 
-        console.log(5);
+        // console.log(5);
         await page.setViewport({ width, height });
 
-        console.log(6);
+        // console.log(6);
         const pages = await browser.pages();
         await pages[0].close();
 
         // let html = await page.evaluate(body => body.innerHTML, await page.$('body'));
-        console.log(7);
+        // console.log(7);
         await page.waitForSelector("body");
-        console.log(8);
+        // console.log(8);
         await page.click("a.butt");
 
-        console.log(9);
+        // console.log(9);
         await page.type('input[name=id]', 'Ghyslain');
         await page.type('input[name=pass]', 'foobar');
 
@@ -156,7 +156,7 @@ const downloadTorrentFile = async (url, user, infos) => {
         await page.type('input[name=id]', 'Ghyslain');
         await page.keyboard.down('Enter');
 
-        console.log(10);
+        // console.log(10);
         await page.waitForNavigation();
         await page.waitForSelector("a.butt");
 

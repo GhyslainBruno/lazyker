@@ -634,8 +634,9 @@ class Settings extends Component {
                                                 label="NAS Synology"
                                                 variant={this.state.storage === "nas" ? "default" : "outlined"}
                                                 style={{margin: '3px'}}
-                                                clickable="true"
-                                                onClick={() => {this.setState({storage: 'nas'})}}/>
+                                                // clickable="true"
+                                                // onClick={() => {this.setState({storage: 'nas'})}}
+                                            />
                                         </Grid>
 
                                         {this.state.storage === 'gdrive' ?

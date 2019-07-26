@@ -7,7 +7,7 @@ This project is a [PWA](https://developers.google.com/web/progressive-web-apps/)
 * It scrapes several provider websites (only **torrent** for now, DDL has already been developed but is not fully stable for now, so I decided not to use it), here is the list : 
   * Torrents : 
     * [Ygg](https://www.torrent9.tw/)
-    * [Torrent9](https://www.yggtorrent.gg/)
+    * <s>[Torrent9](https://www.yggtorrent.gg/)</s>
   * <s>DDL</s> : 
     * <s>[Extreme download](https://www1.extreme-download.me/)</s>
     * <s>[Annuaire telechargement](https://vwvvv.annuaire-telechargement.com/)</s>
@@ -22,14 +22,14 @@ This project is a [PWA](https://developers.google.com/web/progressive-web-apps/)
 | -------- | :------: |
 | Add a torrent into debrider's seedbox service |  :white_check_mark: |
 | Download torrent file into Google Drive user's storage | :white_check_mark: |
-| Download torrent file into Synology NAS user's storage | :white_check_mark: |
+| Download torrent file into Synology NAS user's storage | :x: |
 | Add torrent file from movies | :white_check_mark: |
 | Add torrent file from Tv Shows | :white_check_mark: |
 | Search movies from title / genres | :white_check_mark: |
 | Manage downloads into Google Drive user's storage | :white_check_mark: |
-| Manage downloads into Synology NAS user's storage | :white_check_mark: |
+| Manage downloads into Synology NAS user's storage | :x: |
 | Display a console output to user | :white_check_mark: |
-| Auto update Tv Shows new episodes aired  | :red_circle: |
+| Auto update Tv Shows new episodes aired  | :x: |
 
 #### Some other features should be developed soon. To know what's coming, you can report to the [issues dashboard of this project](https://gitlab.com/ghyslainbruno/lazyker/boards/781495)
 
@@ -55,7 +55,7 @@ Indeed, this project allowed me to practice :
 And probably many more I'm forgetting.  
 
 ### <u>Lazyker</u> : https://dedibox.ghyslain.xyz (<u>the project</u>)
-#### SonarQube : http://sonarqube.ghyslain.xyz/projects (code analysis and quality report)
+<s>#### SonarQube : http://sonarqube.ghyslain.xyz/projects (code analysis and quality report)</s>
 #### Issues / Features board : https://gitlab.com/ghyslainbruno/lazyker/boards/781495
  
 # Cheat sheet for personnal use 

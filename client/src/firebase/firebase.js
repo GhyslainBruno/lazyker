@@ -4,12 +4,12 @@ import 'firebase/auth';
 import database from 'firebase/database';
 
 const config = {
-    apiKey: "AIzaSyCRqR1Mc3oQFPgQPgsKTbRBIBz1-UbCqcI",
-    authDomain: "lazyker-568c4.firebaseapp.com",
-    databaseURL: "https://lazyker-568c4.firebaseio.com",
-    projectId: "lazyker-568c4",
-    storageBucket: "lazyker-568c4.appspot.com",
-    messagingSenderId: "348584284"
+    apiKey: "AIzaSyAec0nB-wc2G1LizG7P6OWlTsp7hAc5wpg",
+    authDomain: "gamification-d5b83.firebaseapp.com",
+    databaseURL: "https://gamification-d5b83.firebaseio.com",
+    projectId: "gamification-d5b83",
+    storageBucket: "gamification-d5b83.appspot.com",
+    messagingSenderId: "162007142775"
 };
 
 // Similar to a singleton pattern
@@ -23,19 +23,19 @@ if (!firebase.apps.length) {
         });
 
     // Commenting this part for using lazyker on iOS
-    //const messaging = firebaseMessaging.messaging();
+    const messaging = firebaseMessaging.messaging();
 
-    //messaging.requestPermission()
-        //.then( () => {
-            //console.log('have persmission');
-            //return messaging.getToken();
-        //})
-        //.then(token => {
-            //console.log(token);
-        //})
-        //.catch(error => {
-            //console.log(error);
-        //})
+    messaging.requestPermission()
+        .then( () => {
+            console.log('have persmission');
+            return messaging.getToken();
+        })
+        .then(token => {
+            console.log(token);
+        })
+        .catch(error => {
+            console.log(error);
+        })
 }
 
 // Export the auth firebase api

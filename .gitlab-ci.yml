@@ -28,8 +28,8 @@ deploy_odroid:
   stage: deploy
   environment:
     name: production
-    url: dedibox.ghyslain.xyz
+    url: lazyker.ghyslain.xyz
   script:
-    - ssh pi@dedibox.ghyslain.xyz "cd lazyker && git reset --hard && git clean -f && git pull && ./deploy.sh"
+    - ssh -p 82 pi@lazyker.ghyslain.xyz "cd lazyker && git reset --hard && git clean -f && git pull && ./deploy.sh"
   only:
     - architecture-arm

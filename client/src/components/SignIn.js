@@ -4,6 +4,11 @@ import Divider from '@material-ui/core/Divider';
 import { SignUpLink } from './SignUp';
 import { auth } from '../firebase';
 import * as routes from '../constants/routes';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 // Trying the new material spec
 import Button from '@material/react-button/dist';
@@ -41,9 +46,14 @@ class SignInForm extends Component {
         super(props);
 
         this.state = {
-            ...INITIAL_STATE
+            ...INITIAL_STATE,
+            presentationDialogOpen: true
         };
     }
+
+    handleClose = () => {
+        this.setState({presentationDialogOpen: false});
+    };
 
     onSubmit = (event) => {
 
@@ -86,6 +96,28 @@ class SignInForm extends Component {
         return (
 
             <Paper elevation={1} className="signInCard">
+
+                <Dialog
+                    open={this.state.presentationDialogOpen}
+                    onClose={this.handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"What is Lazyker"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            It is a web application that helps you manage your library.
+                            You can download new medias in several supported storage such as Google Drive.
+                            <br/>
+                            For a better understanding of the whole application, I invite you to read the <a href="/privacy_policy">privacy policies</a>.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose} color="primary">
+                            Keep going
+                        </Button>
+                    </DialogActions>
+                </Dialog>
 
                 <div style={{color: 'white'}}>
                     Sign In into Lazyker
@@ -162,7 +194,6 @@ class SignInForm extends Component {
                     { error && <p style={{color: '#f98e8d'}}>{error.message}</p> }
                 </form>
             </Paper>
-
 
         );
     }

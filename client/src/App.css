@@ -1164,6 +1164,12 @@
 .signOutBtn {
   margin-top: 10px; }
 
+a {
+  color: #FFF; }
+
+a:hover {
+  color: #ff0300; }
+
 .signInCard {
   position: relative;
   top: 50%;

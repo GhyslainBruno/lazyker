@@ -16,12 +16,12 @@ if [[ $1 == docker ]]; then
         # run your container
         #docker run -d --name <name> my-docker-image
         echo 'Running new version of lazyker container'
-        docker run -p 8080:80 -p 443:443 --restart unless-stopped -v /home/ghys/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
+        docker run -p 80:80 -p 443:443 --restart unless-stopped -v /home/ghys/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
         else
          echo 'Lazyker container already running - removing and updating and running new one...'
          docker kill lazyker
          docker rm lazyker
-         docker run -p 8080:80 -p 443:443 --restart unless-stopped -v /home/ghys/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
+         docker run -p 80:80 -p 443:443 --restart unless-stopped -v /home/ghys/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
     fi
 
     ## Running backend tests - editing report file -> in the running container

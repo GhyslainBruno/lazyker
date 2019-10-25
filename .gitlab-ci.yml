@@ -30,6 +30,6 @@ deploy_odroid:
     name: production
     url: lazyker.ghyslain.xyz
   script:
-    - ssh -p 82 odroid@ghyslain.xyz "cd lazyker && git reset --hard && git clean -f && git pull && ./deploy.sh"
+    - ssh -p 82 odroid@ghyslain.xyz "cd lazyker && git reset --hard && git clean -f && git pull && ./deploy.sh docker"
   only:
     - architecture-arm

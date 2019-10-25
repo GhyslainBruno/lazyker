@@ -16,12 +16,12 @@ if [[ $1 == docker ]]; then
         # run your container
         #docker run -d --name <name> my-docker-image
         echo 'Running new version of lazyker container'
-        docker run -p 80:80 -p 443:443 --name lazyker -d ghyslainbruno/lazyker
+        docker run -p 80:80 -p 443:443 --restart unless-stopped --name lazyker -d ghyslainbruno/lazyker
         else
          echo 'Lazyker container already running - removing and updating and running new one...'
          docker kill lazyker
          docker rm lazyker
-         docker run -p 80:80 -p 443:443 --name lazyker -d ghyslainbruno/lazyker
+         docker run -p 80:80 -p 443:443 --restart unless-stopped --name lazyker -d ghyslainbruno/lazyker
     fi
 
     ## Running backend tests - editing report file -> in the running container
@@ -51,7 +51,7 @@ if [[ $1 == docker ]]; then
     #  -Dsonar.host.url=http://sonarqube.ghyslain.xyz:9000 \
     #  -Dsonar.login=c37d841c739531680ebf8c1f874012806bd01da7 && \
 
-    cd /home/ghys/lazyker
+    cd /home/ghyslain/lazyker
 
 else
 

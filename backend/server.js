@@ -1,7 +1,7 @@
 const admin = require('firebase-admin');
 const serviceAccount = require("./lazyker-568c4-firebase-adminsdk-b7xs7-f766489e61");
-const https = require('https');
-// const http = require('http');
+// const https = require('https');
+const http = require('http');
 const fs = require('fs');
 
 admin.initializeApp({
@@ -69,20 +69,20 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-const portUsed = 443;
+const portUsed = 80;
 
 // Redirect from http port 80 to https
-const httpApp = express();
-
-httpApp.get('*', (req, res) => {
-    res.redirect('https://' + req.headers.host + req.url);
-
-    // Or, if you don't want to automatically detect the domain name from the request header, you can hard code it:
-    // res.redirect('https://example.com' + req.url);
-});
-httpApp.listen(80, () => {
-    console.log('Http server (for https redirections) is up...')
-});
+// const httpApp = express();
+//
+// httpApp.get('*', (req, res) => {
+//     res.redirect('https://' + req.headers.host + req.url);
+//
+//     // Or, if you don't want to automatically detect the domain name from the request header, you can hard code it:
+//     // res.redirect('https://example.com' + req.url);
+// });
+// httpApp.listen(80, () => {
+//     console.log('Http server (for https redirections) is up...')
+// });
 
 // const testApp = express();
 // testApp.use(express.static(path.join(__dirname, '/coverage/lcov-report')));
@@ -90,10 +90,7 @@ httpApp.listen(80, () => {
 //     console.log('test app running on 8080');
 // });
 
-https.createServer({
-    key: fs.readFileSync(path.join(__dirname, 'privkey.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'cert.pem'))
-}, app)
+http.createServer(app)
     .listen(portUsed, function () {
         console.log('Listening on port ' + portUsed + ' ! Go to https://localhost:' + portUsed)
     });

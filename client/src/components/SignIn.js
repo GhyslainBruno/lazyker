@@ -21,6 +21,11 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import Slide from '@material-ui/core/Slide';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const SignInPage = ({ history }) =>
     <div>
@@ -98,6 +103,10 @@ class SignInForm extends Component {
             <Paper elevation={1} className="signInCard">
 
                 <Dialog
+                    disableBackdropClick
+                    disableEscapeKeyDown
+                    fullScreen
+                    TransitionComponent={Transition}
                     open={this.state.presentationDialogOpen}
                     onClose={this.handleClose}
                     aria-labelledby="alert-dialog-title"
@@ -107,7 +116,8 @@ class SignInForm extends Component {
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             It is a web application that helps you manage your library.
-                            You can download new medias in several supported storage such as Google Drive.
+                            <br/>
+                            You can download new medias in 2 supported storage : Google Drive or a Synoloy NAS.
                             <br/>
                             For a better understanding of the whole application, I invite you to read the <a href="/privacy_policy">privacy policies</a>.
                         </DialogContentText>

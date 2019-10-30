@@ -11,8 +11,9 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
-import {SignUpForm} from "./components/SignUp";
-import {SignInForm} from "./components/SignIn";
+import { SignUpForm } from "./components/SignUp";
+import { SignInForm } from "./components/SignIn";
+import  HomePage from "./components/HomePage";
 import PasswordReset from "./components/authentication/PasswordReset";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Redirect from "react-router-dom/es/Redirect";
@@ -368,7 +369,8 @@ class App extends Component {
                                     <Route exact path='/signup' render={(props) =><SignUpForm {...props}/>}/>
                                     <Route exact path='/pw-forget' render={() =><PasswordReset />}/>
                                     <Route exact path='/privacy_policy' render={() => <Privacy/>}/>
-                                    <Route path={/^(?!.*(pw-forget|signup|privacy_policy)).*$/} render={() =><SignInForm />}/>
+                                    <Route path='/signin' render={() =><SignInForm />}/>
+                                    <Route path={/^(?!.*(pw-forget|signup|signin|privacy_policy)).*$/} render={() =><HomePage />}/>
                                 </div>
 
                     }

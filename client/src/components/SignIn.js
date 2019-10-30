@@ -52,7 +52,7 @@ class SignInForm extends Component {
 
         this.state = {
             ...INITIAL_STATE,
-            presentationDialogOpen: true
+            presentationDialogOpen: false
         };
     }
 

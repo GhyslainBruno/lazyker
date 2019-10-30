@@ -1185,6 +1185,22 @@ a:hover {
       width: 50%;
       margin: 0 auto; } }
 
+.homePage {
+  width: 100%;
+  height: 100%; }
+
+.iconHomePageContainer {
+  text-align: center;
+  top: 20%; }
+
+.iconHomePage {
+  margin-right: auto;
+  margin-left: auto; }
+
+.homePageText {
+  position: relative;
+  top: 30%; }
+
 .mainApp {
   height: 100%; }
 

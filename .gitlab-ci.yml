@@ -7,7 +7,8 @@ before_script:
 #  - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 --decode)
 #  - Odroid part
 #  - private key must be b64 encoded https://www.base64encode.org/ and include "---begin rsa"... and "--- end rsa..."
-  - ssh-add <(echo "$SSH_PRIVATE_KEY_ODROID" | base64 --decode)
+#  - new way of doing such a thing : https://docs.gitlab.com/ee/ci/ssh_keys/ --> copy/paste full id_rsa private key (with "begin" and "end" characters, and not b64 encode it
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 

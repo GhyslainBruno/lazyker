@@ -6,7 +6,7 @@
 if [[ $1 == docker ]]; then
 
     echo Installing using docker...
-    docker ps
+    echo "$USER"
     docker build -t ghyslainbruno/lazyker .
     if [ ! "$(docker ps -q -f name=lazyker)" ]; then
         if [ "$(docker ps -aq -f status=exited -f name=lazyker)" ]; then

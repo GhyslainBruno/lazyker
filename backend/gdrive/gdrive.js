@@ -26,9 +26,9 @@ async function storeGDriveAccessToken(code, user) {
 
         let redirectUrl = '';
         if (process.env.NODE_ENV === 'production') {
-            redirectUrl = redirect_uris[2];
-        } else {
             redirectUrl = redirect_uris[1];
+        } else {
+            redirectUrl = redirect_uris[0];
         }
         const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirectUrl);
 

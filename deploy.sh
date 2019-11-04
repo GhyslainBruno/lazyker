@@ -7,8 +7,8 @@ if [[ $1 == docker ]]; then
 
     echo Installing using docker...
     sudo docker build -t ghyslainbruno/lazyker .
-    if [ ! "$(docker ps -q -f name=lazyker)" ]; then
-        if [ "$(docker ps -aq -f status=exited -f name=lazyker)" ]; then
+    if [ ! "$(sudo docker ps -q -f name=lazyker)" ]; then
+        if [ "$(sudo docker ps -aq -f status=exited -f name=lazyker)" ]; then
             # cleanup
             echo 'Old lazyker container exited - cleaning up'
             docker rm lazyker
@@ -16,12 +16,12 @@ if [[ $1 == docker ]]; then
         # run your container
         #docker run -d --name <name> my-docker-image
         echo 'Running new version of lazyker container'
-        docker run -p 8080:80 --restart unless-stopped --name lazyker -d ghyslainbruno/lazyker
+        sudo docker run -p 8080:80 --restart unless-stopped --name lazyker -d ghyslainbruno/lazyker
         else
          echo 'Lazyker container already running - removing and updating and running new one...'
-         docker kill lazyker
-         docker rm lazyker
-         docker run -p 8080:80 --restart unless-stopped --name lazyker -d ghyslainbruno/lazyker
+         sudo docker kill lazyker
+         sudo docker rm lazyker
+         sudo docker run -p 8080:80 --restart unless-stopped --name lazyker -d ghyslainbruno/lazyker
     fi
 
     ## Running backend tests - editing report file -> in the running container

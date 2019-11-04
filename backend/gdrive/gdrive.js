@@ -338,6 +338,7 @@ const downloadMovieFile = async (link, user, title, torrentInfos, unrestrictedLi
         // Upload done after here
         if (lastEvent !== 'destroy') {
             await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({status: 'finished'});
+            await usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({speed: 0});
             // Detaching event listener (to avoid memory leak)
             downloadEventReference.off();
         }

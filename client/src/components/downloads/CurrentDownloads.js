@@ -186,11 +186,19 @@ class CurrentDownloads extends React.Component {
                 case 'gdrive':
                     const finishedDownloads = await usersRef.child(await auth.getUid()).child('/settings/downloads').orderByChild("status").equalTo('finished').once('value');
 
-                    finishedDownloads.forEach(async finishedDownload => {
-                        usersRef.child(await auth.getUid()).child('/settings/downloads').child(finishedDownload.val().id).remove();
-                    });
+                    for (let finishedDownload in finishedDownloads.val()) {
 
-                    console.log(finishedDownloads);
+                        usersRef.child(await auth.getUid()).child('/settings/downloads').child(finishedDownload).remove();
+                    }
+
+                    const errorDownloads = await usersRef.child(await auth.getUid()).child('/settings/downloads').orderByChild("status").equalTo('error').once('value');
+
+                    for (let errorDownload in errorDownloads.val()) {
+
+                        usersRef.child(await auth.getUid()).child('/settings/downloads').child(errorDownload).remove();
+                    }
+
+                    this.props.displaySnackMessage('Downloads cleared');
                     break;
                 case 'nas':
                     const downloadsToRemove = this.state.currentDownloads.tasks.filter(dl => dl.status === "finished").map(dl => dl.id).join(',');

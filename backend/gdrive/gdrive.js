@@ -494,15 +494,24 @@ const setAllGdriveDownloadsInError = async () => {
     users = users.val();
 
     Object.keys(users).forEach(async userKey => {
-        const downloads = users[userKey].settings.downloads;
+        if (users[userKey].settings !== undefined) {
+            const downloads = users[userKey].settings.downloads;
 
-        if (downloads !== undefined) {
-            if (Object.keys(downloads).length > 0) {
-                Object.keys(downloads).map(async downloadKey => {
-                    await usersRef.child(userKey).child('/settings/downloads').child(downloadKey).update({
-                        status: 'error'
+            if (downloads !== undefined) {
+                if (Object.keys(downloads).length > 0) {
+                    Object.keys(downloads).map(async downloadKey => {
+
+                        // Set all downloads still in "downloading" status in error
+                        let download = await usersRef.child(userKey).child('/settings/downloads').child(downloadKey).once('value');
+                        download = download.val();
+                        if (download.status === 'downloading' || download.status === 'paused') {
+                            await usersRef.child(userKey).child('/settings/downloads').child(downloadKey).update({
+                                status: 'error'
+                            })
+                        }
+
                     })
-                })
+                }
             }
         }
     })

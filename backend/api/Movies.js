@@ -218,7 +218,7 @@ module.exports = (app) => {
             let movieInfo = await rp(options);
 
             // To avoid some differences between languages
-            // movieInfo.title = movieInfo.original_title;
+            movieInfo.original_title = movieInfo.title;
 
             movieInfo.images = await rp(imagesRequest);
 

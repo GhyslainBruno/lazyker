@@ -37,18 +37,21 @@ const getTorrentsList = async title => {
     if (process.env.NODE_ENV === 'production') {
         launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
     } else {
-        launchBrowserProperties = {headless: false, timeout: 70000}
+        launchBrowserProperties = {headless: false, ignoreHTTPSErrors: true, timeout: 100000, args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
     }
 
     let browser = {};
 
     try {
+
+        title = title.replace(/[!-]/gi, '');
+
         // console.log(1);
         browser = await puppeteer.launch(launchBrowserProperties);
         // console.log(2);
         const page = await browser.newPage();
         // console.log(3);
-        await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145', {timeout: 60000});
+        await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145', {timeout: 100000});
         // console.log(4);
         await page.waitFor(7000);
         // console.log(5);

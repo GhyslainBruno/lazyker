@@ -1264,7 +1264,7 @@ body {
 /* VERY Little screens */
 @media screen and (max-width: 417px) {
   .titleDownload {
-    width: 100%; } }
+    width: 30%; } }
 
 @media screen and (min-width: 418px) {
   .titleDownload {

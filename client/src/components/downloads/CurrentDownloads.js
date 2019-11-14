@@ -350,58 +350,60 @@ class CurrentDownloads extends React.Component {
                         {this.state.currentDownloads !== null ? this.state.currentDownloads.length > 0 ? this.state.currentDownloads.map(currentDownload => {
                                 return (
                                     <div>
-                                        <div style={{display: 'flex', width: '100%', textAlign: 'left', padding: '5px', flexWrap: 'wrap'}}>
+                                        <div style={{display: 'flex', width: '100%', textAlign: 'left', padding: '5px', flexWrap: 'wrap', justifyContent: 'space-between'}}>
 
                                             {/* Title */}
-                                            <div className="titleDownload" style={{flex: '1'}}>
+                                            <div className="titleDownload">
                                                 <p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{currentDownload.destination}</p>
                                             </div>
 
-                                            {/* State icon */}
-                                            <div style={{width: '8%', padding: '12px', textAlign: 'center'}}>
-                                                {currentDownload.status === 'downloading' ?
-                                                    <Download/>
-                                                    :
-                                                    currentDownload.status === 'error' ?
-                                                        <ErrorRed/>
+                                            <div className="actionDownload">
+                                                {/* State icon */}
+                                                <div style={{width: '8%', padding: '12px', textAlign: 'center'}}>
+                                                    {currentDownload.status === 'downloading' ?
+                                                        <Download/>
                                                         :
-                                                        currentDownload.status === 'waiting' ?
-                                                            <Delayed/>
+                                                        currentDownload.status === 'error' ?
+                                                            <ErrorRed/>
                                                             :
-                                                            currentDownload.status === 'finished' ?
-                                                                <DoneGreen/>
+                                                            currentDownload.status === 'waiting' ?
+                                                                <Delayed/>
                                                                 :
-                                                                currentDownload.status === 'extracting' ?
-                                                                    <Download/>
+                                                                currentDownload.status === 'finished' ?
+                                                                    <DoneGreen/>
                                                                     :
-                                                                    currentDownload.status === 'paused' ?
-                                                                        <PauseFilled/>
+                                                                    currentDownload.status === 'extracting' ?
+                                                                        <Download/>
                                                                         :
-                                                                        currentDownload.status === 'finishing' ?
-                                                                            <Download/>
+                                                                        currentDownload.status === 'paused' ?
+                                                                            <PauseFilled/>
                                                                             :
-                                                                            null
-                                                }
-                                            </div>
+                                                                            currentDownload.status === 'finishing' ?
+                                                                                <Download/>
+                                                                                :
+                                                                                null
+                                                    }
+                                                </div>
 
-                                            {/* Speed */}
-                                            <div style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                                                <p>{currentDownload.speed.toFixed(1).padStart(4, '0')} Mo/s</p>
-                                            </div>
+                                                {/* Speed */}
+                                                <div style={{paddingLeft: '10px', paddingRight: '10px'}}>
+                                                    <p>{currentDownload.speed.toFixed(1).padStart(4, '0')} Mo/s</p>
+                                                </div>
 
-                                            {/* Download buttons */}
-                                            <div style={{textAlign: 'center', margin: 'auto'}} className="buttonsDownload">
-                                                <IconButton style={{padding: '5px'}} disabled={currentDownload.status !== 'paused'}>
-                                                    <PlayCircle onClick={() => this.resumeDownload(currentDownload)}/>
-                                                </IconButton>
+                                                {/* Download buttons */}
+                                                <div style={{textAlign: 'center', margin: 'auto'}} className="buttonsDownload">
+                                                    <IconButton style={{padding: '5px'}} disabled={currentDownload.status !== 'paused'}>
+                                                        <PlayCircle onClick={() => this.resumeDownload(currentDownload)}/>
+                                                    </IconButton>
 
-                                                <IconButton style={{padding: '5px'}} disabled={currentDownload.status !== 'finishing' && currentDownload.status !== 'extracting' && currentDownload.status !== 'downloading'}>
-                                                    <PauseCircle onClick={() => this.pauseDownload(currentDownload)}/>
-                                                </IconButton>
+                                                    <IconButton style={{padding: '5px'}} disabled={currentDownload.status !== 'finishing' && currentDownload.status !== 'extracting' && currentDownload.status !== 'downloading'}>
+                                                        <PauseCircle onClick={() => this.pauseDownload(currentDownload)}/>
+                                                    </IconButton>
 
-                                                <IconButton style={{padding: '5px'}}>
-                                                    <RemoveCircle  onClick={() => this.showRemoveDialog(currentDownload)}/>
-                                                </IconButton>
+                                                    <IconButton style={{padding: '5px'}}>
+                                                        <RemoveCircle  onClick={() => this.showRemoveDialog(currentDownload)}/>
+                                                    </IconButton>
+                                                </div>
                                             </div>
 
                                         </div>

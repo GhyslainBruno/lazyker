@@ -1262,13 +1262,32 @@ body {
     width: 100%; } }
 
 /* VERY Little screens */
-@media screen and (max-width: 417px) {
+@media screen and (max-width: 480px) {
   .titleDownload {
-    width: 30%; } }
+    width: 100%; } }
 
-@media screen and (min-width: 418px) {
+@media screen and (min-width: 480px) and (max-width: 840px) {
   .titleDownload {
-    width: 30%; } }
+    max-width: 40%;
+    flex: 1; } }
+
+@media (min-width: 840px) and (max-width: 1150px) {
+  .titleDownload {
+    width: 100%; } }
+
+@media screen and (min-width: 1151px) {
+  .titleDownload {
+    max-width: 40%;
+    flex: 1; } }
+
+.actionDownload {
+  display: flex; }
+  @media screen and (max-width: 480px) {
+    .actionDownload {
+      width: 100%; } }
+  @media screen and (min-width: 840px) and (max-width: 1150px) {
+    .actionDownload {
+      width: 100%; } }
 
 @media screen and (max-width: 417px) {
   .torrentsTitlesDownload {

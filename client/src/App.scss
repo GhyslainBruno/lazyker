@@ -1,5 +1,6 @@
 $break-small: 320px;
 $break-large: 840px;
+$break-extraLarge: 1150px;
 
 $mdc-theme-primary: white;
 $mdc-theme-secondary: red;
@@ -224,12 +225,45 @@ body {
 
 /* VERY Little screens */
 .titleDownload {
-  @media screen and (max-width: 417px) {
+
+  //max-width: 70%;
+
+  @media screen and (max-width: 480px) {
     width: 100%;
   }
 
-  @media screen and (min-width: 418px) {
-    width: 30%;
+  @media screen and (min-width: 480px) and (max-width: $break-large) {
+    max-width: 40%;
+    flex: 1;
+  }
+
+  @media (min-width: $break-large) and (max-width: $break-extraLarge) {
+    width: 100%;
+  }
+
+  @media screen and (min-width: $break-extraLarge + 1) {
+    max-width: 40%;
+    flex: 1;
+  }
+}
+
+.actionDownload {
+  display: flex;
+
+  @media screen and (max-width: 480px) {
+    width: 100%;
+  }
+
+  @media screen and (min-width: 480px) and (max-width: $break-large) {
+
+  }
+
+  @media screen and (min-width: $break-large) and (max-width: $break-extraLarge) {
+    width: 100%;
+  }
+
+  @media screen and (min-width: $break-extraLarge + 1) {
+
   }
 }
 

@@ -57,7 +57,7 @@ if [[ $1 == docker ]]; then
         echo Running backend tests...
         cd backend
         # Only Running these tests for now --> TODO write (a lot) more tests !
-        docker exec -it lazyker /bin/sh -c "cd backend;npm test Cloudscrapper;pwd=`pwd` && sed -i -e \"s|\/lazyker\/app\/backend|\/root\/src|g\" coverage/lcov.info"
+        sudo docker exec -it lazyker /bin/sh -c "cd backend;npm test Cloudscrapper;pwd=`pwd` && sed -i -e \"s|\/lazyker\/app\/backend|\/root\/src|g\" coverage/lcov.info"
 
     elif [[ $1 == test_frontent ]]; then
         echo Running frontend tests...
@@ -67,7 +67,7 @@ if [[ $1 == docker ]]; then
     elif [[ $1 == backend_analysis ]]; then
         echo Running backend analisys...
         cd backend
-        docker run -ti -v $(pwd):/usr/src newtmitch/sonar-scanner \
+        sudo docker run -ti -v $(pwd):/usr/src newtmitch/sonar-scanner \
               -Dsonar.projectKey=lazyker-back \
               -Dsonar.projectName='Lazyker Back' \
               -Dsonar.organization=ghyslainbruno \
@@ -84,7 +84,7 @@ if [[ $1 == docker ]]; then
     elif [[ $1 == frontend_analysis ]]; then
         echo Running frontend analisis...
         cd client
-        docker run -ti -v $(pwd):/usr/src newtmitch/sonar-scanner \
+        sudo docker run -ti -v $(pwd):/usr/src newtmitch/sonar-scanner \
           -Dsonar.projectKey=lazyker-front \
           -Dsonar.projectName='Lazyker Front' \
           -Dsonar.organization=ghyslainbruno \

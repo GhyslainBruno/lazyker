@@ -58,7 +58,7 @@ frontend_analysis:
   only:
     - nuc
 
-deploy_odroid:
+deploy_nuc:
   stage: deploy
   environment:
     name: production

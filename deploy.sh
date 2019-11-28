@@ -16,12 +16,12 @@ if [[ $1 == docker ]]; then
         # run your container
         #docker run -d --name <name> my-docker-image
         echo 'Running new version of lazyker container'
-        sudo docker run -p 8080:80 --restart unless-stopped --name lazyker -d ghyslainbruno/lazyker
+        sudo docker run -p 8080:80 --restart unless-stopped -v /home/ghyslain/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
         else
          echo 'Lazyker container already running - removing and updating and running new one...'
          sudo docker kill lazyker
          sudo docker rm lazyker
-         sudo docker run -p 8080:80 --restart unless-stopped --name lazyker -d ghyslainbruno/lazyker
+         sudo docker run -p 8080:80 --restart unless-stopped -v /home/ghyslain/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
     fi
 
     ## Running backend tests - editing report file -> in the running container
@@ -57,7 +57,7 @@ if [[ $1 == docker ]]; then
         echo Running backend tests...
         cd backend
         # Only Running these tests for now --> TODO write (a lot) more tests !
-        npm test Cloudscrapper
+        docker exec -it lazyker /bin/sh -c "cd backend;npm test Cloudscrapper;pwd=`pwd` && sed -i -e \"s|\/lazyker\/app\/backend|\/root\/src|g\" coverage/lcov.info"
 
     elif [[ $1 == test_frontent ]]; then
         echo Running frontend tests...

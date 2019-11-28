@@ -53,6 +53,45 @@ if [[ $1 == docker ]]; then
 
     cd /home/ghyslain/lazyker
 
+    elif [[ $1 == test_backend ]]; then
+        echo Running backend tests...
+        cd backend
+        # Only Running these tests for now --> TODO write (a lot) more tests !
+        npm test Cloudscrapper
+
+    elif [[ $1 == test_frontent ]]; then
+        echo Running frontend tests...
+        cd client
+        # No frontend tests written for now --> TODO write a lot of tests !
+
+    elif [[ $1 == backend_analysis ]]; then
+        echo Running backend analisys...
+        cd backend
+        docker run -ti -v $(pwd):/usr/src newtmitch/sonar-scanner \
+              -Dsonar.projectKey=lazyker-back \
+              -Dsonar.projectName='Lazyker Back' \
+              -Dsonar.organization=ghyslainbruno \
+              -Dsonar.sources=. \
+              -Dsonar.tests=. \
+              -Dsonar.test.inclusions='**/*.test.js' \
+              -Dsonar.exclusions='**/node_modules/**,**/coverage/**,**/*.json/**,**/*.pem/**,**/*.xml/**' \
+              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+              -Dsonar.testExecutionReportPaths=coverage/test-report.xml \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=28a4ef2881be958ff37da6deee7b915816c32a04
+
+
+    elif [[ $1 == frontend_analysis ]]; then
+        echo Running frontend analisis...
+        cd client
+        docker run -ti -v $(pwd):/usr/src newtmitch/sonar-scanner \
+          -Dsonar.projectKey=lazyker-front \
+          -Dsonar.projectName='Lazyker Front' \
+          -Dsonar.organization=ghyslainbruno \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=28a4ef2881be958ff37da6deee7b915816c32a04
+
 else
 
     # pm2 should already be running (in sudo mode) with watch set to true -> to properly update the whole application

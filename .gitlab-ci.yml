@@ -13,6 +13,9 @@ before_script:
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
 stages:
+  - pull
+  - test
+  - analysis
   - deploy
 
 deploy_dedibox:
@@ -25,12 +28,52 @@ deploy_dedibox:
   only:
     - dedibox
 
+pull_changes:
+  stage: pull
+    environment:
+      name: production
+      url: lazyker.ghyslain.xyz
+    script:
+      - ssh ghyslain@ghyslain.xyz "cd lazyker && git reset --hard && git clean -f && git pull"
+    only:
+      - nuc
+
+test_backend:
+  stage: test
+    environment:
+      name: production
+      url: lazyker.ghyslain.xyz
+    script:
+      - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh test_backend"
+    only:
+      - nuc
+
+backend_analysis:
+  stage: analysis
+    environment:
+      name: production
+      url: lazyker.ghyslain.xyz
+    script:
+      - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh backend_analysis"
+    only:
+      - nuc
+
+frontend_analysis:
+  stage: analysis
+    environment:
+      name: production
+      url: lazyker.ghyslain.xyz
+    script:
+      - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh frontend_analysis"
+    only:
+      - nuc
+
 deploy_odroid:
   stage: deploy
   environment:
     name: production
     url: lazyker.ghyslain.xyz
   script:
-    - ssh ghyslain@ghyslain.xyz "cd lazyker && git reset --hard && git clean -f && git pull && ./deploy.sh docker"
+    - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh docker"
   only:
     - nuc

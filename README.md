@@ -54,11 +54,11 @@ Indeed, this project allowed me to practice :
 
 And probably many more I'm forgetting.  
 
-### <u>Lazyker</u> : https://dedibox.ghyslain.xyz (<u>the project</u>)
-<s>#### SonarQube : http://sonarqube.ghyslain.xyz/projects (code analysis and quality report)</s>
+### <u>Lazyker</u> : https://lazyker.ghyslain.xyz (<u>the project</u>)
+#### SonarQube : https://sonarcloud.io/organizations/ghyslainbruno/projects (code analysis and quality report)
 #### Issues / Features board : https://gitlab.com/ghyslainbruno/lazyker/boards/781495
  
-# Cheat sheet for personnal use 
+# Cheat sheet :warning: For personnal use :warning: 
 
 ### With Docker ([ghyslainbruno/lazyker](https://hub.docker.com/r/ghyslainbruno/lazyker/))
 
@@ -113,6 +113,9 @@ Can, for now, be build in dev / prod mode :
 **Careful : in Settings component, a callback url for OAuth realdebrid authentication is set to lazyker.herokuapp.com**
 
 ## To get SSL certificate
+
+:warning: DEPRECATED :warning: --> Now implemented using [Caddy](https://hub.docker.com/r/abiosoft/caddy/)
+
 - Connect to ssh server
 - run ````docker stop lazyker```` to let the 80 port accessible to certbot program
 - sudo /path/to/certbot-auto certonly (for interactive session)
@@ -125,4 +128,3 @@ Can, for now, be build in dev / prod mode :
 - then (for now) take the new certificates and commit it to the project
 
 --> Later : automatize certificates renewals and share the volume with docker lazyker container (in order to not doing anything anymore)
-  

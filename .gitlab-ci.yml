@@ -18,55 +18,45 @@ stages:
   - analysis
   - deploy
 
-deploy_dedibox:
-  stage: deploy
-  environment:
-    name: production
-    url: dedibox.ghyslain.xyz
-  script:
-    - ssh ghys@dedibox.ghyslain.xyz "cd lazyker && git pull && ./deploy.sh"
-  only:
-    - dedibox
-
 pull_changes:
   stage: pull
-    environment:
-      name: production
-      url: lazyker.ghyslain.xyz
-    script:
-      - ssh ghyslain@ghyslain.xyz "cd lazyker && git reset --hard && git clean -f && git pull"
-    only:
-      - nuc
+  environment:
+    name: production
+    url: lazyker.ghyslain.xyz
+  script:
+    - ssh ghyslain@ghyslain.xyz "cd lazyker && git reset --hard && git clean -f && git pull"
+  only:
+    - nuc
 
 test_backend:
   stage: test
-    environment:
-      name: production
-      url: lazyker.ghyslain.xyz
-    script:
-      - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh test_backend"
-    only:
-      - nuc
+  environment:
+    name: production
+    url: lazyker.ghyslain.xyz
+  script:
+    - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh test_backend"
+  only:
+    - nuc
 
 backend_analysis:
   stage: analysis
-    environment:
-      name: production
-      url: lazyker.ghyslain.xyz
-    script:
-      - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh backend_analysis"
-    only:
-      - nuc
+  environment:
+    name: production
+    url: lazyker.ghyslain.xyz
+  script:
+    - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh backend_analysis"
+  only:
+    - nuc
 
 frontend_analysis:
   stage: analysis
-    environment:
-      name: production
-      url: lazyker.ghyslain.xyz
-    script:
-      - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh frontend_analysis"
-    only:
-      - nuc
+  environment:
+    name: production
+    url: lazyker.ghyslain.xyz
+  script:
+    - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh frontend_analysis"
+  only:
+    - nuc
 
 deploy_odroid:
   stage: deploy

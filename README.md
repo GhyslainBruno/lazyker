@@ -54,8 +54,9 @@ Indeed, this project allowed me to practice :
 
 And probably many more I'm forgetting.  
 
-### <u>Lazyker</u> : https://lazyker.ghyslain.xyz (<u>the project</u>)
-#### SonarQube : https://sonarcloud.io/organizations/ghyslainbruno/projects (code analysis and quality report)
+### :white_check_mark: <u>Lazyker</u> : https://lazyker.ghyslain.xyz (<u>the project</u>)
+#### :vertical_traffic_light: SonarQube : https://sonarcloud.io/organizations/ghyslainbruno/projects (code analysis and quality report)
+#### :rocket: LightHouse : https://lazyker.ghyslain.xyz/lighthouse_report.html (lighthouse audit generated at each push)
 #### Issues / Features board : https://gitlab.com/ghyslainbruno/lazyker/boards/781495
  
 # Cheat sheet :warning: For personnal use :warning: 

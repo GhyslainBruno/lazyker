@@ -15,8 +15,8 @@ before_script:
 stages:
   - pull
   - test
-  - analysis
   - deploy
+  - analysis
 
 pull_changes:
   stage: pull

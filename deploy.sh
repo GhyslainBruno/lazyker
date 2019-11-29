@@ -80,6 +80,9 @@ if [[ $1 == docker ]]; then
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=28a4ef2881be958ff37da6deee7b915816c32a04
 
+    elif [[ $1 == lighthouse_analysis ]]; then
+        echo Running Lighthouse analisys...
+        sudo docker exec -t lazyker /bin/sh -c "cd backend/client_build && echo y | lighthouse 'https://lazyker.ghyslain.xyz' --chrome-flags='--headless --no-sandbox' --output-path='lighthouse_report.html'"
 
     elif [[ $1 == frontend_analysis ]]; then
         echo Running frontend analisis...

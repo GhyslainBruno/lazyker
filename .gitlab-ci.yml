@@ -38,6 +38,16 @@ test_backend:
   only:
     - nuc
 
+deploy_nuc:
+  stage: deploy
+  environment:
+    name: production
+    url: lazyker.ghyslain.xyz
+  script:
+    - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh docker"
+  only:
+    - nuc
+
 backend_analysis:
   stage: analysis
   environment:
@@ -58,12 +68,12 @@ frontend_analysis:
   only:
     - nuc
 
-deploy_nuc:
-  stage: deploy
+lighthouse_analysis:
+  stage: analysis
   environment:
     name: production
     url: lazyker.ghyslain.xyz
   script:
-    - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh docker"
+    - ssh ghyslain@ghyslain.xyz "cd lazyker && ./deploy.sh lighthouse_analysis"
   only:
     - nuc

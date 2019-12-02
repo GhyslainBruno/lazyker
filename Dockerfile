@@ -107,6 +107,7 @@ RUN rm -rf client
 
 # Install lighthouse globally to be able to run a full lighthouse analysis in the CI pipeline
 RUN npm install -g lighthouse
+RUN mkdir /lighthouse
 
 ENV NODE_ENV=production
 EXPOSE 80

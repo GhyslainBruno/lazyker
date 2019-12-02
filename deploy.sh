@@ -16,12 +16,12 @@ if [[ $1 == docker ]]; then
         # run your container
         #docker run -d --name <name> my-docker-image
         echo 'Running new version of lazyker container'
-        sudo docker run -p 8080:80 --restart unless-stopped -v /home/ghyslain/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
+        sudo docker run -p 8080:80 --restart unless-stopped -v /home/ghyslain/lazyker/backend/coverage:/lazyker/app/backend/coverage -v /home/ghyslain/lighthouse:/lighthouse --name lazyker -d ghyslainbruno/lazyker
         else
          echo 'Lazyker container already running - removing and updating and running new one...'
          sudo docker kill lazyker
          sudo docker rm lazyker
-         sudo docker run -p 8080:80 --restart unless-stopped -v /home/ghyslain/lazyker/backend/coverage:/lazyker/app/backend/coverage --name lazyker -d ghyslainbruno/lazyker
+         sudo docker run -p 8080:80 --restart unless-stopped -v /home/ghyslain/lazyker/backend/coverage:/lazyker/app/backend/coverage -v /home/ghyslain/lighthouse:/lighthouse --name lazyker -d ghyslainbruno/lazyker
     fi
 
     ## Running backend tests - editing report file -> in the running container
@@ -82,7 +82,7 @@ if [[ $1 == docker ]]; then
 
     elif [[ $1 == lighthouse_analysis ]]; then
         echo Running Lighthouse analisys...
-        sudo docker exec -t lazyker /bin/sh -c "cd backend/client_build && echo y | lighthouse 'https://lazyker.ghyslain.xyz' --chrome-flags='--headless --no-sandbox' --output-path='lighthouse_report.html'"
+        sudo docker exec -t lazyker /bin/sh -c "cd /lighthouse && echo y | lighthouse 'https://lazyker.ghyslain.xyz' --chrome-flags='--headless --no-sandbox' --output-path='index.html'"
 
     elif [[ $1 == frontend_analysis ]]; then
         echo Running frontend analisis...

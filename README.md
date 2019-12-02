@@ -56,7 +56,7 @@ And probably many more I'm forgetting.
 
 ### :white_check_mark: <u>Lazyker</u> : https://lazyker.ghyslain.xyz (<u>the project</u>)
 #### :vertical_traffic_light: SonarQube : https://sonarcloud.io/organizations/ghyslainbruno/projects (code analysis and quality report)
-#### :rocket: LightHouse : https://lazyker.ghyslain.xyz/lighthouse_report.html (lighthouse audit generated at each push)
+#### :rocket: LightHouse : https://lighthouse.lazyker.ghyslain.xyz/ (lighthouse audit generated at each push)
 #### Issues / Features board : https://gitlab.com/ghyslainbruno/lazyker/boards/781495
  
 # Cheat sheet :warning: For personnal use :warning: 
@@ -129,3 +129,50 @@ Can, for now, be build in dev / prod mode :
 - then (for now) take the new certificates and commit it to the project
 
 --> Later : automatize certificates renewals and share the volume with docker lazyker container (in order to not doing anything anymore)
+
+## To serve lighthouse CI html report : 
+
+I simply serve html files with another web server ([article example](https://www.dailysmarty.com/posts/steps-for-deploying-a-static-html-site-with-docker-and-nginx)).
+
+So here is the Docker command I use in the /lighthouse directory in my main container :  
+
+```docker run -d -p 8082:80 --restart unless-stopped --name lighthouse -v /home/ghyslain/lighthouse/:/usr/share/nginx/html nginx:alpine```
+
+<i>Doing that, every commit will change index.html file in this directory</i>
+
+TODO : Use docker_compose to do the whole thing. 
+
+## Caddy : 
+
+Here is the Caddy file I use (in ~/) : 
+
+```
+lazyker.ghyslain.xyz {
+  proxy / 192.168.1.12:8080
+}
+
+lighthouse.lazyker.ghyslain.xyz {
+  proxy / 192.168.1.12:8082
+}
+
+dedibox.ghyslain.xyz {
+  proxy / 192.168.1.12:8080
+}
+
+plex.ghyslain.xyz {
+  proxy / 192.168.1.12:32400
+}
+
+livebox.ghyslain.xyz {
+  proxy / 192.168.1.1
+}
+
+domotique.ghyslain.xyz {
+  proxy / 192.168.1.12:8081
+}
+
+nuc.ghyslain.xyz {
+  proxy / 192.168.1.12:19999
+}
+``` 
+

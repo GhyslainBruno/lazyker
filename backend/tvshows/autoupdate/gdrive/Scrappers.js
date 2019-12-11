@@ -34,7 +34,7 @@ const downloadTorrentsToDebrider = async (lastEpisodesFromStorage, user, qualiti
                 const torrentPageUrlNewSeason = await ygg.getLink(show, user, qualities);
 
                 if (torrentPageUrlNewSeason !== null) {
-                    await ygg.downloadTorrent(torrentPageUrl, user, show);
+                    await ygg.downloadTorrent(torrentPageUrlNewSeason, user, show);
                 } else {
                     await logger.info(`${show.name} S${show.lastSeason}E${show.lastEpisode} - no new episode found`, user);
                 }

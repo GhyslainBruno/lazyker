@@ -201,7 +201,7 @@ module.exports = (app) => {
             res.send({message: 'Auto-update started'});
 
             // TODO handle gdrive or nas depending on settings selection
-            await autoupdateGdrive.startUpdate(await admin.auth().getUser("GN1K5421gaVWjVMGReJYmkf2TNH3"));
+            await autoupdateGdrive.startUpdate(await admin.auth().getUser("OmbDjWXTCdb5ZusQTyOP2Psa1Ws1"));
 
             // // Only keeping 'nas' users for now to autoupdate tvShows
             // const snapshot = await usersRef.child('/').orderByChild('/settings/storage').equalTo('nas').once('value');

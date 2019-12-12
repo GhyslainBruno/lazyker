@@ -81,3 +81,14 @@ const setNewEpisodeBadgeVisible = async (user, show) => {
     await usersRef.child(user.uid).child(`/shows/${show.lazyker_id}`).update({episode: true});
 };
 module.exports.setNewEpisodeBadgeVisible = setNewEpisodeBadgeVisible;
+
+/**
+ *
+ * @param user
+ * @returns {Promise<admin.database.DataSnapshot>}
+ */
+const getTorrentsDownloadedFromDatabase = async user => {
+    const snapshot = await usersRef.child(user.uid).child('/torrentsDownloaded').orderByChild("mediaInfos/isShow").equalTo(true).once('value');
+    return snapshot.val();
+};
+module.exports.getTorrentsDownloadedFromDatabase = getTorrentsDownloadedFromDatabase;

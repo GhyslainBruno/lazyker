@@ -57,57 +57,90 @@ module.exports.getTvShowsToUpdateFromGdrive = getTvShowsToUpdateFromGdrive;
  * Returns the last episodes of tv shows present in google drive folders
  * @param user
  * @param shows
- * @returns {Promise<void>}
+ * @param torrentsDownloadedFromDatabase
+ * @returns {Promise<*>}
  */
-const getLastEpisodes = async (user, shows) => {
+const getLastEpisodes = async (user, shows, torrentsDownloadedFromDatabase) => {
 
     try {
 
         await pMap(shows, async show => {
 
-            // Checking if the show we want to get the last episode/season number is a new one, is fo --> bypass the process and set the numbers manually
-            if (show.isNew !== undefined && show.isNew) {
+            // Getting the keys of torrents (in firebase database) about thins particular show
+            let keyTorrentsOfThisShow = [];
 
-                show.lastSeason = '01';
-                show.lastEpisode = '0';
+            if (torrentsDownloadedFromDatabase !== null) {
+                keyTorrentsOfThisShow = Object.keys(torrentsDownloadedFromDatabase).filter(id => torrentsDownloadedFromDatabase[id].mediaInfos.name === show.name);
+            }
+
+            // Checking if there are some torrents (in RD) that are about the tv show wanted
+            // If so, then the next episode numbers will be found using the torrents information (NOT THE FILES INFORMATION !)
+            if (keyTorrentsOfThisShow.length > 0) {
+
+                let lastSeason = '01';
+                let lastEpisode = '0';
+
+                // Getting the latest episode torrents (basically getting the higher numbers)
+                keyTorrentsOfThisShow.forEach(keyTorrent => {
+                    if (parseInt(torrentsDownloadedFromDatabase[keyTorrent].mediaInfos.lastSeason) > parseInt(lastSeason)) {
+                        lastSeason = torrentsDownloadedFromDatabase[keyTorrent].mediaInfos.lastSeason;
+                        lastEpisode = torrentsDownloadedFromDatabase[keyTorrent].mediaInfos.lastEpisode;
+                    } else {
+                        if (parseInt(torrentsDownloadedFromDatabase[keyTorrent].mediaInfos.lastEpisode) > parseInt(lastEpisode)) {
+                            lastEpisode = torrentsDownloadedFromDatabase[keyTorrent].mediaInfos.lastEpisode;
+                        }
+                    }
+                });
+
+                // Setting the last episode/season numbers for this show, using torrents
+                show.lastSeason = lastSeason;
+                show.lastEpisode = lastEpisode;
 
             } else {
+                // Checking if the show we want to get the last episode/season number is a new one, is fo --> bypass the process and set the numbers manually
+                if (show.isNew !== undefined && show.isNew) {
 
-                const seasons = await gdrive.getFilesList(user, show);
+                    show.lastSeason = '01';
+                    show.lastEpisode = '0';
 
-                let lastSeasonFolder = '';
+                } else {
 
-                // If season is empty
-                if (await gdrive.isFolderEmpty(user, seasons[seasons.length-1])) {
-                    // If there is more thant 1 season folder
-                    if (seasons.files.length > 1) {
-                        shows.filter(file => file.name === show.name)[0].lastSeason = seasons[seasons.length-2].name.match(/\d+/)[0];
-                        lastSeasonFolder = seasons[seasons.length-2];
+                    const seasons = await gdrive.getFilesList(user, show);
+
+                    let lastSeasonFolder = '';
+
+                    // If season is empty
+                    if (await gdrive.isFolderEmpty(user, seasons[seasons.length-1])) {
+                        // If there is more thant 1 season folder
+                        if (seasons.files.length > 1) {
+                            shows.filter(file => file.name === show.name)[0].lastSeason = seasons[seasons.length-2].name.match(/\d+/)[0];
+                            lastSeasonFolder = seasons[seasons.length-2];
+                        } else {
+                            shows.filter(file => file.name === show.name)[0].lastSeason = seasons[seasons.length-1].name.match(/\d+/)[0];
+                            lastSeasonFolder = seasons[seasons.length-1];
+                        }
                     } else {
                         shows.filter(file => file.name === show.name)[0].lastSeason = seasons[seasons.length-1].name.match(/\d+/)[0];
                         lastSeasonFolder = seasons[seasons.length-1];
                     }
-                } else {
-                    shows.filter(file => file.name === show.name)[0].lastSeason = seasons[seasons.length-1].name.match(/\d+/)[0];
-                    lastSeasonFolder = seasons[seasons.length-1];
-                }
 
-                const episodes = await gdrive.getFilesList(user, lastSeasonFolder);
+                    const episodes = await gdrive.getFilesList(user, lastSeasonFolder);
 
-                if (await gdrive.isFolderEmpty(user, episodes[episodes.length-1])) {
+                    if (await gdrive.isFolderEmpty(user, episodes[episodes.length-1])) {
 
-                    if (episodes.length > 1) {
-                        shows.filter(file => file.name === show.name)[0].lastEpisode = episodes[episodes.length-2].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
+                        if (episodes.length > 1) {
+                            shows.filter(file => file.name === show.name)[0].lastEpisode = episodes[episodes.length-2].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
+                        } else {
+                            shows.filter(file => file.name === show.name)[0].lastEpisode = episodes[episodes.length-1].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
+                        }
+
                     } else {
+
                         shows.filter(file => file.name === show.name)[0].lastEpisode = episodes[episodes.length-1].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
+
                     }
 
-                } else {
-
-                    shows.filter(file => file.name === show.name)[0].lastEpisode = episodes[episodes.length-1].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
-
                 }
-
             }
 
         }, {concurency: 10});

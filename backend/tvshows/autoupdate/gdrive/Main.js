@@ -25,7 +25,11 @@ const startUpdate = async user => {
 
     try {
 
-        // TODO should verify if some torrents/downloads are still doing !!
+        /**
+         * Before everything : get the tv shows torrents from realdebrid to check some previous downloads
+         * @type {admin.database.DataSnapshot}
+         */
+        const torrentsDownloadedFromDatabase = await database.getTorrentsDownloadedFromDatabase(user);
 
         /**
          * 1 - Get Tv Shows path from Firebase database
@@ -99,7 +103,7 @@ const startUpdate = async user => {
                 }
             ]
          */
-        let lastEpisodes = await storage.getLastEpisodes(user, showsToUpdateFromFiles);
+        let lastEpisodes = await storage.getLastEpisodes(user, showsToUpdateFromFiles, torrentsDownloadedFromDatabase);
 
         /**
          * 7 - get the qualities wanted by the user for Tv Shows

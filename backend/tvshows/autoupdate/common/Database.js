@@ -69,3 +69,15 @@ const getLangWantedForThisTvShow = async (show, user) => {
 
 };
 module.exports.getLangWantedForThisTvShow = getLangWantedForThisTvShow;
+
+/**
+ * Set a show "new episode" badge visible
+ * (basically to tell the user that a new episode of his tv show has been found and downloaded in Realdebrid)
+ * @param user
+ * @param show
+ * @returns {Promise<void>}
+ */
+const setNewEpisodeBadgeVisible = async (user, show) => {
+    await usersRef.child(user.uid).child(`/shows/${show.lazyker_id}`).update({episode: true});
+};
+module.exports.setNewEpisodeBadgeVisible = setNewEpisodeBadgeVisible;

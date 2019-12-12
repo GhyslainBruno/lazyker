@@ -31,6 +31,7 @@ const getTvShowsToUpdateFromGdrive = async (showsFromGdrive, showsFromDb, tvShow
                 // Using Tv Show title from tmdb and not the one used when naming the folder
                 showFomFilesToUpdate.name = showFromDb.title;
                 showFomFilesToUpdate.isNew = false;
+                showFomFilesToUpdate.lazyker_id = showFromDb.id;
 
                 showsFromFilesToUpdate.push(showFomFilesToUpdate)
             } else {
@@ -39,6 +40,7 @@ const getTvShowsToUpdateFromGdrive = async (showsFromGdrive, showsFromDb, tvShow
                 showsFromFilesToUpdate.push({
                     isNew: true,
                     name: showFromDb.title,
+                    lazyker_id: showFromDb.id
                 })
             }
 

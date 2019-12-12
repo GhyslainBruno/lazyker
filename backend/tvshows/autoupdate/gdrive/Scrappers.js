@@ -2,6 +2,7 @@ const pMap = require('p-map');
 const showsScrapers = require('../scrappers/main');
 const ygg = require('../scrappers/torrent/ygg');
 const logger = require('../../../logs/logger');
+const database = require('../common/Database');
 
 /**
  * Find new Tv Shows episodes
@@ -23,6 +24,7 @@ const downloadTorrentsToDebrider = async (lastEpisodesFromStorage, user, qualiti
 
             if (torrentPageUrl !== null) {
                 await ygg.downloadTorrent(torrentPageUrl, user, show);
+                await database.setNewEpisodeBadgeVisible(user, show);
             } else {
 
                 await logger.info(`${show.name} S${show.lastSeason}E${show.lastEpisode} - no new episode found -> looking for next season`, user);
@@ -35,6 +37,7 @@ const downloadTorrentsToDebrider = async (lastEpisodesFromStorage, user, qualiti
 
                 if (torrentPageUrlNewSeason !== null) {
                     await ygg.downloadTorrent(torrentPageUrlNewSeason, user, show);
+                    await database.setNewEpisodeBadgeVisible(user, show);
                 } else {
                     await logger.info(`${show.name} S${show.lastSeason}E${show.lastEpisode} - no new episode found`, user);
                 }

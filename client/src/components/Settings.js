@@ -38,14 +38,12 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import * as routes from '../constants/routes';
 import { Link as RouterLink } from 'react-router-dom';
-
 import GooglePicker from 'react-google-picker';
-
 import gapi from 'gapi-client';
 import Chip from "@material-ui/core/Chip/Chip";
+import Logs from "./settings/logs";
 
 let auth2 = null;
-
 
 class Settings extends Component {
 
@@ -54,10 +52,7 @@ class Settings extends Component {
 
         this.state = {
             autoUpdate: null,
-            output: [],
             h265: false,
-            snack: false,
-            snackBarMessage: null,
             loading: false,
             moviesPath: '',
             tvShowsPath: '',
@@ -118,48 +113,6 @@ class Settings extends Component {
                 this.props.history.push('/settings');
             }
         }
-    };
-
-    loadOutput = async () => {
-        try {
-            this.setState({output: [], loading: true});
-            let response = await fetch('/api/logs', {
-                method: 'GET',
-                headers: {
-                    'token': await auth.getIdToken()
-                }
-            });
-            response = await response.json();
-            this.setState({ output: response.map(el => {return {text: el.textPayload, time: el.timestamp.seconds * 1000}}) , loading: false})
-        } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error fetching logs', output: [], loading: false})
-        }
-
-    };
-
-    clearLogs = async () => {
-        try {
-            this.setState({output: [], loading: true});
-
-            let response = await fetch('/api/logs', {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'token': await auth.getIdToken()
-                },
-                body: JSON.stringify({
-                    logs: 'logs'
-                })
-            });
-
-            response = await response.json();
-            this.setState({snack: true, snackBarMessage: response.message});
-            this.loadOutput();
-        } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error clearing logs'})
-        }
-
     };
 
     loadSettings = async () => {
@@ -485,6 +438,10 @@ class Settings extends Component {
 
     handleH265Change = name => event => {
         this.setState({ [name]: event.target.checked });
+    };
+
+    displaySnackMessage = message => {
+        this.setState({snack: true, snackBarMessage: message});
     };
 
     render() {
@@ -817,11 +774,6 @@ class Settings extends Component {
                                             <div>
                                                 <Grid container spacing={0}>
 
-                                                    {/*<Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>*/}
-                                                    {/*NAS configuration*/}
-                                                    {/*</Grid>*/}
-
-
                                                     <Grid item xs={12} style={{padding: '6px'}}>
                                                         <FormControl fullWidth>
                                                             <TextField
@@ -935,127 +887,6 @@ class Settings extends Component {
                                     </Grid>
                                 </ExpansionPanelDetails>
 
-                                {/*<Divider/>*/}
-
-                                {/*<ExpansionPanelDetails>*/}
-
-                                {/*<Grid container spacing={0}>*/}
-
-                                {/*/!*<Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>*!/*/}
-                                {/*/!*NAS configuration*!/*/}
-                                {/*/!*</Grid>*!/*/}
-
-
-                                {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
-                                {/*<FormControl fullWidth>*/}
-                                {/*<TextField*/}
-                                {/*label="Path to Movies"*/}
-                                {/*id="movie-path"*/}
-                                {/*variant="outlined"*/}
-                                {/*value={this.state.moviesPath}*/}
-                                {/*onChange={(event) => this.setState({moviesPath: event.target.value})}*/}
-                                {/*/>*/}
-                                {/*</FormControl>*/}
-                                {/*</Grid>*/}
-
-                                {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
-                                {/*<FormControl fullWidth>*/}
-                                {/*<TextField*/}
-                                {/*label="Path to Tv Shows"*/}
-                                {/*id="tv-shows-path"*/}
-                                {/*variant="outlined"*/}
-                                {/*value={this.state.tvShowsPath}*/}
-                                {/*onChange={(event) => this.setState({tvShowsPath: event.target.value})}*/}
-                                {/*/>*/}
-                                {/*</FormControl>*/}
-                                {/*</Grid>*/}
-
-                                {/*<Grid item xs={12} sm={2} style={{padding: '6px', position: 'relative', marginRight: '1.6rem', marginTop: '1rem', textAlign: 'left'}}>*/}
-                                {/*<FormControl className="protocolInput" variant="outlined" fullWidth style={{minWidth: '80px', margin: '0 auto', bottom: '6px'}}>*/}
-                                {/*<Select*/}
-                                {/*value={this.state.protocol}*/}
-                                {/*onChange={this.handleProtocolChange}*/}
-                                {/*input={*/}
-                                {/*<OutlinedInput*/}
-                                {/*labelWidth={0}*/}
-                                {/*name="protocol"*/}
-                                {/*id="protocol"*/}
-                                {/*/>*/}
-                                {/*}>*/}
-
-                                {/*<MenuItem value={'http'}>http</MenuItem>*/}
-                                {/*<MenuItem value={'https'}>https</MenuItem>*/}
-                                {/*</Select>*/}
-                                {/*/!*<FormHelperText>Protocol</FormHelperText>*!/*/}
-                                {/*</FormControl>*/}
-                                {/*</Grid>*/}
-
-                                {/*<Grid item xs={12} sm={7} style={{padding: '6px'}}>*/}
-                                {/*<FormControl fullWidth>*/}
-                                {/*<TextField*/}
-                                {/*label="Host"*/}
-                                {/*id="host"*/}
-                                {/*variant="outlined"*/}
-                                {/*value={this.state.host}*/}
-                                {/*onChange={(event) => this.setState({host: event.target.value})}*/}
-                                {/*/>*/}
-                                {/*</FormControl>*/}
-                                {/*</Grid>*/}
-
-                                {/*<Grid item xs={4} sm={2} style={{padding: '6px'}}>*/}
-                                {/*<FormControl fullWidth>*/}
-                                {/*<TextField*/}
-                                {/*label="Port"*/}
-                                {/*id="port"*/}
-                                {/*variant="outlined"*/}
-                                {/*value={this.state.port}*/}
-                                {/*onChange={(event) => this.setState({port: event.target.value})}*/}
-                                {/*/>*/}
-                                {/*</FormControl>*/}
-                                {/*</Grid>*/}
-
-                                {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
-                                {/*<FormControl fullWidth>*/}
-                                {/*<TextField*/}
-                                {/*label="Username"*/}
-                                {/*id="nas-username"*/}
-                                {/*variant="outlined"*/}
-                                {/*value={this.state.nasUsername}*/}
-                                {/*onChange={(event) => this.setState({nasUsername: event.target.value})}*/}
-                                {/*/>*/}
-                                {/*</FormControl>*/}
-                                {/*</Grid>*/}
-
-                                {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
-                                {/*<FormControl fullWidth>*/}
-                                {/*<TextField*/}
-                                {/*label="Password"*/}
-                                {/*id="nas-password"*/}
-                                {/*type={this.state.showPassword ? 'text' : 'password'}*/}
-                                {/*variant="outlined"*/}
-                                {/*value={this.state.nasPassword}*/}
-                                {/*onChange={(event) => this.setState({nasPassword: event.target.value})}*/}
-                                {/*InputProps={{*/}
-                                {/*endAdornment: (*/}
-                                {/*<InputAdornment position="end">*/}
-                                {/*<IconButton*/}
-                                {/*aria-label="Toggle password visibility"*/}
-                                {/*onClick={this.handleClickShowPassword}*/}
-                                {/*>*/}
-                                {/*{this.state.showPassword ? <VisibilityOff /> : <Visibility />}*/}
-                                {/*</IconButton>*/}
-                                {/*</InputAdornment>*/}
-                                {/*),*/}
-                                {/*}}*/}
-                                {/*/>*/}
-                                {/*</FormControl>*/}
-
-                                {/*</Grid>*/}
-
-                                {/*</Grid>*/}
-
-                                {/*</ExpansionPanelDetails>*/}
-
                                 <Divider/>
 
                                 <ExpansionPanelDetails>
@@ -1106,92 +937,10 @@ class Settings extends Component {
                                                     </div>
 
                                                 </Grid>
-
                                         }
 
-                                        {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
-                                        {/*<FormControl fullWidth>*/}
-                                        {/*<TextField*/}
-                                        {/*label="Password"*/}
-                                        {/*id="realdebrid-password"*/}
-                                        {/*value={this.state.realdebridPassword}*/}
-                                        {/*onChange={(event) => this.setState({realdebridPassword: event.target.value})}*/}
-                                        {/*/>*/}
-                                        {/*</FormControl>*/}
-                                        {/*</Grid>*/}
                                     </Grid>
                                 </ExpansionPanelDetails>
-
-                                {/*<ExpansionPanelDetails>*/}
-                                {/*<Grid container spacing={0}>*/}
-
-                                {/*<Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>*/}
-                                {/*Ygg configuration*/}
-                                {/*</Grid>*/}
-
-                                {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
-                                {/*<FormControl fullWidth>*/}
-                                {/*<TextField*/}
-                                {/*label="Username"*/}
-                                {/*id="ygg-username"*/}
-                                {/*value={this.state.yggUsername}*/}
-                                {/*onChange={(event) => this.setState({yggUsername: event.target.value})}*/}
-                                {/*/>*/}
-                                {/*</FormControl>*/}
-                                {/*</Grid>*/}
-
-                                {/*<Grid item xs={12} style={{padding: '6px'}}>*/}
-                                {/*<FormControl fullWidth>*/}
-                                {/*<TextField*/}
-                                {/*label="Password"*/}
-                                {/*id="ygg-password"*/}
-                                {/*value={this.state.yggPassword}*/}
-                                {/*onChange={(event) => this.setState({yggPassword: event.target.value})}*/}
-                                {/*/>*/}
-                                {/*</FormControl>*/}
-                                {/*</Grid>*/}
-                                {/*</Grid>*/}
-                                {/*</ExpansionPanelDetails>*/}
-
-                                {/*<Divider/>*/}
-
-                                {/*<ExpansionPanelDetails style={{display: 'inline'}}>*/}
-
-                                {/*<div style={{padding: '6px', textAlign: 'center', color: 'white', marginTop: '20px', marginBottom: '20px'}}>*/}
-                                {/*Auto Update Management*/}
-                                {/*</div>*/}
-
-                                {/*<div className="autoUpdateSentence" style={{display: 'flex', textAlign: 'center', width: '100%'}}>*/}
-
-                                {/*<div style={{flex: '2'}}>*/}
-                                {/*Launch update every*/}
-                                {/*</div>*/}
-
-                                {/*<div style={{flex: '1', width: '10%'}}>*/}
-                                {/*<TextField*/}
-                                {/*style={{maxWidth: '100%'}}*/}
-                                {/*id="every"*/}
-                                {/*value={this.state.every}*/}
-                                {/*onChange={(event) => this.setState({every: event.target.value})}*/}
-                                {/*type="number"*/}
-                                {/*/>*/}
-                                {/*</div>*/}
-
-                                {/*<div style={{flex: '1'}}>*/}
-                                {/*hours*/}
-                                {/*</div>*/}
-                                {/*</div>*/}
-
-                                {/*<div style={{margin: '0 auto', textAlign: 'center', marginTop: '30px'}}>*/}
-                                {/*<Button variant="outlined" disabled={this.state.autoUpdate} onClick={this.startAutoUpdate} style={{margin: '5px'}}>*/}
-                                {/*Start*/}
-                                {/*</Button>*/}
-
-                                {/*<Button variant="outlined" disabled={!this.state.autoUpdate} onClick={this.stopAutoUpdate} style={{margin: '5px'}}>*/}
-                                {/*Stop*/}
-                                {/*</Button>*/}
-                                {/*</div>*/}
-                                {/*</ExpansionPanelDetails>*/}
 
                                 <Divider/>
 
@@ -1207,54 +956,10 @@ class Settings extends Component {
 
                     </ExpansionPanel>
 
-                    <ExpansionPanel onChange={(event, expanded) => expanded ? this.loadOutput() : null}>
-
-                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography>Output</Typography>
-                        </ExpansionPanelSummary>
-
-                        <ExpansionPanelDetails style={{maxHeight: '50vh', overflow: 'auto'}}>
-                            <div style={this.state.loading ? {display: 'inline-block', width: '100%', textAlign: 'center'} : {display: 'none'}}>
-                                <CircularProgress />
-                            </div>
-
-
-                            <List dense={true}>
-
-                                {this.state.output.map(log => {
-
-                                    // const date = new Date(log.time).toDateString();
-
-                                    return (
-                                        <ListItem>
-                                            <ListItemText
-                                                primary={log.text}
-                                                secondary={new Date(log.time).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour:'numeric', minute: 'numeric' })}
-                                            />
-                                        </ListItem>
-                                    )
-
-                                })}
-
-                            </List>
-
-                            {/*<p style={{whiteSpace: 'pre', overflow: 'scroll', height: '200px', width: '100%'}}>*/}
-                            {/*{this.state.output}*/}
-                            {/*</p>*/}
-                        </ExpansionPanelDetails>
-
-                        <Divider />
-
-                        <ExpansionPanelActions>
-                            <Button
-                                size="small"
-                                onClick={this.clearLogs}>
-
-                                <ClearLogs />
-                            </Button>
-                        </ExpansionPanelActions>
-
-                    </ExpansionPanel>
+                    {/* Logs pannel */}
+                    <Logs
+                        displaySnackMessage={this.displaySnackMessage}
+                    />
                 </div>
 
                 <SignOutButton />

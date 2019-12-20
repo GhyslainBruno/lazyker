@@ -42,6 +42,7 @@ import GooglePicker from 'react-google-picker';
 import gapi from 'gapi-client';
 import Chip from "@material-ui/core/Chip/Chip";
 import Logs from "./settings/logs";
+import Qualities from "./settings/configuration/qualities";
 
 let auth2 = null;
 
@@ -135,7 +136,6 @@ class Settings extends Component {
                     snack: true,
                     snackBarMessage: 'Please configure lazyker',
                     settingsLoading: false,
-
                     firstQuality: null,
                     secondQuality: null,
                     thirdQuality: null,
@@ -473,103 +473,15 @@ class Settings extends Component {
                         {!this.state.settingsLoading ?
                             <div>
 
-                                <ExpansionPanelDetails style={{textAlign: 'center'}}>
-
-                                    <Grid container spacing={0}>
-
-                                        <Grid item xs={12} style={{padding: '6px', color: 'white'}}>
-                                            Qualities wanted
-                                        </Grid>
-
-                                        <Grid item xs={4} style={{padding: '6px'}}>
-                                            <FormControl style={{minWidth: '80px'}} variant="outlined">
-                                                <Select
-                                                    value={this.state.firstQuality}
-                                                    onChange={this.handlerQualityChange}
-                                                    input={
-                                                        <OutlinedInput
-                                                            labelWidth={this.state.labelWidth}
-                                                            name="firstQuality"
-                                                            id="first-quality"
-                                                        />
-                                                    }>
-
-                                                    <MenuItem value="none">
-                                                        <em>None</em>
-                                                    </MenuItem>
-                                                    <MenuItem value={'hdtv'}>HDTV</MenuItem>
-                                                    <MenuItem value={'720p'}>720p</MenuItem>
-                                                    <MenuItem value={'1080p'}>1080p</MenuItem>
-                                                </Select>
-                                                <FormHelperText>First quality wanted</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
-
-
-                                        <Grid item xs={4} style={{padding: '6px'}}>
-                                            <FormControl variant="outlined" style={{minWidth: '80px', margin: '0 auto'}}>
-                                                <Select
-                                                    value={this.state.secondQuality}
-                                                    onChange={this.handlerQualityChange}
-                                                    input={
-                                                        <OutlinedInput
-                                                            labelWidth={this.state.labelWidth}
-                                                            name="secondQuality"
-                                                            id="second-quality"
-                                                        />
-                                                    }>
-
-                                                    <MenuItem value="none">
-                                                        <em>None</em>
-                                                    </MenuItem>
-                                                    <MenuItem value={'hdtv'}>HDTV</MenuItem>
-                                                    <MenuItem value={'720p'}>720p</MenuItem>
-                                                    <MenuItem value={'1080p'}>1080p</MenuItem>
-                                                </Select>
-                                                <FormHelperText>Second quality wanted</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
-
-
-                                        <Grid item xs={4} style={{padding: '6px'}}>
-                                            <FormControl style={{minWidth: '80px', margin: '0 auto'}} variant="outlined">
-                                                <Select
-                                                    value={this.state.thirdQuality}
-                                                    onChange={this.handlerQualityChange}
-                                                    input={
-                                                        <OutlinedInput
-                                                            labelWidth={this.state.labelWidth}
-                                                            name="thirdQuality"
-                                                            id="third-quality"
-                                                        />
-                                                    }>
-
-
-                                                    <MenuItem value="none">
-                                                        <em>None</em>
-                                                    </MenuItem>
-                                                    <MenuItem value={'hdtv'}>HDTV</MenuItem>
-                                                    <MenuItem value={'720p'}>720p</MenuItem>
-                                                    <MenuItem value={'1080p'}>1080p</MenuItem>
-                                                </Select>
-                                                <FormHelperText>Third quality wanted</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
-
-                                        <Grid item xs={4} style={{padding: '6px'}}>
-                                            <FormControlLabel
-                                                control={
-                                                    <Switch
-                                                        checked={this.state.h265}
-                                                        onChange={this.handleH265Change('h265')}
-                                                        value="h265"
-                                                    />
-                                                }
-                                                label="H265"
-                                                style={{margin: '0 auto'}}/>
-                                        </Grid>
-                                    </Grid>
-                                </ExpansionPanelDetails>
+                                <Qualities
+                                    firstQuality={this.state.firstQuality}
+                                    handlerQualityChange={this.handlerQualityChange}
+                                    labelWidth={this.state.labelWidth}
+                                    secondQuality={this.state.secondQuality}
+                                    thirdQuality={this.state.thirdQuality}
+                                    h265={this.state.h265}
+                                    handleH265Change={this.handleH265Change}
+                                />
 
                                 <Divider/>
 

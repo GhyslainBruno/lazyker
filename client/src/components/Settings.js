@@ -21,6 +21,7 @@ import Logs from "./settings/logs";
 import Qualities from "./settings/configuration/qualities";
 import Storage from "./settings/configuration/storage";
 import Debriders from "./settings/configuration/debriders";
+import PrivacyPolicies from "./settings/privacy_policies";
 
 let auth2 = null;
 
@@ -559,7 +560,6 @@ class Settings extends Component {
 
                     </ExpansionPanel>
 
-                    {/* Logs pannel */}
                     <Logs
                         displaySnackMessage={this.displaySnackMessage}
                     />
@@ -567,9 +567,7 @@ class Settings extends Component {
 
                 <SignOutButton />
 
-                <div style={{textAlign: 'center', marginTop: '20px'}}>
-                    <RouterLink style={{color: 'red'}} to={routes.PRIVACY}>Privacy policies</RouterLink>
-                </div>
+                <PrivacyPolicies/>
 
             </div>
         )

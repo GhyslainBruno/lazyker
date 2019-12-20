@@ -7,7 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
-import imageNotFound from "../../assets/notfound.png";
+import imageNotFound from "../../../assets/notfound.png";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
@@ -24,10 +24,9 @@ import React from "react";
 import screenfull from "screenfull";
 import {findDOMNode} from "react-dom";
 import Slide from "@material-ui/core/Slide";
-import * as auth from "../../firebase/auth";
+import * as auth from "../../../firebase/auth";
 import Link from "react-router-dom/es/Link";
 import Fab from '@material-ui/core/Fab';
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 
 
 const styles = {
@@ -852,7 +851,6 @@ class MovieInfoDialog extends React.Component {
                                         className="backdropMovieInfoDialog"
                                         style={{
                                             position: 'relative',
-                                            // backgroundImage:`url(${'https://image.tmdb.org/t/p/w780' + this.state.movieInfo.backdrop_path})`,
                                             background: `linear-gradient(transparent, transparent, transparent, transparent, black), url(${'https://image.tmdb.org/t/p/w780' + this.state.movieInfo.backdrop_path})`}}>
 
                                         <Chip

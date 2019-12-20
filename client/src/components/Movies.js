@@ -7,9 +7,7 @@ import Input from '@material-ui/core/Input';
 import Search from '@material-ui/icons/Search';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardMedia from '@material-ui/core/CardMedia';
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import Star from '@material-ui/icons/Star';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -17,10 +15,10 @@ import Close from '@material-ui/icons/Close';
 import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
 import * as qs from 'query-string';
-import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
-import MovieInfoDialog from './movies/MovieInfoDialog';
+import MovieInfoDialog from './movies/infos/MovieInfoDialog';
 import Link from "react-router-dom/es/Link";
+import MoviesGrid from "./movies/moviesGrid";
 
 const styles = {
 
@@ -429,108 +427,13 @@ class Movies extends Component {
 
                 <CircularProgress style={this.state.loading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
 
+                <MoviesGrid
+                    tmdbMovies={this.state.tmdbMovies}
+                    moviesGenre={this.state.moviesGenre}
+                    infiniteLoading={this.state.infiniteLoading}
+                    loading={this.state.loading}
 
-                {this.state.tmdbMovies !== null ? this.state.tmdbMovies.length > 0 ?
-
-                    <div>
-
-                        {
-                            this.state.moviesGenre.name !== 'Now Playing' &&
-                            this.state.moviesGenre.name !== 'Popular' &&
-                            this.state.moviesGenre.name !== 'Top Rated' &&
-                            this.state.moviesGenre.name !== 'Upcoming' ?
-                                <h2>{this.state.moviesGenre.name} movies</h2>
-                                :
-                                null
-                        }
-
-                        <Grid container spacing={0}>
-                            {this.state.tmdbMovies.map(movie => {
-
-                                return (
-
-                                    <Grid item xs={4} style={{padding: '6px'}}>
-
-                                        <Link to={{pathname: `/movies/${movie.id}`, search: `?genre=${this.state.moviesGenre.id}`}} style={{ textDecoration: 'none', color: 'white' }}>
-                                            <Card>
-
-                                                <CardMedia
-                                                    // onClick={() => this.displayMovieInfo(movie)}
-                                                    style={{paddingTop: '150%', cursor: 'pointer', WebkitTapHighlightColor: 'transparent'}}
-                                                    image={"https://image.tmdb.org/t/p/w500" + movie.posterPath}
-                                                    title={movie.title}
-                                                    clickable="true"
-                                                />
-
-                                                <CardContent>
-                                                    <div>
-                                                        <Star style={{fontSize: '18', verticalAlign: 'bottom'}}/>
-                                                        {movie.note}
-                                                    </div>
-
-                                                </CardContent>
-
-                                            </Card>
-                                        </Link>
-
-                                    </Grid>
-
-                                )
-
-                            })}
-                        </Grid>
-
-                        <CircularProgress style={this.state.infiniteLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
-
-                    </div>
-
-                    :
-
-                    <CircularProgress style={
-
-                        this.state.loading ?
-
-                            this.state.infiniteLoading ?
-
-                                {display: 'none'}
-                                :
-                                {display: 'none'}
-
-                            :
-                            this.state.infiniteLoading ?
-
-                                {display: 'inline-block', marginTop: '40px'}
-                                :
-                                {display: 'none'}}
-                                      
-                    />
-
-                    :
-
-                    <div>
-                        <CircularProgress style={this.state.infiniteLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
-                        <div style={
-                            this.state.loading ?
-
-                                this.state.infiniteLoading ?
-
-                                    {display: 'none'}
-                                    :
-                                    {display: 'none'}
-
-                                :
-                                this.state.infiniteLoading ?
-
-                                    {display: 'none'}
-                                    :
-                                    {display: 'inline-block', padding: '30px', color: 'grey'}
-                        }
-
-                        >no results found</div>
-                    </div>
-
-                }
-
+                />
 
             </div>
         )

@@ -1,24 +1,10 @@
 import React, { Component } from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import ArrowBack from '@material-ui/icons/ArrowBack';
-import Input from '@material-ui/core/Input';
-import Search from '@material-ui/icons/Search';
-import Grid from '@material-ui/core/Grid';
-import Card from '@material-ui/core/Card';
-import CardMedia from '@material-ui/core/CardMedia';
 import Snackbar from '@material-ui/core/Snackbar';
-import Star from '@material-ui/icons/Star';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Close from '@material-ui/icons/Close';
-import Paper from '@material-ui/core/Paper';
-import Chip from '@material-ui/core/Chip';
 import * as qs from 'query-string';
-import CardContent from '@material-ui/core/CardContent';
 import MovieInfoDialog from './movies/infos/MovieInfoDialog';
-import Link from "react-router-dom/es/Link";
 import MoviesGrid from "./movies/moviesGrid";
+import SearchMoviesAppBar from "./movies/searchMoviesAppBar";
 
 const styles = {
 
@@ -362,67 +348,22 @@ class Movies extends Component {
                     message={this.state.snackBarMessage}
                 />
 
-
-
-                <div style={{flexGrow: '1'}}>
-                    <AppBar
-                        position="static"
-                        color="default">
-                        <Toolbar>
-                            <IconButton style={this.state.isInSearchView ? {visibility: 'visible', marginRight: '16px'} : {visibility: 'hidden', marginRight: '16px'}}>
-                                <ArrowBack onClick={this.cleanSearch}/>
-                            </IconButton>
-
-                            <Input
-                                id="movie_title_to_search"
-                                value={this.state.movieTitleToSearch}
-                                onClick={this.getMoviesGenres}
-                                placeholder="Movie title"
-                                autoComplete="off"
-                                // type="search"
-                                onChange={evt => this.updateMovieTitleToSearch(evt)}
-                                onBlur={evt => this.searchBarLostFocus(evt)}
-                                disableUnderline={true}
-                                style={{width: '80%'}}
-                                onKeyPress={(event) => {this.onEnterKeyPressed(event)}}
-                            />
-
-                            <IconButton>
-                                {this.state.movieTitleToSearch !== null && this.state.movieTitleToSearch !== '' ?
-                                    <Close onClick={this.clearTitle}/>
-                                    :
-                                    <Search onClick={this.state.movieTitleToSearch !== null && this.state.movieTitleToSearch !== '' ? this.searchMovie : null}/>
-                                }
-                            </IconButton>
-
-                        </Toolbar>
-                    </AppBar>
-
-                    <Paper elevation={1} style={this.state.movieGenres !== null ? {padding: '5px'} : {display: 'none'}}>
-
-                        <CircularProgress style={this.state.movieGenresLoading ? {display: 'inline-block'} : {display: 'none'}}/>
-
-                        {
-                            this.state.movieGenres !== null ? this.state.movieGenres.map(movieGenre => {
-                                return (
-                                    <Chip label={movieGenre.name} style={styles.outlinedChip} className="movieGenre" clickable={true} onClick={() => this.searchMovieGenre(movieGenre)} />
-                                    )
-                            })
-                                :
-                                null
-                        }
-
-                    </Paper>
-
-                    <div style={{paddingTop: '10px', paddingBottom: '10px'}}>
-                        <Chip label="Now Playing" style={this.state.moviesGenre.name === 'Now Playing' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Now Playing", id: "now_playing"})}/>
-                        <Chip label="Popular" style={this.state.moviesGenre.name === 'Popular' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Popular", id: "popular"})} />
-                        <Chip label="Top Rated" style={this.state.moviesGenre.name === 'Top Rated' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Top Rated", id: "top_rated"})} />
-                        <Chip label="Upcoming" style={this.state.moviesGenre.name === 'Upcoming' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Upcoming", id: "upcoming"})} />
-                    </div>
-
-
-                </div>
+                <SearchMoviesAppBar
+                    isInSearchView={this.state.isInSearchView}
+                    cleanSearch={this.cleanSearch}
+                    movieTitleToSearch={this.state.movieTitleToSearch}
+                    getMoviesGenres={this.getMoviesGenres}
+                    updateMovieTitleToSearch={this.updateMovieTitleToSearch}
+                    searchBarLostFocus={this.searchBarLostFocus}
+                    onEnterKeyPressed={this.onEnterKeyPressed}
+                    searchMovie={this.searchMovie}
+                    clearTitle={this.clearTitle}
+                    movieGenres={this.state.movieGenres}
+                    movieGenresLoading={this.state.movieGenresLoading}
+                    moviesGenre={this.state.moviesGenre}
+                    styles={styles}
+                    searchMovieGenre={this.searchMovieGenre}
+                />
 
 
                 <CircularProgress style={this.state.loading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>

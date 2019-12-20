@@ -576,366 +576,363 @@ class MovieInfoDialog extends React.Component {
         const { showInfoDialog, selectedMovie, closeDialog } = this.props;
 
         return (
+            <Dialog
+                fullScreen
+                TransitionComponent={this.Transition}
+                open={showInfoDialog}
+                onClose={() => this.closeDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description">
 
-            <div>
+                <DialogContent style={{padding: '0'}}>
 
-                <Dialog
-                    fullScreen
-                    TransitionComponent={this.Transition}
-                    open={showInfoDialog}
-                    onClose={() => this.closeDialog}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description">
+                    {/*<Button*/}
+                    {/*onClick={() => closeDialog()}*/}
+                    {/*variant="fab"*/}
+                    {/*mini*/}
+                    {/*style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>*/}
+                    {/*<Close />*/}
+                    {/*</Button>*/}
 
-                    <DialogContent style={{padding: '0'}}>
+                    {/*<Link to={{pathname: '/movies', search: `?genre=${this.props.genreSelected.id}`}} style={{ textDecoration: 'none', color: 'white' }}>*/}
+                    {/*<Button*/}
+                    {/*onClick={() => closeDialog()}*/}
+                    {/*variant="fab"*/}
+                    {/*mini*/}
+                    {/*style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>*/}
+                    {/*<Close />*/}
+                    {/*</Button>*/}
+                    {/*</Link>*/}
 
-                        {/*<Button*/}
-                            {/*onClick={() => closeDialog()}*/}
-                            {/*variant="fab"*/}
-                            {/*mini*/}
-                            {/*style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>*/}
-                            {/*<Close />*/}
-                        {/*</Button>*/}
-
-                        {/*<Link to={{pathname: '/movies', search: `?genre=${this.props.genreSelected.id}`}} style={{ textDecoration: 'none', color: 'white' }}>*/}
-                            {/*<Button*/}
-                                {/*onClick={() => closeDialog()}*/}
-                                {/*variant="fab"*/}
-                                {/*mini*/}
-                                {/*style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>*/}
-                                {/*<Close />*/}
-                            {/*</Button>*/}
-                        {/*</Link>*/}
-
-                        <Fab
-                            size="small"
-                            style={{
-                                position: 'absolute',
-                                zIndex: '1',
-                                right: '5px',
-                                top: '5px',
-                                backgroundColor: '#757575',
-                                color: "white"
-                            }}
-                            component={Link}
-                            to={{pathname: '/movies', search: `?genre=${this.props.genreSelected.id}`}}>
-                            <Close/>
-                        </Fab>
+                    <Fab
+                        size="small"
+                        style={{
+                            position: 'absolute',
+                            zIndex: '1',
+                            right: '5px',
+                            top: '5px',
+                            backgroundColor: '#757575',
+                            color: "white"
+                        }}
+                        component={Link}
+                        to={{pathname: '/movies', search: `?genre=${this.props.genreSelected.id}`}}>
+                        <Close/>
+                    </Fab>
 
 
-                        <Button
-                            onClick={() => this.getMovieInfo(this.props.selectedMovie)}
-                            variant="fab"
-                            mini
-                            style={this.state.isInTorrentOrDdl ? {margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", left: '0'} : {display: 'none'}}>
-                            <ArrowBack />
-                        </Button>
+                    <Button
+                        onClick={() => this.getMovieInfo(this.props.selectedMovie)}
+                        variant="fab"
+                        mini
+                        style={this.state.isInTorrentOrDdl ? {margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", left: '0'} : {display: 'none'}}>
+                        <ArrowBack />
+                    </Button>
 
-                        <div style={{textAlign: 'center'}}>
+                    <div style={{textAlign: 'center'}}>
 
-                            <div style={this.state.movieInfoLoading ? {position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'} : {display: 'none'}}>
-                                <CircularProgress/>
-                            </div>
+                        <div style={this.state.movieInfoLoading ? {position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'} : {display: 'none'}}>
+                            <CircularProgress/>
+                        </div>
 
-                            {/*Torrents list*/}
-                            {this.state.torrentsList !== null ?
-                                <div className="movieInfoDialog">
+                        {/*Torrents list*/}
+                        {this.state.torrentsList !== null ?
+                            <div className="movieInfoDialog">
 
-                                    <h2>Torrents</h2>
+                                <h2>Torrents</h2>
 
-                                    <Chip label={'4K'} style={this.state.uhd ? styles.h264Full : styles.h264} clickable={true} onClick={() => this.filterTorrents('uhd')}/>
-                                    <Chip label={'1080p'} style={this.state.fullHd ? styles.h264Full : styles.h264} clickable={true} onClick={() => this.filterTorrents('fullHd')}/>
-                                    <Chip label={'720p'} style={this.state.hd ? styles.multiChipFull : styles.multiChip} clickable={true} onClick={() => this.filterTorrents('hd')}/>
-                                    <Chip label={'Multi'} style={this.state.multi ? styles.blurayFull : styles.bluray} clickable={true} onClick={() => this.filterTorrents('multi')}/>
+                                <Chip label={'4K'} style={this.state.uhd ? styles.h264Full : styles.h264} clickable={true} onClick={() => this.filterTorrents('uhd')}/>
+                                <Chip label={'1080p'} style={this.state.fullHd ? styles.h264Full : styles.h264} clickable={true} onClick={() => this.filterTorrents('fullHd')}/>
+                                <Chip label={'720p'} style={this.state.hd ? styles.multiChipFull : styles.multiChip} clickable={true} onClick={() => this.filterTorrents('hd')}/>
+                                <Chip label={'Multi'} style={this.state.multi ? styles.blurayFull : styles.bluray} clickable={true} onClick={() => this.filterTorrents('multi')}/>
 
-                                    <List component="nav" dense >
+                                <List component="nav" dense >
 
-                                        {
-                                            this.state.torrentsList.map(provider => {
-                                                return (
-                                                    <div>
-                                                        <h3>
-                                                            {provider.provider}
-                                                        </h3>
-
-                                                        {
-                                                            provider.torrents.length > 0 ?
-
-                                                                provider.torrents.map(torrent => {
-                                                                    return (
-                                                                        <Paper elevation={1} style={
-                                                                            torrent.isDisplayed ?
-                                                                                {
-                                                                                    margin: '5px',
-                                                                                    backgroundColor: '#757575',
-                                                                                    visibility: 'visible'
-                                                                                }
-                                                                                :
-                                                                                {
-                                                                                    margin: '5px',
-                                                                                    backgroundColor: '#757575',
-                                                                                    visibility: 'hidden'
-                                                                                }
-                                                                        }>
-
-                                                                            <ListItem button
-                                                                                      style={{overflow: 'hidden'}}>
-
-
-                                                                                <ListItemText
-
-                                                                                    style={{padding: '0'}}
-
-                                                                                    primary= {
-                                                                                        <div style={{
-                                                                                            overflow: 'hidden',
-                                                                                            textOverflow: 'ellipsis',
-                                                                                            whiteSpace: 'nowrap'
-                                                                                        }}>
-                                                                                            {torrent.title}
-                                                                                        </div>
-                                                                                    }
-
-                                                                                    secondary={
-
-                                                                                        <div style={{
-                                                                                            overflow: 'auto',
-                                                                                            whiteSpace: 'nowrap'
-                                                                                        }}
-                                                                                             className="torrentsChips">
-
-                                                                                            {/* Video quality */}
-
-                                                                                            {
-                                                                                                torrent.tags.threeD ? <Chip label={'3D'} style={styles.multiChip} /> : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.uhd ? <Chip label={'4k'} style={styles.h264} /> : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.fullHd ? <Chip label={'1080p'} style={styles.h264} /> : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.hd ? <Chip label={'720p'} style={styles.multiChip} /> : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.hdlight ? <Chip label={'hdlight'} style={styles.multiChip} /> : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.bdrip ? <Chip label={'bdrip'} style={styles.multiChip} /> : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.h264 ? <Chip label={'h264'} style={styles.multiChip} /> : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.h265 ? <Chip label={'h265'} style={styles.h264} /> : null
-                                                                                            }
-
-
-                                                                                            {/* Language */}
-
-                                                                                            {
-                                                                                                torrent.tags.multi ? <Chip label={'multi'} style={styles.bluray} /> : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.vo ?  (torrent.tags.vostfr ? <Chip label={'vostfr'} style={styles.frenchChip} /> : <Chip label={'vo'} style={styles.frenchChip} />) : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.vf ? (torrent.tags.vfq ? <Chip label={'vfq'} style={styles.frenchChip} /> : <Chip label={'vf'} style={styles.frenchChip} />) : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.french ? <Chip label={'french'} style={styles.frenchChip} /> : null
-                                                                                            }
-
-                                                                                            {/* Audio quality */}
-
-                                                                                            {
-                                                                                                torrent.tags.aac ? <Chip label={'aac'} style={styles.hdChip} /> : null
-                                                                                            }
-
-                                                                                            {
-                                                                                                torrent.tags.dts ? <Chip label={'dts'} style={styles.hdChip} /> : null
-                                                                                            }
-
-                                                                                        </div>
-
-                                                                                    }
-
-                                                                                    onClick={() => this.downloadTorrentFile(torrent)}/>
-                                                                            </ListItem>
-                                                                        </Paper>
-                                                                    )
-                                                                })
-                                                                :
-                                                                <div style={{
-                                                                    fontSize: '0.9rem',
-                                                                    color: 'grey'
-                                                                }}>no torrents found</div>
-                                                        }
-                                                    </div>
-                                                )
-                                            })}
-                                    </List>
-                                </div>
-
-                                :
-                                    null
-                            }
-
-
-                            {/*URL for ddl*/}
-                            {this.state.providersMovies !== undefined ?
-                                this.state.providersMovies !== null  ?
-                                    this.state.providersMovies[0].results.length > 0 ?
-                                        <div>
-                                            {this.state.providersMovies.map(provider => {
-                                                return (
-                                                    <div className="movieInfoDialog">
-                                                        <h2>{provider.provider}</h2>
-                                                        <Grid container spacing={0}>
-                                                            {
-                                                                provider.results.map(movie => {
-                                                                    movie.validImage = movie.image.match(/^http/g) === null ? imageNotFound : movie.image;
-                                                                    return (
-                                                                        <Grid item xs={4} style={{padding: '6px'}}>
-                                                                            <Card>
-                                                                                <CardMedia
-                                                                                    onClick={() => this.findProviderQualities(movie.title, movie, provider.provider)}
-                                                                                    style={{paddingTop: '150%'}}
-                                                                                    image={movie.validImage}
-                                                                                    title={movie.title}
-                                                                                />
-                                                                                <CardContent style={{padding: '5px', backgroundColor: '#757575'}}>
-                                                                                    <Typography gutterBottom component="p" style={{
-                                                                                        overflow: 'hidden',
-                                                                                        lineHeight: '1.5em',
-                                                                                        textOverflow: 'ellipsis',
-                                                                                        height: '3em'
-                                                                                    }}>
-                                                                                        {movie.title}</Typography>
-                                                                                </CardContent>
-                                                                            </Card>
-                                                                        </Grid>
-                                                                    )})
-                                                            }
-                                                            </Grid>
-                                                    </div>
-                                                )
-                                            })
-                                            }
-                                        </div>
-                                        :
-                                        <div style={{paddingTop: '20rem', fontSize: '0.9rem', color: 'grey'}}>no results found</div>
-                                    :
-                                    null
-                                :
-                                null
-                            }
-
-                            {/* Movie Info */}
-                            {this.state.movieInfo !== null ?
-
-                                <div className="movieInfoDialog">
-
-                                    <div
-                                        className="backdropMovieInfoDialog"
-                                        style={{
-                                            position: 'relative',
-                                            background: `linear-gradient(transparent, transparent, transparent, transparent, black), url(${'https://image.tmdb.org/t/p/w780' + this.state.movieInfo.backdrop_path})`}}>
-
-                                        <Chip
-                                            clickable="true"
-                                            onClick={() => this.startTrailer()}
-                                            avatar={
-                                                <Avatar>
-                                                    <Play />
-                                                </Avatar>
-                                            }
-                                            label="Trailer"
-                                            style={{margin: '0', position: 'relative', top: '50%'}}/>
-
-                                    </div>
-
-                                    <div style={{display: 'flex'}}>
-                                        <div style={{width: '30%'}}>
-                                            <img className="dataMovieInfo" style={{width: '100%'}} src={'https://image.tmdb.org/t/p/w500' + this.state.movieInfo.poster_path}/>
-                                        </div>
-
-                                        <div style={{width: '70%', paddingLeft: '30px', textAlign: 'left'}}>
-                                            <h4 style={{color: 'white', fontSize: '1.4rem', marginTop: '15px', marginBottom: '15px'}}>{this.state.movieInfo.original_title}</h4>
-                                            <p style={{margin: '5px'}}>{this.state.movieInfo.release_date}</p>
-                                            <p style={{margin: '5px'}}>{this.state.movieInfo.runtime} min</p>
-                                            <p style={{margin: '5px'}}><Star style={{fontSize: '18'}}/> {this.state.movieInfo.vote_average}</p>
-                                        </div>
-                                    </div>
-
-                                    <div style={{display: 'inline-flex', marginTop: '10px', marginBottom: '10px'}}>
-                                        <div>
-                                            <Chip
-                                                clickable="true"
-                                                onClick={() => this.getTorrentsList(this.state.movieInfo)}
-                                                avatar={
-                                                    <Avatar
-                                                        style={{backgroundColor: "#9b0101"}}>
-                                                        <Download />
-                                                    </Avatar>
-                                                }
-                                                label="Torrents Download"
-                                                style={{margin: '5px', position: 'relative', top: '50%', backgroundColor: "red"}}/>
-                                        </div>
-
-                                        {/*<div>*/}
-                                            {/*<Chip*/}
-                                                {/*clickable="true"*/}
-                                                {/*// onClick={() => this.searchProvidersMovie(this.state.movieInfo.title)}*/}
-                                                {/*onClick={() => this.props.displaySnackMessage('Not ready yet')}*/}
-                                                {/*avatar={*/}
-                                                    {/*<Avatar*/}
-                                                        {/*style={{backgroundColor: "#9b0101"}}>*/}
-                                                        {/*<Download />*/}
-                                                    {/*</Avatar>*/}
-                                                {/*}*/}
-                                                {/*label="Direct Download"*/}
-                                                {/*style={{margin: '5px', position: 'relative', top: '50%', backgroundColor: "red"}}/>*/}
-                                        {/*</div>*/}
-                                    </div>
-
-
-                                    <div>
-                                        <p className="dataMovieInfo" style={{textAlign: 'justify'}}>{this.state.movieInfo.overview}</p>
-                                    </div>
-
-                                    <div style={{marginBottom: '15px'}}>
-                                        <p className="dataMovieInfo" style={{textAlign: 'left'}}>Genre(s) :</p>
-                                        {this.state.movieInfo.genres.map(genre => {
+                                    {
+                                        this.state.torrentsList.map(provider => {
                                             return (
-                                                <Chip label={genre.name} style={styles.outlinedChip} />
+                                                <div>
+                                                    <h3>
+                                                        {provider.provider}
+                                                    </h3>
+
+                                                    {
+                                                        provider.torrents.length > 0 ?
+
+                                                            provider.torrents.map(torrent => {
+                                                                return (
+                                                                    <Paper elevation={1} style={
+                                                                        torrent.isDisplayed ?
+                                                                            {
+                                                                                margin: '5px',
+                                                                                backgroundColor: '#757575',
+                                                                                visibility: 'visible'
+                                                                            }
+                                                                            :
+                                                                            {
+                                                                                margin: '5px',
+                                                                                backgroundColor: '#757575',
+                                                                                visibility: 'hidden'
+                                                                            }
+                                                                    }>
+
+                                                                        <ListItem button
+                                                                                  style={{overflow: 'hidden'}}>
+
+
+                                                                            <ListItemText
+
+                                                                                style={{padding: '0'}}
+
+                                                                                primary= {
+                                                                                    <div style={{
+                                                                                        overflow: 'hidden',
+                                                                                        textOverflow: 'ellipsis',
+                                                                                        whiteSpace: 'nowrap'
+                                                                                    }}>
+                                                                                        {torrent.title}
+                                                                                    </div>
+                                                                                }
+
+                                                                                secondary={
+
+                                                                                    <div style={{
+                                                                                        overflow: 'auto',
+                                                                                        whiteSpace: 'nowrap'
+                                                                                    }}
+                                                                                         className="torrentsChips">
+
+                                                                                        {/* Video quality */}
+
+                                                                                        {
+                                                                                            torrent.tags.threeD ? <Chip label={'3D'} style={styles.multiChip} /> : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.uhd ? <Chip label={'4k'} style={styles.h264} /> : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.fullHd ? <Chip label={'1080p'} style={styles.h264} /> : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.hd ? <Chip label={'720p'} style={styles.multiChip} /> : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.hdlight ? <Chip label={'hdlight'} style={styles.multiChip} /> : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.bdrip ? <Chip label={'bdrip'} style={styles.multiChip} /> : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.h264 ? <Chip label={'h264'} style={styles.multiChip} /> : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.h265 ? <Chip label={'h265'} style={styles.h264} /> : null
+                                                                                        }
+
+
+                                                                                        {/* Language */}
+
+                                                                                        {
+                                                                                            torrent.tags.multi ? <Chip label={'multi'} style={styles.bluray} /> : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.vo ?  (torrent.tags.vostfr ? <Chip label={'vostfr'} style={styles.frenchChip} /> : <Chip label={'vo'} style={styles.frenchChip} />) : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.vf ? (torrent.tags.vfq ? <Chip label={'vfq'} style={styles.frenchChip} /> : <Chip label={'vf'} style={styles.frenchChip} />) : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.french ? <Chip label={'french'} style={styles.frenchChip} /> : null
+                                                                                        }
+
+                                                                                        {/* Audio quality */}
+
+                                                                                        {
+                                                                                            torrent.tags.aac ? <Chip label={'aac'} style={styles.hdChip} /> : null
+                                                                                        }
+
+                                                                                        {
+                                                                                            torrent.tags.dts ? <Chip label={'dts'} style={styles.hdChip} /> : null
+                                                                                        }
+
+                                                                                    </div>
+
+                                                                                }
+
+                                                                                onClick={() => this.downloadTorrentFile(torrent)}/>
+                                                                        </ListItem>
+                                                                    </Paper>
+                                                                )
+                                                            })
+                                                            :
+                                                            <div style={{
+                                                                fontSize: '0.9rem',
+                                                                color: 'grey'
+                                                            }}>no torrents found</div>
+                                                    }
+                                                </div>
                                             )
                                         })}
-                                    </div>
+                                </List>
+                            </div>
 
-                                    <ReactPlayer ref={this.ref} url={this.state.movieInfo.trailer} playing={this.state.trailerPlaying} controls={true} width="100%" />
+                            :
+                            null
+                        }
+
+
+                        {/*URL for ddl*/}
+                        {this.state.providersMovies !== undefined ?
+                            this.state.providersMovies !== null  ?
+                                this.state.providersMovies[0].results.length > 0 ?
+                                    <div>
+                                        {this.state.providersMovies.map(provider => {
+                                            return (
+                                                <div className="movieInfoDialog">
+                                                    <h2>{provider.provider}</h2>
+                                                    <Grid container spacing={0}>
+                                                        {
+                                                            provider.results.map(movie => {
+                                                                movie.validImage = movie.image.match(/^http/g) === null ? imageNotFound : movie.image;
+                                                                return (
+                                                                    <Grid item xs={4} style={{padding: '6px'}}>
+                                                                        <Card>
+                                                                            <CardMedia
+                                                                                onClick={() => this.findProviderQualities(movie.title, movie, provider.provider)}
+                                                                                style={{paddingTop: '150%'}}
+                                                                                image={movie.validImage}
+                                                                                title={movie.title}
+                                                                            />
+                                                                            <CardContent style={{padding: '5px', backgroundColor: '#757575'}}>
+                                                                                <Typography gutterBottom component="p" style={{
+                                                                                    overflow: 'hidden',
+                                                                                    lineHeight: '1.5em',
+                                                                                    textOverflow: 'ellipsis',
+                                                                                    height: '3em'
+                                                                                }}>
+                                                                                    {movie.title}</Typography>
+                                                                            </CardContent>
+                                                                        </Card>
+                                                                    </Grid>
+                                                                )})
+                                                        }
+                                                    </Grid>
+                                                </div>
+                                            )
+                                        })
+                                        }
+                                    </div>
+                                    :
+                                    <div style={{paddingTop: '20rem', fontSize: '0.9rem', color: 'grey'}}>no results found</div>
+                                :
+                                null
+                            :
+                            null
+                        }
+
+                        {/* Movie Info */}
+                        {this.state.movieInfo !== null ?
+
+                            <div className="movieInfoDialog">
+
+                                <div
+                                    className="backdropMovieInfoDialog"
+                                    style={{
+                                        position: 'relative',
+                                        background: `linear-gradient(transparent, transparent, transparent, transparent, black), url(${'https://image.tmdb.org/t/p/w780' + this.state.movieInfo.backdrop_path})`}}>
+
+                                    <Chip
+                                        clickable="true"
+                                        onClick={() => this.startTrailer()}
+                                        avatar={
+                                            <Avatar>
+                                                <Play />
+                                            </Avatar>
+                                        }
+                                        label="Trailer"
+                                        style={{margin: '0', position: 'relative', top: '50%'}}/>
 
                                 </div>
 
-                                :
+                                <div style={{display: 'flex'}}>
+                                    <div style={{width: '30%'}}>
+                                        <img className="dataMovieInfo" style={{width: '100%'}} src={'https://image.tmdb.org/t/p/w500' + this.state.movieInfo.poster_path}/>
+                                    </div>
 
-                                null
+                                    <div style={{width: '70%', paddingLeft: '30px', textAlign: 'left'}}>
+                                        <h4 style={{color: 'white', fontSize: '1.4rem', marginTop: '15px', marginBottom: '15px'}}>{this.state.movieInfo.original_title}</h4>
+                                        <p style={{margin: '5px'}}>{this.state.movieInfo.release_date}</p>
+                                        <p style={{margin: '5px'}}>{this.state.movieInfo.runtime} min</p>
+                                        <p style={{margin: '5px'}}><Star style={{fontSize: '18'}}/> {this.state.movieInfo.vote_average}</p>
+                                    </div>
+                                </div>
 
-                            }
+                                <div style={{display: 'inline-flex', marginTop: '10px', marginBottom: '10px'}}>
+                                    <div>
+                                        <Chip
+                                            clickable="true"
+                                            onClick={() => this.getTorrentsList(this.state.movieInfo)}
+                                            avatar={
+                                                <Avatar
+                                                    style={{backgroundColor: "#9b0101"}}>
+                                                    <Download />
+                                                </Avatar>
+                                            }
+                                            label="Torrents Download"
+                                            style={{margin: '5px', position: 'relative', top: '50%', backgroundColor: "red"}}/>
+                                    </div>
 
-                            {/* Qualities */}
-                            {this.state.qualities !== null ? this.state.qualities.length > 0 ?
+                                    {/*<div>*/}
+                                    {/*<Chip*/}
+                                    {/*clickable="true"*/}
+                                    {/*// onClick={() => this.searchProvidersMovie(this.state.movieInfo.title)}*/}
+                                    {/*onClick={() => this.props.displaySnackMessage('Not ready yet')}*/}
+                                    {/*avatar={*/}
+                                    {/*<Avatar*/}
+                                    {/*style={{backgroundColor: "#9b0101"}}>*/}
+                                    {/*<Download />*/}
+                                    {/*</Avatar>*/}
+                                    {/*}*/}
+                                    {/*label="Direct Download"*/}
+                                    {/*style={{margin: '5px', position: 'relative', top: '50%', backgroundColor: "red"}}/>*/}
+                                    {/*</div>*/}
+                                </div>
+
+
+                                <div>
+                                    <p className="dataMovieInfo" style={{textAlign: 'justify'}}>{this.state.movieInfo.overview}</p>
+                                </div>
+
+                                <div style={{marginBottom: '15px'}}>
+                                    <p className="dataMovieInfo" style={{textAlign: 'left'}}>Genre(s) :</p>
+                                    {this.state.movieInfo.genres.map(genre => {
+                                        return (
+                                            <Chip label={genre.name} style={styles.outlinedChip} />
+                                        )
+                                    })}
+                                </div>
+
+                                <ReactPlayer ref={this.ref} url={this.state.movieInfo.trailer} playing={this.state.trailerPlaying} controls={true} width="100%" />
+
+                            </div>
+
+                            :
+
+                            null
+
+                        }
+
+                        {/* Qualities */}
+                        {this.state.qualities !== null ? this.state.qualities.length > 0 ?
 
                             <div className="movieInfoDialog">
 
@@ -953,23 +950,23 @@ class MovieInfoDialog extends React.Component {
 
                                         )
                                     })}
-                                    </List>
+                                </List>
                             </div>
 
-                                :
+                            :
 
-                                <div style={{padding: "30px", color: "grey"}}>no results found</div>
+                            <div style={{padding: "30px", color: "grey"}}>no results found</div>
 
-                                :
+                            :
 
-                                null
-                            }
+                            null
+                        }
 
-                            </div>
-                    </DialogContent>
-                </Dialog>
-            </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
         )
+
     }
 }
 

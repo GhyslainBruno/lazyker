@@ -22,6 +22,7 @@ import Qualities from "./settings/configuration/qualities";
 import Storage from "./settings/configuration/storage";
 import Debriders from "./settings/configuration/debriders";
 import PrivacyPolicies from "./settings/privacy_policies";
+import Save from "./settings/save";
 
 let auth2 = null;
 
@@ -484,13 +485,17 @@ class Settings extends Component {
                 <h1>Settings</h1>
 
                 <div>
-                    <ExpansionPanel style={{textAlign: 'center'}} onChange={(event, expanded) => expanded ? this.loadSettings() : null}>
+                    <ExpansionPanel style={{textAlign: 'center'}}
+                                    onChange={(event, expanded) => expanded ? this.loadSettings() : null}>
 
-                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
                             <Typography>Configuration</Typography>
                         </ExpansionPanelSummary>
 
-                        <CircularProgress style={this.state.settingsLoading ? {display: 'inline-block', margin: '5px'} : {display: 'none'}} />
+                        <CircularProgress style={this.state.settingsLoading ? {
+                            display: 'inline-block',
+                            margin: '5px'
+                        } : {display: 'none'}}/>
 
                         {!this.state.settingsLoading ?
                             <div>
@@ -548,11 +553,9 @@ class Settings extends Component {
 
                                 <Divider/>
 
-                                <ExpansionPanelDetails style={{padding: '24px'}}>
-                                    <Button variant="outlined" onClick={this.setSettings} style={{margin: 'auto 0 auto auto'}}>
-                                        Save
-                                    </Button>
-                                </ExpansionPanelDetails>
+                                <Save
+                                    setSettings={this.setSettings}
+                                />
                             </div>
                             :
                             null
@@ -565,12 +568,12 @@ class Settings extends Component {
                     />
                 </div>
 
-                <SignOutButton />
+                <SignOutButton/>
 
                 <PrivacyPolicies/>
 
             </div>
-        )
+        );
     }
 
 }

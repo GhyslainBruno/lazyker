@@ -20,11 +20,13 @@ import gapi from 'gapi-client';
 import Logs from "./settings/logs";
 import Qualities from "./settings/configuration/qualities";
 import Storage from "./settings/configuration/storage";
+import Debriders from "./settings/configuration/debriders";
 
 let auth2 = null;
 
 class Settings extends Component {
 
+    // Parent functions
     constructor (props) {
         super(props);
 
@@ -299,28 +301,16 @@ class Settings extends Component {
 
     };
 
-    realdebridDisconnect = async () => {
-        try {
-            let response = await fetch('/api/unlink', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'token': await auth.getIdToken()
-                }
-            });
-
-            response = await response.json();
-
-            this.loadSettings();
-
-            this.setState({snack: true, snackBarMessage: response.message})
-
-        } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
-        }
+    // Qualities (child) functions
+    handlerQualityChange = event => {
+        this.setState({ [event.target.name]: event.target.value });
     };
 
+    handleH265Change = name => event => {
+        this.setState({ [name]: event.target.checked });
+    };
+
+    // Storage (child) functions
     googleDriveConnect = async () => {
 
         const code = await auth2.grantOfflineAccess();
@@ -363,62 +353,12 @@ class Settings extends Component {
         }
     };
 
-    testGdriveList = async () => {
-
-        try {
-            let response = await fetch('/api/gdrive_list', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'token': await auth.getIdToken()
-                }
-            });
-
-            response = await response.json();
-        } catch (error) {
-            this.setState({snack: true, snackBarMessage: 'Error listing files from Google Drive'});
-        }
-
-    };
-
     handleClickShowPassword = () => {
         this.setState(state => ({ showPassword: !state.showPassword }));
     };
 
-    realdebridConnect = async () => {
-        try {
-
-            let response = await fetch('https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foo', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            response = await response.json();
-
-            this.setState({snack: true, snackBarMessage: response.message})
-        } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
-        }
-    };
-
-    handlerQualityChange = event => {
-        this.setState({ [event.target.name]: event.target.value });
-    };
-
     handleProtocolChange = event => {
         this.setState({ [event.target.name]: event.target.value });
-    };
-
-    handleH265Change = name => event => {
-        this.setState({ [name]: event.target.checked });
-    };
-
-    displaySnackMessage = message => {
-        this.setState({snack: true, snackBarMessage: message});
     };
 
     setStorage = storage => {
@@ -481,9 +421,54 @@ class Settings extends Component {
         this.setState({nasPassword: password})
     };
 
-    render() {
+    // Debriders (child) functions
+    realdebridDisconnect = async () => {
+        try {
+            let response = await fetch('/api/unlink', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': await auth.getIdToken()
+                }
+            });
 
-        const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foobar';
+            response = await response.json();
+
+            this.loadSettings();
+
+            this.setState({snack: true, snackBarMessage: response.message})
+
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
+        }
+    };
+
+    realdebridConnect = async () => {
+        try {
+
+            let response = await fetch('https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foo', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            response = await response.json();
+
+            this.setState({snack: true, snackBarMessage: response.message})
+        } catch(error) {
+            this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
+        }
+    };
+
+    // Logs (child) functions
+    displaySnackMessage = message => {
+        this.setState({snack: true, snackBarMessage: message});
+    };
+
+    render() {
 
         return (
             <div style={{width: '100%', marginBottom: '10vh'}}>
@@ -550,62 +535,15 @@ class Settings extends Component {
                                     showPassword={this.state.showPassword}
                                     nasPassword={this.state.nasPassword}
                                     setNasPassword={this.setNasPassword}
+                                    handleClickShowPassword={this.handleClickShowPassword}
                                 />
 
                                 <Divider/>
 
-                                <ExpansionPanelDetails>
-                                    <Grid container spacing={0}>
-
-                                        <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
-                                            Debriders
-                                        </Grid>
-
-                                        {
-                                            this.state.realdebrid ?
-                                                <Grid item xs={12} style={{padding: '6px'}}>
-
-                                                    <div style={{display: 'flex'}}>
-                                                        <div style={{flex: '1', marginTop: '10px'}}>
-                                                            Realdebrid
-                                                        </div>
-
-                                                        <div style={{flex: '1', marginTop: '10px'}}>
-                                                            <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
-                                                        </div>
-
-                                                        <div style={{flex: '1'}}>
-                                                            <Button variant="outlined" onClick={this.realdebridDisconnect}>
-                                                                Disconnect
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-
-                                                </Grid>
-                                                :
-                                                <Grid item xs={12} style={{padding: '6px'}}>
-
-                                                    <div style={{display: 'flex'}}>
-                                                        <div style={{flex: '1', marginTop: '10px'}}>
-                                                            Realdebrid
-                                                        </div>
-
-                                                        <div style={{flex: '1', marginTop: '10px'}}>
-                                                            <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
-                                                        </div>
-
-                                                        <div style={{flex: '1'}}>
-                                                            <Button variant="outlined" href={redirectUri}>
-                                                                Connect
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-
-                                                </Grid>
-                                        }
-
-                                    </Grid>
-                                </ExpansionPanelDetails>
+                                <Debriders
+                                    realdebrid={this.state.realdebrid}
+                                    realdebridDisconnect={this.realdebridDisconnect}
+                                />
 
                                 <Divider/>
 

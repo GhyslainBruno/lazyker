@@ -299,7 +299,7 @@ const Storage = props => {
                                                 <InputAdornment position="end">
                                                     <IconButton
                                                         aria-label="Toggle password visibility"
-                                                        onClick={this.handleClickShowPassword}
+                                                        onClick={props.handleClickShowPassword}
                                                     >
                                                         {props.showPassword ? <VisibilityOff /> : <Visibility />}
                                                     </IconButton>

@@ -2,8 +2,6 @@ import React  from 'react';
 import Button from '@material-ui/core/Button';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import { auth } from '../firebase';
-import Fab from "@material-ui/core/Fab";
-import Chip from "@material-ui/core/Chip";
 
 const Providers = () =>
     <div style={{textAlign: 'center'}}>

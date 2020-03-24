@@ -1,26 +1,10 @@
 import React, { Component } from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import ArrowBack from '@material-ui/icons/ArrowBack';
-import Input from '@material-ui/core/Input';
-import Search from '@material-ui/icons/Search';
-import Grid from '@material-ui/core/Grid';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardMedia from '@material-ui/core/CardMedia';
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
-import Star from '@material-ui/icons/Star';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Close from '@material-ui/icons/Close';
-import Paper from '@material-ui/core/Paper';
-import Chip from '@material-ui/core/Chip';
 import * as qs from 'query-string';
-import Typography from '@material-ui/core/Typography';
-import CardContent from '@material-ui/core/CardContent';
-import MovieInfoDialog from './movies/MovieInfoDialog';
-import Link from "react-router-dom/es/Link";
+import MovieInfoDialog from './movies/infos/MovieInfoDialog';
+import MoviesGrid from "./movies/moviesGrid";
+import SearchMoviesAppBar from "./movies/searchMoviesAppBar";
 
 const styles = {
 
@@ -110,24 +94,6 @@ class Movies extends Component {
             movieTitleToSearch: evt.target.value
         });
     };
-
-    // startDownload = async (title, qualityWanted) => {
-    //     let response = fetch('/api/start_movie_download', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({
-    //             title: title,
-    //             quality_wanted: qualityWanted,
-    //             provider: qualityWanted.provider
-    //         })
-    //     });
-    //
-    //     this.setState({providersMovies: null, tmdbMovies: null, qualities: null, snackBarMessage: 'Added - check Downloads for status', snack: true, pageNumber: 1});
-    //     this.getMovies();
-    // };
 
     getMovies = async () => {
 
@@ -240,16 +206,6 @@ class Movies extends Component {
         }
     }
 
-    // componentWillMount() {
-    //
-    //     const movie = {};
-    //     movie.id = this.props.match.params.id;
-    //
-    //     if (movie.id) {
-    //         this.displayMovieInfo(movie);
-    //     }
-    // }
-
     componentWillUnmount = () => {
         window.removeEventListener('scroll', this.handleOnScroll);
     };
@@ -262,17 +218,12 @@ class Movies extends Component {
         this.setState({snack: true, snackBarMessage: 'Providers error', loading: false})
     };
 
-
     handleOnScroll = (event) => {
         // http://stackoverflow.com/questions/9439725/javascript-how-to-detect-if-browser-window-is-scrolled-to-bottom
         const scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
         const scrollHeight = (document.documentElement && document.documentElement.scrollHeight) || document.body.scrollHeight;
         const clientHeight = document.documentElement.clientHeight || window.innerHeight;
         const scrolledToBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
-
-        // const scrollY = window.scrollY;
-        //
-        // this.checkScrollDirection(scrollY);
 
         if (scrolledToBottom) {
             this.getMovies();
@@ -337,7 +288,6 @@ class Movies extends Component {
         this.setState({snack: true, snackBarMessage: message})
     };
 
-
     render() {
 
         return (
@@ -364,173 +314,33 @@ class Movies extends Component {
                     message={this.state.snackBarMessage}
                 />
 
-
-
-                <div style={{flexGrow: '1'}}>
-                    <AppBar
-                        position="static"
-                        color="default">
-                        <Toolbar>
-                            <IconButton style={this.state.isInSearchView ? {visibility: 'visible', marginRight: '16px'} : {visibility: 'hidden', marginRight: '16px'}}>
-                                <ArrowBack onClick={this.cleanSearch}/>
-                            </IconButton>
-
-                            <Input
-                                id="movie_title_to_search"
-                                value={this.state.movieTitleToSearch}
-                                onClick={this.getMoviesGenres}
-                                placeholder="Movie title"
-                                autoComplete="off"
-                                // type="search"
-                                onChange={evt => this.updateMovieTitleToSearch(evt)}
-                                onBlur={evt => this.searchBarLostFocus(evt)}
-                                disableUnderline={true}
-                                style={{width: '80%'}}
-                                onKeyPress={(event) => {this.onEnterKeyPressed(event)}}
-                            />
-
-                            <IconButton>
-                                {this.state.movieTitleToSearch !== null && this.state.movieTitleToSearch !== '' ?
-                                    <Close onClick={this.clearTitle}/>
-                                    :
-                                    <Search onClick={this.state.movieTitleToSearch !== null && this.state.movieTitleToSearch !== '' ? this.searchMovie : null}/>
-                                }
-                            </IconButton>
-
-                        </Toolbar>
-                    </AppBar>
-
-                    <Paper elevation={1} style={this.state.movieGenres !== null ? {padding: '5px'} : {display: 'none'}}>
-
-                        <CircularProgress style={this.state.movieGenresLoading ? {display: 'inline-block'} : {display: 'none'}}/>
-
-                        {
-                            this.state.movieGenres !== null ? this.state.movieGenres.map(movieGenre => {
-                                return (
-                                    <Chip label={movieGenre.name} style={styles.outlinedChip} className="movieGenre" clickable={true} onClick={() => this.searchMovieGenre(movieGenre)} />
-                                    )
-                            })
-                                :
-                                null
-                        }
-
-                    </Paper>
-
-                    <div style={{paddingTop: '10px', paddingBottom: '10px'}}>
-                        <Chip label="Now Playing" style={this.state.moviesGenre.name === 'Now Playing' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Now Playing", id: "now_playing"})}/>
-                        <Chip label="Popular" style={this.state.moviesGenre.name === 'Popular' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Popular", id: "popular"})} />
-                        <Chip label="Top Rated" style={this.state.moviesGenre.name === 'Top Rated' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Top Rated", id: "top_rated"})} />
-                        <Chip label="Upcoming" style={this.state.moviesGenre.name === 'Upcoming' ? styles.selectedChip : styles.outlinedChip} clickable={true} onClick={() => this.searchMovieGenre({name: "Upcoming", id: "upcoming"})} />
-                    </div>
-
-
-                </div>
+                <SearchMoviesAppBar
+                    isInSearchView={this.state.isInSearchView}
+                    cleanSearch={this.cleanSearch}
+                    movieTitleToSearch={this.state.movieTitleToSearch}
+                    getMoviesGenres={this.getMoviesGenres}
+                    updateMovieTitleToSearch={this.updateMovieTitleToSearch}
+                    searchBarLostFocus={this.searchBarLostFocus}
+                    onEnterKeyPressed={this.onEnterKeyPressed}
+                    searchMovie={this.searchMovie}
+                    clearTitle={this.clearTitle}
+                    movieGenres={this.state.movieGenres}
+                    movieGenresLoading={this.state.movieGenresLoading}
+                    moviesGenre={this.state.moviesGenre}
+                    styles={styles}
+                    searchMovieGenre={this.searchMovieGenre}
+                />
 
 
                 <CircularProgress style={this.state.loading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
 
+                <MoviesGrid
+                    tmdbMovies={this.state.tmdbMovies}
+                    moviesGenre={this.state.moviesGenre}
+                    infiniteLoading={this.state.infiniteLoading}
+                    loading={this.state.loading}
 
-                {this.state.tmdbMovies !== null ? this.state.tmdbMovies.length > 0 ?
-
-                    <div>
-
-                        {
-                            this.state.moviesGenre.name !== 'Now Playing' &&
-                            this.state.moviesGenre.name !== 'Popular' &&
-                            this.state.moviesGenre.name !== 'Top Rated' &&
-                            this.state.moviesGenre.name !== 'Upcoming' ?
-                                <h2>{this.state.moviesGenre.name} movies</h2>
-                                :
-                                null
-                        }
-
-                        <Grid container spacing={0}>
-                            {this.state.tmdbMovies.map(movie => {
-
-                                return (
-
-                                    <Grid item xs={4} style={{padding: '6px'}}>
-
-                                        <Link to={{pathname: `/movies/${movie.id}`, search: `?genre=${this.state.moviesGenre.id}`}} style={{ textDecoration: 'none', color: 'white' }}>
-                                            <Card>
-
-                                                <CardMedia
-                                                    // onClick={() => this.displayMovieInfo(movie)}
-                                                    style={{paddingTop: '150%', cursor: 'pointer', WebkitTapHighlightColor: 'transparent'}}
-                                                    image={"https://image.tmdb.org/t/p/w500" + movie.posterPath}
-                                                    title={movie.title}
-                                                    clickable="true"
-                                                />
-
-                                                <CardContent>
-                                                    <div>
-                                                        <Star style={{fontSize: '18', verticalAlign: 'bottom'}}/>
-                                                        {movie.note}
-                                                    </div>
-
-                                                </CardContent>
-
-                                            </Card>
-                                        </Link>
-
-                                    </Grid>
-
-                                )
-
-                            })}
-                        </Grid>
-
-                        <CircularProgress style={this.state.infiniteLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
-
-                    </div>
-
-                    :
-
-                    <CircularProgress style={
-
-                        this.state.loading ?
-
-                            this.state.infiniteLoading ?
-
-                                {display: 'none'}
-                                :
-                                {display: 'none'}
-
-                            :
-                            this.state.infiniteLoading ?
-
-                                {display: 'inline-block', marginTop: '40px'}
-                                :
-                                {display: 'none'}}
-                                      
-                    />
-
-                    :
-
-                    <div>
-                        <CircularProgress style={this.state.infiniteLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
-                        <div style={
-                            this.state.loading ?
-
-                                this.state.infiniteLoading ?
-
-                                    {display: 'none'}
-                                    :
-                                    {display: 'none'}
-
-                                :
-                                this.state.infiniteLoading ?
-
-                                    {display: 'none'}
-                                    :
-                                    {display: 'inline-block', padding: '30px', color: 'grey'}
-                        }
-
-                        >no results found</div>
-                    </div>
-
-                }
-
+                />
 
             </div>
         )

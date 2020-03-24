@@ -21,7 +21,8 @@
     "react-player": "^1.6.4",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
-    "screenfull": "^3.3.2"
+    "screenfull": "^3.3.2",
+    "use-state-with-callback": "^1.0.18"
   },
   "scripts": {
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules ./src/App.scss -o ./src",

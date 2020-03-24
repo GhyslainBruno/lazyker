@@ -27,177 +27,36 @@ import Slide from "@material-ui/core/Slide";
 import * as auth from "../../../firebase/auth";
 import Link from "react-router-dom/es/Link";
 import Fab from '@material-ui/core/Fab';
+import MovieTorrentsList from "./MovieTorrentsList";
 
 const styles = {
     outlinedChip : {
         border: 'thin solid grey',
         backgroundColor: 'transparent',
         margin: '5px'
-    },
-    // Video quality
-    multiChip: {
-        border: 'thin solid #ffe317',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#ffe317'
-    },
-    multiChipFull: {
-        border: 'thin solid #ffe317',
-        backgroundColor: '#ffe317',
-        opacity: '0.7',
-        margin: '2px',
-        // color: '#ffe317'
-    },
-    hdChip: {
-        border: 'thin solid #1bd860',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#1bd860'
-    },
-    fullHdChip: {
-        border: 'thin solid #c7c21d',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#c7c21d'
-    },
-    aacChip: {
-        border: 'thin solid #1ebd97',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#1ebd97'
-    },
-    dtsChip: {
-        border: 'thin solid #ff7858',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#ff7858'
-    },
-    frenchChip: {
-        border: 'thin solid #01dcff',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#01dcff'
-    },
-    voChip: {
-        border: 'thin solid #ac3fff',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#ac3fff'
-    },
-    h264: {
-        border: 'thin solid #ffa489',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#ffa489'
-    },
-    h264Full: {
-        border: 'thin solid #ffa489',
-        backgroundColor: '#ffa489',
-        opacity: '0.7',
-        margin: '2px'
-    },
-    h265: {
-        border: 'thin solid #d55e37',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#d55e37'
-    },
-    bluray: {
-        border: 'thin solid #b4ff56',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#b4ff56'
-    },
-    blurayFull: {
-        border: 'thin solid #b4ff56',
-        backgroundColor: '#b4ff56',
-        opacity: '0.7',
-        margin: '2px'
-    },
-    vfq: {
-        border: 'thin solid #d68bff',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#d68bff'
-    },
-    hdlight: {
-        border: 'thin solid #6bff96',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#6bff96'
-    },
-    vostfr: {
-        border: 'thin solid #5070ff',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#5070ff'
-    },
-    ac3: {
-        border: 'thin solid #32ffa1',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#32ffa1'
-    },
-    bdrip: {
-        border: 'thin solid #a9cb4b',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#a9cb4b'
-    },
-    uhd: {
-        border: 'thin solid #ff631d',
-        opacity: '0.7',
-        backgroundColor: 'transparent',
-        margin: '2px',
-        color: '#ff631d'
-    },
-    vf: {
-        border: 'thin solid #2f3dff',
-        opacity: '0.7',
-        backgroundColor: 'transparent',
-        margin: '2px',
-        color: '#2f3dff'
-    },
-    threeD: {
-        border: 'thin solid #ac9826',
-        opacity: '0.7',
-        backgroundColor: 'transparent',
-        margin: '2px',
-        color: '#ac9826'
     }
 };
 
-// Transition used to display dialog (usefull ?)
+/**
+ * Transition used to display dialog (usefull ?)
+ * @param props
+ * @returns {*}
+ * @constructor
+ */
 const Transition = (props) => {
     return <Slide direction="up" {...props} />;
 };
 
-// Usefull for react player
+/**
+ * Usefull for react player
+ * @param player
+ */
 const ref = player => {
     this.player = player
 };
 
 const MovieInfoDialog = props => {
 
-    const [uhd, setUhd] = useState(false);
-    const [fullHd, setFullHd] = useState(false);
-    const [hd, setHd] = useState(false);
-    const [multi, setMulti] = useState(false);
     const [movieInfoLoading, setMovieInfoLoading] = useState(false);
     const [movieInfo, setMovieInfo] = useState(null);
     const [trailerPlaying, setTrailerPlaying] = useState(false);
@@ -210,44 +69,18 @@ const MovieInfoDialog = props => {
     const [showInfoDialog, setShowInfoDialog] = useState(false);
     const [tmdbTitle, setTmdbTitle] = useState(null);
 
-    // constructor(props)
-    // {
-    //     super(props);
-    //     this.state = {
-    //         uhd: false,
-    //         fullHd: false,
-    //         hd: false,
-    //         movieInfoLoading: false,
-    //         movieInfo: null,
-    //         trailerPlaying: false,
-    //         torrentsList: null,
-    //         torrentsListFull: null,
-    //         providersMovies: null,
-    //         qualities: null,
-    //         isInTorrentOrDdl: false,
-    //         movieTitle: null
-    //     };
-    // }
-
     /**
      * Clears all the torrents / ddl results
      */
     const clearTorrentsOrDdl = () => {
-        // this.setState({
-        //     torrentsList: null,
-        //     providersmovies: null
-        // })
-
         setTorrentsList(null);
         setProvidersMovies(null);
     };
 
-    // Start the download of a torrent file (in realdebrid)
+    /**
+     * Start the download of a torrent file (in realdebrid)
+     **/
     const downloadTorrentFile = async (torrent) => {
-        // const movieTitle = this.state.movieInfo.title;
-        // console.log(this.state.movieInfo);
-
-        // this.setState({movieInfoLoading: true, movieInfo: null, torrentsList: null});
         setMovieInfoLoading(true);
         setMovieInfo(null);
         setTorrentsList(null);
@@ -293,7 +126,9 @@ const MovieInfoDialog = props => {
         }
     };
 
-    // Find available qualities for a particular ddl provider
+    /**
+     * Find available qualities for a particular ddl provider
+     **/
     const findProviderQualities = async (title, qualityWanted, provider) => {
         // this.setState({providersMovies: null, movieInfoLoading: true});
         setProvidersMovies(null);
@@ -327,16 +162,19 @@ const MovieInfoDialog = props => {
         }
     };
 
-    // Start in full screen the movie trailer
+    /**
+     * Start in full screen the movie trailer
+     **/
     const startTrailer = () => {
         screenfull.request(findDOMNode(this.player));
         // this.setState({trailerPlaying: true});
         setTrailerPlaying(true);
     };
 
-    // Get a list of all torrents available
+    /**
+     * Get a list of all torrents available
+     **/
     const getTorrentsList = async movie => {
-        // this.setState({movieInfoLoading: true, movieInfo: null, isInTorrentOrDdl: true});
         setMovieInfoLoading(true);
         setMovieInfo(null);
         setIsInTorrentOrDdl(true);
@@ -414,19 +252,18 @@ const MovieInfoDialog = props => {
                 provider: 'ygg'
             });
 
-            // console.log('foo')
-            // this.setState({movieInfoLoading: false, torrentsListFull: torrentsTagguedToReturn, torrentsList: torrentsTagguedToReturn});
             setMovieInfoLoading(false);
             setTorrentsListFull(torrentsTagguedToReturn);
             setTorrentsList(torrentsTagguedToReturn)
         } catch(error) {
             props.displaySnackMessage('Error while getting qualities');
-            // this.setState({loading: false})
             setMovieInfoLoading(false);
         }
     };
 
-    // Search movies in ddl providers
+    /**
+     * Search movies in ddl providers
+     **/
     const searchProvidersMovie = async title => {
 
         window.removeEventListener('scroll', this.handleOnScroll);
@@ -470,19 +307,14 @@ const MovieInfoDialog = props => {
         }
     };
 
-    // Get movie info at rendering
-    // componentDidMount() {
-    //     this.setState({showInfoDialog: this.props.showInfoDialog});
-    //     this.getMovieInfo(this.props.selectedMovie);
-    // };
-
-    // Same effect as componentDidMount
     useEffect(() => {
-        showInfoDialog ? null : getMovieInfo(props.selectedMovie);
+        getMovieInfo(props.selectedMovie);
         setShowInfoDialog(props.showInfoDialog);
-    });
+    }, []);
 
-    // Getting movie info
+    /**
+     * Getting movie info
+     **/
     const getMovieInfo = async movie => {
         // this.setState({movieInfoLoading: true, torrentsList: null, providersMovies: null, isInTorrentOrDdl: false, qualities: null});
         setMovieInfoLoading(true);
@@ -498,21 +330,22 @@ const MovieInfoDialog = props => {
             if (!movieInfo.error) {
                 // this.setState({movieInfo: movieInfo, movieInfoLoading: false, movieTitle: movieInfo.title});
                 setMovieInfo(movieInfo);
-                setMovieInfoLoading(false);
                 setMovieTitle(movieInfo.title);
             } else {
                 props.displaySnackMessage('Error getting infos');
                 // this.setState({movieInfo: null, movieInfoLoading: false});
                 setMovieInfo(null);
-                setMovieInfoLoading(false);
             }
+            setMovieInfoLoading(false);
 
         } catch(error) {
             props.displaySnackMessage('Error getting infos');
         }
     };
 
-    // Starts the download of a particular quality, for a particular movie, using a particular provider
+    /**
+     * Starts the download of a particular quality, for a particular movie, using a particular provider
+     **/
     const startDownload = async (movie, qualityWanted) => {
         try {
             fetch('/api/start_movie_download', {
@@ -541,7 +374,9 @@ const MovieInfoDialog = props => {
 
     };
 
-    // Close the dialog and clears data
+    /**
+     * Close the dialog and clears data
+     **/
     const closeDialog = () => {
         // this.setState({torrentsList: null, isInTorrentOrDdl: false});
         setTorrentsList(null);
@@ -549,70 +384,7 @@ const MovieInfoDialog = props => {
         props.closeDialog();
     };
 
-    // TODO : remove all state parts --> rewrite algo without state use (refacto WIP)
-    const filterTorrents = filter => {
-
-        // console.log(filter);
-        // console.log(this.state[filter]);
-
-        this.setState({
-            [filter]: !this.state[filter]
-        }, () => {
-            const trueFilter = [];
-
-            if (this.state.uhd) {
-                trueFilter.push('uhd');
-            }
-
-            if (this.state.fullHd) {
-                trueFilter.push('fullHd');
-            }
-
-            if (this.state.hd) {
-                trueFilter.push('hd');
-            }
-
-            if (this.state.multi) {
-                trueFilter.push('multi');
-            }
-
-            const torrentsFiltered = this.state.torrentsListFull[0].torrents.map(torrent => {
-
-                let shouldBeDisplayed = false;
-
-                if (trueFilter.length > 0) {
-                    trueFilter.map(filter => {
-                        if (Object.keys(torrent.tags).filter((key) => torrent.tags[key]).includes(filter)) {
-                            shouldBeDisplayed = true;
-                        }
-                    });
-                } else {
-                    shouldBeDisplayed = true;
-                }
-
-                torrent.isDisplayed = shouldBeDisplayed;
-
-                if (torrent.isDisplayed) {
-                    return torrent;
-                }
-
-            });
-
-            const torrentsTagguedToReturn = [];
-
-            torrentsTagguedToReturn.push({
-                torrents : torrentsFiltered.filter(torrent => torrent !== undefined),
-                provider: 'ygg'
-            });
-
-            this.setState({torrentsList: torrentsTagguedToReturn});
-        });
-
-    };
-
     // TODO: finish ddl parts + extract some more components
-    // const { showInfoDialog, selectedMovie } = this.props;
-
     return (
         <Dialog
             fullScreen
@@ -656,155 +428,10 @@ const MovieInfoDialog = props => {
 
                     {/*Torrents list*/}
                     {torrentsList !== null ?
-                        <div className="movieInfoDialog">
-
-                            <h2>Torrents</h2>
-
-                            <Chip label={'4K'} style={uhd ? styles.h264Full : styles.h264} clickable={true} onClick={() => filterTorrents('uhd')}/>
-                            <Chip label={'1080p'} style={fullHd ? styles.h264Full : styles.h264} clickable={true} onClick={() => filterTorrents('fullHd')}/>
-                            <Chip label={'720p'} style={hd ? styles.multiChipFull : styles.multiChip} clickable={true} onClick={() => filterTorrents('hd')}/>
-                            <Chip label={'Multi'} style={multi ? styles.blurayFull : styles.bluray} clickable={true} onClick={() => filterTorrents('multi')}/>
-
-                            <List component="nav" dense >
-
-                                {
-                                    torrentsList.map(provider => {
-                                        return (
-                                            <div>
-                                                <h3>
-                                                    {provider.provider}
-                                                </h3>
-
-                                                {
-                                                    provider.torrents.length > 0 ?
-
-                                                        provider.torrents.map(torrent => {
-                                                            return (
-                                                                <Paper elevation={1} style={
-                                                                    torrent.isDisplayed ?
-                                                                        {
-                                                                            margin: '5px',
-                                                                            backgroundColor: '#757575',
-                                                                            visibility: 'visible'
-                                                                        }
-                                                                        :
-                                                                        {
-                                                                            margin: '5px',
-                                                                            backgroundColor: '#757575',
-                                                                            visibility: 'hidden'
-                                                                        }
-                                                                }>
-
-                                                                    <ListItem button
-                                                                              style={{overflow: 'hidden'}}>
-
-
-                                                                        <ListItemText
-
-                                                                            style={{padding: '0'}}
-
-                                                                            primary= {
-                                                                                <div style={{
-                                                                                    overflow: 'hidden',
-                                                                                    textOverflow: 'ellipsis',
-                                                                                    whiteSpace: 'nowrap'
-                                                                                }}>
-                                                                                    {torrent.title}
-                                                                                </div>
-                                                                            }
-
-                                                                            secondary={
-
-                                                                                <div style={{
-                                                                                    overflow: 'auto',
-                                                                                    whiteSpace: 'nowrap'
-                                                                                }}
-                                                                                     className="torrentsChips">
-
-                                                                                    {/* Video quality */}
-
-                                                                                    {
-                                                                                        torrent.tags.threeD ? <Chip label={'3D'} style={styles.multiChip} /> : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.uhd ? <Chip label={'4k'} style={styles.h264} /> : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.fullHd ? <Chip label={'1080p'} style={styles.h264} /> : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.hd ? <Chip label={'720p'} style={styles.multiChip} /> : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.hdlight ? <Chip label={'hdlight'} style={styles.multiChip} /> : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.bdrip ? <Chip label={'bdrip'} style={styles.multiChip} /> : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.h264 ? <Chip label={'h264'} style={styles.multiChip} /> : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.h265 ? <Chip label={'h265'} style={styles.h264} /> : null
-                                                                                    }
-
-
-                                                                                    {/* Language */}
-
-                                                                                    {
-                                                                                        torrent.tags.multi ? <Chip label={'multi'} style={styles.bluray} /> : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.vo ?  (torrent.tags.vostfr ? <Chip label={'vostfr'} style={styles.frenchChip} /> : <Chip label={'vo'} style={styles.frenchChip} />) : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.vf ? (torrent.tags.vfq ? <Chip label={'vfq'} style={styles.frenchChip} /> : <Chip label={'vf'} style={styles.frenchChip} />) : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.french ? <Chip label={'french'} style={styles.frenchChip} /> : null
-                                                                                    }
-
-                                                                                    {/* Audio quality */}
-
-                                                                                    {
-                                                                                        torrent.tags.aac ? <Chip label={'aac'} style={styles.hdChip} /> : null
-                                                                                    }
-
-                                                                                    {
-                                                                                        torrent.tags.dts ? <Chip label={'dts'} style={styles.hdChip} /> : null
-                                                                                    }
-
-                                                                                </div>
-
-                                                                            }
-
-                                                                            onClick={() => downloadTorrentFile(torrent)}/>
-                                                                    </ListItem>
-                                                                </Paper>
-                                                            )
-                                                        })
-                                                        :
-                                                        <div style={{
-                                                            fontSize: '0.9rem',
-                                                            color: 'grey'
-                                                        }}>no torrents found</div>
-                                                }
-                                            </div>
-                                        )
-                                    })}
-                            </List>
-                        </div>
-
+                        <MovieTorrentsList
+                            providers={torrentsListFull}
+                            downloadTorrent={downloadTorrentFile}
+                            />
                         :
                         null
                     }

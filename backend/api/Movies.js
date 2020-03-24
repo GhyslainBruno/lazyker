@@ -229,7 +229,8 @@ module.exports = (app) => {
                 json: true
             };
 
-            let movieTrailer = await rp(optionsTrailer);
+            // let movieTrailer = await rp(optionsTrailer);
+            let movieTrailer = [];
 
             let movieTrailerTMDB = await rp(optionsTrailerTMDB);
 

@@ -229,8 +229,15 @@ module.exports = (app) => {
                 json: true
             };
 
-            // let movieTrailer = await rp(optionsTrailer);
-            let movieTrailer = [];
+            let movieTrailer = {};
+            movieTrailer.items = [];
+
+            try {
+                movieTrailer = await rp(optionsTrailer);
+            } catch(error) {
+                // TODO make it logging in Stack Driver log service
+                console.log(error)
+            }
 
             let movieTrailerTMDB = await rp(optionsTrailerTMDB);
 

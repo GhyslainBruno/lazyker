@@ -111,7 +111,6 @@ const MovieInfoDialog = props => {
                 props.displaySnackMessage('Torrent added - check progress in downloads');
             }
 
-            // this.setState({movieInfoLoading: false});
             setMovieInfoLoading(false);
 
             setTimeout(() => {
@@ -120,7 +119,6 @@ const MovieInfoDialog = props => {
 
         } catch(error) {
             props.displaySnackMessage('Error while downloading torrent file');
-            // this.setState({movieInfoLoading: false});
             setMovieInfoLoading(false);
             props.closeDialog();
         }

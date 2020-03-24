@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import Icon from '@material-ui/core/Icon';
 import Tv from '@material-ui/icons/TvOutlined';
 import Movie from '@material-ui/icons/MovieOutlined';
 import GetApp from '@material-ui/icons/GetAppOutlined';
 import Settings from '@material-ui/icons/SettingsOutlined';
 import '../App.scss';
-import Shows from "./Shows";
 import {Link} from 'react-router-dom';
 
 class Navigation extends Component {

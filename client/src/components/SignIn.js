@@ -29,9 +29,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const SignInPage = ({ history }) =>
     <div>
-        {/*<h1>SignIn</h1>*/}
         <SignInForm history={history} />
-        {/*<SignUpLink />*/}
     </div>;
 
 const byPropKey = (propertyName, value) => () => ({

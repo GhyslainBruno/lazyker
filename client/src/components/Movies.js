@@ -95,24 +95,6 @@ class Movies extends Component {
         });
     };
 
-    // startDownload = async (title, qualityWanted) => {
-    //     let response = fetch('/api/start_movie_download', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({
-    //             title: title,
-    //             quality_wanted: qualityWanted,
-    //             provider: qualityWanted.provider
-    //         })
-    //     });
-    //
-    //     this.setState({providersMovies: null, tmdbMovies: null, qualities: null, snackBarMessage: 'Added - check Downloads for status', snack: true, pageNumber: 1});
-    //     this.getMovies();
-    // };
-
     getMovies = async () => {
 
         if (!this.props.match.params.id) {
@@ -224,16 +206,6 @@ class Movies extends Component {
         }
     }
 
-    // componentWillMount() {
-    //
-    //     const movie = {};
-    //     movie.id = this.props.match.params.id;
-    //
-    //     if (movie.id) {
-    //         this.displayMovieInfo(movie);
-    //     }
-    // }
-
     componentWillUnmount = () => {
         window.removeEventListener('scroll', this.handleOnScroll);
     };
@@ -246,17 +218,12 @@ class Movies extends Component {
         this.setState({snack: true, snackBarMessage: 'Providers error', loading: false})
     };
 
-
     handleOnScroll = (event) => {
         // http://stackoverflow.com/questions/9439725/javascript-how-to-detect-if-browser-window-is-scrolled-to-bottom
         const scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
         const scrollHeight = (document.documentElement && document.documentElement.scrollHeight) || document.body.scrollHeight;
         const clientHeight = document.documentElement.clientHeight || window.innerHeight;
         const scrolledToBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
-
-        // const scrollY = window.scrollY;
-        //
-        // this.checkScrollDirection(scrollY);
 
         if (scrolledToBottom) {
             this.getMovies();
@@ -320,7 +287,6 @@ class Movies extends Component {
     displaySnackMessage = message => {
         this.setState({snack: true, snackBarMessage: message})
     };
-
 
     render() {
 

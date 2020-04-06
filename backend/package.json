@@ -33,7 +33,9 @@
     "p-map": "^1.2.0",
     "parse-torrent": "^6.1.1",
     "path": "^0.12.7",
-    "puppeteer": "^1.19.0",
+    "puppeteer": "^1.20.0",
+    "puppeteer-extra": "^3.1.9",
+    "puppeteer-extra-plugin-stealth": "^2.4.9",
     "request": "^2.85.0",
     "request-promise": "^4.2.2",
     "semver": "^5.5.1",
@@ -41,6 +43,7 @@
     "supertest": "^3.4.2",
     "syno": "^2.1.0",
     "torrent-to-magnet": "^1.0.1",
+    "user-agents": "^1.0.559",
     "wait-promise": "^0.4.1"
   },
   "pkg": {

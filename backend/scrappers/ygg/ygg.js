@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
 const rp  = require('request-promise');
 const request  = require('request');
 const YGGRootUrl ='https://www2.yggtorrent.ch/';
@@ -12,6 +12,11 @@ const realdebrid = require('../../realdebrid/debrid_links');
 const admin = require('firebase-admin');
 const db = admin.database();
 const usersRef = db.ref("/users");
+// const userAgent = require('user-agents');
+
+// add stealth plugin and use defaults (all evasion techniques)
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
 
 /**
  *  Used to read headers responses in requests
@@ -32,12 +37,15 @@ const _include_headers = function(body, response, resolveWithFullResponse) {
  */
 const getTorrentsList = async title => {
 
+    // const width = 960;
+    // const height = 1280;
+
     let launchBrowserProperties = {};
 
     if (process.env.NODE_ENV === 'production') {
         launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
     } else {
-        launchBrowserProperties = {headless: false, ignoreHTTPSErrors: true, timeout: 100000, args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
+        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 100000, args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
     }
 
     let browser = {};
@@ -50,10 +58,24 @@ const getTorrentsList = async title => {
         browser = await puppeteer.launch(launchBrowserProperties);
         // console.log(2);
         const page = await browser.newPage();
+        // await page.setUserAgent(userAgent.toString());
+        // await page.setViewport({ width, height });
+
+        // await page.goto('https://bot.sannysoft.com');
+        // await page.waitFor(5000);
+        // await page.screenshot({ path: 'testresult.png', fullPage: true });
+
         // console.log(3);
         await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145', {timeout: 100000});
+
         // console.log(4);
-        await page.waitFor(15000);
+        await page.waitFor(10000);
+        // await page.mouse.move(0, 0);
+        // await page.mouse.move(175, 341);
+        // await page.mouse.down();
+        // await page.mouse.up();
+        // await page.mouse.click(175, 341, { button: 'left' });
+        // await page.screenshot({path: 'list.png', fullPage: true });
         // console.log(5);
         await page.waitForSelector("body");
         // console.log(6);
@@ -112,7 +134,7 @@ const downloadTorrentFile = async (url, user, infos) => {
     if (process.env.NODE_ENV === 'production') {
         launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 70000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`, '--disable-gpu']}
     } else {
-        launchBrowserProperties = {headless: false, timeout: 70000, args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`]}
+        launchBrowserProperties = {headless: true, timeout: 70000, args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`]}
     }
 
     let browser = {};
@@ -134,6 +156,7 @@ const downloadTorrentFile = async (url, user, infos) => {
 
         // console.log(3);
         await page.goto(url, {timeout: 70000});
+        await page.waitFor(10000);
 
         // console.log(4);
         await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.join(__dirname, '/torrent_temp')});
@@ -149,6 +172,7 @@ const downloadTorrentFile = async (url, user, infos) => {
         // console.log(7);
         await page.waitForSelector("body");
         // console.log(8);
+        // await page.screenshot({path: 'downloading.png', fullPage: true});
         await page.click("a.butt");
 
         // console.log(9);
@@ -185,7 +209,7 @@ const downloadTorrentFile = async (url, user, infos) => {
 
         // Old way
         await page.click("a.butt");
-        await page.waitFor(15000);
+        await page.waitFor(7000);
 
         // Get the torrent fileName
         const torrentFileName = await getTorrentFileName();

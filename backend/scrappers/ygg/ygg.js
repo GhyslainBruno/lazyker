@@ -53,7 +53,7 @@ const getTorrentsList = async title => {
         // console.log(3);
         await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145', {timeout: 100000});
         // console.log(4);
-        await page.waitFor(10000);
+        await page.waitFor(15000);
         // console.log(5);
         await page.waitForSelector("body");
         // console.log(6);
@@ -185,7 +185,7 @@ const downloadTorrentFile = async (url, user, infos) => {
 
         // Old way
         await page.click("a.butt");
-        await page.waitFor(7000);
+        await page.waitFor(15000);
 
         // Get the torrent fileName
         const torrentFileName = await getTorrentFileName();

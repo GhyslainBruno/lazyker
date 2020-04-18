@@ -147,6 +147,10 @@ TODO : Use docker_compose to do the whole thing.
 Here is the Caddy file I use (in ~/) : 
 
 ```
+nas.ghyslain.xyz {
+  proxy / 192.168.1.20:5000
+}
+
 lazyker.ghyslain.xyz {
   proxy / 192.168.1.12:8080
 }

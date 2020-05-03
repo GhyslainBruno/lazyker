@@ -18,8 +18,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-    watchUpdateShowsNumber(dispatch);
-    return {}
+    watchUpdateShowsNumber(dispatch)
 };
 
 class Navigation extends Component {

@@ -13,7 +13,7 @@ import {watchUpdateShowsNumber} from "../actions/watchUpdateShowsNumber";
 
 const mapStateToProps = state => {
     return {
-        updatedShowsNumber: state.updatedShowsNumber
+        updatedShowsNumber: state.navigationReducer.updatedShowsNumber
     };
 };
 

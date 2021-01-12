@@ -8,7 +8,7 @@
     "@material/react-button": "^0.4.2",
     "@material/react-text-field": "^0.4.2",
     "@material/theme": "^0.39.1",
-    "firebase": "^5.4.2",
+    "firebase": "^8.2.2",
     "gapi-client": "0.0.3",
     "googleapis": "^34.0.0",
     "materialize-css": "^1.0.0-rc.1",

@@ -45,7 +45,7 @@ const getTorrentsList = async title => {
     if (process.env.NODE_ENV === 'production') {
         launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
     } else {
-        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 100000, args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
+        launchBrowserProperties = {headless: false, ignoreHTTPSErrors: true, timeout: 100000, executablePath : '/Users/ghyslain/Developer/lazyker/backend/node_modules/puppeteer/.local-chromium/mac-722234/chrome-mac/Chromium.app/Contents/MacOS/Chromium', args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
     }
 
     let browser = {};

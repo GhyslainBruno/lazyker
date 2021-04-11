@@ -29,6 +29,12 @@ const Storage = props => {
                 </Grid>
 
                 <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
+
+                    <Chip
+                      label="Uptobox"
+                      variant={props.storage === "uptobox" ? "default" : "outlined"}
+                      style={{margin: '3px'}} clickable="true"
+                      onClick={() => {props.setStorage('uptobox')}}/>
                     <Chip
                         label="Google Drive"
                         variant={props.storage === "gdrive" ? "default" : "outlined"}

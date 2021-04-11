@@ -45,7 +45,7 @@ const getTorrentsList = async title => {
     if (process.env.NODE_ENV === 'production') {
         launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
     } else {
-        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 100000, args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
+        launchBrowserProperties = {headless: false, ignoreHTTPSErrors: true, timeout: 100000, args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
     }
 
     let browser = {};
@@ -58,6 +58,8 @@ const getTorrentsList = async title => {
         browser = await puppeteer.launch(launchBrowserProperties);
         // console.log(2);
         const page = await browser.newPage();
+        await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36');
+
         // await page.setUserAgent(userAgent.toString());
         // await page.setViewport({ width, height });
 

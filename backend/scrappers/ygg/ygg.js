@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const puppeteer = require('puppeteer-extra');
+// const puppeteer = require('puppeteer-extra');
 const rp  = require('request-promise');
 const request  = require('request');
 const YGGRootUrl ='https://www2.yggtorrent.ch/';
@@ -12,11 +12,11 @@ const realdebrid = require('../../realdebrid/debrid_links');
 const admin = require('firebase-admin');
 const db = admin.database();
 const usersRef = db.ref("/users");
-// const userAgent = require('user-agents');
+const torrentSearchApi = require('torrent-search-api');
 
 // add stealth plugin and use defaults (all evasion techniques)
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-puppeteer.use(StealthPlugin());
+// const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+// puppeteer.use(StealthPlugin());
 
 /**
  *  Used to read headers responses in requests
@@ -30,6 +30,19 @@ const _include_headers = function(body, response, resolveWithFullResponse) {
     return {'headers': response.headers, 'data': body, 'fullResponse': resolveWithFullResponse};
 };
 
+const getTorrentsApi = title => {
+    return new Promise((resolve, reject) => {
+        torrentSearchApi.search(title, 'Movies', 20)
+          .then(torrents => {
+              resolve(torrents);
+          })
+          .catch(error => {
+              console.log(error);
+              reject(error);
+          })
+    })
+}
+
 /**
  * Returns a list of Ygg torrents for a particular title
  * @param title
@@ -37,86 +50,67 @@ const _include_headers = function(body, response, resolveWithFullResponse) {
  */
 const getTorrentsList = async title => {
 
-    // const width = 960;
-    // const height = 1280;
+    // cloudflare-scrapper way
+    torrentSearchApi.enableProvider('Yggtorrent', 'Ghyslain', 'foobar');
 
-    let launchBrowserProperties = {};
+    const torrents = await getTorrentsApi(title);
 
-    if (process.env.NODE_ENV === 'production') {
-        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
-    } else {
-        launchBrowserProperties = {headless: false, ignoreHTTPSErrors: true, timeout: 100000, args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
-    }
+    console.log(torrents);
 
-    let browser = {};
-
-    try {
-
-        title = title.replace(/[!-]/gi, '');
-
-        // console.log(1);
-        browser = await puppeteer.launch(launchBrowserProperties);
-        // console.log(2);
-        const page = await browser.newPage();
-        await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36');
-
-        // await page.setUserAgent(userAgent.toString());
-        // await page.setViewport({ width, height });
-
-        // await page.goto('https://bot.sannysoft.com');
-        // await page.waitFor(5000);
-        // await page.screenshot({ path: 'testresult.png', fullPage: true });
-
-        // console.log(3);
-        await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145', {timeout: 100000});
-
-        // console.log(4);
-        await page.waitFor(10000);
-        // await page.mouse.move(0, 0);
-        // await page.mouse.move(175, 341);
-        // await page.mouse.down();
-        // await page.mouse.up();
-        // await page.mouse.click(175, 341, { button: 'left' });
-        // await page.screenshot({path: 'list.png', fullPage: true });
-        // console.log(5);
-        await page.waitForSelector("body");
-        // console.log(6);
-        const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
-        // console.log(7);
-        const $ = cheerio.load(html);
-        // console.log(8);
-
-        const tableRows = $('tr');
-        const items = tableRows.splice(7, tableRows.length);
-
-        const torrentsList = [];
-
-        // console.log(9);
-        items.map(item => {
-            torrentsList.push({
-                provider: 'ygg',
-                title: item.children[3].children[0].children[0].data.replace(/\n/g,''),
-                url: item.children[3].children[0].attribs.href,
-                size: item.children[11].children[0].data,
-                completed: item.children[13].children[0].data,
-                seed: item.children[15].children[0].data,
-                leech: item.children[17].children[0].data
-            })
-        });
-
-        // console.log(10);
-        browser.close();
-
-        return {
-            provider: 'ygg',
-            torrents: torrentsList
-        };
-
-    } catch(error) {
-        console.log(error.message);
-        browser.close();
-        throw error;
-    }
+    // Puppeteer way
+    // let launchBrowserProperties = {};
+    //
+    // if (process.env.NODE_ENV === 'production') {
+    //     launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 60000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
+    // } else {
+    //     launchBrowserProperties = {headless: false, ignoreHTTPSErrors: true, timeout: 100000, args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']}
+    // }
+    //
+    // let browser = {};
+    //
+    // try {
+    //     title = title.replace(/[!-]/gi, '');
+    //
+    //     browser = await puppeteer.launch(launchBrowserProperties);
+    //     const page = await browser.newPage();
+    //     await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36');
+    //
+    //     await page.goto(YGGRootUrl + 'engine/search?name=' + title + '&do=search&description=&file=&uploader=&category=2145', {timeout: 100000});
+    //
+    //     await page.waitFor(10000);
+    //     await page.waitForSelector("body");
+    //     const html = await page.evaluate(body => body.innerHTML, await page.$('body'));
+    //     const $ = cheerio.load(html);
+    //
+    //     const tableRows = $('tr');
+    //     const items = tableRows.splice(7, tableRows.length);
+    //
+    //     const torrentsList = [];
+    //
+    //     items.map(item => {
+    //         torrentsList.push({
+    //             provider: 'ygg',
+    //             title: item.children[3].children[0].children[0].data.replace(/\n/g,''),
+    //             url: item.children[3].children[0].attribs.href,
+    //             size: item.children[11].children[0].data,
+    //             completed: item.children[13].children[0].data,
+    //             seed: item.children[15].children[0].data,
+    //             leech: item.children[17].children[0].data
+    //         })
+    //     });
+    //
+    //     browser.close();
+    //
+    //     return {
+    //         provider: 'ygg',
+    //         torrents: torrentsList
+    //     };
+    //
+    // } catch(error) {
+    //     console.log(error.message);
+    //     browser.close();
+    //     throw error;
+    // }
 };
 
 /**
@@ -126,138 +120,141 @@ const getTorrentsList = async title => {
  * @param infos
  * @returns {Promise<null>}
  */
-const downloadTorrentFile = async (url, user, infos) => {
-
-    const width = 960;
-    const height = 1280;
-
-    let launchBrowserProperties = {};
-
-    if (process.env.NODE_ENV === 'production') {
-        launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 70000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`, '--disable-gpu']}
-    } else {
-        launchBrowserProperties = {headless: true, timeout: 70000, args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`]}
-    }
-
-    let browser = {};
-
-    try {
-        // console.log(1);
-        browser = await puppeteer.launch(launchBrowserProperties);
-
-        // browser.addListener('targetdestroyed', async target => {
-        //     console.log(target);
-        // });
-
-
-
-        // With puppeteer
-        // TODO maybe use another YGG account
-        // console.log(2);
-        const page = await browser.newPage();
-
-        // console.log(3);
-        await page.goto(url, {timeout: 70000});
-        await page.waitFor(10000);
-
-        // console.log(4);
-        await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.join(__dirname, '/torrent_temp')});
-
-        // console.log(5);
-        await page.setViewport({ width, height });
-
-        // console.log(6);
-        const pages = await browser.pages();
-        await pages[0].close();
-
-        // let html = await page.evaluate(body => body.innerHTML, await page.$('body'));
-        // console.log(7);
-        await page.waitForSelector("body");
-        // console.log(8);
-        // await page.screenshot({path: 'downloading.png', fullPage: true});
-        await page.click("a.butt");
-
-        // console.log(9);
-        await page.type('input[name=id]', 'Ghyslain');
-        await page.type('input[name=pass]', 'foobar');
-
-        await page.keyboard.down('Enter');
-        await page.type('input[name=id]', 'Ghyslain');
-        await page.keyboard.down('Enter');
-
-        // console.log(10);
-        await page.waitForNavigation();
-        await page.waitForSelector("a.butt");
-
-        // Since now a click on the download buton opens a new popup window before starting the download, chromium crashes
-        // see the #299 error https://github.com/GoogleChrome/puppeteer/issues/299
-        // so I get the url value and fetch it normally
-        // let torrentDownloadUrl = await page.evaluate((sel) => {
-        //     return document.getElementsByClassName(sel)[0].href;
-        // }, 'butt');
-
-        // See here for the way https://stackoverflow.com/questions/48752822/request-promise-download-pdf-file
-        // const optionsStart = {
-        //     uri: torrentDownloadUrl,
-        //     encoding: "binary",
-        //     method: 'GET'
-        // };
-        // await rp(optionsStart)
-        //     .then( async (body, data) => {
-        //         let writeStream = fs.createWriteStream(path.join(__dirname, '/torrent_temp/file.torrent'));
-        //         writeStream.write(body, 'binary');
-        //         writeStream.end();
-        //     });
-
-        // Old way
-        await page.click("a.butt");
-        await page.waitFor(7000);
-
-        // Get the torrent fileName
-        const torrentFileName = await getTorrentFileName();
-
-        // Parse torrent file to get info
-        const torrentInfos = parseTorrent(fs.readFileSync(__dirname + '/torrent_temp/' + torrentFileName));
-
-        // TODO understand why having some "announces" in infos of a torrent is a bad thing...
-        // For now, without flushing [announces] - torrent adding using magnet link don't work in realdebrid...
-        torrentInfos.announce = [];
-
-        // Create magnet link using torrent file infos
-        const magnetLink = parseTorrent.toMagnetURI(
-            torrentInfos
-        );
-
-        // Removing torrent file
-        await removeAllFiles(path.join(__dirname, 'torrent_temp'));
-
-        const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink, user, infos);
-
-        await realdebrid.selectAllTorrentFiles(rdTorrentInfo.id, user);
-
-        browser.close();
-
-        return null;
-
-
-        // Without puppeteer
-        // Ygg login
-        // const sessionCookie = await yggLogin(db.getData('/configuration/ygg/username'), db.getData('/configuration/ygg/password'));
-
-        // Get id of the torrent to download
-        // const id = getTorrentId(url);
-
-        // Start the actual download of the torrent file
-        // await startTorrentDownload(id, sessionCookie);
-
-    } catch(error) {
-
-        await removeAllFiles(path.join(__dirname, 'torrent_temp'));
-        await logger.info(error, user);
-        browser.close();
-        throw error;
-    }
-};
+const downloadTorrentFile = async () => {
+    console.log('been there');
+}
+// const downloadTorrentFile = async (url, user, infos) => {
+//
+//     const width = 960;
+//     const height = 1280;
+//
+//     let launchBrowserProperties = {};
+//
+//     if (process.env.NODE_ENV === 'production') {
+//         launchBrowserProperties = {headless: true, ignoreHTTPSErrors: true, timeout: 70000, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`, '--disable-gpu']}
+//     } else {
+//         launchBrowserProperties = {headless: true, timeout: 70000, args: ['--no-sandbox', '--disable-dev-shm-usage', `--window-size=${height},${width}`]}
+//     }
+//
+//     let browser = {};
+//
+//     try {
+//         // console.log(1);
+//         browser = await puppeteer.launch(launchBrowserProperties);
+//
+//         // browser.addListener('targetdestroyed', async target => {
+//         //     console.log(target);
+//         // });
+//
+//
+//
+//         // With puppeteer
+//         // TODO maybe use another YGG account
+//         // console.log(2);
+//         const page = await browser.newPage();
+//
+//         // console.log(3);
+//         await page.goto(url, {timeout: 70000});
+//         await page.waitFor(10000);
+//
+//         // console.log(4);
+//         await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.join(__dirname, '/torrent_temp')});
+//
+//         // console.log(5);
+//         await page.setViewport({ width, height });
+//
+//         // console.log(6);
+//         const pages = await browser.pages();
+//         await pages[0].close();
+//
+//         // let html = await page.evaluate(body => body.innerHTML, await page.$('body'));
+//         // console.log(7);
+//         await page.waitForSelector("body");
+//         // console.log(8);
+//         // await page.screenshot({path: 'downloading.png', fullPage: true});
+//         await page.click("a.butt");
+//
+//         // console.log(9);
+//         await page.type('input[name=id]', 'Ghyslain');
+//         await page.type('input[name=pass]', 'foobar');
+//
+//         await page.keyboard.down('Enter');
+//         await page.type('input[name=id]', 'Ghyslain');
+//         await page.keyboard.down('Enter');
+//
+//         // console.log(10);
+//         await page.waitForNavigation();
+//         await page.waitForSelector("a.butt");
+//
+//         // Since now a click on the download buton opens a new popup window before starting the download, chromium crashes
+//         // see the #299 error https://github.com/GoogleChrome/puppeteer/issues/299
+//         // so I get the url value and fetch it normally
+//         // let torrentDownloadUrl = await page.evaluate((sel) => {
+//         //     return document.getElementsByClassName(sel)[0].href;
+//         // }, 'butt');
+//
+//         // See here for the way https://stackoverflow.com/questions/48752822/request-promise-download-pdf-file
+//         // const optionsStart = {
+//         //     uri: torrentDownloadUrl,
+//         //     encoding: "binary",
+//         //     method: 'GET'
+//         // };
+//         // await rp(optionsStart)
+//         //     .then( async (body, data) => {
+//         //         let writeStream = fs.createWriteStream(path.join(__dirname, '/torrent_temp/file.torrent'));
+//         //         writeStream.write(body, 'binary');
+//         //         writeStream.end();
+//         //     });
+//
+//         // Old way
+//         await page.click("a.butt");
+//         await page.waitFor(7000);
+//
+//         // Get the torrent fileName
+//         const torrentFileName = await getTorrentFileName();
+//
+//         // Parse torrent file to get info
+//         const torrentInfos = parseTorrent(fs.readFileSync(__dirname + '/torrent_temp/' + torrentFileName));
+//
+//         // TODO understand why having some "announces" in infos of a torrent is a bad thing...
+//         // For now, without flushing [announces] - torrent adding using magnet link don't work in realdebrid...
+//         torrentInfos.announce = [];
+//
+//         // Create magnet link using torrent file infos
+//         const magnetLink = parseTorrent.toMagnetURI(
+//             torrentInfos
+//         );
+//
+//         // Removing torrent file
+//         await removeAllFiles(path.join(__dirname, 'torrent_temp'));
+//
+//         const rdTorrentInfo = await realdebrid.addMagnetLinkToRealdebrid(magnetLink, user, infos);
+//
+//         await realdebrid.selectAllTorrentFiles(rdTorrentInfo.id, user);
+//
+//         browser.close();
+//
+//         return null;
+//
+//
+//         // Without puppeteer
+//         // Ygg login
+//         // const sessionCookie = await yggLogin(db.getData('/configuration/ygg/username'), db.getData('/configuration/ygg/password'));
+//
+//         // Get id of the torrent to download
+//         // const id = getTorrentId(url);
+//
+//         // Start the actual download of the torrent file
+//         // await startTorrentDownload(id, sessionCookie);
+//
+//     } catch(error) {
+//
+//         await removeAllFiles(path.join(__dirname, 'torrent_temp'));
+//         await logger.info(error, user);
+//         browser.close();
+//         throw error;
+//     }
+// };
 
 const closeAdTabs = async browser => {
     const pages = await browser.pages();

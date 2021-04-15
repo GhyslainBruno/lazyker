@@ -29,7 +29,7 @@ const getTorrentsList = async title => {
         // torrent9.getTorrentsList(title)
     ];
 
-    return await pMap(providersPromises, async providerUrls => {
+        return await pMap(providersPromises, async providerUrls => {
         return providerUrls;
     }, {concurrency: 2});
 

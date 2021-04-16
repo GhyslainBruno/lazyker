@@ -2,15 +2,15 @@
   "name": "lazyker",
   "version": "1.0.0",
   "bin": {
-    "lazyker": "server.js"
+    "lazyker": "src/server.js"
   },
   "description": "Back-End to trigger downloads (and some more things) on synology nas",
-  "main": "server.js",
+  "main": "src/server.js",
   "jest": {
     "testResultsProcessor": "jest-sonar-reporter"
   },
   "scripts": {
-    "test": "jest --config jest.config.js --forceExit --detectOpenHandles"
+    "test": "jest --config src/jest.config.js --forceExit --detectOpenHandles"
   },
   "jestSonar": {
     "reportPath": "coverage"
@@ -53,5 +53,9 @@
     "scripts": [
       "node_modules/puppeteer/lib/*.js"
     ]
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.41",
+    "typescript": "^4.2.4"
   }
 }

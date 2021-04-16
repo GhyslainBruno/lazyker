@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const torrentToMagnet = require('torrent-to-magnet');
 const parseTorrent = require('parse-torrent');
-const realdebrid = require('../../realdebrid/debrid_links');
+const realdebrid = require('../../debriders/realdebrid/debrid_links');
 const admin = require('firebase-admin');
 const db = admin.database();
 const usersRef = db.ref("/users");
@@ -55,7 +55,24 @@ const getTorrentsList = async title => {
 
     const torrents = await getTorrentsApi(title);
 
-    console.log(torrents);
+    const torrentsList = [];
+
+    torrents.map(torrent => {
+        torrentsList.push({
+            provider: 'ygg',
+            title: torrent.title,
+            url: torrent.link,
+            size: torrent.size,
+            seed: torrent.seeds,
+            leech: torrent.peers,
+            ...torrent
+        })
+    });
+
+        return {
+            provider: 'ygg',
+            torrents: torrentsList
+        };
 
     // Puppeteer way
     // let launchBrowserProperties = {};
@@ -115,13 +132,36 @@ const getTorrentsList = async title => {
 
 /**
  * Start the download of a torrent file -> to magnetLink -> deletes torrent file -> add to realdebrid service
- * @param url
- * @param user
- * @param infos
- * @returns {Promise<null>}
+ * @param torrent
+ * @returns {Promise<void>}
  */
-const downloadTorrentFile = async () => {
-    console.log('been there');
+const downloadTorrentFile = async (url, user, infos) => {
+
+    try {
+        const torrent = {
+            link: url,
+            title: infos.title,
+            provider: 'Yggtorrent',
+            desc: url
+        }
+
+        torrentSearchApi.enableProvider('Yggtorrent', 'Ghyslain', 'foobar');
+
+        await torrentSearchApi.downloadTorrent(torrent, path.join(__dirname, '/torrent_temp/file.torrent'));
+
+        const torrentInfos = parseTorrent(fs.readFileSync(path.join(__dirname, '/torrent_temp/file.torrent')));
+        // Create magnet link using torrent file infos
+        const magnetLink = parseTorrent.toMagnetURI(
+            torrentInfos
+        );
+
+        // Removing torrent file
+        await removeAllFiles(path.join(__dirname, 'torrent_temp'));
+
+        console.log(magnetLink);
+    } catch(error) {
+        console.log(error)
+    }
 }
 // const downloadTorrentFile = async (url, user, infos) => {
 //

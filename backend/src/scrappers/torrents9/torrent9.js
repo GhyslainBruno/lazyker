@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const logger = require('../../logs/logger');
 const Torrent9RootUrl = 'https://www.torrent9.vg';
-const realdebrid = require('../../realdebrid/debrid_links');
+const realdebrid = require('../../debriders/realdebrid/debrid_links');
 // const puppeteer = require('puppeteer');
 const parseTorrent = require('parse-torrent');
 

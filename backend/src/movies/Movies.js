@@ -4,7 +4,7 @@ const EDScrapper = require('../scrappers/extremedownload/extremedownload');
 const dlprotectlol = require('../scrappers/zonetelechargementlol/dlprotect1co');
 const dlprotect = require('../scrappers/zonetelechargement/dlprotect1com');
 const edprotect = require('../scrappers/extremedownload/edprotect');
-const realdebrid = require('../realdebrid/debrid_links');
+const realdebrid = require('../debriders/realdebrid/debrid_links');
 // const download = require('../synology/Download');
 const download = require('../downloads/downloader');
 const logger = require('../logs/logger');
@@ -49,7 +49,7 @@ const downloadTorrentFile = async (url, provider, title, id, user) => {
     try {
 
         switch (provider) {
-            case 'ygg':
+            case 'Yggtorrent' :
                 await ygg.downloadTorrentFile(url, user, {title: title, isShow: false});
                 break;
             case 'torrent9':

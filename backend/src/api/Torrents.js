@@ -1,4 +1,4 @@
-const realdebrid = require('../realdebrid/debrid_links');
+const realdebrid = require('../debriders/realdebrid/debrid_links');
 const admin = require("firebase-admin");
 const Movies = require('../movies/Movies');
 // const downloader = require('../synology/Download');

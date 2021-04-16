@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const _ = require('lodash');
 
 const logger = require('../../../../logs/logger');
-const realdebrid = require('../../../../realdebrid/debrid_links');
+const realdebrid = require('../../../../debriders/realdebrid/debrid_links');
 
 const rootRMZ = "http://rmz.cr/";
 

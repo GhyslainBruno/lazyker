@@ -5,7 +5,7 @@ const got = require('got');
 const utils = require('../utils/downloads/MultipleDownloads');
 // const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
 const request = require('request');
-const credentials = require("./client_secret_348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com");
+const credentials = require("./client_secret_348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com.json");
 
 // Get a database reference to our blog
 const db = admin.database();

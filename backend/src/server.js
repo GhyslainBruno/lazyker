@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const serviceAccount = require("./lazyker-568c4-firebase-adminsdk-b7xs7-f766489e61");
+const serviceAccount = require("./lazyker-568c4-firebase-adminsdk-b7xs7-f766489e61.json");
 // const https = require('https');
 const http = require('http');
 const fs = require('fs');

@@ -2,7 +2,7 @@ const rp = require('request-promise');
 const pFilter = require('p-filter');
 const pMap = require('p-map');
 
-const logger = require('../logs/logger');
+const logger = require('../../logs/logger');
 
 // Realdebrid authentication part
 const CLIENT_ID = 'GPA2MB33HLS3I';

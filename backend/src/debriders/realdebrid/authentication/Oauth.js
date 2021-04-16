@@ -1,5 +1,5 @@
 const rp = require('request-promise');
-const logger = require('../../logs/logger');
+const logger = require('../../../logs/logger');
 const CLIENT_ID = 'GPA2MB33HLS3I';
 const CLIENT_SECRET = '1e56fa016de2d07058c2501737710683a12d3dee';
 const authUrlRealDebrid = "https://api.real-debrid.com/oauth/v2/token";

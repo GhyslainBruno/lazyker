@@ -2,6 +2,7 @@
 backend/node_modules/
 backend/coverage/
 backend/client_build/
+backend/build/
 client/build/
 client/node_modules
 backend/test-report.xml

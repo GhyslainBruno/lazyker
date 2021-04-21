@@ -113,4 +113,4 @@ ENV NODE_ENV=production
 EXPOSE 80
 
 # Starting server in production mode
-CMD ["node","backend/server.js"]
+CMD ["node","backend/server.ts"]

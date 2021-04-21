@@ -2,15 +2,16 @@
   "name": "lazyker",
   "version": "1.0.0",
   "bin": {
-    "lazyker": "src/server.js"
+    "lazyker": "src/server.ts"
   },
   "description": "Back-End to trigger downloads (and some more things) on synology nas",
-  "main": "src/server.js",
+  "main": "src/server.ts",
   "jest": {
     "testResultsProcessor": "jest-sonar-reporter"
   },
   "scripts": {
-    "test": "jest --config src/jest.config.js --forceExit --detectOpenHandles"
+    "test": "jest --config src/jest.config.js --forceExit --detectOpenHandles",
+    "dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts"
   },
   "jestSonar": {
     "reportPath": "coverage"
@@ -56,6 +57,11 @@
   },
   "devDependencies": {
     "@types/node": "^14.14.41",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "ts-node": "^9.1.1",
+    "ts-node-dev": "^1.1.6",
     "typescript": "^4.2.4"
   }
 }

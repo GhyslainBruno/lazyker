@@ -11,7 +11,7 @@ const logger = require('../../../logs/logger');
  * @param qualities
  * @returns {Promise<*>}
  */
-const getLink = async (show, user, qualities) => {
+export const getLink = async (show: any, user: any, qualities: any) => {
 
     try {
 
@@ -22,7 +22,7 @@ const getLink = async (show, user, qualities) => {
             ygg.getLink(show, user, qualities)
         ];
 
-        const links = await pMap(providersPromises, link => {
+        const links = await pMap(providersPromises, (link: any) => {
             return link
         }, {concurency: 1});
 
@@ -45,10 +45,10 @@ const getLink = async (show, user, qualities) => {
  * @param links
  * @returns {*}
  */
-const downloadBetterTorrent = (links) => {
+const downloadBetterTorrent = (links: any) => {
 
-    links = links.filter(link => link !== null);
-    links = links.filter(link => link !== undefined);
+    links = links.filter((link: any) => link !== null);
+    links = links.filter((link: any) => link !== undefined);
 
 
 

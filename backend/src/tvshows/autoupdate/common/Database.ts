@@ -7,7 +7,7 @@ const stringSimilarity = require('string-similarity');
  * Returns all tv Shows with "autoUpdate" property to true from Firebase database
  * @returns {Promise<any>}
  */
-async function getTvShowsToUpdateFromDatabase(user) {
+export async function getTvShowsToUpdateFromDatabase(user: any) {
     // Set movie in progress state to movie in error (in db)
     const snapshot = await usersRef.child(user.uid).child('/shows').orderByChild('autoUpdate').equalTo(true).once('value');
     return snapshot.val();
@@ -19,7 +19,7 @@ module.exports.getTvShowsToUpdateFromDatabase = getTvShowsToUpdateFromDatabase;
  * @param user
  * @returns {Promise<void>}
  */
-const getTvShowsPath = async user => {
+export const getTvShowsPath = async (user: any) => {
     const snapshot = await usersRef.child(user.uid).child('/settings/nas/tvShowsPath').once('value');
     return snapshot.val();
 };
@@ -30,7 +30,7 @@ module.exports.getTvShowsPath = getTvShowsPath;
  * @param user
  * @returns {Promise<void>}
  */
-const getTvShowsFolderGdrive = async user => {
+export const getTvShowsFolderGdrive = async (user: any) => {
     const snapshot = await usersRef.child(user.uid).child('/settings/gdrive/tvShowsGdriveFolder').once('value');
     return snapshot.val();
 };
@@ -41,11 +41,12 @@ module.exports.getTvShowsFolderGdrive = getTvShowsFolderGdrive;
  * @param user
  * @returns {Promise<void>}
  */
-const getQualitiesWanted = async user => {
+export const getQualitiesWanted = async (user: any) => {
     const snapshot = await usersRef.child(user.uid).child('/settings/qualities').once('value');
     const qualities = snapshot.val();
 
     // Removing all qualities set to "none
+    //@ts-ignore
     return await Object.keys(qualities).filter(key => qualities[key] !== "none").reduce((obj, key) => {obj[key] = qualities[key]; return obj;}, {});
 };
 module.exports.getQualitiesWanted  = getQualitiesWanted;
@@ -56,7 +57,7 @@ module.exports.getQualitiesWanted  = getQualitiesWanted;
  * @param user
  * @returns {Promise<*>}
  */
-const getLangWantedForThisTvShow = async (show, user) => {
+export const getLangWantedForThisTvShow = async (show: any, user: any) => {
 
     const showsSnapshot = await usersRef.child(user.uid).child('/shows').once('value');
     const shows = showsSnapshot.val();
@@ -77,7 +78,7 @@ module.exports.getLangWantedForThisTvShow = getLangWantedForThisTvShow;
  * @param show
  * @returns {Promise<void>}
  */
-const setNewEpisodeBadgeVisible = async (user, show) => {
+export const setNewEpisodeBadgeVisible = async (user: any, show: any) => {
     await usersRef.child(user.uid).child(`/shows/${show.lazyker_id}`).update({episode: true});
 };
 module.exports.setNewEpisodeBadgeVisible = setNewEpisodeBadgeVisible;
@@ -87,7 +88,7 @@ module.exports.setNewEpisodeBadgeVisible = setNewEpisodeBadgeVisible;
  * @param user
  * @returns {Promise<admin.database.DataSnapshot>}
  */
-const getTorrentsDownloadedFromDatabase = async user => {
+export const getTorrentsDownloadedFromDatabase = async (user: any) => {
     const snapshot = await usersRef.child(user.uid).child('/torrentsDownloaded').orderByChild("mediaInfos/isShow").equalTo(true).once('value');
     return snapshot.val();
 };

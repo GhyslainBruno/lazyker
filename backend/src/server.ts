@@ -1,4 +1,5 @@
-const admin = require('firebase-admin');
+import admin from 'firebase-admin';
+// const admin = require('firebase-admin');
 const serviceAccount = require("./lazyker-568c4-firebase-adminsdk-b7xs7-f766489e61.json");
 // const https = require('https');
 const http = require('http');
@@ -16,7 +17,7 @@ const path = require('path');
 const app = express();
 
 // For CORS error
-app.use(function(req, res, next) {
+app.use(function(req: any, res: any, next: any) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
@@ -64,7 +65,7 @@ if (process.env.NODE_ENV === 'production') {
     // Serve any static files
     app.use(express.static(path.join(__dirname, '/client_build')));
     // Handle React routing, return all requests to React app
-    app.get('*', function(req, res) {
+    app.get('*', function(req: any, res: any) {
         res.sendFile(path.join(__dirname, '/client_build', 'index.html'));
     });
 }

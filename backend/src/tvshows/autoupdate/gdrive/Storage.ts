@@ -9,21 +9,21 @@ const pMap = require('p-map');
  * @param tvShowsFolder
  * @returns {Promise<Array>}
  */
-const getTvShowsToUpdateFromGdrive = async (showsFromGdrive, showsFromDb, tvShowsFolder) => {
+export const getTvShowsToUpdateFromGdrive = async (showsFromGdrive: any, showsFromDb: any, tvShowsFolder: any) => {
 
     if (showsFromDb === null) throw Error("No Tv Shows specified in Database");
     if (showsFromGdrive === null) throw Error("No Tv Shows to update in storage");
     if (tvShowsFolder === null) throw Error("No Tv Shows path specified in settings");
 
     try {
-        const showsFromFilesToUpdate = [];
+        const showsFromFilesToUpdate: any[] = [];
         Object.keys(showsFromDb).forEach(showFromDbId => {
 
             const showFromDb = showsFromDb[showFromDbId];
 
-            const showTitleFromGdriveToUpdate = stringSimilarity.findBestMatch(showFromDb.title, showsFromGdrive.map(show => show.name)).bestMatch.target;
+            const showTitleFromGdriveToUpdate = stringSimilarity.findBestMatch(showFromDb.title, showsFromGdrive.map((show: any) => show.name)).bestMatch.target;
 
-            const showFomFilesToUpdate = showsFromGdrive.filter(show => {return show.name === showTitleFromGdriveToUpdate})[0];
+            const showFomFilesToUpdate = showsFromGdrive.filter((show: any) => {return show.name === showTitleFromGdriveToUpdate})[0];
 
             // If the two titles are not almost identical --> it means it is a new show to add to the library --> TODO: check if 0.5 is the good number
             if (stringSimilarity.compareTwoStrings(showTitleFromGdriveToUpdate, showFromDb.title) > 0.5) {
@@ -60,14 +60,14 @@ module.exports.getTvShowsToUpdateFromGdrive = getTvShowsToUpdateFromGdrive;
  * @param torrentsDownloadedFromDatabase
  * @returns {Promise<*>}
  */
-const getLastEpisodes = async (user, shows, torrentsDownloadedFromDatabase) => {
+export const getLastEpisodes = async (user: any, shows: any, torrentsDownloadedFromDatabase: any) => {
 
     try {
 
-        await pMap(shows, async show => {
+        await pMap(shows, async (show: any) => {
 
             // Getting the keys of torrents (in firebase database) about thins particular show
-            let keyTorrentsOfThisShow = [];
+            let keyTorrentsOfThisShow: any[] = [];
 
             if (torrentsDownloadedFromDatabase !== null) {
                 keyTorrentsOfThisShow = Object.keys(torrentsDownloadedFromDatabase).filter(id => torrentsDownloadedFromDatabase[id].mediaInfos.name === show.name);
@@ -113,14 +113,14 @@ const getLastEpisodes = async (user, shows, torrentsDownloadedFromDatabase) => {
                     if (await gdrive.isFolderEmpty(user, seasons[seasons.length-1])) {
                         // If there is more thant 1 season folder
                         if (seasons.files.length > 1) {
-                            shows.filter(file => file.name === show.name)[0].lastSeason = seasons[seasons.length-2].name.match(/\d+/)[0];
+                            shows.filter((file: any) => file.name === show.name)[0].lastSeason = seasons[seasons.length-2].name.match(/\d+/)[0];
                             lastSeasonFolder = seasons[seasons.length-2];
                         } else {
-                            shows.filter(file => file.name === show.name)[0].lastSeason = seasons[seasons.length-1].name.match(/\d+/)[0];
+                            shows.filter((file: any) => file.name === show.name)[0].lastSeason = seasons[seasons.length-1].name.match(/\d+/)[0];
                             lastSeasonFolder = seasons[seasons.length-1];
                         }
                     } else {
-                        shows.filter(file => file.name === show.name)[0].lastSeason = seasons[seasons.length-1].name.match(/\d+/)[0];
+                        shows.filter((file: any) => file.name === show.name)[0].lastSeason = seasons[seasons.length-1].name.match(/\d+/)[0];
                         lastSeasonFolder = seasons[seasons.length-1];
                     }
 
@@ -129,14 +129,14 @@ const getLastEpisodes = async (user, shows, torrentsDownloadedFromDatabase) => {
                     if (await gdrive.isFolderEmpty(user, episodes[episodes.length-1])) {
 
                         if (episodes.length > 1) {
-                            shows.filter(file => file.name === show.name)[0].lastEpisode = episodes[episodes.length-2].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
+                            shows.filter((file: any) => file.name === show.name)[0].lastEpisode = episodes[episodes.length-2].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
                         } else {
-                            shows.filter(file => file.name === show.name)[0].lastEpisode = episodes[episodes.length-1].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
+                            shows.filter((file: any) => file.name === show.name)[0].lastEpisode = episodes[episodes.length-1].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
                         }
 
                     } else {
 
-                        shows.filter(file => file.name === show.name)[0].lastEpisode = episodes[episodes.length-1].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
+                        shows.filter((file: any) => file.name === show.name)[0].lastEpisode = episodes[episodes.length-1].name.match(/[Ss]\d+[Ee]\d+/)[0].match(/[Ee]\d+$/)[0].replace("E", "").replace("e", "");
 
                     }
 

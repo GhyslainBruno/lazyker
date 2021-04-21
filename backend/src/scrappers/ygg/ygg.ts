@@ -26,17 +26,17 @@ const torrentSearchApi = require('torrent-search-api');
  * @returns {{headers: *, data: *, fullResponse: *}}
  * @private
  */
-const _include_headers = function(body, response, resolveWithFullResponse) {
+const _include_headers = function(body: any, response: any, resolveWithFullResponse: any) {
     return {'headers': response.headers, 'data': body, 'fullResponse': resolveWithFullResponse};
 };
 
-const getTorrentsApi = title => {
+const getTorrentsApi = (title: any) => {
     return new Promise((resolve, reject) => {
         torrentSearchApi.search(title, 'Movies', 20)
-          .then(torrents => {
+          .then((torrents: any) => {
               resolve(torrents);
           })
-          .catch(error => {
+          .catch((error: any) => {
               console.log(error);
               reject(error);
           })
@@ -48,16 +48,17 @@ const getTorrentsApi = title => {
  * @param title
  * @returns {Promise<Array>}
  */
-const getTorrentsList = async title => {
+export const getTorrentsList = async (title: any) => {
 
     // cloudflare-scrapper way
     torrentSearchApi.enableProvider('Yggtorrent', 'Ghyslain', 'foobar');
 
     const torrents = await getTorrentsApi(title);
 
-    const torrentsList = [];
+    const torrentsList: any[] = [];
 
-    torrents.map(torrent => {
+    // @ts-ignore
+    torrents.map((torrent: any) => {
         torrentsList.push({
             provider: 'ygg',
             title: torrent.title,
@@ -135,7 +136,7 @@ const getTorrentsList = async title => {
  * @param torrent
  * @returns {Promise<void>}
  */
-const downloadTorrentFile = async (url, user, infos) => {
+export const downloadTorrentFile = async (url: any, user: any, infos: any) => {
 
     try {
         const torrent = {
@@ -296,10 +297,10 @@ const downloadTorrentFile = async (url, user, infos) => {
 //     }
 // };
 
-const closeAdTabs = async browser => {
+const closeAdTabs = async (browser: any) => {
     const pages = await browser.pages();
     let pageNumber = 0;
-    pages.forEach(page => {
+    pages.forEach((page: any) => {
 
         if (pageNumber > 0) {
             page.close();
@@ -314,9 +315,9 @@ const closeAdTabs = async browser => {
  * @param filePath
  * @returns {Promise<any>}
  */
-const removeFile = filePath => {
-    return new Promise( (resolve, reject) => {
-        fs.unlink(filePath, (err) => {
+const removeFile = (filePath: any) => {
+    return new Promise<void>( (resolve, reject) => {
+        fs.unlink(filePath, (err: any) => {
             if (err) reject(err);
             resolve();
         });
@@ -328,13 +329,13 @@ const removeFile = filePath => {
  * @param directory
  * @returns {Promise<any>}
  */
-const removeAllFiles = directory => {
-    return new Promise((resolve, reject) => {
-        fs.readdir(directory, (err, files) => {
+const removeAllFiles = (directory: any) => {
+    return new Promise<void>((resolve, reject) => {
+        fs.readdir(directory, (err: any, files: any) => {
             if (err) reject(err);
 
             for (const file of files) {
-                fs.unlink(path.join(directory, file), err => {
+                fs.unlink(path.join(directory, file), (err: any) => {
                     if (err) reject(err);
                 });
             }
@@ -350,9 +351,9 @@ const removeAllFiles = directory => {
  */
 const getTorrentFileName = () => {
     return new Promise(function(resolve, reject) {
-        fs.readdir(__dirname + '/torrent_temp/', (err, files) => {
+        fs.readdir(__dirname + '/torrent_temp/', (err: any, files: any) => {
             if (!err) {
-                files.forEach(file => {
+                files.forEach((file: any) => {
                     resolve(file);
                 });
             } else {
@@ -367,7 +368,7 @@ const getTorrentFileName = () => {
  * @param url
  * @returns {Promise<void>}
  */
-const getTorrentId = (url, sessionCookie) => {
+const getTorrentId = (url: any, sessionCookie: any) => {
     // try {
     //     const options = {
     //         method: 'GET',
@@ -395,7 +396,7 @@ const getTorrentId = (url, sessionCookie) => {
  * @param login
  * @param password
  */
-const yggLogin = async (login, password) => {
+const yggLogin = async (login: any, password: any) => {
     try {
         const options = {
             method: 'GET',
@@ -436,57 +437,57 @@ const yggLogin = async (login, password) => {
  * @param sessionCookie
  * @returns {Promise<void>}
  */
-const startTorrentDownload = async (torrentId, sessionCookie) => {
-
-    let cookie = new tough.Cookie({
-        key: "ygg_",
-        value: sessionCookie.replace('ygg_=','').toString(),
-        path: '/',
-        domain: '.ww3.yggtorrent.is',
-        httpOnly: true,
-        maxAge: 31536000
-    });
-
-    const cookieJar = rp.jar();
-    cookieJar.setCookie(cookie.toString(), 'https://ww3.yggtorrent.is');
-
-    const options = {
-        method: 'GET',
-        url: 'https://ww3.yggtorrent.is/engine/download_torrent?id=' + torrentId,
-        encoding: null,
-        jar: cookieJar
-        // headers: {
-        //     'Cookie': sessionCookie
-        // }
-    };
-
-    // Try using request
-    // request(options, function (error, response, body) {
-    //     if (!error) {
-    //         const buffer = Buffer.from(response, 'utf8');
-    //         fs.writeFileSync('torrent_temp/torrent_temp.torrent', buffer);
-    //         console.log('torrent download done');
-    //     } else {
-    //         logger.info(error);
-    //         throw error;
-    //     }
-    // });
-
-    // try using request promise
-    await rp(options)
-        .then((body, data) => {
-            let writeStream = fs.createWriteStream('torrent_temp/file.torrent');
-            // console.log(body);
-            writeStream.write(body, 'binary');
-            writeStream.on('finish', () => {
-                console.log('wrote all data to file');
-            });
-            writeStream.end();
-        })
-        .catch(error => {
-            throw error;
-        })
-};
+// const startTorrentDownload = async (torrentId: any, sessionCookie: any) => {
+//
+//     let cookie = new tough.Cookie({
+//         key: "ygg_",
+//         value: sessionCookie.replace('ygg_=','').toString(),
+//         path: '/',
+//         domain: '.ww3.yggtorrent.is',
+//         httpOnly: true,
+//         maxAge: 31536000
+//     });
+//
+//     const cookieJar = rp.jar();
+//     cookieJar.setCookie(cookie.toString(), 'https://ww3.yggtorrent.is');
+//
+//     const options = {
+//         method: 'GET',
+//         url: 'https://ww3.yggtorrent.is/engine/download_torrent?id=' + torrentId,
+//         encoding: null,
+//         jar: cookieJar
+//         // headers: {
+//         //     'Cookie': sessionCookie
+//         // }
+//     };
+//
+//     // Try using request
+//     // request(options, function (error, response, body) {
+//     //     if (!error) {
+//     //         const buffer = Buffer.from(response, 'utf8');
+//     //         fs.writeFileSync('torrent_temp/torrent_temp.torrent', buffer);
+//     //         console.log('torrent download done');
+//     //     } else {
+//     //         logger.info(error);
+//     //         throw error;
+//     //     }
+//     // });
+//
+//     // try using request promise
+//     await rp(options)
+//         .then((body, data) => {
+//             let writeStream = fs.createWriteStream('torrent_temp/file.torrent');
+//             // console.log(body);
+//             writeStream.write(body, 'binary');
+//             writeStream.on('finish', () => {
+//                 console.log('wrote all data to file');
+//             });
+//             writeStream.end();
+//         })
+//         .catch(error => {
+//             throw error;
+//         })
+// };
 
 module.exports.getTorrentsList = getTorrentsList;
 module.exports.downloadTorrentFile = downloadTorrentFile;

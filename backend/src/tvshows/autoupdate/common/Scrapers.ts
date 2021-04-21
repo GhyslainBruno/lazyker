@@ -9,10 +9,10 @@ const logger = require('../../../logs/logger');
  * @param qualities
  * @returns {Promise<*>}
  */
-const findNewEpisodes = async (lastEpisodesFromStorage, user, qualities) => {
+export const findNewEpisodes = async (lastEpisodesFromStorage: any, user: any, qualities: any) => {
     try {
         let lastEpisodes = lastEpisodesFromStorage;
-        await pMap(lastEpisodes, async link => {
+        await pMap(lastEpisodes, async (link: any) => {
 
             // Adding 1 to last episode know from FileStation API
             link.lastEpisode = (parseInt(link.lastEpisode) + 1).toString().padStart(2, '0');
@@ -23,7 +23,7 @@ const findNewEpisodes = async (lastEpisodesFromStorage, user, qualities) => {
             // Here, if episode + 1 of the same season is not found, we are looking for episode 01 of season : seasonNumber + 1 --> TODO: still need to be tested with firebase
             if (betterLink === null) {
 
-                const lastEpisodeObjectToUseHere = lastEpisodes.find(show => show.name === link.name);
+                const lastEpisodeObjectToUseHere = lastEpisodes.find((show: any) => show.name === link.name);
 
                 lastEpisodeObjectToUseHere.lastSeason = (parseInt(link.lastSeason) + 1).toString().padStart(2, '0');
                 lastEpisodeObjectToUseHere.lastEpisode = '01';
@@ -34,10 +34,10 @@ const findNewEpisodes = async (lastEpisodesFromStorage, user, qualities) => {
                     // await logger.info('No new episode found for ' + lastEpisodeObjectToUseHere.name, user);
                 }
 
-                lastEpisodes.find(show => show.name === link.name).unrestrictedLink = betterLink;
+                lastEpisodes.find((show: any) => show.name === link.name).unrestrictedLink = betterLink;
 
             } else {
-                lastEpisodes.find(show => show.name === link.name).unrestrictedLink = betterLink;
+                lastEpisodes.find((show: any) => show.name === link.name).unrestrictedLink = betterLink;
             }
 
         }, {concurency: 10});

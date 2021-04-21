@@ -21,7 +21,7 @@ const logger = require('../../../logs/logger');
  * Passes through all the big steps above
  * @returns {Promise<void>}
  */
-const startUpdate = async user => {
+export const startUpdate = async (user: any) => {
 
     try {
 

@@ -1,4 +1,5 @@
-const ygg = require('../scrappers/ygg/ygg');
+import * as ygg from '../scrappers/ygg/ygg'
+// const ygg = require('../scrappers/ygg/ygg');
 const torrent9 = require('../scrappers/torrents9/torrent9');
 const admin = require("firebase-admin");
 const db = admin.database();
@@ -13,7 +14,7 @@ const usersRef = db.ref("/users");
  * @param user
  * @returns {Promise<void>}
  */
-const downloadEpisodeTorrentFile = async (url, provider, mediaInfos, id, user) => {
+const downloadEpisodeTorrentFile = async (url: any, provider: any, mediaInfos: any, id: any, user: any) => {
 
     try {
         switch (provider) {

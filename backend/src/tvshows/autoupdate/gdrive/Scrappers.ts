@@ -11,10 +11,11 @@ const database = require('../common/Database');
  * @param qualities
  * @returns {Promise<*>}
  */
-const downloadTorrentsToDebrider = async (lastEpisodesFromStorage, user, qualities) => {
+// @ts-ignore
+export const downloadTorrentsToDebrider = async (lastEpisodesFromStorage: any, user: any, qualities: any) => {
     try {
 
-        await pMap(lastEpisodesFromStorage, async show => {
+        await pMap(lastEpisodesFromStorage, async (show: any) => {
 
             // Adding 1 to last episode know from FileStation API
             show.lastEpisode = (parseInt(show.lastEpisode) + 1).toString().padStart(2, '0');

@@ -9,7 +9,7 @@ const database = require('../../common/Database');
  * @param qualities
  * @returns {Promise<void>}
  */
-const getLink = async (show, user, qualities) => {
+export const getLink = async (show: any, user: any, qualities: any) => {
 
     try {
 
@@ -48,7 +48,7 @@ module.exports.getLink = getLink;
  * @param show
  * @returns {Promise<void>}
  */
-const downloadTorrent = async (url, user, show) => {
+const downloadTorrent = async (url: any, user: any, show: any) => {
     // Download torrent file into debrider's service and store some torrent infos into db
     // TODO can it be done directly in the next line ?
     show.isShow = true;
@@ -62,9 +62,9 @@ module.exports.downloadTorrent = downloadTorrent;
  * @param lang
  * @returns {Promise<void>}
  */
-const filterTorrentsWithLang = async (torrents, lang) => {
+const filterTorrentsWithLang = async (torrents: any, lang: any) => {
     const regex = new RegExp("(" + lang + ")", 'gi');
-    return torrents.filter(torrent => torrent.title.match(regex));
+    return torrents.filter((torrent: any) => torrent.title.match(regex));
 };
 
 /**
@@ -74,14 +74,14 @@ const filterTorrentsWithLang = async (torrents, lang) => {
  * @param qualities
  * @returns {Promise<void>}
  */
-const filterTorrentsWithQualities = async (torrents, qualities) => {
+const filterTorrentsWithQualities = async (torrents: any, qualities: any) => {
     const regexFirstQuality = new RegExp("(" + qualities.first + ")", 'gi');
     const regexSecondQuality = new RegExp("(" + qualities.second + ")", 'gi');
     const regexThirdQuality = new RegExp("(" + qualities.third + ")", 'gi');
 
-    const filteredTorrentsWithFirstQuality = torrents.filter(torrent => torrent.title.match(regexFirstQuality));
-    const filteredTorrentsWithSecondQuality = torrents.filter(torrent => torrent.title.match(regexSecondQuality));
-    const filteredTorrentsWithThirdQuality = torrents.filter(torrent => torrent.title.match(regexThirdQuality));
+    const filteredTorrentsWithFirstQuality = torrents.filter((torrent: any) => torrent.title.match(regexFirstQuality));
+    const filteredTorrentsWithSecondQuality = torrents.filter((torrent: any) => torrent.title.match(regexSecondQuality));
+    const filteredTorrentsWithThirdQuality = torrents.filter((torrent: any) => torrent.title.match(regexThirdQuality));
 
     if (filteredTorrentsWithFirstQuality.length > 0) {
         return filteredTorrentsWithFirstQuality;
@@ -100,9 +100,9 @@ const filterTorrentsWithQualities = async (torrents, qualities) => {
  * @param show
  * @returns {Promise<void>}
  */
-const filterTorrentsWithNumber = async (torrents, show) => {
+const filterTorrentsWithNumber = async (torrents: any, show: any) => {
     const regex = new RegExp("(" + `s${show.lastSeason}e${show.lastEpisode}` + ")", 'gi');
-    return torrents.filter(torrent => torrent.title.match(regex));
+    return torrents.filter((torrent: any) => torrent.title.match(regex));
 };
 
 /**
@@ -110,6 +110,6 @@ const filterTorrentsWithNumber = async (torrents, show) => {
  * -> using unlimited google drive storage, so don't really care for now
  * @param torrents
  */
-const getHeavierTorrent = torrents => {
-    return torrents.reduce((previous, current) => (parseInt(previous.size) > parseInt(current.size)) ? previous : current);
+const getHeavierTorrent = (torrents: any) => {
+    return torrents.reduce((previous: any, current: any) => (parseInt(previous.size) > parseInt(current.size)) ? previous : current);
 };

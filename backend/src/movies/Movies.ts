@@ -22,14 +22,14 @@ const usersRef = db.ref("/users");
  * @param title
  * @returns {Promise<void>}
  */
-const getTorrentsList = async title => {
+export const getTorrentsList = async (title: any) => {
 
     const providersPromises = [
         ygg.getTorrentsList(title),
         // torrent9.getTorrentsList(title)
     ];
 
-        return await pMap(providersPromises, async providerUrls => {
+        return await pMap(providersPromises, async (providerUrls: any) => {
         return providerUrls;
     }, {concurrency: 2});
 
@@ -44,7 +44,7 @@ const getTorrentsList = async title => {
  * @param user
  * @returns {Promise<void>}
  */
-const downloadTorrentFile = async (url, provider, title, id, user) => {
+export const downloadTorrentFile = async (url: any, provider: any, title: any, id: any, user: any) => {
 
     try {
 
@@ -87,14 +87,14 @@ const downloadTorrentFile = async (url, provider, title, id, user) => {
  * @param title
  * @returns {Promise<T>}
  */
-const getUrls = async title => {
+export const getUrls = async (title: any) => {
 
     const providersPromises = [
         ZTScrapper.getUrls(title),
         // EDScrapper.getUrls(title)
     ];
 
-    return await pMap(providersPromises, async providerUrls => {
+    return await pMap(providersPromises, async (providerUrls: any) => {
         return providerUrls;
     }, {concurrency: 2});
 };
@@ -105,7 +105,7 @@ const getUrls = async title => {
  * @param title
  * @returns {Promise<*>}
  */
-const getQualities = async (movie, title, provider) => {
+export const getQualities = async (movie: any, title: any, provider: any) => {
 
     switch (provider) {
         case 'zonetelechargementlol':
@@ -128,7 +128,7 @@ const getQualities = async (movie, title, provider) => {
  * @param link
  * @returns {Promise<*>}
  */
-const getDownloadLinks = async link => {
+export const getDownloadLinks = async (link: any) => {
     return await ZTScrapper.getDownloadLinks(link)
 };
 
@@ -138,7 +138,7 @@ const getDownloadLinks = async link => {
  * @param db
  * @returns {Promise<*>}
  */
-const getUnprotectedLinks = async (host, db) => {
+export const getUnprotectedLinks = async (host: any, db: any) => {
     return await realdebrid.getUnrestrictedLinks(await dlprotect.getUnprotectedLinks(host), db)
 };
 
@@ -150,112 +150,112 @@ const getUnprotectedLinks = async (host, db) => {
  * @param user
  * @returns {Promise<void>}
  */
-const startDownloadMovieTask = async (qualityLink, title, provider, user) => {
+// export const startDownloadMovieTask = async (qualityLink: any, title: any, provider: any, user: any) => {
+//
+//     let hosts = {};
+//
+//     switch (provider) {
+//         case 'zonetelechargementlol':
+//             hosts = await ZTScrapperlol.getDownloadLinks(qualityLink);
+//             break;
+//         case 'zonetelechargement':
+//             hosts = await ZTScrapper.getDownloadLinks(qualityLink);
+//             break;
+//         case 'extremedownload':
+//             hosts = await EDScrapper.getDownloadLinks(qualityLink);
+//             break;
+//         default:
+//             throw new Error('bad provider');
+//             break;
+//     }
+//
+//
+//     // if no premium link is found
+//     if (hosts.premium.length === 0) {
+//
+//         let linkToDownload = '';
+//
+//         // Doing this to firstly check when there is an only one link (preferable)
+//         const freeHostsOrdered = hosts.free.sort((a, b) => {
+//             return a.links.length - b.links.length
+//         });
+//
+//         for (let host in freeHostsOrdered) {
+//             try {
+//
+//                 linkToDownload = await realdebrid.getUnrestrictedLinks(await unprotectLinks(freeHostsOrdered[host].links, provider), user);
+//
+//                 if (linkToDownload !== '' && linkToDownload !== undefined) {
+//                     break;
+//                 }
+//
+//             } catch(error) {
+//                 logger.info('ERROR ' + host + error, user)
+//             }
+//         }
+//
+//         if (linkToDownload === '') {
+//             // Set movie in progress state to movie in error (in db)
+//             const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
+//             const inProgressMovie = snapshot.val();
+//
+//             if (inProgressMovie) {
+//                 // If several inProgressMovies with the same title, taking the first one
+//                 const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
+//                 await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).child('/state').set('error');
+//             }
+//
+//         } else {
+//             return await download.startMovieDownload(linkToDownload, title, user);
+//         }
+//
+//
+//     } else {
+//         // if premium links are found
+//         // Check firstly premium links | and if no one is a good one --> check the free ones
+//
+//         let linkToDownload = '';
+//
+//         // Doing this to firstly check when there is an only one link (preferable)
+//         const premiumHostsOrdered = hosts.premium.sort((a, b) => {
+//             return a.links.length - b.links.length
+//         });
+//
+//         for (let host in premiumHostsOrdered) {
+//             try {
+//
+//                 linkToDownload = await realdebrid.getUnrestrictedLinks(await unprotectLinks(premiumHostsOrdered[host].links, provider, user), user);
+//
+//                 if (linkToDownload !== '' && linkToDownload !== undefined) {
+//                     break;
+//                 }
+//
+//             } catch(error) {
+//                 logger.info('ERROR ' + host + error, user)
+//             }
+//         }
+//
+//         if (linkToDownload === '') {
+//             // Set movie in progress (in db) to movie in error
+//             // Set movie in progress state to movie in error (in db)
+//             const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
+//             const inProgressMovie = snapshot.val();
+//
+//             if (inProgressMovie) {
+//                 // If several inProgressMovies with the same title, taking the first one
+//                 const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
+//                 await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).child('/state').set('error');
+//             }
+//
+//         } else {
+//             return await download.startMovieDownload(linkToDownload, title, user);
+//         }
+//
+//     }
+//
+// };
 
-    let hosts = {};
-
-    switch (provider) {
-        case 'zonetelechargementlol':
-            hosts = await ZTScrapperlol.getDownloadLinks(qualityLink);
-            break;
-        case 'zonetelechargement':
-            hosts = await ZTScrapper.getDownloadLinks(qualityLink);
-            break;
-        case 'extremedownload':
-            hosts = await EDScrapper.getDownloadLinks(qualityLink);
-            break;
-        default:
-            throw new Error('bad provider');
-            break;
-    }
-
-
-    // if no premium link is found
-    if (hosts.premium.length === 0) {
-
-        let linkToDownload = '';
-
-        // Doing this to firstly check when there is an only one link (preferable)
-        const freeHostsOrdered = hosts.free.sort((a, b) => {
-            return a.links.length - b.links.length
-        });
-
-        for (let host in freeHostsOrdered) {
-            try {
-
-                linkToDownload = await realdebrid.getUnrestrictedLinks(await unprotectLinks(freeHostsOrdered[host].links, provider), user);
-
-                if (linkToDownload !== '' && linkToDownload !== undefined) {
-                    break;
-                }
-
-            } catch(error) {
-                logger.info('ERROR ' + host + error, user)
-            }
-        }
-
-        if (linkToDownload === '') {
-            // Set movie in progress state to movie in error (in db)
-            const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
-            const inProgressMovie = snapshot.val();
-
-            if (inProgressMovie) {
-                // If several inProgressMovies with the same title, taking the first one
-                const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
-                await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).child('/state').set('error');
-            }
-
-        } else {
-            return await download.startMovieDownload(linkToDownload, title, user);
-        }
-
-
-    } else {
-        // if premium links are found
-        // Check firstly premium links | and if no one is a good one --> check the free ones
-
-        let linkToDownload = '';
-
-        // Doing this to firstly check when there is an only one link (preferable)
-        const premiumHostsOrdered = hosts.premium.sort((a, b) => {
-            return a.links.length - b.links.length
-        });
-
-        for (let host in premiumHostsOrdered) {
-            try {
-
-                linkToDownload = await realdebrid.getUnrestrictedLinks(await unprotectLinks(premiumHostsOrdered[host].links, provider, user), user);
-
-                if (linkToDownload !== '' && linkToDownload !== undefined) {
-                    break;
-                }
-
-            } catch(error) {
-                logger.info('ERROR ' + host + error, user)
-            }
-        }
-
-        if (linkToDownload === '') {
-            // Set movie in progress (in db) to movie in error
-            // Set movie in progress state to movie in error (in db)
-            const snapshot = await usersRef.child(user.uid).child('/movies').orderByChild("title").equalTo(title).once('value');
-            const inProgressMovie = snapshot.val();
-
-            if (inProgressMovie) {
-                // If several inProgressMovies with the same title, taking the first one
-                const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
-                await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).child('/state').set('error');
-            }
-
-        } else {
-            return await download.startMovieDownload(linkToDownload, title, user);
-        }
-
-    }
-
-};
-
-const unprotectLinks = async (links, provider, user) => {
+const unprotectLinks = async (links: any, provider: any, user: any) => {
     switch (provider) {
         case 'zonetelechargementlol':
             return await dlprotect.getUnprotectedLinks(links);
@@ -278,4 +278,4 @@ module.exports.getUrls = getUrls;
 module.exports.getQualities = getQualities;
 module.exports.getDownloadLinks = getDownloadLinks;
 module.exports.getUnprotectedLinks = getUnprotectedLinks;
-module.exports.startDownloadMovieTask = startDownloadMovieTask;
+// module.exports.startDownloadMovieTask = startDownloadMovieTask;

@@ -7,7 +7,7 @@ const usersRef = db.ref("/users");
  * Returns a good Syno (Synology connection) object every time
  * @returns {Promise<void>}
  */
-const getConnection = async (user) => {
+export const getConnection = async (user: any) => {
 
     try{
         const snapshot = await usersRef.child(user.uid).child('/settings/nas').once('value');

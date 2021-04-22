@@ -5,10 +5,10 @@
  * @param syno
  * @returns {Promise<void>}
  */
-const getFilesList = (path, syno) => {
+export const getFilesList = (path: any, syno: any) => {
 
     return new Promise((resolve, reject) => {
-        syno.fs.list({'folder_path': path }, (error, data) => {
+        syno.fs.list({'folder_path': path }, (error: any, data: any) => {
             if (!error) {
                 resolve(data);
             } else {

@@ -17,7 +17,7 @@ const gdrive = require('../gdrive/gdrive');
  * @param user
  * @returns {Promise<void>}
  */
-const startMovieDownload = async (linkFromRealdebrid, title, user) => {
+export const startMovieDownload = async (linkFromRealdebrid: any, title: any, user: any) => {
 
     try {
         const syno = await connector.getConnection(user);
@@ -32,7 +32,7 @@ const startMovieDownload = async (linkFromRealdebrid, title, user) => {
         moviesPath = moviesPath.val();
 
         // If no download in the folder wanted is present --> start download
-        if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === moviesPath + '/' + title).length === 0) {
+        if (currentDownloads.tasks.filter((dl: any) => dl.additional.detail.destination === moviesPath + '/' + title).length === 0) {
 
             let directoryToStartDownload = await createMovieDir(title, syno, moviesPath);
             directoryToStartDownload = directoryToStartDownload.replace(/^\//,'');
@@ -57,7 +57,7 @@ const startMovieDownload = async (linkFromRealdebrid, title, user) => {
  * @param user
  * @returns {Promise<*>}
  */
-const startMovieDownloadFromRealdebridTorrent = async (linkFromRealdebrid, title, user) => {
+const startMovieDownloadFromRealdebridTorrent = async (linkFromRealdebrid: any, title: any, user: any) => {
 
     // Getting a connection to synology NAS
     const syno = await connector.getConnection(user);
@@ -69,7 +69,7 @@ const startMovieDownloadFromRealdebridTorrent = async (linkFromRealdebrid, title
     const currentDownloads = await getCurrentDownloads(syno);
 
     // If no download in the folder wanted is present --> start download
-    if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === moviesPath + '/' + title).length === 0) {
+    if (currentDownloads.tasks.filter((dl: any) => dl.additional.detail.destination === moviesPath + '/' + title).length === 0) {
 
         let directoryToStartDownload = await createMovieDir(title, syno, moviesPath);
         directoryToStartDownload = directoryToStartDownload.replace(/^\//,'');
@@ -92,7 +92,7 @@ const startMovieDownloadFromRealdebridTorrent = async (linkFromRealdebrid, title
  * @param user
  * @returns {Promise<void>}
  */
-const startDownload = async function(show, syno, user) {
+export const startDownload = async function(show: any, syno: any, user: any) {
 
     try {
 
@@ -105,7 +105,7 @@ const startDownload = async function(show, syno, user) {
         directoryToStartDownload = directoryToStartDownload.replace(/^\//,'');
 
         // If there is NOT already a download to the destination wanted --> start download | IF there is one, don't do anything (for now)
-        if (currentDownloads.tasks.filter(dl => dl.additional.detail.destination === directoryToStartDownload).length === 0) {
+        if (currentDownloads.tasks.filter((dl: any) => dl.additional.detail.destination === directoryToStartDownload).length === 0) {
             //   Then --> start download task
             await createDownload(show, syno, directoryToStartDownload, user);
         } else {
@@ -125,10 +125,10 @@ const startDownload = async function(show, syno, user) {
  * @param syno
  * @returns {Promise<any>}
  */
-function getCurrentDownloads(syno) {
+export function getCurrentDownloads(syno: any): Promise<any> {
 
     return new Promise((resolve, reject) => {
-        syno.dl.listTasks({'additional': 'detail,transfer'}, function(error, data) {
+        syno.dl.listTasks({'additional': 'detail,transfer'}, function(error: any, data: any) {
             if (!error) {
                 resolve(data)
             } else {
@@ -146,10 +146,10 @@ function getCurrentDownloads(syno) {
  * @returns {Promise<any>}
  */
 // TODO: remove duplicate code for the string of the directory to start download
-function createDir(show, syno) {
+function createDir(show: any, syno: any): Promise<any> {
 
     return new Promise((resolve, reject) => {
-        syno.fs.createFolder({'folder_path': show.path, 'force_parent': true, 'name': 'saison ' + show.lastSeason + '/' + show.name + ' S' + show.lastSeason + 'E' + show.lastEpisode}, function(error, data) {
+        syno.fs.createFolder({'folder_path': show.path, 'force_parent': true, 'name': 'saison ' + show.lastSeason + '/' + show.name + ' S' + show.lastSeason + 'E' + show.lastEpisode}, function(error: any, data: any) {
             if (!error) {
                 // Returns the full path of folder created
                 resolve(data.folders[0].path)
@@ -168,9 +168,9 @@ function createDir(show, syno) {
  * @param moviesPath
  * @returns {Promise<any>}
  */
-const createMovieDir = (title, syno, moviesPath) => {
+const createMovieDir = (title: any, syno: any, moviesPath: any): Promise<any> => {
     return new Promise((resolve, reject) => {
-        syno.fs.createFolder({'folder_path': moviesPath, 'force_parent': true, 'name': title.replace(':', '')}, function(error, data) {
+        syno.fs.createFolder({'folder_path': moviesPath, 'force_parent': true, 'name': title.replace(':', '')}, function(error: any, data: any) {
             if (!error) {
                 // Returns the full path of folder created
                 resolve(data.folders[0].path)
@@ -189,9 +189,9 @@ const createMovieDir = (title, syno, moviesPath) => {
  * @param user
  * @returns {Promise<void>}
  */
-const createDownload = async (show, syno, directoryToStartDownload, user) =>{
+const createDownload = async (show: any, syno: any, directoryToStartDownload: any, user: any) =>{
 
-    syno.dl.createTask({'uri': show.unrestrictedLink.download, 'destination': directoryToStartDownload}, async (error, data) => {
+    syno.dl.createTask({'uri': show.unrestrictedLink.download, 'destination': directoryToStartDownload}, async (error: any, data: any) => {
         if (!error) {
             await logger.info(show.name + ' S' + show.lastSeason + 'E' + show.lastEpisode + ' --> download STARTED !', user);
 
@@ -227,10 +227,10 @@ const createDownload = async (show, syno, directoryToStartDownload, user) =>{
  * @param title
  * @returns {Promise<any>}
  */
-const createMovieDownload = (link, syno, directoryToStartDownload, user, title) => {
+const createMovieDownload = (link: any, syno: any, directoryToStartDownload: any, user: any, title: any): Promise<any> => {
 
     return new Promise((resolve, reject) => {
-        syno.dl.createTask({'uri': link.download, 'destination': directoryToStartDownload}, async (error, data) => {
+        syno.dl.createTask({'uri': link.download, 'destination': directoryToStartDownload}, async (error: any, data: any) => {
             if (!error) {
                 logger.info(title + ' --> download STARTED !', user);
                 // Removing the movie in database inProgress movies - TODO: find a way if multiple movies with the same title
@@ -269,9 +269,9 @@ const createMovieDownload = (link, syno, directoryToStartDownload, user, title) 
  * @param downloadId
  * @returns {Promise<any>}
  */
-const resumeDownload = (syno, downloadId) => {
+export const resumeDownload = (syno: any, downloadId: any): Promise<any> => {
     return new Promise((resolve, reject) => {
-        syno.dl.resumeTask({'id': downloadId}, function(error, data) {
+        syno.dl.resumeTask({'id': downloadId}, function(error: any, data: any) {
             if (!error) {
                 resolve(data)
             } else {
@@ -287,9 +287,9 @@ const resumeDownload = (syno, downloadId) => {
  * @param downloadId
  * @returns {Promise<any>}
  */
-const pauseDownload = (syno, downloadId) => {
+export const pauseDownload = (syno: any, downloadId: any): Promise<any> => {
     return new Promise((resolve, reject) => {
-        syno.dl.pauseTask({'id': downloadId}, function(error, data) {
+        syno.dl.pauseTask({'id': downloadId}, function(error: any, data: any) {
             if (!error) {
                 resolve(data)
             } else {
@@ -305,9 +305,9 @@ const pauseDownload = (syno, downloadId) => {
  * @param downloadId
  * @returns {Promise<any>}
  */
-const removeDownload = (syno, downloadId) => {
+export const removeDownload = (syno: any, downloadId: any): Promise<any> => {
     return new Promise((resolve, reject) => {
-        syno.dl.deleteTask({'id': downloadId}, function(error, data) {
+        syno.dl.deleteTask({'id': downloadId}, function(error: any, data: any) {
             if (!error) {
                 resolve(data)
             } else {
@@ -324,7 +324,7 @@ const removeDownload = (syno, downloadId) => {
  * @param user
  * @returns {Promise<void>}
  */
-const startRealdebridTorrentDownload = async (unrestrictedLink, name, user) => {
+export const startRealdebridTorrentDownload = async (unrestrictedLink: any, name: any, user: any) => {
     try {
         // const unrestrictedLink = await realdebrid.unrestricLinkNoDB(torrent.links[0], user);
         return await startMovieDownloadFromRealdebridTorrent(unrestrictedLink, name, user);

@@ -25,7 +25,7 @@ const rdAuth = require('./authentication/Oauth');
  * @param user
  * @returns {Promise<void>}
  */
-const connectUser = async (code, user) => {
+export const connectUser = async (code: any, user: any) => {
     return await rdAuth.connectUser(code, user);
 };
 
@@ -35,7 +35,7 @@ const connectUser = async (code, user) => {
  * @param user
  * @returns {Promise<*>}
  */
-const getUnrestrictedLinks = async function(links, user) {
+export const getUnrestrictedLinks = async function(links: any, user: any) {
     try {
 
         const token = await getRealdebridAuthToken(user);
@@ -71,7 +71,7 @@ const getUnrestrictedLinks = async function(links, user) {
  * @param user
  * @returns {Promise<*>}
  */
-const getBetterLink = async function(links, user) {
+export const getBetterLink = async function(links: any, user: any) {
 
     try {
 
@@ -104,7 +104,7 @@ const getBetterLink = async function(links, user) {
  * @param user
  * @returns {Promise<any>}
  */
-async function getRealdebridAuthToken(user) {
+async function getRealdebridAuthToken(user: any) {
 
     try {
         const uid = user.uid;
@@ -192,7 +192,7 @@ async function getRealdebridAuthToken(user) {
  * @param token
  * @returns {Promise<any>}
  */
-async function getRegexes(token) {
+async function getRegexes(token: any) {
 
     return new Promise((resolve, reject) => {
 
@@ -205,10 +205,10 @@ async function getRegexes(token) {
         };
 
         rp(options)
-            .then(function (regexes) {
+            .then(function (regexes: any) {
                 resolve(regexes)
             })
-            .catch(error => {
+            .catch((error: any) => {
                 reject(error)
             })
     })
@@ -219,7 +219,7 @@ async function getRegexes(token) {
  * @param token
  * @returns {Promise<void>}
  */
-getHostsStatus = async token => {
+const getHostsStatus = async (token: any) => {
     try {
         const options = {
             uri: rootUrlRealDebrid + '/hosts/status',
@@ -242,11 +242,11 @@ getHostsStatus = async token => {
  * @param regexes
  * @returns {Promise<boolean>}
  */
-const areLinksSupported = async (links, regexes) => {
+const areLinksSupported = async (links: any, regexes: any) => {
 
     const supportedLinks = [];
-    await pMap(links, async link => {
-        regexes.forEach(regex => {
+    await pMap(links, async (link: any) => {
+        regexes.forEach((regex: any) => {
             const regEx = new RegExp(regex.substring(1, regex.length - 1));
             if (regEx.test(link)) {
                 supportedLinks.push(link)
@@ -265,17 +265,17 @@ const areLinksSupported = async (links, regexes) => {
  * @param hostsStatus
  * @returns {Promise<any>}
  */
-async function getSupportedLinks(qualityLinks, regexes, hostsStatus) {
+async function getSupportedLinks(qualityLinks: any, regexes: any, hostsStatus: any) {
     return new Promise((resolve, reject) => {
 
-        const supportedLinks = {};
+        const supportedLinks: any = {};
 
         for (const quality in qualityLinks)  {
 
             supportedLinks[quality] = [];
 
-            qualityLinks[quality].forEach(link => {
-                regexes.forEach(regex => {
+            qualityLinks[quality].forEach((link: any) => {
+                regexes.forEach((regex: any) => {
                     const regEx = new RegExp(regex.substring(1, regex.length - 1));
                     if (regEx.test(link)) {
 
@@ -304,15 +304,15 @@ async function getSupportedLinks(qualityLinks, regexes, hostsStatus) {
  * @param hostsStatus
  * @returns {Promise<null>}
  */
-async function getAvailableLinks(qualityLinks, token, hostsStatus) {
+async function getAvailableLinks(qualityLinks: any, token: any, hostsStatus: any) {
 
-    let linksToReturn = {};
+    let linksToReturn: any = {};
 
     let isThereAvailableLinks = false;
 
     for (let quality in qualityLinks) {
 
-        const validLinks = await pFilter(qualityLinks[quality], async (link) => {
+        const validLinks = await pFilter(qualityLinks[quality], async (link: any) => {
 
             if (link.split('\n').length > 1) {
                 return await areValid(link.split('\n'), token, hostsStatus);
@@ -344,7 +344,7 @@ async function getAvailableLinks(qualityLinks, token, hostsStatus) {
  * @param hostStatus
  * @returns {Promise<boolean>}
  */
-isValid = async (link, token, hostStatus) => {
+const isValid = async (link: any, token: any, hostStatus: any) => {
 
     const options = {
         method: 'POST',
@@ -386,7 +386,7 @@ isValid = async (link, token, hostStatus) => {
  * @param hostStatus
  * @returns {Promise<boolean>}
  */
-async function areValid(links, token, hostStatus) {
+async function areValid(links: any, token: any, hostStatus: any) {
 
     let areAllLinksValid = true;
 
@@ -407,15 +407,15 @@ async function areValid(links, token, hostStatus) {
  * @param token
  * @returns {Promise<void>}
  */
-async function unrestricLinks(links, token) {
+async function unrestricLinks(links: any, token: any) {
 
-    let unrestrictedLinks = {};
+    let unrestrictedLinks: any = {};
 
     for (let quality in links) {
 
         unrestrictedLinks[quality] = [];
 
-        await pMap(links[quality], async link => {
+        await pMap(links[quality], async (link: any) => {
 
             const unrestricetdLink = await unrestricLink(link, token);
 
@@ -432,10 +432,10 @@ async function unrestricLinks(links, token) {
  * @param token
  * @returns {Promise<*>}
  */
-const unrestrictArrayOfLinks = async (links, token) => {
-    const unrestrictedLinks = [];
+const unrestrictArrayOfLinks = async (links: any, token: any) => {
+    const unrestrictedLinks: any[] = [];
 
-    await pMap(links, async link => {
+    await pMap(links, async (link: any) => {
         unrestrictedLinks.push(await unrestricLink(link, token))
     }, {concurrency: 10});
 
@@ -448,7 +448,7 @@ const unrestrictArrayOfLinks = async (links, token) => {
  * @param token
  * @returns {Promise<void>}
  */
-async function unrestricLink(link, token) {
+async function unrestricLink(link: any, token: any) {
     const options = {
         method: 'POST',
         uri: "https://api.real-debrid.com/rest/1.0/unrestrict/link",
@@ -471,7 +471,7 @@ async function unrestricLink(link, token) {
  * @param user
  * @returns {Promise<void>}
  */
-async function unrestricLinkNoDB(link, user) {
+export async function unrestricLinkNoDB(link: any, user: any) {
 
     const token = await getRealdebridAuthToken(user);
 
@@ -496,17 +496,17 @@ async function unrestricLinkNoDB(link, user) {
  * @param links
  * @returns {Promise<void>}
  */
-async function getLighterLink(links) {
+async function getLighterLink(links: any) {
 
     // Have to get the lighter link OF THE FIRST QUALITY WANTED !
     if (links.firstQualityLinks.length > 0) {
-        return links.firstQualityLinks.find(link => link.filesize === Math.min.apply(Math, links.firstQualityLinks.map(link => link.filesize)));
+        return links.firstQualityLinks.find((link: any) => link.filesize === Math.min.apply(Math, links.firstQualityLinks.map((link: any) => link.filesize)));
     } else {
         if (links.secondQualityLinks.length > 0) {
-            return links.secondQualityLinks.find(link => link.filesize === Math.min.apply(Math, links.secondQualityLinks.map(link => link.filesize)));
+            return links.secondQualityLinks.find((link: any) => link.filesize === Math.min.apply(Math, links.secondQualityLinks.map((link: any) => link.filesize)));
         } else {
             if (links.thirdQualityLinks.length > 0) {
-                return links.thirdQualityLinks.find(link => link.filesize === Math.min.apply(Math, links.thirdQualityLinks.map(link => link.filesize)));
+                return links.thirdQualityLinks.find((link: any) => link.filesize === Math.min.apply(Math, links.thirdQualityLinks.map((link: any) => link.filesize)));
             } else {
                 // TODO : test this case
                 return null
@@ -547,7 +547,7 @@ async function getLighterLink(links) {
  * @param infos
  * @returns {Promise<void>}
  */
-const addMagnetLinkToRealdebrid = async (magnetLink, user, infos) => {
+export const addMagnetLinkToRealdebrid = async (magnetLink: any, user: any, infos: any) => {
 
     try {
 
@@ -589,7 +589,7 @@ const addMagnetLinkToRealdebrid = async (magnetLink, user, infos) => {
  * @param user
  * @returns {Promise<void>}
  */
-const selectAllTorrentFiles = async (torrentId, user) => {
+export const selectAllTorrentFiles = async (torrentId: any, user: any) => {
     try {
 
         const token = await getRealdebridAuthToken(user);
@@ -618,7 +618,7 @@ const selectAllTorrentFiles = async (torrentId, user) => {
  * Get all torrents present in realdebrid service
  * @returns {Promise<void>}
  */
-const getTorrents = async (user) => {
+export const getTorrents = async (user: any) => {
     try {
 
         const token = await getRealdebridAuthToken(user);
@@ -647,7 +647,7 @@ const getTorrents = async (user) => {
  * Deletes a particular torrent in realdebrid service
  * @returns {Promise<void>}
  */
-const deleteTorrent = async (torrentId, user) => {
+export const deleteTorrent = async (torrentId: any, user: any): Promise<any> => {
     try {
 
         const token = await getRealdebridAuthToken(user);

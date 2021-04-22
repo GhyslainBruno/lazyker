@@ -18,12 +18,12 @@ const sleep = wait.sleep;
  * @param res
  * @returns {Promise<void>}
  */
-const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
+export const startRealdebridTorrentDownload = async (torrent: any, name: any, user: any, res: any) => {
     try {
 
         utils.initPassage();
 
-        await pMap(torrent.links, async link => {
+        await pMap(torrent.links, async (link: any) => {
             // Here, if several links  in the torrent -> torrent.links.length > 1
             const unrestrictedLink = await realdebrid.unrestricLinkNoDB(link, user);
             const storage = await usersRef.child(user.uid).child('/settings/storage').once('value');
@@ -61,7 +61,7 @@ const startRealdebridTorrentDownload = async (torrent, name, user, res) => {
  * @param user
  * @returns {Promise<void>}
  */
-const startMovieDownload = async (linkFromRealdebrid, title, user) => {
+export const startMovieDownload = async (linkFromRealdebrid: any, title: any, user: any) => {
     const storage = await usersRef.child(user.uid).child('/settings/storage').once('value');
 
     switch (storage.val()) {

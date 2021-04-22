@@ -13,7 +13,7 @@ const usersRef = db.ref("/users");
  * @param user
  * @returns {Promise<void>}
  */
-connectUser = async (code, user) => {
+export const connectUser = async (code: any, user: any) => {
 
     const uid = user.uid;
 

@@ -17,7 +17,7 @@ const usersRef = db.ref("/users");
  * @param user
  * @returns {Promise<void>}
  */
-async function storeGDriveAccessToken(code, user) {
+export async function storeGDriveAccessToken(code: any, user: any) {
 
     try {
 
@@ -55,7 +55,7 @@ async function storeGDriveAccessToken(code, user) {
  * @param query
  * @returns {Promise<*>}
  */
-async function getFilesList(user, parent, query = `'${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`) {
+async function getFilesList(user: any, parent: any, query = `'${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`) {
 
     const params = {
         // Using this to specify only folders
@@ -90,7 +90,7 @@ module.exports.getFilesList = getFilesList;
  * @param folder
  * @returns {Promise<boolean>}
  */
-isFolderEmpty = async (user, folder) => {
+const isFolderEmpty = async (user: any, folder: any) => {
     const files = await getFilesList(user, folder);
     return files.length === 0;
 };
@@ -103,7 +103,7 @@ module.exports.isFolderEmpty = isFolderEmpty;
  * @param childFolderTitle
  * @returns {Promise<boolean>}
  */
-doesFolderContainsThisFolder = async (user, parent, childFolderTitle) => {
+const doesFolderContainsThisFolder = async (user: any, parent: any, childFolderTitle: any) => {
     const files = await getFilesList(user, parent, `mimeType = 'application/vnd.google-apps.folder' and name contains '${childFolderTitle.replace(/[']/g, '\\$&')}' and '${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`);
     return files.length > 0
 };
@@ -115,7 +115,7 @@ doesFolderContainsThisFolder = async (user, parent, childFolderTitle) => {
  * @param childFolderTitle
  * @returns {Promise<*>}
  */
-getFolder = async (user, parent, childFolderTitle) => {
+const getFolder = async (user: any, parent: any, childFolderTitle: any) => {
     return await getFilesList(user, parent, `mimeType = 'application/vnd.google-apps.folder' and name contains '${childFolderTitle.replace(/[']/g, '\\$&')}' and '${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`);
 };
 
@@ -124,7 +124,7 @@ getFolder = async (user, parent, childFolderTitle) => {
  * @param user
  * @returns {Promise<void>}
  */
-async function getOAuth2Client(user) {
+export async function getOAuth2Client(user: any) {
     const {client_secret, client_id, redirect_uris} = credentials.web;
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[1]);
     const token = await getAccessToken(user);
@@ -137,7 +137,7 @@ async function getOAuth2Client(user) {
  * @param user
  * @returns {Promise<admin.database.DataSnapshot>}
  */
-const getAccessToken = async user => {
+const getAccessToken = async (user: any) => {
     return await usersRef.child(user.uid).child('/settings/gdrive/token').once('value');
 };
 
@@ -151,7 +151,7 @@ const getAccessToken = async user => {
  * @param res
  * @returns {Promise<void>}
  */
-const downloadMovieFile = async (link, user, title, torrentInfos, unrestrictedLink, res) => {
+export const downloadMovieFile = async (link: any, user: any, title: any, torrentInfos: any, unrestrictedLink: any, res: any) => {
 
     let fileTitle = title;
 
@@ -172,7 +172,7 @@ const downloadMovieFile = async (link, user, title, torrentInfos, unrestrictedLi
         auth: oAuth2Client
     });
 
-    let folderCreated = {};
+    let folderCreated: any = {};
 
     if (torrentInfos) {
         if (torrentInfos.mediaInfos) {
@@ -247,7 +247,7 @@ const downloadMovieFile = async (link, user, title, torrentInfos, unrestrictedLi
             }
 
             usersRef.child(user.uid).child('/settings/downloads/' + downloadKey).update({speed: speed})
-                .catch(error => {
+                .catch((error: any) => {
                     throw error
                 });
 
@@ -260,7 +260,7 @@ const downloadMovieFile = async (link, user, title, torrentInfos, unrestrictedLi
 
         // Creating download stream
         downloadStream
-            .on('downloadProgress', async progress => {
+            .on('downloadProgress', async (progress: any) => {
 
                 // Updating this variable to display speed
                 bytesUploaded = progress.transferred;
@@ -290,7 +290,7 @@ const downloadMovieFile = async (link, user, title, torrentInfos, unrestrictedLi
         const downloadEventReference = usersRef.child(user.uid).child('/settings/downloads/' + downloadKey + '/event');
 
         // Managing download task using stream events (resume, pause, destroy)
-        downloadEventReference.on('value', async snapshot => {
+        downloadEventReference.on('value', async (snapshot: any) => {
 
             if (snapshot.val() === 'pause') {
                 downloadStream.pause();
@@ -365,7 +365,7 @@ const downloadMovieFile = async (link, user, title, torrentInfos, unrestrictedLi
  * @param newFolderName
  * @returns {Promise<*>}
  */
-const createFolder = async (drive, parentFolder, newFolderName) => {
+const createFolder = async (drive: any, parentFolder: any, newFolderName: any) => {
 
     try {
         const fileMetadata = {
@@ -394,7 +394,7 @@ const createFolder = async (drive, parentFolder, newFolderName) => {
  * @param unrestrictedLink
  * @returns {Promise<void>}
  */
-const createShowEpisodeFolder = async (drive, parent, user, mediaInfos, unrestrictedLink) => {
+const createShowEpisodeFolder = async (drive: any, parent: any, user: any, mediaInfos: any, unrestrictedLink: any) => {
     try {
 
         // const test = await doesFolderContainsThisFolder(user, parent, `'${mediaInfos.name} S${mediaInfos.lastSeason}E${mediaInfos.lastEpisode}'`);
@@ -473,7 +473,7 @@ const createShowEpisodeFolder = async (drive, parent, user, mediaInfos, unrestri
  * @param folder
  * @returns {Promise<*>}
  */
-const deleteMovieFolder = async (drive, folder) => {
+const deleteMovieFolder = async (drive: any, folder: any) => {
     try {
 
         const folderDeleted = await drive.files.delete({
@@ -489,7 +489,7 @@ const deleteMovieFolder = async (drive, folder) => {
 /**
  * Passes all Google Drive downloads in error - ! Use ONLY at first launch of the app, at boot !
  */
-const setAllGdriveDownloadsInError = async () => {
+export const setAllGdriveDownloadsInError = async () => {
     let users = await usersRef.once('value');
     users = users.val();
 

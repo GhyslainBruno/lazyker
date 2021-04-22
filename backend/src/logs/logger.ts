@@ -14,7 +14,7 @@ const logging = new Logging({
  * @param user
  * @returns {Promise<void>}
  */
-const info = async (textToLog, user) => {
+const info = async (textToLog: any, user: any) => {
 
     if (textToLog !== '') {
         // The name of the log to write to
@@ -38,10 +38,10 @@ const info = async (textToLog, user) => {
         // Writes the log entry
         log
             .write(entry)
-            .then(() => {
+            .then((): any => {
                 return null
             })
-            .catch(error => {
+            .catch((error: any) => {
                 throw error
             });
     }
@@ -53,7 +53,7 @@ const info = async (textToLog, user) => {
  * @param user
  * @returns {Promise<DeleteLogResponse>}
  */
-const clearLogs = async user => {
+const clearLogs = async (user: any) => {
 
     // The name of the log to write to
     const logName = user.uid;
@@ -73,7 +73,7 @@ const clearLogs = async user => {
  * @param user
  * @returns {Promise<GetEntriesResponse>}
  */
-const getLogs = async user => {
+const getLogs = async (user: any) => {
     // The name of the log to write to
     const logName = user.uid;
     // Selects the log to write to

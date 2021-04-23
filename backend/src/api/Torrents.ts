@@ -1,18 +1,26 @@
-const realdebrid = require('../debriders/realdebrid/debrid_links');
-const admin = require("firebase-admin");
-const Movies = require('../movies/Movies');
+// const realdebrid = require('../debriders/realdebrid/debrid_links');
+// const admin = require("firebase-admin");
+// const Movies = require('../movies/Movies');
 // const downloader = require('../synology/Download');
-const downloader = require('../downloads/downloader');
+// const downloader = require('../downloads/downloader');
+// const TvShows = require('../tvshows/TvShows');
+
+import * as realdebrid from '../debriders/realdebrid/debrid_links';
+import * as admin from 'firebase-admin';
+import * as Movies from '../movies/Movies';
+import * as downloader from '../downloads/downloader'
+import * as TvShows from '../tvshows/TvShows';
+
 const db = admin.database();
 const usersRef = db.ref("/users");
-const TvShows = require('../tvshows/TvShows');
 
-module.exports = (app) => {
+
+module.exports = (app: any) => {
 
     /**
      * Get list of torrents for a particular title
      */
-    app.get('/api/torrents', async (req, res) => {
+    app.get('/api/torrents', async (req: any, res: any) => {
         try {
             res.send(await Movies.getTorrentsList(req.query.title));
         } catch(error) {
@@ -25,7 +33,7 @@ module.exports = (app) => {
     /**
      * Download a torrent file using page url
      */
-    app.post('/api/torrents', async (req, res) => {
+    app.post('/api/torrents', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             // Putting this particular movie into "inProgress" state into firebase database
@@ -43,7 +51,7 @@ module.exports = (app) => {
      * Download an episode torrent file using page url
      * TODO - Remove all duplicated code in here
      */
-    app.post('/api/episode_torrents', async (req, res) => {
+    app.post('/api/episode_torrents', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             // Putting this particular movie into "inProgress" state into firebase database
@@ -60,7 +68,7 @@ module.exports = (app) => {
     /**
      * Get list of torrents in realdebrid service
      */
-    app.get('/api/realdebrid_torrents', async (req, res) => {
+    app.get('/api/realdebrid_torrents', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             res.send(await realdebrid.getTorrents(user));
@@ -72,7 +80,7 @@ module.exports = (app) => {
     /**
      * Download the file into the user's library (precedently torrented in debrider's pool)
      */
-    app.post('/api/realdebrid_torrent_download', async (req, res) => {
+    app.post('/api/realdebrid_torrent_download', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             await downloader.startRealdebridTorrentDownload(req.body.torrent, req.body.torrent.filename.replace(/\.[^/.]+$/, ""), user, res);
@@ -112,7 +120,7 @@ module.exports = (app) => {
     /**
      * Get streaming links for a particular realdebrid torrent
      */
-    app.post('/api/streaming_torrent', async (req, res) => {
+    app.post('/api/streaming_torrent', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const unrestrictedTorrent = await realdebrid.unrestricLinkNoDB(req.body.link, user);
@@ -137,7 +145,7 @@ module.exports = (app) => {
     /**
      * Remove a particular realdebrid torrent
      */
-    app.delete('/api/realdebrid_torrents', async (req, res) => {
+    app.delete('/api/realdebrid_torrents', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();

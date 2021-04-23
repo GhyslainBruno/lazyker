@@ -1,12 +1,12 @@
-const logger = require('../logs/logger');
-const admin = require("firebase-admin");
+import * as logger from '../logs/logger';
+import * as admin from 'firebase-admin';
 
-module.exports = (app) => {
+module.exports = (app: any) => {
 
     /**
      * Retrieves the stackdriver logs
      */
-    app.get('/api/logs', async (req, res) => {
+    app.get('/api/logs', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const logs = await logger.getLogs(user);
@@ -19,7 +19,7 @@ module.exports = (app) => {
     /**
      * Deletes the stackdriver logs
      */
-    app.delete('/api/logs', async (req, res) => {
+    app.delete('/api/logs', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             await logger.clearLogs(user);

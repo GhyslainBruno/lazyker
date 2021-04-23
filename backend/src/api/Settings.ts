@@ -1,18 +1,18 @@
 // Import Admin SDK
-const admin = require("firebase-admin");
-const realdebrid = require('../debriders/realdebrid/debrid_links');
-const gdrive = require('../gdrive/gdrive');
+import * as admin from 'firebase-admin';
+import * as realdebrid from '../debriders/realdebrid/debrid_links';
+import * as gdrive from '../gdrive/gdrive';
 
 // Get a database reference to our blog
 const db = admin.database();
 const usersRef = db.ref("/users");
 
-module.exports = (app) => {
+module.exports = (app: any) => {
 
     /**
      * Get user settings from database
      */
-    app.get('/api/settings', async (req, res) => {
+    app.get('/api/settings', async (req: any, res: any) => {
 
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
@@ -27,7 +27,7 @@ module.exports = (app) => {
     /**
      * Store new user settings to database
      */
-    app.post('/api/settings', async (req, res) => {
+    app.post('/api/settings', async (req: any, res: any) => {
 
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
@@ -46,7 +46,7 @@ module.exports = (app) => {
     /**
      * Link/connect Realdebrid user
      */
-    app.get('/api/link', async (req, res) => {
+    app.get('/api/link', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const code = req.query.code;
@@ -60,7 +60,7 @@ module.exports = (app) => {
     /**
      * Disconnect Realdebrid user
      */
-    app.get('/api/unlink', async (req, res) => {
+    app.get('/api/unlink', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             await usersRef.child(user.uid).child('/settings').child('realdebrid').remove();
@@ -73,7 +73,7 @@ module.exports = (app) => {
     /**
      * Gets and stores a Gdrive access token to database from single use client token
      */
-    app.post('/api/gdrive_auth', async (req, res) => {
+    app.post('/api/gdrive_auth', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const code = req.body.code;
@@ -89,7 +89,7 @@ module.exports = (app) => {
     /**
      * Removes Google Drive rest API token from DB (TODO: should also invalidate this token)
      */
-    app.get('/api/gdrive_disconect', async (req, res) => {
+    app.get('/api/gdrive_disconect', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             await usersRef.child(user.uid).child('/settings/gdrive/token').remove();
@@ -105,15 +105,15 @@ module.exports = (app) => {
      * Gets and stores a Gdrive access token to database from single use client token
      * Not used for now (used in client - but only for test purposes
      */
-    app.get('/api/gdrive_list', async (req, res) => {
-        try {
-            const user = await admin.auth().verifyIdToken(req.headers.token);
-            await gdrive.listFiles(user);
-            res.send({
-                message: 'Foo'
-            });
-        } catch(error) {
-            res.status(500).send({message: error})
-        }
-    });
+    // app.get('/api/gdrive_list', async (req: any, res: any) => {
+    //     try {
+    //         const user = await admin.auth().verifyIdToken(req.headers.token);
+    //         await gdrive.listFiles(user);
+    //         res.send({
+    //             message: 'Foo'
+    //         });
+    //     } catch(error) {
+    //         res.status(500).send({message: error})
+    //     }
+    // });
 };

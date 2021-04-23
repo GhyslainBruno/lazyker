@@ -14,7 +14,7 @@ const usersRef = db.ref("/users");
  * @param user
  * @returns {Promise<void>}
  */
-const downloadEpisodeTorrentFile = async (url: any, provider: any, mediaInfos: any, id: any, user: any) => {
+export const downloadEpisodeTorrentFile = async (url: any, provider: any, mediaInfos: any, id: any, user: any) => {
 
     try {
         switch (provider) {

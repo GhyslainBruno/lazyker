@@ -1,18 +1,19 @@
-const Movies = require('../movies/Movies');
-const admin = require("firebase-admin");
+import * as Movies from '../movies/Movies';
+import * as admin from 'firebase-admin';
+import rp from 'request-promise';
+
 const db = admin.database();
-const rp = require('request-promise');
 const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
 const youtubeAPIKey = 'AIzaSyDJUXgEKJSwbsr_Gj7IuWTNlTPoGKP_xn8';
 const searchMovieTmdbUrl = 'https://api.themoviedb.org/3/search/movie';
 const usersRef = db.ref("/users");
 
-module.exports = (app) => {
+module.exports = (app: any) => {
 
     /**
      * List TMDB movies - using genres
      */
-    app.get('/api/movies', async (req, res) => {
+    app.get('/api/movies', async (req: any, res: any) => {
 
         const genreWanted = req.query.genre;
         const page = req.query.page;
@@ -49,7 +50,7 @@ module.exports = (app) => {
             let results = await rp(options);
 
             // Get only wanted fields in tmdb api response
-            results = results.results.map(movie => {
+            results = results.results.map((movie: any) => {
 
                 const posterPath = movie.poster_path;
                 const title = movie.title;
@@ -66,7 +67,7 @@ module.exports = (app) => {
             });
 
             // Removing tv shows without title or poster path
-            results = results.filter(movie => movie !== null);
+            results = results.filter((movie: any) => movie !== null);
 
             res.send(results)
         }
@@ -78,7 +79,7 @@ module.exports = (app) => {
     /**
      * Search a particular movie in TMDB database with title
      */
-    app.get('/api/search_tmdb_movie', async (req, res) => {
+    app.get('/api/search_tmdb_movie', async (req: any, res: any) => {
         const title = req.query.title;
 
         const options = {
@@ -91,7 +92,7 @@ module.exports = (app) => {
             let results = await rp(options);
 
             // Get only wanted fields in tmdb api response
-            results = results.results.map(movie => {
+            results = results.results.map((movie: any) => {
 
                 const posterPath = movie.poster_path;
                 const title = movie.title;
@@ -108,7 +109,7 @@ module.exports = (app) => {
             });
 
             // Removing tv shows without title or poster path
-            results = results.filter(movie => movie !== null);
+            results = results.filter((movie: any) => movie !== null);
 
             res.send(results)
         }
@@ -120,7 +121,7 @@ module.exports = (app) => {
     /**
      * Get urls (from different providers) for a particular movie
      */
-    app.post('/api/search_providers_movie', async (req, res) => {
+    app.post('/api/search_providers_movie', async (req: any, res: any) => {
 
         try {
 
@@ -138,7 +139,7 @@ module.exports = (app) => {
     /**
      * Get available qualities for a particular movie
      */
-    app.post('/api/search_qualities', async (req, res) => {
+    app.post('/api/search_qualities', async (req: any, res: any) => {
 
         try {
             res.send(await Movies.getQualities(req.body.wanted.url, req.body.title, req.body.provider));
@@ -153,24 +154,25 @@ module.exports = (app) => {
     /**
      * Start the download of a particular movie
      */
-    app.post('/api/start_movie_download', async (req, res) => {
-
-        try {
-            const user = await admin.auth().verifyIdToken(req.headers.token);
-            await usersRef.child(user.uid).child('/movies').child(req.body.id).set({title: req.body.title, state: 'finding_links', id: req.body.id});
-
-            // Promise ignored because this process can take some time - using "inProgress" movies category instead
-            Movies.startDownloadMovieTask(req.body.quality_wanted.url, req.body.title, req.body.provider, user);
-            res.send({message: "Movie in progress"});
-        } catch(error) {
-            res.status(500).send({message: error});
-        }
-    });
+    // Commented until direct download will have to be re enabled
+    // app.post('/api/start_movie_download', async (req: any, res: any) => {
+    //
+    //     try {
+    //         const user = await admin.auth().verifyIdToken(req.headers.token);
+    //         await usersRef.child(user.uid).child('/movies').child(req.body.id).set({title: req.body.title, state: 'finding_links', id: req.body.id});
+    //
+    //         // Promise ignored because this process can take some time - using "inProgress" movies category instead
+    //         Movies.startDownloadMovieTask(req.body.quality_wanted.url, req.body.title, req.body.provider, user);
+    //         res.send({message: "Movie in progress"});
+    //     } catch(error) {
+    //         res.status(500).send({message: error});
+    //     }
+    // });
 
     /**
      * Get all tmdb movie genres
      */
-    app.get('/api/movies_genres', async (req, res) => {
+    app.get('/api/movies_genres', async (req: any, res: any) => {
 
         const options = {
             method: 'GET',
@@ -191,25 +193,25 @@ module.exports = (app) => {
     /**
      * Get TMDB infos for a particular movie
      */
-    app.get('/api/movie_info', async (req, res) => {
+    app.get('/api/movie_info', async (req: any, res: any) => {
         const id = req.query.id;
 
         const options = {
             method: 'GET',
-            uri: url = 'https://api.themoviedb.org/3/movie/' + id + '?api_key=' + tmdbApiKey + '&language=fr-FR',
+            uri: 'https://api.themoviedb.org/3/movie/' + id + '?api_key=' + tmdbApiKey + '&language=fr-FR',
             json: true
         };
 
         const imagesRequest = {
             method: 'GET',
-            uri: url = 'https://api.themoviedb.org/3/movie/' + id + '/images'+ '?api_key=' + tmdbApiKey,
+            uri: 'https://api.themoviedb.org/3/movie/' + id + '/images'+ '?api_key=' + tmdbApiKey,
             json: true
         };
 
         // Using TMDB as a trailer provider
         const optionsTrailerTMDB = {
             method: 'GET',
-            uri: url = 'https://api.themoviedb.org/3/movie/' + id + '/videos' + '?api_key=' + tmdbApiKey + '&language=fr-FR',
+            uri: 'https://api.themoviedb.org/3/movie/' + id + '/videos' + '?api_key=' + tmdbApiKey + '&language=fr-FR',
             json: true
         };
 
@@ -229,7 +231,7 @@ module.exports = (app) => {
                 json: true
             };
 
-            let movieTrailer = {};
+            let movieTrailer: any = {};
             movieTrailer.items = [];
 
             try {

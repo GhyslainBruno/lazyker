@@ -18,12 +18,12 @@ try {
     throw error;
 }
 
-module.exports = (app) => {
+module.exports = (app: any) => {
 
     /**
      * Load all movies in progress (download not started yet - basically checking/finding good download links)
      */
-    app.get('/api/movies_in_progress', async (req, res) => {
+    app.get('/api/movies_in_progress', async (req: any, res: any) => {
 
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
@@ -44,7 +44,7 @@ module.exports = (app) => {
     /**
      * Remove a movie from in progress part
      */
-    app.post('/api/remove_in_progress_movie', async (req, res) => {
+    app.post('/api/remove_in_progress_movie', async (req: any, res: any) => {
 
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
@@ -67,13 +67,13 @@ module.exports = (app) => {
     /**
      * List all downloader current downloads - TODO: abstract synology to a generic downloader
      */
-    app.get('/api/current_downloads', async (req, res) => {
+    app.get('/api/current_downloads', async (req: any, res: any) => {
 
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const currentDownloads = await downloader.getCurrentDownloads(await synoConnector.getConnection(user));
 
-            currentDownloads.tasks.map((download, index) => {
+            currentDownloads.tasks.map((download: any, index: any) => {
                 download.size_downloaded = download.additional.transfer.size_downloaded;
                 download.destination = currentDownloads.tasks[index].additional.detail.destination;
             });
@@ -92,7 +92,7 @@ module.exports = (app) => {
     /**
      * Resume a particular download
      */
-    app.post('/api/resume_download', async (req, res) => {
+    app.post('/api/resume_download', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const message = await downloader.resumeDownload(await synoConnector.getConnection(user), req.body.id);
@@ -109,7 +109,7 @@ module.exports = (app) => {
     /**
      * Remove a particular download
      */
-    app.post('/api/remove_download', async (req, res) => {
+    app.post('/api/remove_download', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const message = await downloader.removeDownload(await synoConnector.getConnection(user), req.body.id);
@@ -126,7 +126,7 @@ module.exports = (app) => {
     /**
      * Pause a particular download
      */
-    app.post('/api/pause_download', async (req, res) => {
+    app.post('/api/pause_download', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const message = await downloader.pauseDownload(await synoConnector.getConnection(user), req.body.id);

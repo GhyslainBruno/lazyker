@@ -1,5 +1,9 @@
-const admin = require("firebase-admin");
-const rp = require('request-promise');
+// const admin = require("firebase-admin");
+// const rp = require('request-promise');
+
+import * as admin from 'firebase-admin'
+import rp from 'request-promise';
+
 const db = admin.database();
 const usersRef = db.ref("/users");
 const pMap = require('p-map');
@@ -11,12 +15,12 @@ const searchTvTmdbUrl = 'https://api.themoviedb.org/3/search/tv';
 const autoupdateNAS = require('../tvshows/autoupdate/nas/Main');
 const autoupdateGdrive = require('../tvshows/autoupdate/gdrive/Main');
 
-module.exports = (app) => {
+module.exports = (app: any) => {
 
     /**
      * List tv shows
      */
-    app.get('/api/shows', async function(req, res) {
+    app.get('/api/shows', async function(req: any, res: any) {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             const snapshot = await usersRef.child(user.uid).child('/shows').once('value');
@@ -37,7 +41,7 @@ module.exports = (app) => {
     /**
      * Add a new tv show
      */
-    app.post('/api/show', async (req, res) => {
+    app.post('/api/show', async (req: any, res: any) => {
 
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
@@ -52,7 +56,7 @@ module.exports = (app) => {
     /**
      * Delete a tv show
      */
-    app.delete('/api/show', async (req, res) => {
+    app.delete('/api/show', async (req: any, res: any) => {
 
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
@@ -67,7 +71,7 @@ module.exports = (app) => {
     /**
      * Get tv show info
      */
-    app.get('/api/show/:id', async (req, res) => {
+    app.get('/api/show/:id', async (req: any, res: any) => {
 
         const showId = req.params.id;
 
@@ -80,7 +84,7 @@ module.exports = (app) => {
         try {
             let results = await rp(options);
 
-            const lastSeasonInformations = results.seasons.filter(season => season.season_number === Math.max.apply(Math, results.seasons.map(function(o) { return o.season_number; })))[0];
+            const lastSeasonInformations = results.seasons.filter((season: any) => season.season_number === Math.max.apply(Math, results.seasons.map(function(o: any) { return o.season_number; })))[0];
 
             const show = {
                 // lastSeason:  lastSeasonInformations.season_number,
@@ -103,7 +107,7 @@ module.exports = (app) => {
     /**
      * Update a tv show
      */
-    app.put('/api/show', async (req, res) => {
+    app.put('/api/show', async (req: any, res: any) => {
         try {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             await usersRef.child(user.uid).child('/shows').child(req.body.show.id).set(req.body.show);
@@ -116,7 +120,7 @@ module.exports = (app) => {
     /**
      * Searching tv show
      */
-    app.get('/api/search_shows', async (req, res) => {
+    app.get('/api/search_shows', async (req: any, res: any) => {
 
         const title = req.query.title;
 
@@ -130,7 +134,7 @@ module.exports = (app) => {
             let results = await rp(options);
 
             // Get only wanted fields in tmdb api response
-            results = results.results.map(show => {
+            results = results.results.map((show: any) => {
 
                 const posterPath = show.poster_path;
                 const title = show.original_name;
@@ -145,7 +149,7 @@ module.exports = (app) => {
             });
 
             // Removing tv shows without title or poster path
-            results = results.filter(show => show !== null);
+            results = results.filter((show: any) => show !== null);
 
             res.send({shows: results, total: results.length});
         }
@@ -157,7 +161,7 @@ module.exports = (app) => {
     /**
      * Clears all new episodes tags (basically when firstly listing tv shows)
      */
-    app.get('/api/clear_new_episodes', async (req, res) => {
+    app.get('/api/clear_new_episodes', async (req: any, res: any) => {
 
         // Using multi-path update, for more information please visit https://www.youtube.com/watch?v=i1n9Kw3AORw
         try {
@@ -170,7 +174,7 @@ module.exports = (app) => {
             if (shows) {
 
                 let showsKeys = Object.keys(shows);
-                let updateObject = {};
+                let updateObject: any = {};
 
 
                 showsKeys.forEach(key => {
@@ -194,7 +198,7 @@ module.exports = (app) => {
     /**
      * Starts an autoupdate task for every users
      */
-    app.get('/api/autoupdate_start', async (req, res) => {
+    app.get('/api/autoupdate_start', async (req: any, res: any) => {
 
         try {
 
@@ -238,7 +242,8 @@ module.exports = (app) => {
             // }, {concurency: 1});
 
         } catch(error) {
-            await logger.info(error.message, user);
+            // await logger.info(error.message, user);
+            console.log(error.message);
         }
     });
 

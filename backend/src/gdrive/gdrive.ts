@@ -17,7 +17,7 @@ const usersRef = db.ref("/users");
  * @param user
  * @returns {Promise<void>}
  */
-export async function storeGDriveAccessToken(code: any, user: any) {
+export async function getGDriveAccessToken(code: any, user: any) {
 
     try {
 
@@ -517,7 +517,7 @@ export const setAllGdriveDownloadsInError = async () => {
     })
 };
 
-module.exports.getGDriveAccessToken = storeGDriveAccessToken;
+module.exports.getGDriveAccessToken = getGDriveAccessToken;
 module.exports.getOAuth2Client = getOAuth2Client;
 module.exports.downloadMovieFile = downloadMovieFile;
 module.exports.setAllgdriveDownloadsInError = setAllGdriveDownloadsInError;

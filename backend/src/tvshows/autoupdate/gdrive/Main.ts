@@ -1,5 +1,5 @@
 const storage = require('./Storage');
-const gdrive = require('../../../gdrive/gdrive');
+const gdrive = require('../../../storage/gdrive/gdrive');
 const database = require('../common/Database');
 const scrapers = require('./Scrappers');
 const logger = require('../../../logs/logger');

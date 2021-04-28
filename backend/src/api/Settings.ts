@@ -1,7 +1,7 @@
 // Import Admin SDK
 import * as admin from 'firebase-admin';
 import * as realdebrid from '../debriders/realdebrid/debrid_links';
-import * as gdrive from '../gdrive/gdrive';
+import * as gdrive from '../storage/gdrive/gdrive';
 
 // Get a database reference to our blog
 const db = admin.database();

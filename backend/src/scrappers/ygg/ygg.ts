@@ -3,20 +3,9 @@ import {AllDebrid} from '../../debriders/alldebrid/alldebrid-provider';
 import {Torrent} from './torrent';
 import {TorrentProviderEnum} from './torrent-provider-enum';
 import {TorrentsList} from './torrents-list';
-
-const cheerio = require('cheerio');
-const rp  = require('request-promise');
-const request  = require('request');
-const YGGRootUrl ='https://www2.yggtorrent.ch/';
-const logger = require('../../logs/logger');
-const fs = require('fs');
-const path = require('path');
-const torrentToMagnet = require('torrent-to-magnet');
-const parseTorrent = require('parse-torrent');
-const realdebrid = require('../../debriders/realdebrid/debrid_links');
-const admin = require('firebase-admin');
-const db = admin.database();
-const usersRef = db.ref("/users");
+import fs from 'fs';
+import path from 'path';
+import parseTorrent from 'parse-torrent';
 
 const getTorrentsApi = async (title: string): Promise<Torrent[]> => {
     const searchTorrentApiTorrents = await search(title, 'Movies', 20);
@@ -25,6 +14,7 @@ const getTorrentsApi = async (title: string): Promise<Torrent[]> => {
         return new Torrent(
           TorrentProviderEnum.YGG,
           searchTorrentApiTorrent.title,
+          // TODO: change definition file for this lib
           //@ts-ignore
           searchTorrentApiTorrent.link,
           +searchTorrentApiTorrent.size,
@@ -37,6 +27,7 @@ const getTorrentsApi = async (title: string): Promise<Torrent[]> => {
     })
 }
 
+// TODO: extract user part
 /**
  * Returns a list of Ygg torrents for a particular title
  * @param title
@@ -82,8 +73,6 @@ export const downloadTorrentFile = async (url: any, user: any, infos: any) => {
         const allDebrid = new AllDebrid();
 
         await allDebrid.addMagnetLink(magnetLink, user);
-
-        console.log('magnet added');
 
     } catch(error) {
         console.log(error.message)

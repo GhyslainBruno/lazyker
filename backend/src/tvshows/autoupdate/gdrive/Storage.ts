@@ -1,4 +1,4 @@
-const gdrive = require('../../../gdrive/gdrive');
+const gdrive = require('../../../storage/gdrive/gdrive');
 const stringSimilarity = require('string-similarity');
 const pMap = require('p-map');
 

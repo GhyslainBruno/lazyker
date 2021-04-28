@@ -22,6 +22,7 @@
   "dependencies": {
     "@google-cloud/logging": "^3.0.2",
     "@types/got": "^9.6.11",
+    "@types/parse-torrent": "^5.8.3",
     "@types/request-promise": "^4.1.47",
     "@types/torrent-search-api": "^2.0.0",
     "body-parser": "^1.18.2",

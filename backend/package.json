@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "jest --config src/jest.config.js --forceExit --detectOpenHandles",
-    "dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts"
+    "kill:debug": "kill -9 `lsof -nP +c 15 | grep LISTEN | grep :9229 | awk '{print $2}'`",
+    "debug": "npx ts-node-dev --inspect --respawn --transpile-only ./src/server.ts"
   },
   "jestSonar": {
     "reportPath": "coverage"
@@ -21,6 +22,7 @@
   "dependencies": {
     "@google-cloud/logging": "^3.0.2",
     "@types/request-promise": "^4.1.47",
+    "@types/torrent-search-api": "^2.0.0",
     "body-parser": "^1.18.2",
     "cheerio": "^1.0.0-rc.2",
     "cloudscraper": "^1.5.0",

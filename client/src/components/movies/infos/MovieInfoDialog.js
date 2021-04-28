@@ -100,6 +100,7 @@ const MovieInfoDialog = props => {
                     provider: torrent.provider,
                     title: movieTitle,
                     id: selectedMovie.id,
+                    infos: torrent
                 })
             });
 

@@ -238,7 +238,7 @@ module.exports = (app: any) => {
                 movieTrailer = await rp(optionsTrailer);
             } catch(error) {
                 // TODO make it logging in Stack Driver log service
-                console.log(error)
+                console.log(error.message)
             }
 
             let movieTrailerTMDB = await rp(optionsTrailerTMDB);

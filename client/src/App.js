@@ -156,7 +156,7 @@ class App extends Component {
                             this.customizeDialogAndPassCredentials(error.email, accountsForThisEmail[0], error.credential.providerId, error);
                         })
                         .catch(error => {
-                            console.log(error);
+                            console.log(error.message);
                         })
                 }
 

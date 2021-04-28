@@ -41,16 +41,16 @@ export const getTorrentsList = async (title: any) => {
  * @param provider
  * @param title
  * @param id
+ * @param infos
  * @param user
- * @returns {Promise<void>}
  */
-export const downloadTorrentFile = async (url: any, provider: any, title: any, id: any, user: any) => {
+export const downloadTorrentFile = async (url: string, provider: any, title: string, id: any, infos: any, user: any) => {
 
     try {
 
         switch (provider) {
-            case 'Yggtorrent' :
-                await ygg.downloadTorrentFile(url, user, {title: title, isShow: false});
+            case 'ygg' :
+                await ygg.downloadTorrentFile(url, user, { ...infos, isShow: false });
                 break;
             case 'torrent9':
                 await torrent9.downloadTorrentFile(url, user, {title: title, isShow: false});

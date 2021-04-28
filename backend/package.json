@@ -12,7 +12,7 @@
   "scripts": {
     "test": "jest --config src/jest.config.js --forceExit --detectOpenHandles",
     "kill:debug": "kill -9 `lsof -nP +c 15 | grep LISTEN | grep :9229 | awk '{print $2}'`",
-    "debug": "npx ts-node-dev --inspect --respawn --transpile-only ./src/server.ts"
+    "debug": "npx ts-node-dev --inspect --respawn ./src/server.ts"
   },
   "jestSonar": {
     "reportPath": "coverage"
@@ -21,6 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "@google-cloud/logging": "^3.0.2",
+    "@types/got": "^9.6.11",
     "@types/request-promise": "^4.1.47",
     "@types/torrent-search-api": "^2.0.0",
     "body-parser": "^1.18.2",

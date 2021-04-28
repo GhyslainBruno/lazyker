@@ -1,4 +1,5 @@
 import {Torrent as TorrentSearchApiTorrent, enableProvider, search, downloadTorrent} from 'torrent-search-api';
+import {AllDebrid} from '../../debriders/alldebrid/alldebrid-provider';
 import {Torrent} from './torrent';
 import {TorrentProviderEnum} from './torrent-provider-enum';
 import {TorrentsList} from './torrents-list';
@@ -60,10 +61,9 @@ export const downloadTorrentFile = async (url: any, user: any, infos: any) => {
 
     try {
 
+        // TODO : change this behaviour
         infos.provider = 'Yggtorrent';
         infos.link = infos.url;
-
-        console.log(infos);
 
         enableProvider('Yggtorrent', 'Ghyslain', 'foobar');
 
@@ -79,7 +79,12 @@ export const downloadTorrentFile = async (url: any, user: any, infos: any) => {
         // Removing torrent file
         await removeAllFiles(path.join(__dirname, 'torrent_temp'));
 
-        console.log(magnetLink);
+        const allDebrid = new AllDebrid();
+
+        await allDebrid.addMagnetLink(magnetLink, user);
+
+        console.log('magnet added');
+
     } catch(error) {
         console.log(error.message)
     }

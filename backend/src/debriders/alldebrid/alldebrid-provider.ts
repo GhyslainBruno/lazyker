@@ -1,5 +1,6 @@
 import {Uptobox, UptoboxFileCode} from '../../storage/uptobox/uptobox';
-import {Debrider} from '../debrider';
+import {TorrentId} from '../debrider';
+import {IDebrider} from '../i-debrider';
 import got from 'got';
 
 interface AddMagnetDto {
@@ -81,7 +82,7 @@ class FileName extends String {
 }
 
 
-export class AllDebrid implements Debrider {
+export class AllDebrid implements IDebrider {
 
   async getUptoboxLink(magnetId: number): Promise<UptoboxLink> {
     try {
@@ -95,7 +96,7 @@ export class AllDebrid implements Debrider {
     }
   }
 
-  async addMagnetLink(magnetLink: string, user: any): Promise<any> {
+  async addMagnetLink(magnetLink: string, user: any): Promise<TorrentId> {
     try {
       const response = await got(`https://api.alldebrid.com/v4/magnet/upload?agent=lazyker&apikey=abswtHHkX4v0cKE2P0Qd&magnets[]=${magnetLink}`, { json: true })
 
@@ -103,17 +104,19 @@ export class AllDebrid implements Debrider {
 
       // When torrent is ready, add it to uptobox right away
       // For the moment everything is done here, but it should be decoupled at maximum
-      if (body.data.magnets[0].ready) {
-        const uptoboxLink = await this.getUptoboxLink(body.data.magnets[0].id);
+      // if (body.data.magnets[0].ready) {
+      //   const uptoboxLink = await this.getUptoboxLink(body.data.magnets[0].id);
+      //
+      //   // Instantiate the storage wanted
+      //   const uptobox = new Uptobox();
+      //
+      //   // Add the media to the storage instantiated
+      //   const newFileCode = await uptobox.addFile(uptoboxLink.getFileCode(), { uptobox: { token: '9108d29c0ab88cdbb4964790106469921394u' } });
+      //
+      //   console.log(newFileCode.code);
+      // }
 
-        const uptobox = new Uptobox();
-        const newFileCode = await uptobox.addFile(uptoboxLink.getFileCode(), { uptobox: { token: '9108d29c0ab88cdbb4964790106469921394u' } });
-
-        console.log(newFileCode.code);
-      }
-
-      // TODO: type the return body, and handle errors
-      return body;
+      return new TorrentId(body.data.magnets[0].id, body.data.magnets[0].ready);
 
     } catch(error) {
       console.log(error.message);

@@ -83,7 +83,7 @@ class Torrents extends React.Component {
                 this.setState({torrents: torrents, torrentsLoading: false});
             } else {
                 this.setState({torrents: [], torrentsLoading: false});
-                this.props.displaySnackMessage('Error : Link your Debrider account -> Settings > Configuration');
+                this.props.displaySnackMessage('Error : Link your InterfaceDebrider account -> Settings > Configuration');
             }
 
         } catch(error) {
@@ -108,7 +108,7 @@ class Torrents extends React.Component {
                 this.setState({torrents: torrents, torrentsLoading: false});
             } else {
                 this.setState({torrents: [], torrentsLoading: false});
-                this.props.displaySnackMessage('Error : Link your Debrider account -> Settings > Configuration');
+                this.props.displaySnackMessage('Error : Link your InterfaceDebrider account -> Settings > Configuration');
             }
 
         } catch(error) {
@@ -132,7 +132,7 @@ class Torrents extends React.Component {
                      this.setState({ torrents: torrents });
                  } else {
                      this.setState({ torrents: [], torrentsLoading: false });
-                     this.props.displaySnackMessage('Error : Link your Debrider account -> Settings > Configuration');
+                     this.props.displaySnackMessage('Error : Link your InterfaceDebrider account -> Settings > Configuration');
                  }
 
              } catch(error) {

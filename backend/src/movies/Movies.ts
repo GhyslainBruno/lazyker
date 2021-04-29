@@ -50,7 +50,7 @@ export const downloadTorrentFile = async (url: string, provider: any, title: str
 
         switch (provider) {
             case 'ygg' :
-                await ygg.downloadTorrentFile(url, user, { ...infos, isShow: false });
+                await ygg.downloadTorrentFile(url, user, { ...infos, isShow: false, title });
                 break;
             case 'torrent9':
                 await torrent9.downloadTorrentFile(url, user, {title: title, isShow: false});

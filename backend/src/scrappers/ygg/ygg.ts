@@ -1,5 +1,8 @@
 import {Torrent as TorrentSearchApiTorrent, enableProvider, search, downloadTorrent} from 'torrent-search-api';
 import {AllDebrid} from '../../debriders/alldebrid/alldebrid-provider';
+import {Debrider} from '../../debriders/debrider';
+import {Storage} from '../../storage/storage';
+import {Uptobox} from '../../storage/uptobox/uptobox';
 import {Torrent} from './torrent';
 import {TorrentProviderEnum} from './torrent-provider-enum';
 import {TorrentsList} from './torrents-list';
@@ -55,6 +58,9 @@ export const downloadTorrentFile = async (url: any, user: any, infos: any) => {
         // TODO : change this behaviour
         infos.provider = 'Yggtorrent';
         infos.link = infos.url;
+        user.uptobox = {
+            token: '9108d29c0ab88cdbb4964790106469921394u'
+        }
 
         enableProvider('Yggtorrent', 'Ghyslain', 'foobar');
 
@@ -70,9 +76,18 @@ export const downloadTorrentFile = async (url: any, user: any, infos: any) => {
         // Removing torrent file
         await removeAllFiles(path.join(__dirname, 'torrent_temp'));
 
-        const allDebrid = new AllDebrid();
+        // const allDebrid = new AllDebrid();
+        // await allDebrid.addMagnetLink(magnetLink, user);
 
-        await allDebrid.addMagnetLink(magnetLink, user);
+        // What I want, inside a Scrapper(s) class
+        // debrider.addMagnet(magnet, user)
+        // storage.addTorrent(torrent, user)
+
+        const debrider = new Debrider(AllDebrid, Uptobox, user);
+        const storage = new Storage(AllDebrid, Uptobox, user);
+
+        const torrentId = await debrider.addMagnet(magnetLink, user);
+        await storage.addTorrent(torrentId, infos, user);
 
     } catch(error) {
         console.log(error.message)

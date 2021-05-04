@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { auth } from './index';
+import { auth } from '../firebase';
 import Button from "@material/react-button";
 
 const SignOutButton = () =>

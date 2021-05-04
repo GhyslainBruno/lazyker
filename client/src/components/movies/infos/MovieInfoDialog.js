@@ -28,7 +28,6 @@ import * as auth from "../../../firebase/auth";
 import Link from "react-router-dom/es/Link";
 import Fab from '@material-ui/core/Fab';
 import MovieTorrentsList from "./MovieTorrentsList";
-import {DownloadTorrentDto} from "../../../shared/download-torrent-dto";
 
 const styles = {
     outlinedChip : {
@@ -67,7 +66,6 @@ const MovieInfoDialog = props => {
     const [qualities, setQualities] = useState(null);
     const [isInTorrentOrDdl, setIsInTorrentOrDdl] = useState(false);
     const [movieTitle, setMovieTitle] = useState(null);
-    const [movieYear, setMovieYear] = useState(null);
     const [showInfoDialog, setShowInfoDialog] = useState(false);
     const [tmdbTitle, setTmdbTitle] = useState(null);
 
@@ -90,27 +88,6 @@ const MovieInfoDialog = props => {
         const { selectedMovie } = props;
 
         try {
-
-            const torrentDto: DownloadTorrentDto = {
-                provider: torrent.provider,
-                torrentInfos: {
-                    url: torrent.url,
-                    link: torrent.url,
-                    title: torrent.title,
-                    time: torrent.time,
-                    size: torrent.size,
-                    magnet: torrent.magnet,
-                    desc: torrent.desc,
-                    provider: torrent.provider
-                },
-                mediaInfos: {
-                    title: movieTitle,
-                    year: movieYear,
-                    movieId: selectedMovie.id,
-                    isShow: false
-                }
-            };
-
             let response = await fetch('/api/torrents', {
                 method: 'POST',
                 headers: {
@@ -118,7 +95,13 @@ const MovieInfoDialog = props => {
                     'Content-Type': 'application/json',
                     'token': await auth.getIdToken()
                 },
-                body: JSON.stringify(torrentDto)
+                body: JSON.stringify({
+                    url: torrent.url,
+                    provider: torrent.provider,
+                    title: movieTitle,
+                    id: selectedMovie.id,
+                    infos: torrent
+                })
             });
 
             response = await response.json();
@@ -347,7 +330,6 @@ const MovieInfoDialog = props => {
                 // this.setState({movieInfo: movieInfo, movieInfoLoading: false, movieTitle: movieInfo.title});
                 setMovieInfo(movieInfo);
                 setMovieTitle(movieInfo.title);
-                setMovieYear(new Date(movieInfo.release_date).getFullYear());
             } else {
                 props.displaySnackMessage('Error getting infos');
                 // this.setState({movieInfo: null, movieInfoLoading: false});

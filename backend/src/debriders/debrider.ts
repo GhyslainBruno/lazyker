@@ -1,27 +1,8 @@
+import {TorrentInDebriderInfos} from '../entities/torrent-in-debrider-infos';
 import {IStorage} from '../storage/i-storage';
 import {Uptobox} from '../storage/uptobox/uptobox';
 import {AllDebrid} from './alldebrid/alldebrid-provider';
 import {IDebrider} from './i-debrider';
-
-export class TorrentId {
-  id: number;
-  isReady: boolean;
-
-  constructor(id: number, isReady: boolean) {
-    this.id = id;
-    this.isReady = isReady;
-  }
-}
-
-export class MovieInfos {
-  title: string;
-  year: number;
-
-  constructor(title: string, year: number) {
-    this.title = title;
-    this.year = year;
-  }
-}
 
 export class Debrider {
 
@@ -67,7 +48,7 @@ export class Debrider {
     this.user = user;
   }
 
-  async addMagnet(magnetLink: string, user: any): Promise<TorrentId> {
+  async addMagnet(magnetLink: string, user: any): Promise<TorrentInDebriderInfos> {
     return await this.debrider.addMagnetLink(magnetLink, user);
   }
 

@@ -1,5 +1,6 @@
 import got from 'got';
-import {MovieInfos, TorrentId} from '../../debriders/debrider';
+import {MediaInfos} from '../../entities/media-infos';
+import {TorrentInDebriderInfos} from '../../entities/torrent-in-debrider-infos';
 import {IStorage} from '../i-storage';
 
 export class UptoboxFileCode extends String {
@@ -59,6 +60,8 @@ interface UptoboxFolderInfos {
   }
 }
 
+
+
 export class Uptobox implements IStorage {
 
   async addFile(fileCode: UptoboxFileCode, user: any): Promise<UptoboxFileCode> {
@@ -71,7 +74,7 @@ export class Uptobox implements IStorage {
     }
   }
 
-  async createMovieFolder(movieInfos: MovieInfos, user: any): Promise<UptoboxFolderId> {
+  async createMovieFolder(movieInfos: MediaInfos, user: any): Promise<UptoboxFolderId> {
     try {
       const moviesFolderPath = '//medias/movies';
       const newFolderName = `${movieInfos.title}`;
@@ -98,15 +101,13 @@ export class Uptobox implements IStorage {
     try {
 
       // TODO: retrieve the path for movies from user's data in database
-      const result = await got.patch(`https://uptobox.com/api/user/files?token=${user.uptobox.token}&file_codes=${fileCode.code}&destination_fld_id=${destinationFolderId.id}&action=move`, { json: true });
-
-      console.log(result.body);
+      await got.patch(`https://uptobox.com/api/user/files?token=${user.uptobox.token}&file_codes=${fileCode.code}&destination_fld_id=${destinationFolderId.id}&action=move`, { json: true });
     } catch(error) {
       console.log(error.message);
     }
   }
 
-  async addTorrent(torrentId:TorrentId, user:any): Promise<any> {
+  async addTorrent(mediaInfos: MediaInfos, torrentInfos:TorrentInDebriderInfos, user:any): Promise<any> {
 
   }
 

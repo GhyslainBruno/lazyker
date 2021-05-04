@@ -1,3 +1,4 @@
+import {MediaInfos} from '../entities/media-infos';
 import * as ygg from '../scrappers/ygg/ygg'
 // const ygg = require('../scrappers/ygg/ygg');
 const torrent9 = require('../scrappers/torrents9/torrent9');

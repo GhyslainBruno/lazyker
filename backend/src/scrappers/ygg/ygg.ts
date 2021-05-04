@@ -1,11 +1,14 @@
 import {Torrent as TorrentSearchApiTorrent, enableProvider, search, downloadTorrent} from 'torrent-search-api';
 import {AllDebrid} from '../../debriders/alldebrid/alldebrid-provider';
 import {Debrider} from '../../debriders/debrider';
+import {MediaInfos} from '../../entities/media-infos';
+import {ScrapperTorrentInfos} from '../../entities/scrapper-torrent-infos';
 import {Storage} from '../../storage/storage';
 import {Uptobox} from '../../storage/uptobox/uptobox';
 import {Torrent} from './torrent';
 import {TorrentProviderEnum} from './torrent-provider-enum';
 import {TorrentsList} from './torrents-list';
+import {Torrent as TorrentSearchApi} from 'torrent-search-api';
 import fs from 'fs';
 import path from 'path';
 import parseTorrent from 'parse-torrent';
@@ -48,46 +51,54 @@ export const getTorrentsList = async (title: string) => {
 
 /**
  * Start the download of a torrent file -> to magnetLink -> deletes torrent file -> add to realdebrid service
- * @param torrent
- * @returns {Promise<void>}
+ * @param user
+ * @param scrapperTorrentInfos
+ * @param mediaInfos
  */
-export const downloadTorrentFile = async (url: any, user: any, infos: any) => {
+export const downloadTorrentFile = async (user: any, scrapperTorrentInfos: ScrapperTorrentInfos, mediaInfos: MediaInfos) => {
 
     try {
 
         // TODO : change this behaviour
-        infos.provider = 'Yggtorrent';
-        infos.link = infos.url;
+        // infos.provider = 'Yggtorrent';
+        // infos.link = infos.url;
+
         user.uptobox = {
             token: '9108d29c0ab88cdbb4964790106469921394u'
         }
 
+        // const torrentForTorrentSearchApi = {
+        //     provider: 'Yggtorrent',
+        //     link: infos.url,
+        //     title: infos.title,
+        //     time: infos.time,
+        //     size: infos.size,
+        //     magnet: infos.magnet,
+        //     desc: infos.desc
+        // } as TorrentSearchApi
+
+        // const torrentForTorrentSearchApi = torrentInfos as TorrentSearchApi
+
         enableProvider('Yggtorrent', 'Ghyslain', 'foobar');
 
-        await downloadTorrent(infos, path.join(__dirname, '/torrent_temp/file.torrent'))
+        await downloadTorrent(scrapperTorrentInfos, path.join(__dirname, '/torrent_temp/file.torrent'))
 
-        const torrentInfos = parseTorrent(fs.readFileSync(path.join(__dirname, '/torrent_temp/file.torrent')));
+        const torrent = parseTorrent(fs.readFileSync(path.join(__dirname, '/torrent_temp/file.torrent')));
 
         // Create magnet link using torrent file infos
         const magnetLink = parseTorrent.toMagnetURI(
-            torrentInfos
+            torrent
         );
 
         // Removing torrent file
         await removeAllFiles(path.join(__dirname, 'torrent_temp'));
 
-        // const allDebrid = new AllDebrid();
-        // await allDebrid.addMagnetLink(magnetLink, user);
-
-        // What I want, inside a Scrapper(s) class
-        // debrider.addMagnet(magnet, user)
-        // storage.addTorrent(torrent, user)
-
+        // TODO: think about it to improve !
         const debrider = new Debrider(AllDebrid, Uptobox, user);
         const storage = new Storage(AllDebrid, Uptobox, user);
 
-        const torrentId = await debrider.addMagnet(magnetLink, user);
-        await storage.addTorrent(torrentId, infos, user);
+        const torrentInfos = await debrider.addMagnet(magnetLink, user);
+        await storage.addTorrent(mediaInfos, torrentInfos, user);
 
     } catch(error) {
         console.log(error.message)

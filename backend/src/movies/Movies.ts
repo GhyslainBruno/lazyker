@@ -1,11 +1,12 @@
+import {DownloadTorrentDto} from '../dtos/download-torrent-dto';
+import {TorrentProviderEnum} from '../scrappers/ygg/torrent-provider-enum';
+
 const ZTScrapper = require('../scrappers/zonetelechargement/zonetelechargement');
 const ZTScrapperlol = require('../scrappers/zonetelechargementlol/zonetelechargementlol');
 const EDScrapper = require('../scrappers/extremedownload/extremedownload');
-const dlprotectlol = require('../scrappers/zonetelechargementlol/dlprotect1co');
 const dlprotect = require('../scrappers/zonetelechargement/dlprotect1com');
 const edprotect = require('../scrappers/extremedownload/edprotect');
 const realdebrid = require('../debriders/realdebrid/debrid_links');
-// const download = require('../synology/Download');
 const download = require('../downloads/downloader');
 const logger = require('../logs/logger');
 const pMap = require('p-map');
@@ -37,24 +38,22 @@ export const getTorrentsList = async (title: any) => {
 
 /**
  * Download torrent file aggregator
- * @param url
- * @param provider
- * @param title
- * @param id
- * @param infos
- * @param user
+ * @param downloadTorrentDto
  */
-export const downloadTorrentFile = async (url: string, provider: any, title: string, id: any, infos: any, user: any) => {
+export const downloadTorrentFile = async (downloadTorrentDto: DownloadTorrentDto) => {
+
+    const { user } = downloadTorrentDto;
+    const { title } = downloadTorrentDto.mediaInfos;
 
     try {
 
-        switch (provider) {
-            case 'ygg' :
-                await ygg.downloadTorrentFile(url, user, { ...infos, isShow: false, title });
+        switch (downloadTorrentDto.provider) {
+            case TorrentProviderEnum.YGG :
+                await ygg.downloadTorrentFile(user, downloadTorrentDto.torrentInfos, downloadTorrentDto.mediaInfos);
                 break;
-            case 'torrent9':
-                await torrent9.downloadTorrentFile(url, user, {title: title, isShow: false});
-                break;
+            // case 'torrent9':
+            //     await torrent9.downloadTorrentFile(torrentInfos.url, user, {title: title, isShow: false});
+            //     break;
             default:
                 throw new Error('bad provider');
         }

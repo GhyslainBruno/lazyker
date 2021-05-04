@@ -141,14 +141,14 @@ my-app/
     Shows.ts
     App.test.js
     index.css
-    index.js
+    index.tsx
     logo.svg
 ```
 
 For the project to build, **these files must exist with exact filenames**:
 
 * `public/index.html` is the page template;
-* `src/index.js` is the JavaScript entry point.
+* `src/index.tsx` is the JavaScript entry point.
 
 You can delete or rename the other files.
 
@@ -510,7 +510,7 @@ class Button extends Component {
 
 In development, expressing dependencies this way allows your styles to be reloaded on the fly as you edit them. In production, all CSS files will be concatenated into a single minified `.css` file in the build output.
 
-If you are concerned about using Webpack-specific semantics, you can put all your CSS right into `src/index.css`. It would still be imported from `src/index.js`, but you could always remove that import if you later migrate to a different build tool.
+If you are concerned about using Webpack-specific semantics, you can put all your CSS right into `src/index.css`. It would still be imported from `src/index.tsx`, but you could always remove that import if you later migrate to a different build tool.
 
 ## Post-Processing CSS
 
@@ -774,7 +774,7 @@ Alternatively you may use `yarn`:
 yarn add react-bootstrap bootstrap@3
 ```
 
-Import Bootstrap CSS and optionally Bootstrap theme CSS in the beginning of your ```src/index.js``` file:
+Import Bootstrap CSS and optionally Bootstrap theme CSS in the beginning of your ```src/index.tsx``` file:
 
 ```js
 import 'bootstrap/dist/css/bootstrap.css';
@@ -1798,12 +1798,12 @@ that your web app is reliably fast, even on a slow or unreliable network.
 
 If you would prefer not to enable service workers prior to your initial
 production deployment, then remove the call to `registerServiceWorker()`
-from [`src/index.js`](src/index.js).
+from [`src/index.tsx`](src/index.tsx).
 
 If you had previously enabled service workers in your production deployment and
 have decided that you would like to disable them for all your existing users,
 you can swap out the call to `registerServiceWorker()` in
-[`src/index.js`](src/index.js) first by modifying the service worker import:
+[`src/index.tsx`](src/index.tsx) first by modifying the service worker import:
 ```javascript
 import { unregister } from './registerServiceWorker';
 ```
@@ -1821,7 +1821,7 @@ If your production web server does not support HTTPS, then the service worker
 registration will fail, but the rest of your web app will remain functional.
 
 1. Service workers are [not currently supported](https://jakearchibald.github.io/isserviceworkerready/)
-in all web browsers. Service worker registration [won't be attempted](src/registerServiceWorker.js)
+in all web browsers. Service worker registration [won't be attempted](src/registerServiceWorker.tsx)
 on browsers that lack support.
 
 1. The service worker is only enabled in the [production environment](#deployment),
@@ -1855,7 +1855,7 @@ app works offline!" message) and also let them know when the service worker has
 fetched the latest updates that will be available the next time they load the
 page (showing a "New content is available; please refresh." message). Showing
 this messages is currently left as an exercise to the developer, but as a
-starting point, you can make use of the logic included in [`src/registerServiceWorker.js`](src/registerServiceWorker.js), which
+starting point, you can make use of the logic included in [`src/registerServiceWorker.tsx`](src/registerServiceWorker.tsx), which
 demonstrates which service worker lifecycle events to listen for to detect each
 scenario, and which as a default, just logs appropriate messages to the
 JavaScript console.
@@ -2348,7 +2348,7 @@ When you save a file while `npm start` is running, the browser should refresh wi
 If this doesn’t happen, try one of the following workarounds:
 
 * If your project is in a Dropbox folder, try moving it out.
-* If the watcher doesn’t see a file called `index.js` and you’re referencing it by the folder name, you [need to restart the watcher](https://github.com/facebookincubator/create-react-app/issues/1164) due to a Webpack bug.
+* If the watcher doesn’t see a file called `index.tsx` and you’re referencing it by the folder name, you [need to restart the watcher](https://github.com/facebookincubator/create-react-app/issues/1164) due to a Webpack bug.
 * Some editors like Vim and IntelliJ have a “safe write” feature that currently breaks the watcher. You will need to disable it. Follow the instructions in [“Adjusting Your Text Editor”](https://webpack.js.org/guides/development/#adjusting-your-text-editor).
 * If your project path contains parentheses, try moving the project to a path without them. This is caused by a [Webpack watcher bug](https://github.com/webpack/watchpack/issues/42).
 * On Linux and macOS, you might need to [tweak system settings](https://github.com/webpack/docs/wiki/troubleshooting#not-enough-watchers) to allow more watchers.

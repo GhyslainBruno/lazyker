@@ -1,5 +1,5 @@
+import {TorrentInDebriderInfos} from '../../entities/torrent-in-debrider-infos';
 import {Uptobox, UptoboxFileCode} from '../../storage/uptobox/uptobox';
-import {TorrentId} from '../debrider';
 import {IDebrider} from '../i-debrider';
 import got from 'got';
 
@@ -96,27 +96,13 @@ export class AllDebrid implements IDebrider {
     }
   }
 
-  async addMagnetLink(magnetLink: string, user: any): Promise<TorrentId> {
+  async addMagnetLink(magnetLink: string, user: any): Promise<TorrentInDebriderInfos> {
     try {
       const response = await got(`https://api.alldebrid.com/v4/magnet/upload?agent=lazyker&apikey=abswtHHkX4v0cKE2P0Qd&magnets[]=${magnetLink}`, { json: true })
 
       const body = response.body as AddMagnetDto;
 
-      // When torrent is ready, add it to uptobox right away
-      // For the moment everything is done here, but it should be decoupled at maximum
-      // if (body.data.magnets[0].ready) {
-      //   const uptoboxLink = await this.getUptoboxLink(body.data.magnets[0].id);
-      //
-      //   // Instantiate the storage wanted
-      //   const uptobox = new Uptobox();
-      //
-      //   // Add the media to the storage instantiated
-      //   const newFileCode = await uptobox.addFile(uptoboxLink.getFileCode(), { uptobox: { token: '9108d29c0ab88cdbb4964790106469921394u' } });
-      //
-      //   console.log(newFileCode.code);
-      // }
-
-      return new TorrentId(body.data.magnets[0].id, body.data.magnets[0].ready);
+      return new TorrentInDebriderInfos(body.data.magnets[0].id, body.data.magnets[0].ready);
 
     } catch(error) {
       console.log(error.message);

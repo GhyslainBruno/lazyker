@@ -7,13 +7,16 @@
 
 import * as realdebrid from '../debriders/realdebrid/debrid_links';
 import * as admin from 'firebase-admin';
+import {DownloadTorrentDto} from '../dtos/download-torrent-dto';
+import {MediaInfos} from '../entities/media-infos';
+import {ScrapperTorrentInfos} from '../entities/scrapper-torrent-infos';
 import * as Movies from '../movies/Movies';
 import * as downloader from '../downloads/downloader'
+import {TorrentProviderEnum} from '../scrappers/ygg/torrent-provider-enum';
 import * as TvShows from '../tvshows/TvShows';
 
 const db = admin.database();
 const usersRef = db.ref("/users");
-
 
 module.exports = (app: any) => {
 
@@ -35,10 +38,13 @@ module.exports = (app: any) => {
      */
     app.post('/api/torrents', async (req: any, res: any) => {
         try {
+
+            const downloadTorrentDto = req.body as DownloadTorrentDto;
+
             const user = await admin.auth().verifyIdToken(req.headers.token);
             // Putting this particular movie into "inProgress" state into firebase database
             await usersRef.child(user.uid).child('/movies').child(req.body.id).set({title: req.body.title, state: 'finding_links', id: req.body.id});
-            await Movies.downloadTorrentFile(req.body.url, req.body.provider, req.body.title, req.body.id, req.body.infos, user);
+            await Movies.downloadTorrentFile(downloadTorrentDto);
             res.send({message: 'ok'});
         } catch(error) {
             res.status(500).send({

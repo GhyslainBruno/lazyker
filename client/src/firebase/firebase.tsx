@@ -17,7 +17,7 @@ if (!firebase.apps.length) {
     firebase.initializeApp(config);
 
     navigator.serviceWorker
-        .register('src/registerServiceWorker.js')
+        .register('src/registerServiceWorker.tsx')
         .then((registration) => {
             firebaseMessaging.messaging().useServiceWorker(registration);
         });

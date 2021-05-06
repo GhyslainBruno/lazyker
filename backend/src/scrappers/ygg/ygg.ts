@@ -81,6 +81,9 @@ export const downloadTorrentFile = async (user: any, scrapperTorrentInfos: Scrap
 
         enableProvider('Yggtorrent', 'Ghyslain', 'foobar');
 
+        // Weird stuff
+        scrapperTorrentInfos.provider = 'Yggtorrent';
+
         await downloadTorrent(scrapperTorrentInfos, path.join(__dirname, '/torrent_temp/file.torrent'))
 
         const torrent = parseTorrent(fs.readFileSync(path.join(__dirname, '/torrent_temp/file.torrent')));

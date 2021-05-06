@@ -39,11 +39,15 @@ module.exports = (app: any) => {
     app.post('/api/torrents', async (req: any, res: any) => {
         try {
 
-            const downloadTorrentDto = req.body as DownloadTorrentDto;
-
             const user = await admin.auth().verifyIdToken(req.headers.token);
+
+            const downloadTorrentDto = req.body as DownloadTorrentDto;
+            downloadTorrentDto.user = user;
+
+            console.log('bar');
+
             // Putting this particular movie into "inProgress" state into firebase database
-            await usersRef.child(user.uid).child('/movies').child(req.body.id).set({title: req.body.title, state: 'finding_links', id: req.body.id});
+            await usersRef.child(user.uid).child('/movies').child(req.body.mediaInfos.movieId).set({title: req.body.mediaInfos.title, state: 'finding_links', id: req.body.mediaInfos.movieId});
             await Movies.downloadTorrentFile(downloadTorrentDto);
             res.send({message: 'ok'});
         } catch(error) {

@@ -66,6 +66,7 @@ const MovieInfoDialog = props => {
     const [qualities, setQualities] = useState(null);
     const [isInTorrentOrDdl, setIsInTorrentOrDdl] = useState(false);
     const [movieTitle, setMovieTitle] = useState(null);
+    const [movieYear, setMovieYear] = useState(null);
     const [showInfoDialog, setShowInfoDialog] = useState(false);
     const [tmdbTitle, setTmdbTitle] = useState(null);
 
@@ -96,11 +97,26 @@ const MovieInfoDialog = props => {
                     'token': await auth.getIdToken()
                 },
                 body: JSON.stringify({
-                    url: torrent.url,
+
                     provider: torrent.provider,
-                    title: movieTitle,
-                    id: selectedMovie.id,
-                    infos: torrent
+                    torrentInfos: {
+                        url: torrent.url,
+                        desc: torrent.desc,
+                        magnet: undefined,
+                        link: torrent.url,
+                        title: movieTitle,
+                        time: 0,
+                        size: torrent.size,
+                    },
+                    mediaInfos: {
+                        title: movieTitle,
+                          year: movieYear,
+                          movieId: props.selectedMovie.id,
+                          isShow: false,
+                    },
+                    user: {
+
+                    }
                 })
             });
 
@@ -330,6 +346,7 @@ const MovieInfoDialog = props => {
                 // this.setState({movieInfo: movieInfo, movieInfoLoading: false, movieTitle: movieInfo.title});
                 setMovieInfo(movieInfo);
                 setMovieTitle(movieInfo.title);
+                setMovieYear(new Date(movieInfo.release_date).getFullYear());
             } else {
                 props.displaySnackMessage('Error getting infos');
                 // this.setState({movieInfo: null, movieInfoLoading: false});

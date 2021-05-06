@@ -12,7 +12,7 @@
   "scripts": {
     "test": "jest --config src/jest.config.js --forceExit --detectOpenHandles",
     "kill:debug": "kill -9 `lsof -nP +c 15 | grep LISTEN | grep :9229 | awk '{print $2}'`",
-    "debug": "npx ts-node-dev --inspect --respawn ./src/server.ts"
+    "debug": "npx ts-node-dev --inspect --exit-child --respawn ./src/server.ts"
   },
   "jestSonar": {
     "reportPath": "coverage"

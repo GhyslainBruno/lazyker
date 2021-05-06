@@ -55,6 +55,10 @@ export class Storage implements IStorage {
         // Move the previously added torrent to the wanted location (which is inside the previously created folder)
         await this.storage.moveFile(fileCode, folderId, user);
 
+        const newFileName = mediaInfos.title + ' (' + mediaInfos.year + ')';
+
+        await this.storage.renameFile(fileCode, newFileName, user);
+
         // If torrent is not ready yet, then add infos in database to be able to add it to storage when it's ready
       } else {
 

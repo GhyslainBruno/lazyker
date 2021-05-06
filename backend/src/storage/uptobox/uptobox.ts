@@ -70,7 +70,7 @@ export class Uptobox implements IStorage {
       const body = response.body as UptoboxAddFileToAccountDto;
       return new UptoboxFileCode(body.data.file_code);
     } catch(error) {
-      console.log(error.message);
+      console.error(error.message);
     }
   }
 
@@ -84,7 +84,7 @@ export class Uptobox implements IStorage {
       await got.put(`https://uptobox.com/api/user/files?token=${user.uptobox.token}&path=${moviesFolderPath}&name=${newFolderName}`, { json: true });
       return await this.getFolderId(moviesFolderPath + '/' + newFolderName, user);
     } catch(error) {
-      console.log(error.message);
+      console.error(error.message);
     }
   }
 
@@ -94,7 +94,7 @@ export class Uptobox implements IStorage {
       const folderInfos = response.body as UptoboxFolderInfos;
       return new UptoboxFolderId(folderInfos.data.currentFolder.fld_id);
     } catch(error) {
-      console.log(error.message);
+      console.error(error.message);
     }
   }
 
@@ -102,9 +102,17 @@ export class Uptobox implements IStorage {
     try {
 
       // TODO: retrieve the path for movies from user's data in database
-      await got.patch(`https://uptobox.com/api/user/files?token=${user.uptobox.token}&file_codes=${fileCode.code}&destination_fld_id=${destinationFolderId.id}&action=move`, { json: true });
+      return await got.patch(`https://uptobox.com/api/user/files?token=${user.uptobox.token}&file_codes=${fileCode.code}&destination_fld_id=${destinationFolderId.id}&action=move`, { json: true });
     } catch(error) {
-      console.log(error.message);
+      console.error(error.message);
+    }
+  }
+
+  async renameFile(fileCode: UptoboxFileCode, newName: string, user: any): Promise<any> {
+    try {
+      return await got.patch(`https://uptobox.com/api/user/files?token=${user.uptobox.token}&file_code=${fileCode.code}&new_name=${newName}`, { json: true });
+    } catch(error) {
+      console.error(error.message);
     }
   }
 

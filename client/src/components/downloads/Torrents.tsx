@@ -26,21 +26,42 @@ import Tooltip from '@material-ui/core/Tooltip';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 
-function CloudDoneGreen(props) {
+function CloudDoneGreen(props: any) {
     return (
         <CloudDone style={{color: '#4CAF50'}}/>
     )
 }
 
-function ErrorRed(props) {
+function ErrorRed(props: any) {
     return(
         <Error style={{color: '#ff0000'}}/>
     )
 }
 
-class Torrents extends React.Component {
+type MyProps = {
+    displaySnackMessage: (message: string) => {};
+};
+type MyState = {
+    torrents: any;
+    torrentsLoading: boolean;
+    torrentIdToRemove: any;
+    showDeleteDialog: boolean;
+    open: any;
+    torrentsInterval: any;
+};
 
-    constructor(props)
+interface StreamingTorrentDto {
+    error: any;
+    streamingLink: any;
+}
+
+interface StartTorrentDownloadDto {
+    message: string;
+}
+
+class Torrents extends React.Component<MyProps, MyState> {
+
+    constructor(props: any)
     {
         super(props);
         this.state = {
@@ -118,35 +139,37 @@ class Torrents extends React.Component {
     };
 
     loadRealTimeTorrents = () => {
-         this.state.torrentsInterval = setInterval(async () => {
-             try {
-                 let response = await fetch('/api/realdebrid_torrents', {
-                     method: 'GET',
-                     headers: {
-                         'token': await auth.getIdToken()
-                     }
-                 });
+        this.setState({
+            torrentsInterval: setInterval(async () => {
+                try {
+                    let response = await fetch('/api/realdebrid_torrents', {
+                        method: 'GET',
+                        headers: {
+                            'token': await auth.getIdToken()
+                        }
+                    });
 
-                 if (response.status === 200) {
-                     const torrents = await response.json();
-                     this.setState({ torrents: torrents });
-                 } else {
-                     this.setState({ torrents: [], torrentsLoading: false });
-                     this.props.displaySnackMessage('Error : Link your InterfaceDebrider account -> Settings > Configuration');
-                 }
+                    if (response.status === 200) {
+                        const torrents = await response.json();
+                        this.setState({ torrents: torrents });
+                    } else {
+                        this.setState({ torrents: [], torrentsLoading: false });
+                        this.props.displaySnackMessage('Error : Link your InterfaceDebrider account -> Settings > Configuration');
+                    }
 
-             } catch(error) {
-                 this.props.displaySnackMessage('Error getting Realdebrid torrents');
-                 this.setState({torrentsLoading: false});
-             }
-         }, 4000)
+                } catch(error) {
+                    this.props.displaySnackMessage('Error getting Realdebrid torrents');
+                    this.setState({torrentsLoading: false});
+                }
+            }, 4000)
+        })
     };
 
     stopsRealTimeTorrents = () => {
         clearInterval(this.state.torrentsInterval);
     };
 
-    showDeleteDialog = async (torrentId) => {
+    showDeleteDialog = async (torrentId: any) => {
         this.setState({showDeleteDialog: true, torrentIdToRemove: torrentId});
     };
 
@@ -174,7 +197,7 @@ class Torrents extends React.Component {
         }
     };
 
-    startTorrentStreaming = async torrent => {
+    startTorrentStreaming = async (torrent: any) => {
         try {
             let response = await fetch('/api/streaming_torrent', {
                 method: 'POST',
@@ -187,19 +210,19 @@ class Torrents extends React.Component {
                     link: torrent.links[0]
                 })
             });
-            response = await response.json();
+            const responseJSON: StreamingTorrentDto = await response.json();
 
-            if (response.error) {
+            if (responseJSON.error) {
                 this.props.displaySnackMessage('File not streamable');
             } else {
-                window.location = response.streamingLink;
+                window.location = responseJSON.streamingLink;
             }
         } catch (error) {
             this.props.displaySnackMessage('Impossible to stream this torrent');
         }
     };
 
-    startTorrentDownload = async torrent => {
+    startTorrentDownload = async (torrent: any) => {
         this.setState({torrentsLoading: true, torrents: null, showDeleteDialog: false});
 
         try {
@@ -214,9 +237,10 @@ class Torrents extends React.Component {
                     torrent: torrent
                 })
             });
-            response = await response.json();
-            if (response.message !== 'ok') {
-                this.props.displaySnackMessage(response.message);
+            const responseJSON: StartTorrentDownloadDto = await response.json();
+
+            if (responseJSON.message !== 'ok') {
+                this.props.displaySnackMessage(responseJSON.message);
                 this.setState({torrentsLoading: false});
                 // this.loadTorrents();
             } else {
@@ -271,7 +295,7 @@ class Torrents extends React.Component {
                         {this.state.torrents !== null ?
                             this.state.torrents.length > 0 ?
                                 !this.state.torrentsLoading ?
-                                    this.state.torrents.map(torrent => {
+                                    this.state.torrents.map((torrent: any) => {
                                         return (
                                             <div>
                                                 <div style={{display: 'inline-flex', width: '100%', textAlign: 'left', padding: '5px'}}>

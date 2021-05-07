@@ -17,9 +17,18 @@ import firebase from "firebase";
 
 const usersRef = firebase.database().ref('/users');
 
-class MoviesInProgress extends React.Component {
+type MyProps = {
+    displaySnackMessage: (message: string) => {};
+};
+type MyState = {
+    moviesInProgress: any;
+    total: number;
+    moviesInProgressLoading: boolean;
+};
 
-    constructor(props)
+class MoviesInProgress extends React.Component<MyProps, MyState> {
+
+    constructor(props: any)
     {
         super(props);
         this.state = {
@@ -37,9 +46,10 @@ class MoviesInProgress extends React.Component {
 
         try {
             this.setState({moviesInProgressLoading: true});
-            usersRef.child(await auth.getUid()).child('/movies').on('value', snapshot => {
-                const inProgressMovies = [];
-                snapshot.forEach(movie => {
+            usersRef.child(await auth.getUid()).child('/movies').on('value', (snapshot: any) => {
+                const inProgressMovies: [] = [];
+                snapshot.forEach((movie: any) => {
+                    // @ts-ignore
                     inProgressMovies.push(movie.val());
                 });
 
@@ -50,14 +60,14 @@ class MoviesInProgress extends React.Component {
             });
             this.setState({moviesInProgressLoading: false});
         } catch(error) {
-            this.setState({currentDownloads: null, snack: true, snackBarMessage: 'Error loading movies in progress', currentDownloadsLoading: false})
+            this.props.displaySnackMessage('Error loading movies in progress');
         }
     };
 
     /**
      * Remove a particular in progress movie
      */
-    removeInProgressMovie = async (movie) => {
+    removeInProgressMovie = async (movie: any) => {
 
         try {
             // TODO trigger the kill of the spawn to stop the "in progress" state (but first to it using a spawn...)
@@ -81,7 +91,7 @@ class MoviesInProgress extends React.Component {
 
                         <CircularProgress style={this.state.moviesInProgressLoading ? {display: 'inline-block'} : {display: 'none'}} />
 
-                        { this.state.total > 0 ? this.state.moviesInProgress.map(movie => {
+                        { this.state.total > 0 ? this.state.moviesInProgress.map((movie: any) => {
 
                                 return (
                                     <ListItem button>

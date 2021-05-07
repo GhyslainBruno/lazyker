@@ -8,6 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
+// @ts-ignore
 import imageNotFound from "../../../assets/notfound.png";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -21,10 +22,12 @@ import Star from "@material-ui/icons/Star";
 import Download from "@material-ui/icons/GetApp";
 import ReactPlayer from "react-player";
 import Dialog from "@material-ui/core/Dialog";
+// @ts-ignore
 import screenfull from "screenfull";
 import {findDOMNode} from "react-dom";
 import Slide from "@material-ui/core/Slide";
 import * as auth from "../../../firebase/auth";
+// @ts-ignore
 import Link from "react-router-dom/es/Link";
 import Fab from '@material-ui/core/Fab';
 import MovieTorrentsList from "./MovieTorrentsList";
@@ -43,7 +46,7 @@ const styles = {
  * @returns {*}
  * @constructor
  */
-const Transition = (props) => {
+const Transition = (props: any) => {
     return <Slide direction="up" {...props} />;
 };
 
@@ -51,22 +54,66 @@ const Transition = (props) => {
  * Usefull for react player
  * @param player
  */
-const ref = player => {
+const ref = (player: any) => {
+    // @ts-ignore
     this.player = player
 };
 
-const MovieInfoDialog = props => {
+interface DownloadTorrentFileDto {
+    message: string;
+}
+
+interface MovieInfoDto {
+    error: any;
+    title: string;
+    release_date: any;
+    runtime: any;
+    vote_average: any;
+    original_title: string;
+    poster_path: string;
+    backdrop_path: string;
+    overview: string;
+    genres: [{
+        name: string;
+    }],
+    trailer: any;
+}
+
+interface MyProps {
+    selectedMovie: any;
+    showInfoDialog: any;
+    displaySnackMessage: (message: string) => {};
+    closeDialog: () => {};
+    genreSelected: {
+        id: any;
+    }
+}
+
+interface MyState {
+
+}
+
+type ProviderMovies = {
+    provider: any;
+    results: [{
+        image: any;
+        title: string;
+        validImage: any;
+    }]
+}
+
+const MovieInfoDialog = (props: MyProps) => {
 
     const [movieInfoLoading, setMovieInfoLoading] = useState(false);
-    const [movieInfo, setMovieInfo] = useState(null);
+    const [movieInfo, setMovieInfo] = useState<MovieInfoDto | null>(null);
     const [trailerPlaying, setTrailerPlaying] = useState(false);
-    const [torrentsList, setTorrentsList] = useState(null);
-    const [torrentsListFull, setTorrentsListFull] = useState(null);
-    const [providersMovies, setProvidersMovies] = useState(null);
-    const [qualities, setQualities] = useState(null);
+    const [torrentsList, setTorrentsList] = useState<any[] | null>(null);
+    const [torrentsListFull, setTorrentsListFull] = useState<any[] | null>(null);
+    const [providersMovies, setProvidersMovies] = useState<ProviderMovies[] | null>(null);
+    const [qualities, setQualities] = useState<any[] | null>(null);
     const [isInTorrentOrDdl, setIsInTorrentOrDdl] = useState(false);
-    const [movieTitle, setMovieTitle] = useState(null);
-    const [movieYear, setMovieYear] = useState(null);
+    const [movieTitle, setMovieTitle] = useState<string | null>(null);
+    const [movieYear, setMovieYear] = useState<number | null>(null);
     const [showInfoDialog, setShowInfoDialog] = useState(false);
     const [tmdbTitle, setTmdbTitle] = useState(null);
 
@@ -81,7 +128,7 @@ const MovieInfoDialog = props => {
     /**
      * Start the download of a torrent file (in realdebrid)
      **/
-    const downloadTorrentFile = async (torrent) => {
+    const downloadTorrentFile = async (torrent: any) => {
         setMovieInfoLoading(true);
         setMovieInfo(null);
         setTorrentsList(null);
@@ -120,9 +167,9 @@ const MovieInfoDialog = props => {
                 })
             });
 
-            response = await response.json();
+            const responseJSON: DownloadTorrentFileDto = await response.json();
 
-            if (response.message !== 'ok') {
+            if (responseJSON.message !== 'ok') {
                 props.displaySnackMessage('Error while downloading torrent file');
             } else {
                 props.displaySnackMessage('Torrent added - check progress in downloads');
@@ -144,7 +191,7 @@ const MovieInfoDialog = props => {
     /**
      * Find available qualities for a particular ddl provider
      **/
-    const findProviderQualities = async (title, qualityWanted, provider) => {
+    const findProviderQualities = async (title: any, qualityWanted: any, provider: any) => {
         // this.setState({providersMovies: null, movieInfoLoading: true});
         setProvidersMovies(null);
         setMovieInfoLoading(true);
@@ -181,6 +228,7 @@ const MovieInfoDialog = props => {
      * Start in full screen the movie trailer
      **/
     const startTrailer = () => {
+        // @ts-ignore
         screenfull.request(findDOMNode(this.player));
         // this.setState({trailerPlaying: true});
         setTrailerPlaying(true);
@@ -189,7 +237,7 @@ const MovieInfoDialog = props => {
     /**
      * Get a list of all torrents available
      **/
-    const getTorrentsList = async movie => {
+    const getTorrentsList = async (movie: any) => {
         setMovieInfoLoading(true);
         setMovieInfo(null);
         setIsInTorrentOrDdl(true);
@@ -232,7 +280,7 @@ const MovieInfoDialog = props => {
             //     ]
             // }];
 
-            const torrentsTaggued = torrents[0].torrents.map(torrent => {
+            const torrentsTaggued = torrents[0].torrents.map((torrent: any) => {
 
                 torrent.tags = {};
 
@@ -260,7 +308,7 @@ const MovieInfoDialog = props => {
                 return torrent;
             });
 
-            const torrentsTagguedToReturn = [];
+            const torrentsTagguedToReturn: any[] = [];
 
             torrentsTagguedToReturn.push({
                 torrents : torrentsTaggued,
@@ -276,52 +324,7 @@ const MovieInfoDialog = props => {
         }
     };
 
-    /**
-     * Search movies in ddl providers
-     **/
-    const searchProvidersMovie = async title => {
-
-        window.removeEventListener('scroll', this.handleOnScroll);
-        // this.setState({movieInfoLoading: true, movieInfo: null, isInTorrentOrDdl: true});
-        setMovieInfoLoading(true);
-        setMovieInfo(null);
-        setIsInTorrentOrDdl(true);
-
-        try {
-            let response = await fetch('/api/search_providers_movie', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    title: title
-                })
-            });
-
-            const providersMovies = await response.json();
-
-            // If .message exists --> error (TODO: find why)
-            if (!providersMovies.message) {
-                // this.setState({providersMovies: providersMovies, tmdbTitle: title, movieInfoLoading: false})
-                setProvidersMovies(providersMovies);
-                setMovieInfoLoading(false);
-                setTmdbTitle(title);
-            } else {
-                props.closeDialog();
-                props.displaySnackMessage('Providers error');
-                // this.setState({movieInfoLoading: false})
-                setMovieInfoLoading(false);
-            }
-
-        } catch (error) {
-            props.closeDialog();
-            props.displaySnackMessage('Providers error');
-            // this.setState({movieInfoLoading: false})
-            setMovieInfoLoading(false);
-        }
-    };
-
+    //TODO: how to to an async call in useEffect ?
     useEffect(() => {
         getMovieInfo(props.selectedMovie);
         setShowInfoDialog(props.showInfoDialog);
@@ -330,7 +333,7 @@ const MovieInfoDialog = props => {
     /**
      * Getting movie info
      **/
-    const getMovieInfo = async movie => {
+    const getMovieInfo = async (movie: any) => {
         // this.setState({movieInfoLoading: true, torrentsList: null, providersMovies: null, isInTorrentOrDdl: false, qualities: null});
         setMovieInfoLoading(true);
         setTorrentsList(null);
@@ -340,13 +343,13 @@ const MovieInfoDialog = props => {
 
         try {
             let movieInfo = await fetch('/api/movie_info?id=' + movie.id);
-            movieInfo =  await movieInfo.json();
+            const movieInfoJSON: MovieInfoDto =  await movieInfo.json();
 
-            if (!movieInfo.error) {
+            if (!movieInfoJSON.error) {
                 // this.setState({movieInfo: movieInfo, movieInfoLoading: false, movieTitle: movieInfo.title});
-                setMovieInfo(movieInfo);
-                setMovieTitle(movieInfo.title);
-                setMovieYear(new Date(movieInfo.release_date).getFullYear());
+                setMovieInfo(movieInfoJSON);
+                setMovieTitle(movieInfoJSON.title);
+                setMovieYear(new Date(movieInfoJSON.release_date).getFullYear());
             } else {
                 props.displaySnackMessage('Error getting infos');
                 // this.setState({movieInfo: null, movieInfoLoading: false});
@@ -362,9 +365,9 @@ const MovieInfoDialog = props => {
     /**
      * Starts the download of a particular quality, for a particular movie, using a particular provider
      **/
-    const startDownload = async (movie, qualityWanted) => {
+    const startDownload = async (movie: any, qualityWanted: any) => {
         try {
-            fetch('/api/start_movie_download', {
+            await fetch('/api/start_movie_download', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -416,13 +419,14 @@ const MovieInfoDialog = props => {
                     size="small"
                     style={{
                         position: 'absolute',
-                        zIndex: '1',
+                        // zIndex: '1',
                         right: '5px',
                         top: '5px',
                         backgroundColor: '#757575',
                         color: "white"
                     }}
                     component={Link}
+                  // @ts-ignore
                     to={{pathname: '/movies', search: `?genre=${props.genreSelected.id}`}}>
                     <Close/>
                 </Fab>
@@ -432,6 +436,7 @@ const MovieInfoDialog = props => {
                     onClick={() => getMovieInfo(props.selectedMovie)}
                     variant="fab"
                     mini
+                    // @ts-ignore
                     style={isInTorrentOrDdl ? {margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", left: '0'} : {display: 'none'}}>
                     <ArrowBack />
                 </Button>
@@ -514,7 +519,7 @@ const MovieInfoDialog = props => {
                                     background: `linear-gradient(transparent, transparent, transparent, transparent, black), url(${'https://image.tmdb.org/t/p/w780' + movieInfo.backdrop_path})`}}>
 
                                 <Chip
-                                    clickable="true"
+                                    // clickable="true"
                                     onClick={() => startTrailer()}
                                     avatar={
                                         <Avatar>
@@ -542,7 +547,7 @@ const MovieInfoDialog = props => {
                             <div style={{display: 'inline-flex', marginTop: '10px', marginBottom: '10px'}}>
                                 <div>
                                     <Chip
-                                        clickable="true"
+                                        // clickable="true"
                                         onClick={() => getTorrentsList(movieInfo)}
                                         avatar={
                                             <Avatar

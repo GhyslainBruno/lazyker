@@ -154,13 +154,27 @@ const styles = {
     }
 };
 
-const MovieTorrentsList = props => {
+type MovieTorrentsListProps = {
+    providers: any;
+    downloadTorrent: (torrent: Torrent) => {};
+}
+
+type Torrent = {
+    provider: any;
+    torrents: [{
+        tags: any;
+        isDisplayed: any;
+        provider: any;
+    }]
+}
+
+const MovieTorrentsList = (props: MovieTorrentsListProps) => {
 
     const [uhd, setUhd] = useState(false);
     const [hd, setHd] = useState(false);
     const [fullHd, setFullHd] = useState(false);
     const [multi, setMulti] = useState(false);
-    const [torrents, setTorrents] = useState(props.providers);
+    const [torrents, setTorrents] = useState<Torrent[]>(props.providers);
     const [torrentsFiltered, setTorrentsFiltered] = useState(props.providers);
 
     useEffect(() => {
@@ -169,7 +183,7 @@ const MovieTorrentsList = props => {
 
     const filterTorrents = () => {
 
-        const trueFilter = [];
+        const trueFilter: any[] = [];
 
         if (uhd) {
             trueFilter.push('uhd');
@@ -234,7 +248,7 @@ const MovieTorrentsList = props => {
             <List component="nav" dense >
 
                 {
-                    torrentsFiltered.map(provider => {
+                    torrentsFiltered.map((provider: any) => {
                         return (
                             <div>
                                 <h3>
@@ -244,7 +258,7 @@ const MovieTorrentsList = props => {
                                 {
                                     provider.torrents.length > 0 ?
 
-                                        provider.torrents.map(torrent => {
+                                        provider.torrents.map((torrent: any) => {
                                             return (
                                                 <Paper elevation={1} style={
                                                     torrent.isDisplayed ?

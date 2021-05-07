@@ -1,5 +1,6 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
+// @ts-ignore
 import Link from "react-router-dom/Link";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -7,7 +8,17 @@ import CardContent from "@material-ui/core/CardContent";
 import Star from "@material-ui/icons/Star";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-const MoviesGrid = props => {
+type MoviesGridProps = {
+    tmdbMovies: any[];
+    moviesGenre: {
+        name: string;
+        id: any;
+    };
+    infiniteLoading: any;
+    loading: any;
+}
+
+const MoviesGrid = (props: MoviesGridProps) => {
     return (
         <div>
             {props.tmdbMovies !== null ? props.tmdbMovies.length > 0 ?
@@ -39,7 +50,7 @@ const MoviesGrid = props => {
                                                 style={{paddingTop: '150%', cursor: 'pointer', WebkitTapHighlightColor: 'transparent'}}
                                                 image={"https://image.tmdb.org/t/p/w500" + movie.posterPath}
                                                 title={movie.title}
-                                                clickable="true"
+                                                // clickable="true"
                                             />
 
                                             <CardContent>

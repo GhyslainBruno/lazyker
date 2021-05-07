@@ -10,8 +10,35 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Chip from "@material-ui/core/Chip";
 import React from "react";
 
-const SearchMoviesAppBar = props => {
-    return (
+type SearchMoviesAppBarProps = {
+  isInSearchView: boolean;
+  cleanSearch: () => {};
+  movieTitleToSearch: string;
+  getMoviesGenres: () => {};
+  updateMovieTitleToSearch: (event: any) => {};
+  searchBarLostFocus: (event: any) => {};
+  onEnterKeyPressed: (event: any) => {};
+  clearTitle: () => {};
+  movieGenres: MovieGenre[];
+  movieGenresLoading: boolean;
+  moviesGenre: MovieGenre;
+  searchMovieGenre: (genre: MovieGenre) => {};
+  styles: {
+    selectedChip: any;
+    outlinedChip: any;
+  };
+  searchMovie: () => {};
+}
+
+type MovieGenre = {
+  name: string;
+  id: any;
+}
+
+const SearchMoviesAppBar = (props: SearchMoviesAppBarProps) => {
+  return (
+
+        // @ts-ignore
         <div style={{flexGrow: '1'}}>
             <AppBar
                 position="static"
@@ -39,7 +66,8 @@ const SearchMoviesAppBar = props => {
                         {props.movieTitleToSearch !== null && props.movieTitleToSearch !== '' ?
                             <Close onClick={props.clearTitle}/>
                             :
-                            <Search onClick={props.movieTitleToSearch !== null && props.movieTitleToSearch !== '' ? props.searchMovie : null}/>
+                            // @ts-ignore
+                            <Search onClick={props.movieTitleToSearch !== null && props.movieTitleToSearch !== '' ? () => props.searchMovie : null}/>
                         }
                     </IconButton>
 

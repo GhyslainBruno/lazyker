@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import CancelCircle from "@material-ui/icons/CancelOutlined";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import React from "react";
+import {Alldebrid} from "./debriders/Alldebrid";
 
 const Debriders = props => {
 
@@ -61,48 +62,7 @@ const Debriders = props => {
                         </Grid>
                 }
 
-              {
-                props.alldebrid ?
-                  <Grid item xs={12} style={{padding: '6px'}}>
-
-                    <div style={{display: 'flex'}}>
-                      <div style={{flex: '1', marginTop: '10px'}}>
-                        Alldebrid
-                      </div>
-
-                      <div style={{flex: '1', marginTop: '10px'}}>
-                        <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
-                      </div>
-
-                      <div style={{flex: '1'}}>
-                        <Button variant="outlined" onClick={props.alldebridDisconnect}>
-                          Disconnect
-                        </Button>
-                      </div>
-                    </div>
-
-                  </Grid>
-                  :
-                  <Grid item xs={12} style={{padding: '6px'}}>
-
-                    <div style={{display: 'flex'}}>
-                      <div style={{flex: '1', marginTop: '10px'}}>
-                        Alldebrid
-                      </div>
-
-                      <div style={{flex: '1', marginTop: '10px'}}>
-                        <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
-                      </div>
-
-                      <div style={{flex: '1'}}>
-                        <Button variant="outlined" href={redirectAlldebridUri}>
-                          Connect
-                        </Button>
-                      </div>
-                    </div>
-
-                  </Grid>
-              }
+              <Alldebrid/>
 
             </Grid>
         </ExpansionPanelDetails>

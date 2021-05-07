@@ -30,9 +30,23 @@ import firebase from "firebase";
 
 const usersRef = firebase.database().ref('/users');
 
-class CurrentDownloads extends React.Component {
+type MyProps = {
+    history: any,
+    displaySnackMessage: (message: string) => {};
+};
+type MyState = {
+    currentDownloads: any;
+    snack: boolean;
+    snackBarMessage: null | string;
+    currentDownloadsLoading: boolean;
+    showRemoveDialog: boolean;
+    downloadTaskIdToRemove: any;
+    storage: any;
+};
 
-    constructor(props)
+class CurrentDownloads extends React.Component<MyProps, MyState> {
+
+    constructor(props: any)
     {
         super(props);
         this.state = {
@@ -51,7 +65,7 @@ class CurrentDownloads extends React.Component {
      * @param download
      * @returns {Promise<void>}
      */
-    resumeDownload = async (download) => {
+    resumeDownload = async (download: any) => {
 
         try {
             switch (this.state.storage) {
@@ -93,7 +107,7 @@ class CurrentDownloads extends React.Component {
      * @param download
      * @returns {Promise<void>}
      */
-    pauseDownload = async (download) => {
+    pauseDownload = async (download: any) => {
         try {
             switch (this.state.storage) {
                 case 'gdrive':
@@ -179,7 +193,7 @@ class CurrentDownloads extends React.Component {
      * @param event
      * @returns {Promise<void>}
      */
-    clearDownloads = async (event) => {
+    clearDownloads = async (event: any) => {
 
         try {
             switch (this.state.storage) {
@@ -201,7 +215,7 @@ class CurrentDownloads extends React.Component {
                     this.props.displaySnackMessage('Downloads cleared');
                     break;
                 case 'nas':
-                    const downloadsToRemove = this.state.currentDownloads.tasks.filter(dl => dl.status === "finished").map(dl => dl.id).join(',');
+                    const downloadsToRemove = this.state.currentDownloads.tasks.filter((dl: any) => dl.status === "finished").map((dl: any) => dl.id).join(',');
 
                     if (downloadsToRemove.length > 0) {
                         this.setState({currentDownloadsLoading: true, currentDownloads: null});
@@ -250,10 +264,12 @@ class CurrentDownloads extends React.Component {
             switch (storage.val()) {
 
                 case 'gdrive':
-                    firebase.database().ref('/users').child(await auth.getUid()).child('/settings/downloads').on('value', snapshot => {
+                    firebase.database().ref('/users').child(await auth.getUid()).child('/settings/downloads').on('value', (snapshot: any) => {
 
-                        const downloads = [];
-                        snapshot.forEach(download => {
+                        const downloads: [] = [];
+
+                        snapshot.forEach((download: any) => {
+                            // @ts-ignore
                             downloads.push(download.val());
                         });
 
@@ -307,7 +323,7 @@ class CurrentDownloads extends React.Component {
         this.setState({showRemoveDialog: false, downloadTaskIdToRemove: null})
     };
 
-    showRemoveDialog = async (taskId) => {
+    showRemoveDialog = async (taskId: any) => {
         this.setState({showRemoveDialog: true, downloadTaskIdToRemove: taskId});
     };
 
@@ -347,7 +363,7 @@ class CurrentDownloads extends React.Component {
 
                         <CircularProgress style={this.state.currentDownloadsLoading ? {display: 'inline-block'} : {display: 'none'}} />
 
-                        {this.state.currentDownloads !== null ? this.state.currentDownloads.length > 0 ? this.state.currentDownloads.map(currentDownload => {
+                        {this.state.currentDownloads !== null ? this.state.currentDownloads.length > 0 ? this.state.currentDownloads.map((currentDownload: any) => {
                                 return (
                                     <div>
                                         <div style={{display: 'flex', width: '100%', textAlign: 'left', padding: '5px', flexWrap: 'wrap', justifyContent: 'space-between'}}>
@@ -449,13 +465,13 @@ class CurrentDownloads extends React.Component {
 
 export default CurrentDownloads
 
-function DoneGreen(props) {
+function DoneGreen(props: any) {
     return (
         <Done style={{color: '#4CAF50'}}/>
     )
 }
 
-function ErrorRed(props) {
+function ErrorRed(props: any) {
     return(
         <Error style={{color: '#ff0000'}}/>
     )

@@ -5,10 +5,6 @@ import Paper from '@material-ui/core/Paper';
 import TextField from "@material-ui/core/TextField";
 import {SignInLink} from "../SignIn";
 
-const byPropKey = (propertyName: any, value: any) => () => ({
-    [propertyName]: value,
-});
-
 type MyProps = {
     history: any
 };

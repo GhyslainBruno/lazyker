@@ -36,7 +36,7 @@ export const alldebridSlice = createSlice({
 export const { isConnected, pinCodeLoading, pinCodeReceived } = alldebridSlice.actions
 
 // Define a thunk that dispatches those action creators
-const fetchPinCode = () => async (dispatch) => {
+const fetchPinCode = () => async (dispatch: any) => {
   dispatch(pinCodeLoading(true))
   const response = await ky.get('/api/alldebrid/new_pin', {json: {foo: true}}).json();
   dispatch(pinCodeReceived(response))

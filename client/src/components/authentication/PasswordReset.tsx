@@ -1,16 +1,27 @@
 import React, { Component } from 'react';
 import { auth } from '../../firebase';
-import Button from '@material/react-button/dist';
+import Button from "@material-ui/core/Button";
 import Paper from '@material-ui/core/Paper';
 import TextField from "@material-ui/core/TextField";
 import {SignInLink} from "../SignIn";
 
-const byPropKey = (propertyName, value) => () => ({
+const byPropKey = (propertyName: any, value: any) => () => ({
     [propertyName]: value,
 });
 
-class PasswordReset extends Component {
-    constructor(props) {
+type MyProps = {
+    history: any
+};
+type MyState = {
+    email: string,
+    error: any,
+    message: any,
+    passwordResetLoading: boolean,
+    isPasswordReset: boolean
+};
+
+class PasswordReset extends Component<MyProps, MyState> {
+    constructor(props: any) {
         super(props);
 
         this.state = {
@@ -22,7 +33,7 @@ class PasswordReset extends Component {
         };
     }
 
-    onSubmit = (event) => {
+    onSubmit = (event: any) => {
 
         this.setState({passwordResetLoading: true});
 
@@ -44,7 +55,7 @@ class PasswordReset extends Component {
             })
             .catch(error => {
                 this.setState({passwordResetLoading: false});
-                this.setState(byPropKey('error', error));
+                this.setState({ error: error });
             });
 
         event.preventDefault();
@@ -78,7 +89,7 @@ class PasswordReset extends Component {
                             label='Email'
                             style={{width: '100%'}}
                             value={email}
-                            onChange={event => this.setState(byPropKey('email', event.target.value))}
+                            onChange={event => this.setState({email: event.target.value})}
                         >
 
                         </TextField>
@@ -87,8 +98,7 @@ class PasswordReset extends Component {
                     <div style={{width: '100%', display: 'inline-block', textAlign: 'center'}}>
                         <Button
                             className="signInBtn"
-                            outlined={false}
-                            unelevated={true}
+                            variant={'outlined'}
                             disabled={! isEmailInvalid || this.state.passwordResetLoading}
                             type="submit">
                             {this.state.passwordResetLoading ?

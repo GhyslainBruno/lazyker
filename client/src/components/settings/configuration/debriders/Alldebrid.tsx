@@ -8,8 +8,8 @@ import Grid from "@material-ui/core/Grid";
 
 export const Alldebrid = () => {
 
-  const pinStatus = useSelector((state) => state.debriders.pinStatus);
-  const isConnectedState = useSelector((state) => state.debriders.isConnected);
+  const pinStatus = useSelector((state: any) => state.debriders.pinStatus);
+  const isConnectedState = useSelector((state: any) => state.debriders.isConnected);
   const dispatch = useDispatch()
 
 

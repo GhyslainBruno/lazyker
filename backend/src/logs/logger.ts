@@ -1,4 +1,6 @@
 // Imports the Google Cloud client library
+import {User} from '../entities/user';
+
 const Logging = require('@google-cloud/logging');
 // Your Google Cloud Platform project ID
 const projectId = 'lazyker-568c4';
@@ -9,12 +11,12 @@ const logging = new Logging({
 });
 
 /**
- * Write a log for a particular user
+ * Write a log for a particular user into Google StackDriver log service
  * @param textToLog
  * @param user
  * @returns {Promise<void>}
  */
-export const info = async (textToLog: any, user: any) => {
+export const info = async (textToLog: string, user: User) => {
 
     if (textToLog !== '') {
         // The name of the log to write to
@@ -23,12 +25,13 @@ export const info = async (textToLog: any, user: any) => {
         const log = logging.log(logName);
 
         // The data to write to the log
-        let text = "";
-        if (textToLog.message) {
-            text = textToLog.message
-        } else {
-            text = textToLog
-        }
+        const text = textToLog
+        // let text = "";
+        // if (textToLog.message) {
+        //     text = textToLog.message
+        // } else {
+        //     text = textToLog
+        // }
 
         // The metadata associated with the entry
         const metadata = {resource: {type: 'global'}};

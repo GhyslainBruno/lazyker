@@ -208,92 +208,121 @@ const Storage = props => {
                         }
                     </div>
                     :
-                    <div>
-                        <Grid container spacing={0}>
+                    props.storage === 'uptobox' ?
+                      <div style={{width: '100%'}}>
+                          <div style={{display: 'flex'}}>
+                              <div style={{flex: '1'}}>
+                                  Link
+                              </div>
+                              <div style={{flex: '1'}}>
+                                  {
+                                      props.uptoboxToken !== null ?
+                                        <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                        :
+                                        <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
+                                  }
+                              </div>
+                              <div style={{flex: '1'}}>
+                                  {
+                                      props.uptoboxToken !== null ?
+                                        <IconButton onClick={props.uptoboxDisconnect}>
+                                            <LinkOff/>
+                                        </IconButton>
+                                        :
+                                        <IconButton onClick={props.uptoboxConnect}>
+                                            <Link/>
+                                        </IconButton>
+                                  }
+                              </div>
+                          </div>
+                      </div>
+                      :
+                      <div>
+                          <Grid container spacing={0}>
 
-                            <Grid item xs={12} style={{padding: '6px'}}>
-                                <FormControl fullWidth>
-                                    <TextField
+                              <Grid item xs={12} style={{padding: '6px'}}>
+                                  <FormControl fullWidth>
+                                      <TextField
                                         label="Path to Movies"
                                         id="movie-path"
                                         variant="outlined"
                                         value={props.moviesPath}
                                         onChange={(event) => props.setMoviesPath(event.target.value)}
-                                    />
-                                </FormControl>
-                            </Grid>
+                                      />
+                                  </FormControl>
+                              </Grid>
 
-                            <Grid item xs={12} style={{padding: '6px'}}>
-                                <FormControl fullWidth>
-                                    <TextField
+                              <Grid item xs={12} style={{padding: '6px'}}>
+                                  <FormControl fullWidth>
+                                      <TextField
                                         label="Path to Tv Shows"
                                         id="tv-shows-path"
                                         variant="outlined"
                                         value={props.tvShowsPath}
                                         onChange={(event) => props.setShowsPath(event.target.value)}
-                                    />
-                                </FormControl>
-                            </Grid>
+                                      />
+                                  </FormControl>
+                              </Grid>
 
-                            <Grid item xs={12} sm={2} style={{padding: '6px', position: 'relative', marginRight: '1.6rem', marginTop: '1rem', textAlign: 'left'}}>
-                                <FormControl className="protocolInput" variant="outlined" fullWidth style={{minWidth: '80px', margin: '0 auto', bottom: '6px'}}>
-                                    <Select
+                              <Grid item xs={12} sm={2} style={{padding: '6px', position: 'relative', marginRight: '1.6rem', marginTop: '1rem', textAlign: 'left'}}>
+                                  <FormControl className="protocolInput" variant="outlined" fullWidth style={{minWidth: '80px', margin: '0 auto', bottom: '6px'}}>
+                                      <Select
                                         value={props.protocol}
                                         onChange={props.handleProtocolChange}
                                         input={
                                             <OutlinedInput
-                                                labelWidth={0}
-                                                name="protocol"
-                                                id="protocol"
+                                              labelWidth={0}
+                                              name="protocol"
+                                              id="protocol"
                                             />
                                         }>
 
-                                        <MenuItem value={'http'}>http</MenuItem>
-                                        <MenuItem value={'https'}>https</MenuItem>
-                                    </Select>
-                                    {/*<FormHelperText>Protocol</FormHelperText>*/}
-                                </FormControl>
-                            </Grid>
+                                          <MenuItem value={'http'}>http</MenuItem>
+                                          <MenuItem value={'https'}>https</MenuItem>
+                                      </Select>
+                                      {/*<FormHelperText>Protocol</FormHelperText>*/}
+                                  </FormControl>
+                              </Grid>
 
-                            <Grid item xs={12} sm={7} style={{padding: '6px'}}>
-                                <FormControl fullWidth>
-                                    <TextField
+                              <Grid item xs={12} sm={7} style={{padding: '6px'}}>
+                                  <FormControl fullWidth>
+                                      <TextField
                                         label="Host"
                                         id="host"
                                         variant="outlined"
                                         value={props.host}
                                         onChange={(event) => props.setHost(event.target.value)}
-                                    />
-                                </FormControl>
-                            </Grid>
+                                      />
+                                  </FormControl>
+                              </Grid>
 
-                            <Grid item xs={4} sm={2} style={{padding: '6px'}}>
-                                <FormControl fullWidth>
-                                    <TextField
+                              <Grid item xs={4} sm={2} style={{padding: '6px'}}>
+                                  <FormControl fullWidth>
+                                      <TextField
                                         label="Port"
                                         id="port"
                                         variant="outlined"
                                         value={props.port}
                                         onChange={(event) => props.setPort(event.target.value)}
-                                    />
-                                </FormControl>
-                            </Grid>
+                                      />
+                                  </FormControl>
+                              </Grid>
 
-                            <Grid item xs={12} style={{padding: '6px'}}>
-                                <FormControl fullWidth>
-                                    <TextField
+                              <Grid item xs={12} style={{padding: '6px'}}>
+                                  <FormControl fullWidth>
+                                      <TextField
                                         label="Username"
                                         id="nas-username"
                                         variant="outlined"
                                         value={props.nasUsername}
                                         onChange={(event) => props.setNasUserName(event.target.value)}
-                                    />
-                                </FormControl>
-                            </Grid>
+                                      />
+                                  </FormControl>
+                              </Grid>
 
-                            <Grid item xs={12} style={{padding: '6px'}}>
-                                <FormControl fullWidth>
-                                    <TextField
+                              <Grid item xs={12} style={{padding: '6px'}}>
+                                  <FormControl fullWidth>
+                                      <TextField
                                         label="Password"
                                         id="nas-password"
                                         type={props.showPassword ? 'text' : 'password'}
@@ -302,23 +331,23 @@ const Storage = props => {
                                         onChange={(event) => props.setNasPassword(event.target.value)}
                                         InputProps={{
                                             endAdornment: (
-                                                <InputAdornment position="end">
-                                                    <IconButton
-                                                        aria-label="Toggle password visibility"
-                                                        onClick={props.handleClickShowPassword}
-                                                    >
-                                                        {props.showPassword ? <VisibilityOff /> : <Visibility />}
-                                                    </IconButton>
-                                                </InputAdornment>
+                                              <InputAdornment position="end">
+                                                  <IconButton
+                                                    aria-label="Toggle password visibility"
+                                                    onClick={props.handleClickShowPassword}
+                                                  >
+                                                      {props.showPassword ? <VisibilityOff /> : <Visibility />}
+                                                  </IconButton>
+                                              </InputAdornment>
                                             ),
                                         }}
-                                    />
-                                </FormControl>
+                                      />
+                                  </FormControl>
 
-                            </Grid>
+                              </Grid>
 
-                        </Grid>
-                    </div>
+                          </Grid>
+                      </div>
                 }
 
             </Grid>

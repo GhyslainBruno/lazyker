@@ -56,7 +56,10 @@ class Settings extends Component {
             parentMoviesGdriveFolderId: null,
             tvShowsGdriveFolderId: null,
             tvShowsGdriveFolderName: null,
-            parentTvShowsGdriveFolderId: null
+            parentTvShowsGdriveFolderId: null,
+            movieUptoboxFolderId: null,
+            tvShowsUptoboxFolderId: null,
+            uptoboxToken: null
         };
 
         props.changeNavigation('settings');
@@ -355,6 +358,16 @@ class Settings extends Component {
         }
     };
 
+    // TODO: implement
+    uptoboxConnect = async () => {
+        console.log('Uptobox connected');
+    };
+
+    // TODO: implement
+    uptoboxDisconnect = async () => {
+        console.log('Uptobox connected');
+    };
+
     handleClickShowPassword = () => {
         this.setState(state => ({ showPassword: !state.showPassword }));
     };
@@ -445,6 +458,11 @@ class Settings extends Component {
             this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
         }
     };
+
+    //TODO: implement
+    alldebridDisconnect = async () => {
+        console.log('Alldebrid disconnect');
+    }
 
     realdebridConnect = async () => {
         try {
@@ -548,6 +566,7 @@ class Settings extends Component {
 
                                 <Debriders
                                     realdebrid={this.state.realdebrid}
+                                    alldebrid={this.state.alldebrid}
                                     realdebridDisconnect={this.realdebridDisconnect}
                                 />
 

@@ -1,5 +1,5 @@
 import {Torrent as TorrentSearchApiTorrent, enableProvider, search, downloadTorrent} from 'torrent-search-api';
-import {AllDebrid} from '../../debriders/alldebrid/alldebrid-provider';
+import {AllDebrid} from '../../debriders/alldebrid/alldebrid-debrider';
 import {Debrider} from '../../debriders/debrider';
 import {MediaInfos} from '../../entities/media-infos';
 import {ScrapperTorrentInfos} from '../../entities/scrapper-torrent-infos';

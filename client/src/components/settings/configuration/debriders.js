@@ -8,6 +8,7 @@ import React from "react";
 const Debriders = props => {
 
     const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foobar';
+    const redirectAlldebridUri = 'https://alldebrid.com/pin/?pin=JYYC';
 
     return (
         <ExpansionPanelDetails>
@@ -59,6 +60,49 @@ const Debriders = props => {
 
                         </Grid>
                 }
+
+              {
+                props.alldebrid ?
+                  <Grid item xs={12} style={{padding: '6px'}}>
+
+                    <div style={{display: 'flex'}}>
+                      <div style={{flex: '1', marginTop: '10px'}}>
+                        Alldebrid
+                      </div>
+
+                      <div style={{flex: '1', marginTop: '10px'}}>
+                        <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                      </div>
+
+                      <div style={{flex: '1'}}>
+                        <Button variant="outlined" onClick={props.alldebridDisconnect}>
+                          Disconnect
+                        </Button>
+                      </div>
+                    </div>
+
+                  </Grid>
+                  :
+                  <Grid item xs={12} style={{padding: '6px'}}>
+
+                    <div style={{display: 'flex'}}>
+                      <div style={{flex: '1', marginTop: '10px'}}>
+                        Alldebrid
+                      </div>
+
+                      <div style={{flex: '1', marginTop: '10px'}}>
+                        <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
+                      </div>
+
+                      <div style={{flex: '1'}}>
+                        <Button variant="outlined" href={redirectAlldebridUri}>
+                          Connect
+                        </Button>
+                      </div>
+                    </div>
+
+                  </Grid>
+              }
 
             </Grid>
         </ExpansionPanelDetails>

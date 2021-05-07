@@ -1,7 +1,11 @@
-import {TorrentInDebriderInfos} from '../../entities/torrent-in-debrider-infos';
-import {Uptobox, UptoboxFileCode} from '../../storage/uptobox/uptobox';
-import {IDebrider} from '../i-debrider';
 import got from 'got';
+import * as url from 'url';
+import {Database} from '../../database/database';
+import {DebriderEnum} from '../../database/debrider-enum';
+import {TorrentInDebriderInfos} from '../../entities/torrent-in-debrider-infos';
+import {User} from '../../entities/user';
+import {UptoboxFileCode} from '../../storage/uptobox/uptobox';
+import {IDebrider} from '../i-debrider';
 
 interface AddMagnetDto {
   status: string;
@@ -17,6 +21,27 @@ interface AddMagnetDto {
         id: number
       }
     ]
+  }
+}
+
+interface CreatePinDto {
+  status: string;
+  data: {
+    pin: string;
+    check: string;
+    expires_in: number;
+    user_url: string;
+    base_url: string;
+    check_url: string;
+  }
+}
+
+interface CheckPinStatusDto {
+  status: string;
+  data: {
+    apikey: string;
+    activated: boolean;
+    expires_in: number;
   }
 }
 
@@ -56,6 +81,8 @@ interface LinkMagnetDto {
   ]
 }
 
+
+
 // TODO extract in value object
 class UptoboxLink extends String {
   url: string;
@@ -82,10 +109,14 @@ class FileName extends String {
 }
 
 
+
 export class AllDebrid implements IDebrider {
 
   async getUptoboxLink(magnetId: number): Promise<UptoboxLink> {
     try {
+
+      // TODO: we should take the user api key
+
       const response = await got(`https://api.alldebrid.com/v4/magnet/status?agent=lazyker&apikey=abswtHHkX4v0cKE2P0Qd&id=${magnetId}`, { json: true })
 
       const body = response.body as GetMagnetStatusDto;
@@ -96,8 +127,11 @@ export class AllDebrid implements IDebrider {
     }
   }
 
-  async addMagnetLink(magnetLink: string, user: any): Promise<TorrentInDebriderInfos> {
+  async addMagnetLink(magnetLink: string, user: User): Promise<TorrentInDebriderInfos> {
     try {
+
+      // TODO: we should take the user api key
+
       const response = await got(`https://api.alldebrid.com/v4/magnet/upload?agent=lazyker&apikey=abswtHHkX4v0cKE2P0Qd&magnets[]=${magnetLink}`, { json: true })
 
       const body = response.body as AddMagnetDto;
@@ -106,6 +140,50 @@ export class AllDebrid implements IDebrider {
 
     } catch(error) {
       console.log(error.message);
+    }
+  }
+
+  static async getPinCode(): Promise<CreatePinDto> {
+    try {
+
+      // Get a fresh new pin
+      const response = await got(`https://api.alldebrid.com/v4/pin/get?agent=lazyker`, { json: true })
+
+      return response.body as CreatePinDto;
+
+    } catch(error) {
+      console.error(error.message);
+    }
+  }
+
+  static async checkPinCodeStatus(user: User, pin: string, check: string): Promise<CheckPinStatusDto> {
+    try {
+
+      // Check status of a particular pin code
+      const response = await got(`https://api.alldebrid.com/v4/pin/check?agent=lazyker&check=${check}&pin=${pin}`, { json: true })
+
+      const pinStatus = response.body as CheckPinStatusDto;
+
+      if (pinStatus.data.activated) {
+        await this.storeAlldebridToken(user, pinStatus.data.apikey);
+      }
+
+      return pinStatus;
+
+    } catch(error) {
+      console.error(error.message);
+    }
+  }
+
+  static async storeAlldebridToken(user: User, apiKey: string): Promise<string> {
+    try {
+
+      await Database.storeAlldebridApiKey(user, DebriderEnum.ALLDEBRID, apiKey);
+
+      return apiKey;
+
+    } catch(error) {
+      console.error(error.message);
     }
   }
 

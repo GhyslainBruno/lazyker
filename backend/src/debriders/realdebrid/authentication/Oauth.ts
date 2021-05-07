@@ -35,7 +35,7 @@ export const connectUser = async (code: any, user: any) => {
         await usersRef.child(uid).child('/settings/realdebrid/token').set(token);
         return token
     } catch(error) {
-        logger.info('Realdebrid connection ERROR - ' + error, user);
+        await logger.info('Realdebrid connection ERROR - ' + error.message, user);
     }
 };
 

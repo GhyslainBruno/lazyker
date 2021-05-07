@@ -1,6 +1,8 @@
 // Import Admin SDK
 import * as admin from 'firebase-admin';
+import {AllDebrid} from '../debriders/alldebrid/alldebrid-debrider';
 import * as realdebrid from '../debriders/realdebrid/debrid_links';
+import {CheckPinStatusDto} from '../dtos/check-pin-status.dto';
 import * as gdrive from '../storage/gdrive/gdrive';
 
 // Get a database reference to our blog
@@ -65,6 +67,38 @@ module.exports = (app: any) => {
             const user = await admin.auth().verifyIdToken(req.headers.token);
             await usersRef.child(user.uid).child('/settings').child('realdebrid').remove();
             res.send({message: 'Disconnected'});
+        } catch(error) {
+            res.status(500).send({message: error});
+        }
+    });
+
+    /**
+     * Get a new Alldebrid pin code
+     */
+    app.get('/api/alldebrid/new_pin', async(req: any, res: any) => {
+        try {
+            // const user = await admin.auth().verifyIdToken(req.headers.token);
+            const pin = await AllDebrid.getPinCode();
+            res.send({
+                pin: pin.data
+            })
+        } catch(error) {
+            res.status(500).send({message: error});
+        }
+    });
+
+    /**
+     * Check Alldebrid pin code status
+     * (client should to this periodically)
+     */
+    app.get('/api/alldebrid/check_pin_status', async(req: any, res: any) => {
+        try {
+            const user = await admin.auth().verifyIdToken(req.headers.token);
+            const checkPinStatusDto = req.query as CheckPinStatusDto;
+            const status = await AllDebrid.checkPinCodeStatus(user, checkPinStatusDto.pin, checkPinStatusDto.check);
+            res.send({
+                pin_status: status.data
+            })
         } catch(error) {
             res.status(500).send({message: error});
         }

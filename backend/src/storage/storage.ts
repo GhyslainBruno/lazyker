@@ -1,5 +1,5 @@
 import {Database} from '../database/database';
-import {AllDebrid} from '../debriders/alldebrid/alldebrid-provider';
+import {AllDebrid} from '../debriders/alldebrid/alldebrid-debrider';
 import {IDebrider} from '../debriders/i-debrider';
 import {MediaInfos} from '../entities/media-infos';
 import {TorrentInDebriderInfos} from '../entities/torrent-in-debrider-infos';

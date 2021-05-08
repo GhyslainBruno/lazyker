@@ -4,9 +4,19 @@ import Torrents from './downloads/Torrents';
 import MoviesInProgress from './downloads/MoviesInProgress';
 import CurrentDownloads from './downloads/CurrentDownloads';
 
-class Downloads extends Component {
+type DownloadsProps = {
+    changeNavigation: (location: any) => {};
+}
 
-    constructor(props)
+type DownloadsState = {
+    snack: boolean;
+    snackBarMessage: string | null;
+
+}
+
+class Downloads extends Component<DownloadsProps, DownloadsState> {
+
+    constructor(props: DownloadsProps)
     {
         super(props);
         this.state = {
@@ -18,7 +28,7 @@ class Downloads extends Component {
 
     }
 
-    displaySnackMessage = message => {
+    displaySnackMessage = (message: string) => {
         this.setState({snack: true, snackBarMessage: message});
     };
 

@@ -9,30 +9,26 @@ import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Chip from "@material-ui/core/Chip";
 import React from "react";
+import {MovieGenre} from '../Movies';
 
 type SearchMoviesAppBarProps = {
   isInSearchView: boolean;
   cleanSearch: () => {};
   movieTitleToSearch: string;
   getMoviesGenres: () => {};
-  updateMovieTitleToSearch: (event: any) => {};
-  searchBarLostFocus: (event: any) => {};
-  onEnterKeyPressed: (event: any) => {};
-  clearTitle: () => {};
+  updateMovieTitleToSearch: (event: any) => void;
+  searchBarLostFocus: (event: any) => void;
+  onEnterKeyPressed: (event: any) => void;
+  clearTitle: () => void;
   movieGenres: MovieGenre[];
   movieGenresLoading: boolean;
   moviesGenre: MovieGenre;
-  searchMovieGenre: (genre: MovieGenre) => {};
+  searchMovieGenre: (genre: MovieGenre) => void;
   styles: {
     selectedChip: any;
     outlinedChip: any;
   };
-  searchMovie: () => {};
-}
-
-type MovieGenre = {
-  name: string;
-  id: any;
+  searchMovie: () => void;
 }
 
 const SearchMoviesAppBar = (props: SearchMoviesAppBarProps) => {

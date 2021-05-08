@@ -82,8 +82,8 @@ interface MovieInfoDto {
 interface MyProps {
     selectedMovie: any;
     showInfoDialog: any;
-    displaySnackMessage: (message: string) => {};
-    closeDialog: () => {};
+    displaySnackMessage: (message: string) => void;
+    closeDialog: () => void;
     genreSelected: {
         id: any;
     }

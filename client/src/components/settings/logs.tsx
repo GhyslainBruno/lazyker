@@ -14,9 +14,31 @@ import Button from "@material-ui/core/Button";
 import ClearLogs from "@material-ui/icons/ClearAll";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 
-const Logs = props => {
+type LoadOutputDto = LogDto[]
 
-    const [logs, setLogs] = useState([]);
+type LogDto = {
+    textPayload: string;
+    timestamp: {
+        seconds: number;
+    }
+}
+
+type ClearLogsDto = {
+    message: string;
+}
+
+type Log = {
+    text: string;
+    time: number;
+}
+
+type LogsProps = {
+    displaySnackMessage: (message: string) => {};
+};
+
+const Logs = (props: LogsProps) => {
+
+    const [logs, setLogs] = useState<Log[]>([]);
     const [loading, setLoading] = useState(false);
 
     const loadOutput = async () => {
@@ -30,8 +52,8 @@ const Logs = props => {
                     'token': await auth.getIdToken()
                 }
             });
-            response = await response.json();
-            setLogs(response.map(el => {return {text: el.textPayload, time: el.timestamp.seconds * 1000}}));
+            const responseJSON: LoadOutputDto = await response.json();
+            setLogs(responseJSON.map(el => {return {text: el.textPayload, time: el.timestamp.seconds * 1000}}));
             setLoading(false);
 
         } catch(error) {
@@ -59,8 +81,8 @@ const Logs = props => {
                 })
             });
 
-            response = await response.json();
-            props.displaySnackMessage(response.message);
+            const responseJSON: ClearLogsDto = await response.json();
+            props.displaySnackMessage(responseJSON.message);
             await loadOutput();
         } catch(error) {
             props.displaySnackMessage('Error clearing logs')

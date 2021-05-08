@@ -7,9 +7,10 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Star from "@material-ui/icons/Star";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import {Movie} from '../Movies';
 
 type MoviesGridProps = {
-    tmdbMovies: any[];
+    tmdbMovies: Movie[];
     moviesGenre: {
         name: string;
         id: any;

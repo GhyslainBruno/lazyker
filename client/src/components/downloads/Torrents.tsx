@@ -39,7 +39,7 @@ function ErrorRed(props: any) {
 }
 
 type MyProps = {
-    displaySnackMessage: (message: string) => {};
+    displaySnackMessage: (message: string) => void;
 };
 type MyState = {
     torrents: any;

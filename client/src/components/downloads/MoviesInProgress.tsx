@@ -18,7 +18,7 @@ import firebase from "firebase";
 const usersRef = firebase.database().ref('/users');
 
 type MyProps = {
-    displaySnackMessage: (message: string) => {};
+    displaySnackMessage: (message: string) => void;
 };
 type MyState = {
     moviesInProgress: any;

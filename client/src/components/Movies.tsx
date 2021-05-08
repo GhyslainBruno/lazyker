@@ -20,15 +20,74 @@ const styles = {
     }
 };
 
-class Movies extends Component {
+type MovieProps = {
+    history: any;
+    changeNavigation: (location: any) => {};
+    match: {
+        params: {
+            id: any
+        }
+    };
+    location: {
+        search: any;
+    }
+}
 
-    constructor(props)
+type MovieState = {
+    isInSearchView: any;
+    tmdbMovies: Movie[];
+    movieTitleToSearch: string;
+    tmdbTitle: string | null;
+    selectedMovie: any;
+    snack: any;
+    loading: boolean;
+    hasMoreItems: boolean;
+    pageNumber: number;
+    infiniteLoading: boolean;
+    showSearchBar: boolean;
+    oldScroll: number;
+    movieGenres: MovieGenre[];
+    movieGenresLoading: boolean;
+    moviesGenre: MovieGenre
+    showInfoDialog: boolean;
+    providersMovies: any;
+    qualities: any;
+    snackBarMessage: string;
+    movieInfoLoading: boolean;
+    movieInfo: any;
+
+}
+
+export type MovieGenre = {
+    name: string;
+    id: string;
+}
+
+type MovieGenreDto = {
+    id: any;
+}
+
+export type Movie = {
+    id: any;
+    posterPath: string;
+    title: string;
+    note: number;
+}
+
+class Movies extends Component<MovieProps, MovieState> {
+
+    constructor(props: MovieProps)
     {
         super(props);
         this.state = {
+            movieInfo: null,
+            movieInfoLoading: false,
+            snackBarMessage: '',
+            qualities: null,
+            providersMovies: null,
             isInSearchView: null,
-            tmdbMovies: null,
-            movieTitleToSearch: null,
+            tmdbMovies: [],
+            movieTitleToSearch: '',
             tmdbTitle: null,
             selectedMovie: null,
             snack: null,
@@ -38,7 +97,7 @@ class Movies extends Component {
             infiniteLoading: false,
             showSearchBar: true,
             oldScroll: 0,
-            movieGenres: null,
+            movieGenres: [],
             movieGenresLoading: true,
             moviesGenre: {name: 'Popular', id: 'popular'},
             showInfoDialog: false,
@@ -57,13 +116,13 @@ class Movies extends Component {
                 qualities: null,
                 movieTitleToSearch: '',
                 pageNumber: 1,
-                movieGenres: null,
+                movieGenres: [],
                 moviesGenre: {name: 'Popular', id: 'popular'}
         });
         await this.getMovies();
     };
 
-    onEnterKeyPressed = (event) => {
+    onEnterKeyPressed = (event: any) => {
         if (event.keyCode || event.which === 13) {
             this.searchMovie()
         }
@@ -72,9 +131,18 @@ class Movies extends Component {
     searchMovie = () =>{
         window.removeEventListener('scroll', this.handleOnScroll);
 
-        this.setState({tmdbMovies: [], isInSearchView: true, providersMovies: null, qualities: null, loading: true, movieGenres: null});
+        this.setState({
+            tmdbMovies: [],
+            isInSearchView: true,
+            providersMovies: null,
+            qualities: null,
+            loading: true,
+            movieGenres: []
+        });
 
-        const movieTitle = document.getElementById('movie_title_to_search').value;
+        // TODO: check why property "value" doesn't exist on type "HTMLElement"
+        // @ts-ignore
+        const movieTitle = document.getElementById('movie_title_to_search')?.value;
 
         fetch('/api/search_tmdb_movie?title=' + movieTitle)
             .then(response => {
@@ -84,12 +152,12 @@ class Movies extends Component {
                 this.setState({tmdbMovies: data, loading: false});
             })
             .catch(error => {
-                this.setState({snack: true, snackBarMessage: 'Error while searching movie', loading: false, tmdbMovies: null})
+                this.setState({snack: true, snackBarMessage: 'Error while searching movie', loading: false, tmdbMovies: []})
             })
 
     };
 
-    updateMovieTitleToSearch = (evt) => {
+    updateMovieTitleToSearch = (evt: any) => {
         this.setState({
             movieTitleToSearch: evt.target.value
         });
@@ -124,30 +192,30 @@ class Movies extends Component {
                         genre = this.state.moviesGenre.id;
 
                         let movieGenresFromTMDB = await fetch('/api/movies_genres');
-                        movieGenresFromTMDB =  await movieGenresFromTMDB.json();
-                        const goodGenreFromTMDB = movieGenresFromTMDB.find(tmdbGenre => tmdbGenre.id === parseInt(genre));
-                        this.setState({moviesGenre: goodGenreFromTMDB});
+                        const movieGenresFromTMDBJSON: MovieGenreDto[] =  await movieGenresFromTMDB.json();
+                        const goodGenreFromTMDB = movieGenresFromTMDBJSON.find(tmdbGenre => tmdbGenre.id === parseInt(genre));
+                        this.setState({moviesGenre: goodGenreFromTMDB as MovieGenre});
                 }
 
                 this.props.history.push(`/movies?genre=${genre}`);
 
                 let movies = await fetch('/api/movies?page=' + page + '&genre=' + genre);
-                movies =  await movies.json();
+                const moviesJSON: Movie[] =  await movies.json();
 
                 let tmdbMovies = [];
 
                 if (this.state.tmdbMovies === null) {
-                    tmdbMovies = movies;
+                    tmdbMovies = moviesJSON;
                 } else {
-                    tmdbMovies = this.state.tmdbMovies.concat(movies);
+                    tmdbMovies = this.state.tmdbMovies.concat(moviesJSON);
                 }
 
-                tmdbMovies = tmdbMovies.filter(el => el !== null);
+                tmdbMovies = tmdbMovies.filter(movie => movie !== null);
 
                 this.setState({tmdbMovies: tmdbMovies, pageNumber: page + 1, infiniteLoading: false});
 
             } catch(error) {
-                this.setState({snack: true, snackBarMessage: 'Error getting movies', infiniteLoading: false, tmdbMovies: null})
+                this.setState({snack: true, snackBarMessage: 'Error getting movies', infiniteLoading: false, tmdbMovies: []})
             }
         }
 
@@ -159,8 +227,9 @@ class Movies extends Component {
 
         if (urlParams.genre) {
 
-            let genre = {
-                id: urlParams.genre
+            const genre: MovieGenre = {
+                id: urlParams.genre,
+                name: ''
             };
 
             switch (genre.id) {
@@ -182,10 +251,16 @@ class Movies extends Component {
 
             this.setState({moviesGenre: genre}, () => {
                 window.addEventListener('scroll', this.handleOnScroll);
+
+                // TODO: why is async job avoided
                 this.getMovies();
 
-                const movie = {};
-                movie.id = this.props.match.params.id;
+                const movie: Movie = {
+                    id: this.props.match.params.id,
+                    title: '',
+                    note: 0,
+                    posterPath: ''
+                };
 
                 if (movie.id) {
                     this.displayMovieInfo(movie);
@@ -194,10 +269,16 @@ class Movies extends Component {
         } else {
             this.setState({moviesGenre: {name: 'Popular', id: 'popular'}}, () => {
                 window.addEventListener('scroll', this.handleOnScroll);
+
+                // TODO: why is async job avoided
                 this.getMovies();
 
-                const movie = {};
-                movie.id = this.props.match.params.id;
+                const movie: Movie = {
+                    id: this.props.match.params.id,
+                    title: '',
+                    note: 0,
+                    posterPath: ''
+                };
 
                 if (movie.id) {
                     this.displayMovieInfo(movie);
@@ -218,7 +299,7 @@ class Movies extends Component {
         this.setState({snack: true, snackBarMessage: 'Providers error', loading: false})
     };
 
-    handleOnScroll = (event) => {
+    handleOnScroll = (event: any) => {
         // http://stackoverflow.com/questions/9439725/javascript-how-to-detect-if-browser-window-is-scrolled-to-bottom
         const scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
         const scrollHeight = (document.documentElement && document.documentElement.scrollHeight) || document.body.scrollHeight;
@@ -230,7 +311,7 @@ class Movies extends Component {
         }
     };
 
-    checkScrollDirection = (scrollY) => {
+    checkScrollDirection = (scrollY: any) => {
         // To know if scrollin down or up
         if (this.state.oldScroll > scrollY) {
             console.log("up");
@@ -250,27 +331,32 @@ class Movies extends Component {
             this.setState({movieGenres: [], movieGenresLoading: true});
 
             let movieGenres = await fetch('/api/movies_genres?genre='+ this.state.moviesGenre);
-            movieGenres =  await movieGenres.json();
+            const movieGenresJSON: MovieGenre[] =  await movieGenres.json();
 
-            this.setState({movieGenres: movieGenres, movieGenresLoading: false});
+            this.setState({movieGenres: movieGenresJSON, movieGenresLoading: false});
 
         } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error getting genres', movieGenresLoading: false, movieGenres: null})
+            this.setState({
+                snack: true,
+                snackBarMessage: 'Error getting genres',
+                movieGenresLoading: false,
+                movieGenres: []
+            })
         }
     };
 
-    searchBarLostFocus = (event) => {
+    searchBarLostFocus = (event: any) => {
         if (event.relatedTarget === null) {
-            this.setState({movieGenres: null});
+            this.setState({movieGenres: []});
         } else if (event.relatedTarget.className.match("movieGenre")) {
             console.log('not cleaning')
         } else {
-            this.setState({movieGenres: null});
+            this.setState({movieGenres: []});
         }
     };
 
-    searchMovieGenre = movieGenre => {
-        this.setState({movieGenres: null, moviesGenre: movieGenre, tmdbMovies: null, pageNumber: 1}, () => {
+    searchMovieGenre = (movieGenre: MovieGenre) => {
+        this.setState({movieGenres: [], moviesGenre: movieGenre, tmdbMovies: [], pageNumber: 1}, () => {
             this.getMovies();
         });
     };
@@ -280,11 +366,11 @@ class Movies extends Component {
         this.setState({showInfoDialog: false});
     };
 
-    displayMovieInfo = (movie) => {
+    displayMovieInfo = (movie: Movie) => {
         this.setState({showInfoDialog: true, movieInfoLoading: true, movieInfo: null, selectedMovie: movie});
     };
 
-    displaySnackMessage = message => {
+    displaySnackMessage = (message: string) => {
         this.setState({snack: true, snackBarMessage: message})
     };
 

@@ -19,8 +19,45 @@ import Visibility from "@material-ui/icons/Visibility";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import React from "react";
 
+type StorageProps = {
 
-const Storage = props => {
+    // TODO: should be an enum at the very least
+    storage: string;
+    // TODO: should be an enum at the very least
+    setStorage: (storage: string) => {};
+    googleDriveConnectLoading: boolean;
+    settingsLoading: boolean;
+    moviesGdriveFolderName: string | null;
+    deleteMovieFolder: () => {};
+    setMovieFolder: (movieFolder: any) => {};
+    tvShowsGdriveFolderName: string | null;
+    deleteShowsFolder: () => {};
+    setShowsFolder: (showsFolder: any) => {};
+    gdriveToken: any;
+    googleDriveConnect: () => {};
+    googleDriveDisConnect: () => {};
+    uptoboxToken: any;
+    uptoboxDisconnect: () => {};
+    uptoboxConnect: () => {};
+    moviesPath: any;
+    setMoviesPath: (event: any) => {};
+    tvShowsPath: any;
+    setShowsPath: (event: any) => {};
+    protocol: any;
+    handleProtocolChange: () => {};
+    host: any;
+    setHost: (event: any) => {};
+    port: any;
+    setPort: (event: any) => {};
+    nasUsername: string;
+    setNasUserName: (username: string) => {};
+    showPassword: boolean;
+    nasPassword: any;
+    setNasPassword: (password: any) => {};
+    handleClickShowPassword: () => {};
+}
+
+const Storage = (props: StorageProps) => {
     return (
         <ExpansionPanelDetails>
             <Grid container spacing={0}>
@@ -33,12 +70,14 @@ const Storage = props => {
                     <Chip
                       label="Uptobox"
                       variant={props.storage === "uptobox" ? "default" : "outlined"}
-                      style={{margin: '3px'}} clickable="true"
+                      style={{margin: '3px'}}
+                      // clickable="true"
                       onClick={() => {props.setStorage('uptobox')}}/>
                     <Chip
                         label="Google Drive"
                         variant={props.storage === "gdrive" ? "default" : "outlined"}
-                        style={{margin: '3px'}} clickable="true"
+                        style={{margin: '3px'}}
+                        // clickable="true"
                         onClick={() => {props.setStorage('gdrive')}}/>
                     <Chip
                         label="NAS Synology"
@@ -77,27 +116,28 @@ const Storage = props => {
                                         <GooglePicker clientId={'348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com'}
                                                       developerKey={'AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0'}
                                                       scope={['https://www.googleapis.com/auth/drive']}
-                                                      onChange={data => console.log('on change:', data)}
-                                                      onAuthFailed={data => console.log('on auth failed:', data)}
+                                                      onChange={(data: any) => console.log('on change:', data)}
+                                                      onAuthFailed={(data: any) => console.log('on auth failed:', data)}
                                                       multiselect={false}
                                                       navHidden={true}
                                                       authImmediate={false}
                                                       mimeTypes={['application/vnd.google-apps.folder']}
                                                       viewId={'FOLDERS'}
-                                                      createPicker={ (google, oauthToken) => {
+                                                      createPicker={ (google: any, oauthToken: any) => {
                                                           const googleViewId = google.picker.ViewId.FOLDERS;
                                                           const docsView = new google.picker.DocsView(googleViewId)
                                                               .setIncludeFolders(true)
                                                               .setMimeTypes('application/vnd.google-apps.folder')
                                                               .setSelectFolderEnabled(true);
 
+                                                          // @ts-ignore
                                                           const picker = new window.google.picker.PickerBuilder()
                                                               .addView(docsView)
                                                               .setSize(1051,650)
                                                               .setTitle('Select movie folder')
                                                               .setOAuthToken(oauthToken)
                                                               .setDeveloperKey('AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0')
-                                                              .setCallback((data)=>{
+                                                              .setCallback((data: any)=>{
 
                                                                   if (data.action === 'picked') {
                                                                       props.setMovieFolder(data.docs[0]);
@@ -138,27 +178,28 @@ const Storage = props => {
                                         <GooglePicker clientId={'348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com'}
                                                       developerKey={'AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0'}
                                                       scope={['https://www.googleapis.com/auth/drive']}
-                                                      onChange={data => console.log('on change:', data)}
-                                                      onAuthFailed={data => console.log('on auth failed:', data)}
+                                                      onChange={(data: any) => console.log('on change:', data)}
+                                                      onAuthFailed={(data: any) => console.log('on auth failed:', data)}
                                                       multiselect={false}
                                                       navHidden={true}
                                                       authImmediate={false}
                                                       mimeTypes={['application/vnd.google-apps.folder']}
                                                       viewId={'FOLDERS'}
-                                                      createPicker={ (google, oauthToken) => {
+                                                      createPicker={ (google: any, oauthToken: any) => {
                                                           const googleViewId = google.picker.ViewId.FOLDERS;
                                                           const docsView = new google.picker.DocsView(googleViewId)
                                                               .setIncludeFolders(true)
                                                               .setMimeTypes('application/vnd.google-apps.folder')
                                                               .setSelectFolderEnabled(true);
 
+                                                          // @ts-ignore
                                                           const picker = new window.google.picker.PickerBuilder()
                                                               .addView(docsView)
                                                               .setSize(1051,650)
                                                               .setTitle('Select Tv Shows folder')
                                                               .setOAuthToken(oauthToken)
                                                               .setDeveloperKey('AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0')
-                                                              .setCallback((data)=>{
+                                                              .setCallback((data: any)=>{
 
                                                                   if (data.action === 'picked') {
                                                                       props.setShowsFolder(data.docs[0]);

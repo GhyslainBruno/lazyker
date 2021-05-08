@@ -9,7 +9,17 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 
-const Qualities = props => {
+type QualitiesProps = {
+    firstQuality: any;
+    handlerQualityChange: () => {};
+    labelWidth: any;
+    secondQuality: any;
+    thirdQuality: any;
+    h265: any;
+    handleH265Change: (h265: string) => {};
+}
+
+const Qualities = (props: QualitiesProps) => {
     return (
         <ExpansionPanelDetails style={{textAlign: 'center'}}>
 
@@ -99,7 +109,8 @@ const Qualities = props => {
                         control={
                             <Switch
                                 checked={props.h265}
-                                onChange={props.handleH265Change('h265')}
+                                //TODO: check why not overload matches this call
+                                // onChange={props.handleH265Change('h265')}
                                 value="h265"
                             />
                         }

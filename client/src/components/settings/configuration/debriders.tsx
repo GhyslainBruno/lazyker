@@ -6,7 +6,12 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import React from "react";
 import {Alldebrid} from "./debriders/Alldebrid";
 
-const Debriders = props => {
+type DebridersProps = {
+  realdebrid: boolean;
+  realdebridDisconnect: () => {};
+}
+
+const Debriders = (props: DebridersProps) => {
 
     const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foobar';
     const redirectAlldebridUri = 'https://alldebrid.com/pin/?pin=JYYC';

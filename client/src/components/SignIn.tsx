@@ -1,3 +1,4 @@
+import Button from '@material-ui/core/Button';
 import React, { Component } from 'react';
 import {Link, withRouter} from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
@@ -11,11 +12,9 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 // Trying the new material spec
-import Button from '@material/react-button/dist';
-import {HelperText, Input} from '@material/react-text-field';
+// import Button from '@material/react-button/dist';
 import Paper from '@material-ui/core/Paper';
-import CircularProgress from "@material-ui/core/CircularProgress";
-import {GoogleProvider, Providers} from "./SignInProviders";
+import { Providers} from "./SignInProviders";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import IconButton from "@material-ui/core/IconButton";
@@ -24,18 +23,20 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Slide from '@material-ui/core/Slide';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
+    // @ts-ignore
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const SignInPage = ({ history }) =>
+const SignInPage = (history: any) =>
     <div>
         <SignInForm history={history} />
     </div>;
 
-const byPropKey = (propertyName, value) => () => ({
+const byPropKey = (propertyName: any, value: any) => () => ({
     [propertyName]: value,
 });
 
+// TODO: why using this ? -> should be deleted with redux
 const INITIAL_STATE = {
     email: '',
     password: '',
@@ -44,8 +45,21 @@ const INITIAL_STATE = {
     error: null,
 };
 
-class SignInForm extends Component {
-    constructor(props) {
+type SignInFormProps = {
+    history: any;
+}
+
+type SignInFormState = {
+    email: string;
+    password: string;
+    presentationDialogOpen: boolean;
+    showPassword: boolean;
+    signInLoading: boolean;
+    error: any;
+}
+
+class SignInForm extends Component<SignInFormProps, SignInFormState> {
+    constructor(props: SignInFormProps) {
         super(props);
 
         this.state = {
@@ -58,7 +72,7 @@ class SignInForm extends Component {
         this.setState({presentationDialogOpen: false});
     };
 
-    onSubmit = (event) => {
+    onSubmit = (event: any) => {
 
         this.setState({signInLoading: true});
 
@@ -79,7 +93,7 @@ class SignInForm extends Component {
             })
             .catch(error => {
                 this.setState({signInLoading: false});
-                this.setState(byPropKey('error', error));
+                this.setState({error: error});
             });
 
         event.preventDefault();
@@ -104,6 +118,8 @@ class SignInForm extends Component {
                     disableBackdropClick
                     disableEscapeKeyDown
                     fullScreen
+                    // TODO: understand how to user TransitionComponent with TS instead of ignoring the TS errors
+                    // @ts-ignore
                     TransitionComponent={Transition}
                     open={this.state.presentationDialogOpen}
                     onClose={this.handleClose}
@@ -142,7 +158,7 @@ class SignInForm extends Component {
                             label='Email'
                             style={{width: '100%'}}
                             value={email}
-                            onChange={event => this.setState(byPropKey('email', event.target.value))}
+                            onChange={event => this.setState({ email: event.target.value })}
                         >
 
                         </TextField>
@@ -157,7 +173,7 @@ class SignInForm extends Component {
                             variant="outlined"
                             style={{width: '100%'}}
                             value={password}
-                            onChange={event => this.setState(byPropKey('password', event.target.value))}
+                            onChange={event => this.setState({ password: event.target.value })}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
@@ -178,8 +194,8 @@ class SignInForm extends Component {
                     <div style={{width: '100%', display: 'inline-block', textAlign: 'center'}}>
                         <Button
                             className="signInBtn"
-                            outlined={false}
-                            unelevated={true}
+                            variant='outlined'
+                            // unelevated={true}
                             disabled={isInvalid || this.state.signInLoading}
                             type="submit">
                             {this.state.signInLoading ?

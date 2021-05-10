@@ -7,11 +7,11 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import Button from "@material/react-button";
+import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper/Paper";
 import { SignInLink } from './SignIn';
 
-const SignUpPage = ({history}) =>
+const SignUpPage = (history: any) =>
     <div>
         <h1>SignUp</h1>
         <SignUpForm history={history} />
@@ -26,18 +26,31 @@ const INITIAL_STATE = {
     signUpLoading: false
 };
 
-const byPropKey = (propertyName, value) => () => ({
+const byPropKey = (propertyName: any, value: any) => () => ({
     [propertyName]: value,
 });
 
-class SignUpForm extends Component {
-    constructor(props) {
+type SignUpFormProps = {
+  history: any;
+}
+
+type SignUpFormState = {
+  email: string;
+  passwordOne: string;
+  signUpLoading: boolean;
+  passwordTwo: string;
+  error: any;
+  showPassword: boolean;
+}
+
+class SignUpForm extends Component<SignUpFormProps, SignUpFormState> {
+    constructor(props: SignUpFormProps) {
         super(props);
 
         this.state = { ...INITIAL_STATE };
     }
 
-    onSubmit = (event) => {
+    onSubmit = (event: any) => {
 
         this.setState({signUpLoading: true});
 
@@ -57,7 +70,7 @@ class SignUpForm extends Component {
                 history.push(routes.MOVIES);
             })
             .catch(error => {
-                this.setState(byPropKey('error', error));
+                this.setState({ error: error });
                 this.setState({ signUpLoading: false });
             });
 
@@ -99,7 +112,7 @@ class SignUpForm extends Component {
                             value={email}
                             type="email"
                             autoComplete="email"
-                            onChange={event => this.setState(byPropKey('email', event.target.value))}
+                            onChange={event => this.setState({ email: event.target.value })}
                         >
 
                         </TextField>
@@ -113,7 +126,7 @@ class SignUpForm extends Component {
                             type={this.state.showPassword ? 'text' : 'password'}
                             style={{width: '100%'}}
                             value={passwordOne}
-                            onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
+                            onChange={event => this.setState({ passwordOne: event.target.value })}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
@@ -139,7 +152,7 @@ class SignUpForm extends Component {
                             type={this.state.showPassword ? 'text' : 'password'}
                             style={{width: '100%'}}
                             value={passwordTwo}
-                            onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
+                            onChange={event => this.setState({ passwordTwo: event.target.value })}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
@@ -160,8 +173,8 @@ class SignUpForm extends Component {
                     <div style={{width: '100%', display: 'inline-block', textAlign: 'center'}}>
                         <Button
                             className="signUpBtn"
-                            outlined={false}
-                            unelevated={true}
+                            variant='outlined'
+                            // unelevated={true}
                             disabled={isInvalid || signUpLoading}
                             type="submit">
                             {this.state.signUpLoading ?

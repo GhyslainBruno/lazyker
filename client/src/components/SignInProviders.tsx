@@ -9,7 +9,7 @@ const Providers = () =>
         <FacebookProvider />
     </div>;
 
-const GoogleIcon = props => {
+const GoogleIcon = (props: any) => {
     return (
         <SvgIcon
             viewBox="0 0 80 80"
@@ -47,7 +47,7 @@ const GoogleIcon = props => {
     )
 };
 
-const FacebookIcon = props => {
+const FacebookIcon = (props: any) => {
     return (
         <SvgIcon
             viewBox="0 0 112.196 112.196"

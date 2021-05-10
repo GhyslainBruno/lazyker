@@ -11,7 +11,7 @@ function getSteps() {
     return ['What is it', 'How it works', 'What is mandatory', 'Who we are'];
 }
 
-function getStepContent(step) {
+function getStepContent(step: number) {
     switch (step) {
         case 0:
             return <div>

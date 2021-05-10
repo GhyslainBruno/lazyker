@@ -2,7 +2,7 @@ import { auth } from './firebase';
 import firebase from 'firebase/app';
 
 // Sign Up
-export const doCreateUserWithEmailAndPassword = (email, password) => {
+export const doCreateUserWithEmailAndPassword = (email: any, password: any) => {
     // const localAuth = auth;
 
     // auth.signInAnonymously()
@@ -47,7 +47,7 @@ export const doCreateUserWithEmailAndPassword = (email, password) => {
 // };
 
 // Sign In
-export const doSignInWithEmailAndPassword = (email, password) => {
+export const doSignInWithEmailAndPassword = (email: any, password: any) => {
     return auth.signInWithEmailAndPassword(email, password);
 };
 
@@ -66,26 +66,26 @@ export const doSignOut = () =>
     auth.signOut();
 
 // Password Reset
-export const doPasswordReset = (email) =>
+export const doPasswordReset = (email: any) =>
     auth.sendPasswordResetEmail(email);
 
 // Password Change
-export const doPasswordUpdate = (password) =>
-    auth.currentUser.updatePassword(password);
+export const doPasswordUpdate = (password: any) =>
+    auth.currentUser?.updatePassword(password);
 
 // Getting user idToken to get authenticated by backend
-export const getIdToken = async () => {
+export const getIdToken = async (): Promise<string> => {
     try {
-        return await auth.currentUser.getIdToken(true);
+        return await auth.currentUser!.getIdToken(true);
     } catch(error) {
         throw error;
     }
 };
 
 // Getting user uid to connect realdebrid - is not best practice at all TODO: should be changed
-export const getUid = () => {
+export const getUid = (): string => {
     try {
-        return auth.currentUser.uid;
+        return auth.currentUser!.uid;
     } catch(error) {
         throw error;
     }

@@ -33,7 +33,7 @@ type Log = {
 }
 
 type LogsProps = {
-    displaySnackMessage: (message: string) => {};
+    displaySnackMessage: (message: string) => void;
 };
 
 const Logs = (props: LogsProps) => {

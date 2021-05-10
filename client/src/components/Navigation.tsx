@@ -8,7 +8,12 @@ import Settings from '@material-ui/icons/SettingsOutlined';
 import '../App.scss';
 import {Link} from 'react-router-dom';
 
-class Navigation extends Component {
+type NavigationProps = {
+    navigation: any;
+    authUser: any;
+}
+
+class Navigation extends Component<NavigationProps> {
 
     render() {
 
@@ -18,11 +23,47 @@ class Navigation extends Component {
 
                 {
                     this.props.authUser ?
-                        <BottomNavigation className="bottomNav" value={this.props.navigation} style={{width: '100%', position: 'fixed', bottom: '0', left: '0', zIndex: '2'}}>
-                            <BottomNavigationAction label="Shows" value="shows" component={Link} to="/shows" icon={<Tv />}/>
-                            <BottomNavigationAction label="Movies" value="movies" component={Link} to="/movies" icon={<Movie />} />
-                            <BottomNavigationAction label="Downloads" value="downloads" component={Link} to="/downloads" icon={<GetApp />} />
-                            <BottomNavigationAction label="Settings" value="settings" component={Link} to="/settings" icon={<Settings/>} />
+                        <BottomNavigation
+                          className="bottomNav"
+                          value={this.props.navigation}
+                          // @ts-ignore
+                          style={{width: '100%', position: 'fixed', bottom: '0', left: '0', zIndex: '2'}}>
+
+                            <BottomNavigationAction
+                              label="Shows"
+                              value="shows"
+                              // @ts-ignore
+                              component={Link}
+                              to="/shows"
+                              icon={<Tv />}
+                            />
+
+                            <BottomNavigationAction
+                              label="Movies"
+                              value="movies"
+                              // @ts-ignore
+                              component={Link}
+                              to="/movies"
+                              icon={<Movie />}
+                            />
+
+                            <BottomNavigationAction
+                              label="Downloads"
+                              value="downloads"
+                              // @ts-ignore
+                              component={Link}
+                              to="/downloads"
+                              icon={<GetApp />}
+                            />
+
+                            <BottomNavigationAction
+                              label="Settings"
+                              value="settings"
+                              // @ts-ignore
+                              component={Link}
+                              to="/settings"
+                              icon={<Settings/>}
+                            />
                         </BottomNavigation>
                         :
                         <div>

@@ -24,37 +24,37 @@ type StorageProps = {
     // TODO: should be an enum at the very least
     storage: string;
     // TODO: should be an enum at the very least
-    setStorage: (storage: string) => {};
+    setStorage: (storage: string) => void;
     googleDriveConnectLoading: boolean;
     settingsLoading: boolean;
     moviesGdriveFolderName: string | null;
-    deleteMovieFolder: () => {};
-    setMovieFolder: (movieFolder: any) => {};
+    deleteMovieFolder: () => void;
+    setMovieFolder: (movieFolder: any) => void;
     tvShowsGdriveFolderName: string | null;
-    deleteShowsFolder: () => {};
-    setShowsFolder: (showsFolder: any) => {};
+    deleteShowsFolder: () => void;
+    setShowsFolder: (showsFolder: any) => void;
     gdriveToken: any;
     googleDriveConnect: () => {};
     googleDriveDisConnect: () => {};
-    uptoboxToken: any;
-    uptoboxDisconnect: () => {};
-    uptoboxConnect: () => {};
+    // uptoboxToken: any;
+    // uptoboxDisconnect: () => {};
+    // uptoboxConnect: () => {};
     moviesPath: any;
-    setMoviesPath: (event: any) => {};
+    setMoviesPath: (event: any) => void;
     tvShowsPath: any;
-    setShowsPath: (event: any) => {};
+    setShowsPath: (event: any) => void;
     protocol: any;
-    handleProtocolChange: () => {};
+    handleProtocolChange: (event: any) => void;
     host: any;
-    setHost: (event: any) => {};
+    setHost: (event: any) => void;
     port: any;
-    setPort: (event: any) => {};
+    setPort: (event: any) => void;
     nasUsername: string;
-    setNasUserName: (username: string) => {};
+    setNasUserName: (username: string) => void;
     showPassword: boolean;
     nasPassword: any;
-    setNasPassword: (password: any) => {};
-    handleClickShowPassword: () => {};
+    setNasPassword: (password: any) => void;
+    handleClickShowPassword: () => void;
 }
 
 const Storage = (props: StorageProps) => {
@@ -250,33 +250,34 @@ const Storage = (props: StorageProps) => {
                     </div>
                     :
                     props.storage === 'uptobox' ?
-                      <div style={{width: '100%'}}>
-                          <div style={{display: 'flex'}}>
-                              <div style={{flex: '1'}}>
-                                  Link
-                              </div>
-                              <div style={{flex: '1'}}>
-                                  {
-                                      props.uptoboxToken !== null ?
-                                        <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
-                                        :
-                                        <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
-                                  }
-                              </div>
-                              <div style={{flex: '1'}}>
-                                  {
-                                      props.uptoboxToken !== null ?
-                                        <IconButton onClick={props.uptoboxDisconnect}>
-                                            <LinkOff/>
-                                        </IconButton>
-                                        :
-                                        <IconButton onClick={props.uptoboxConnect}>
-                                            <Link/>
-                                        </IconButton>
-                                  }
-                              </div>
-                          </div>
-                      </div>
+                      <div>UPTOBOX component</div>
+                      // <div style={{width: '100%'}}>
+                      //     <div style={{display: 'flex'}}>
+                      //         <div style={{flex: '1'}}>
+                      //             Link
+                      //         </div>
+                      //         <div style={{flex: '1'}}>
+                      //             {
+                      //                 props.uptoboxToken !== null ?
+                      //                   <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                      //                   :
+                      //                   <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
+                      //             }
+                      //         </div>
+                      //         <div style={{flex: '1'}}>
+                      //             {
+                      //                 props.uptoboxToken !== null ?
+                      //                   <IconButton onClick={props.uptoboxDisconnect}>
+                      //                       <LinkOff/>
+                      //                   </IconButton>
+                      //                   :
+                      //                   <IconButton onClick={props.uptoboxConnect}>
+                      //                       <Link/>
+                      //                   </IconButton>
+                      //             }
+                      //         </div>
+                      //     </div>
+                      // </div>
                       :
                       <div>
                           <Grid container spacing={0}>

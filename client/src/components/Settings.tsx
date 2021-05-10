@@ -1,21 +1,14 @@
 import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Snackbar from '@material-ui/core/Snackbar';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import SignOutButton from "../firebase/SignOutBtn";
 import { auth } from '../firebase';
-import CheckCircle from "../../node_modules/@material-ui/icons/CheckCircle";
-import CancelCircle from "../../node_modules/@material-ui/icons/CancelOutlined";
 import queryString from "qs";
-import * as routes from '../constants/routes';
-import { Link as RouterLink } from 'react-router-dom';
 import gapi from 'gapi-client';
 import Logs from "./settings/logs";
 import Qualities from "./settings/configuration/qualities";
@@ -24,15 +17,115 @@ import Debriders from "./settings/configuration/debriders";
 import PrivacyPolicies from "./settings/privacy_policies";
 import Save from "./settings/save";
 
-let auth2 = null;
+let auth2: any = null;
 
-class Settings extends Component {
+type LinkRealdebridUserDto = {
+    message: string;
+}
+
+type ReadldebridDisconnectDto = {
+    message: string;
+}
+
+type LoadSettingsDto = {
+    settings: {
+        storage: any;
+        gdrive: {
+            moviesGdriveFolder: {
+                moviesGdriveFolderId: any;
+                moviesGdriveFolderName: any;
+                parentMoviesGdriveFolderId: any;
+            };
+            tvShowsGdriveFolder: {
+                tvShowsGdriveFolderId: any;
+                tvShowsGdriveFolderName: any;
+                parentTvShowsGdriveFolderId: any;
+            };
+            token: any;
+        };
+        qualities: {
+            first: any;
+            second: any;
+            third: any;
+            h265: any;
+        };
+        nas: {
+            moviesPath: any;
+            tvShowsPath: any;
+            protocol: any;
+            host: any;
+            port: any;
+            account: any;
+            password: any;
+        }
+    }
+}
+
+type SetSettingsDto = {
+    message: string;
+}
+
+type SettingsProps = {
+    changeNavigation: (location: any) => void;
+    location: {
+        pathname: any;
+        search: any;
+    };
+    history: any;
+}
+
+type SettingsState = {
+    autoUpdate: any;
+    h265: any;
+    loading: boolean;
+    moviesPath: string;
+    tvShowsPath: string;
+    host: string;
+    port: string;
+    nasUsername: string;
+    nasPassword: string;
+    protocol: string;
+    yggUsername: string;
+    yggPassword: string;
+    every: string;
+    settingsLoading: boolean;
+    showPassword: boolean;
+    googleDriveConnectLoading: boolean;
+    storage: string;
+    gdriveToken: any;
+    moviesGdriveFolderId: any;
+    moviesGdriveFolderName: any;
+    parentMoviesGdriveFolderId: any;
+    tvShowsGdriveFolderId: any;
+    tvShowsGdriveFolderName: any;
+    parentTvShowsGdriveFolderId: any;
+    movieUptoboxFolderId: any;
+    tvShowsUptoboxFolderId: any;
+    uptoboxToken: any;
+    snack: boolean;
+    snackBarMessage: string;
+    firstQuality: any;
+    secondQuality: any;
+    thirdQuality: any;
+    realdebrid: boolean;
+    alldebrid: boolean;
+    labelWidth: any;
+}
+
+class Settings extends Component<SettingsProps, SettingsState> {
 
     // Parent functions
-    constructor (props) {
+    constructor (props: SettingsProps) {
         super(props);
 
         this.state = {
+            labelWidth: null,
+            firstQuality: null,
+            realdebrid: false,
+            alldebrid: false,
+            secondQuality: null,
+            thirdQuality: null,
+            snack: false,
             autoUpdate: null,
             h265: false,
             loading: false,
@@ -59,7 +152,8 @@ class Settings extends Component {
             parentTvShowsGdriveFolderId: null,
             movieUptoboxFolderId: null,
             tvShowsUptoboxFolderId: null,
-            uptoboxToken: null
+            uptoboxToken: null,
+            snackBarMessage: ''
         };
 
         props.changeNavigation('settings');
@@ -89,8 +183,8 @@ class Settings extends Component {
                         }
                     });
 
-                    response = await response.json();
-                    this.setState({snack: true, snackBarMessage: response.message});
+                    const responseJSON: LinkRealdebridUserDto = await response.json();
+                    this.setState({snack: true, snackBarMessage: responseJSON.message});
                 } catch(error) {
                     this.setState({snack: true, snackBarMessage: 'Error connecting to realdebrid'})
                 }
@@ -106,16 +200,16 @@ class Settings extends Component {
 
         try {
 
-            let response = await fetch('/api/settings', {
+            const response = await fetch('/api/settings', {
                 method: 'GET',
                 headers: {
                     'token': await auth.getIdToken()
                 },
             });
-            response = await response.json();
-            response = response.settings;
+            const responseJSON: LoadSettingsDto = await response.json();
+            const settings = responseJSON.settings;
 
-            if (response === null) {
+            if (settings === null) {
                 this.setState({
                     snack: true,
                     snackBarMessage: 'Please configure lazyker',
@@ -143,12 +237,12 @@ class Settings extends Component {
                 })
             } else {
 
-                if (response.gdrive !== undefined) {
-                    if (response.gdrive.moviesGdriveFolder !== undefined) {
+                if (settings.gdrive !== undefined) {
+                    if (settings.gdrive.moviesGdriveFolder !== undefined) {
                         this.setState({
-                            moviesGdriveFolderId: response.gdrive.moviesGdriveFolder.moviesGdriveFolderId,
-                            moviesGdriveFolderName: response.gdrive.moviesGdriveFolder.moviesGdriveFolderName,
-                            parentMoviesGdriveFolderId: response.gdrive.moviesGdriveFolder.parentMoviesGdriveFolderId,
+                            moviesGdriveFolderId: settings.gdrive.moviesGdriveFolder.moviesGdriveFolderId,
+                            moviesGdriveFolderName: settings.gdrive.moviesGdriveFolder.moviesGdriveFolderName,
+                            parentMoviesGdriveFolderId: settings.gdrive.moviesGdriveFolder.parentMoviesGdriveFolderId,
                         })
                     } else {
                         this.setState({
@@ -158,11 +252,11 @@ class Settings extends Component {
                         })
                     }
 
-                    if (response.gdrive.tvShowsGdriveFolder !== undefined) {
+                    if (settings.gdrive.tvShowsGdriveFolder !== undefined) {
                         this.setState({
-                            tvShowsGdriveFolderId: response.gdrive.tvShowsGdriveFolder.tvShowsGdriveFolderId,
-                            tvShowsGdriveFolderName: response.gdrive.tvShowsGdriveFolder.tvShowsGdriveFolderName,
-                            parentTvShowsGdriveFolderId: response.gdrive.tvShowsGdriveFolder.parentTvShowsGdriveFolderId,
+                            tvShowsGdriveFolderId: settings.gdrive.tvShowsGdriveFolder.tvShowsGdriveFolderId,
+                            tvShowsGdriveFolderName: settings.gdrive.tvShowsGdriveFolder.tvShowsGdriveFolderName,
+                            parentTvShowsGdriveFolderId: settings.gdrive.tvShowsGdriveFolder.parentTvShowsGdriveFolderId,
                         })
                     } else {
                         this.setState({
@@ -172,9 +266,9 @@ class Settings extends Component {
                         })
                     }
 
-                    if (response.gdrive.token !== undefined) {
+                    if (settings.gdrive.token !== undefined) {
                         this.setState({
-                            gdriveToken: response.gdrive.token
+                            gdriveToken: settings.gdrive.token
                         })
                     } else {
                         this.setState({
@@ -188,12 +282,12 @@ class Settings extends Component {
                     })
                 }
 
-                if (response.qualities !== undefined) {
+                if (settings.qualities !== undefined) {
                     this.setState({
-                        firstQuality: response.qualities.first,
-                        secondQuality: response.qualities.second,
-                        thirdQuality: response.qualities.third,
-                        h265: response.qualities.h265
+                        firstQuality: settings.qualities.first,
+                        secondQuality: settings.qualities.second,
+                        thirdQuality: settings.qualities.third,
+                        h265: settings.qualities.h265
                     })
                 } else {
                     this.setState({
@@ -204,40 +298,40 @@ class Settings extends Component {
                     })
                 }
 
-                if (response.nas !== undefined) {
+                if (settings.nas !== undefined) {
                     this.setState({
-                        moviesPath: response.nas.moviesPath,
-                        tvShowsPath: response.nas.tvShowsPath,
-                        protocol: response.nas.protocol,
-                        host: response.nas.host,
-                        port: response.nas.port,
-                        nasUsername: response.nas.account,
-                        nasPassword: response.nas.password
+                        moviesPath: settings.nas.moviesPath,
+                        tvShowsPath: settings.nas.tvShowsPath,
+                        protocol: settings.nas.protocol,
+                        host: settings.nas.host,
+                        port: settings.nas.port,
+                        nasUsername: settings.nas.account,
+                        nasPassword: settings.nas.password
                     })
                 } else {
                     this.setState({
-                        moviesPath: null,
-                        tvShowsPath: null,
-                        protocol: null,
-                        host: null,
-                        port: null,
-                        nasUsername: null,
-                        nasPassword: null
+                        moviesPath: '',
+                        tvShowsPath: '',
+                        protocol: '',
+                        host: '',
+                        port: '',
+                        nasUsername: '',
+                        nasPassword: ''
                     })
                 }
 
-                if (response.hasOwnProperty('storage')) {
+                if (settings.hasOwnProperty('storage')) {
                     this.setState({
-                        storage: response.storage
+                        storage: settings.storage
                     });
                 } else {
                     this.setState({
-                        storage: null
+                        storage: ''
                     });
                 }
 
                 this.setState({
-                    realdebrid: response.hasOwnProperty('realdebrid'),
+                    realdebrid: settings.hasOwnProperty('realdebrid'),
                     settingsLoading: false,
                 });
 
@@ -297,9 +391,9 @@ class Settings extends Component {
                 })
             });
 
-            response = await response.json();
+            const responseJSON: SetSettingsDto = await response.json();
 
-            this.setState({snack: true, snackBarMessage: response.message, settingsLoading: false})
+            this.setState({snack: true, snackBarMessage: responseJSON.message, settingsLoading: false})
         } catch(error) {
             this.setState({snack: true, snackBarMessage: 'Error settings settings', settingsLoading: false})
         }
@@ -307,11 +401,13 @@ class Settings extends Component {
     };
 
     // Qualities (child) functions
-    handlerQualityChange = event => {
+    handlerQualityChange = (event: any) => {
+        // @ts-ignore
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    handleH265Change = name => event => {
+    handleH265Change = (name: any) => (event: any) => {
+        // @ts-ignore
         this.setState({ [name]: event.target.checked });
     };
 
@@ -358,12 +454,12 @@ class Settings extends Component {
         }
     };
 
-    // TODO: implement
+    // TODO: implement in a redux store
     uptoboxConnect = async () => {
         console.log('Uptobox connected');
     };
 
-    // TODO: implement
+    // TODO: implement in a redux store
     uptoboxDisconnect = async () => {
         console.log('Uptobox connected');
     };
@@ -372,11 +468,12 @@ class Settings extends Component {
         this.setState(state => ({ showPassword: !state.showPassword }));
     };
 
-    handleProtocolChange = event => {
+    handleProtocolChange = (event: any) => {
+        // @ts-ignore
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    setStorage = storage => {
+    setStorage = (storage: string) => {
         this.setState({storage: storage});
     };
 
@@ -388,7 +485,7 @@ class Settings extends Component {
         })
     };
 
-    setMovieFolder = folder => {
+    setMovieFolder = (folder: any) => {
         this.setState({
             moviesGdriveFolderId: folder.id,
             moviesGdriveFolderName: folder.name,
@@ -404,7 +501,7 @@ class Settings extends Component {
         })
     };
 
-    setShowsFolder = folder => {
+    setShowsFolder = (folder: any) => {
         this.setState({
             tvShowsGdriveFolderId: folder.id,
             tvShowsGdriveFolderName: folder.name,
@@ -412,27 +509,27 @@ class Settings extends Component {
         });
     };
 
-    setMoviesPath = path => {
+    setMoviesPath = (path: any) => {
         this.setState({moviesPath: path})
     };
 
-    setShowsPath = path => {
+    setShowsPath = (path: any) => {
         this.setState({tvShowsPath: path})
     };
 
-    setHost = host => {
+    setHost = (host: any) => {
         this.setState({host: host})
     };
 
-    setPort = port => {
+    setPort = (port: any) => {
         this.setState({port: port})
     };
 
-    setNasUserName = username => {
+    setNasUserName = (username: string) => {
         this.setState({nasUsername: username})
     };
 
-    setNasPassword = password => {
+    setNasPassword = (password: any) => {
         this.setState({nasPassword: password})
     };
 
@@ -448,11 +545,11 @@ class Settings extends Component {
                 }
             });
 
-            response = await response.json();
+            const responseDto: ReadldebridDisconnectDto = await response.json();
 
             this.loadSettings();
 
-            this.setState({snack: true, snackBarMessage: response.message})
+            this.setState({snack: true, snackBarMessage: responseDto.message})
 
         } catch(error) {
             this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
@@ -464,27 +561,27 @@ class Settings extends Component {
         console.log('Alldebrid disconnect');
     }
 
-    realdebridConnect = async () => {
-        try {
-
-            let response = await fetch('https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foo', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            response = await response.json();
-
-            this.setState({snack: true, snackBarMessage: response.message})
-        } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
-        }
-    };
+    // realdebridConnect = async () => {
+    //     try {
+    //
+    //         let response = await fetch('https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foo', {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Accept': 'application/json',
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    //
+    //         response = await response.json();
+    //
+    //         this.setState({snack: true, snackBarMessage: response.message})
+    //     } catch(error) {
+    //         this.setState({snack: true, snackBarMessage: 'Error disconnecting realdebrid'})
+    //     }
+    // };
 
     // Logs (child) functions
-    displaySnackMessage = message => {
+    displaySnackMessage = (message: string) => {
         this.setState({snack: true, snackBarMessage: message});
     };
 

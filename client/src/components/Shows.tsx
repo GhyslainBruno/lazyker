@@ -50,10 +50,9 @@ import Paper from "@material-ui/core/Paper";
 import OutlinedInput from "@material-ui/core/OutlinedInput/OutlinedInput";
 import Chip from "@material-ui/core/Chip";
 
-function Transition(props) {
+function Transition(props: any) {
     return <Slide direction="up" {...props} />;
 }
-
 
 const styles = {
     outlinedChip : {
@@ -209,56 +208,143 @@ const styles = {
     }
 };
 
-class Shows extends Component {
+type ShowsProps = {
+    changeNavigation: (location: any) => void;
+    displaySnackMessage: (message: string) => void;
+}
 
-  constructor(props)
+type Show = {
+    id: any;
+    title: string;
+    autoUpdate: boolean;
+    lang: any;
+}
+
+type Torrent = {
+    url: string;
+    provider: any;
+    title: string;
+    tags: {
+        multi: boolean;
+        french: boolean;
+        vo: boolean;
+        aac: boolean;
+        dts: boolean;
+        fullHd: boolean;
+        hd: boolean;
+        h264: boolean;
+        h265: boolean;
+        vfq: boolean;
+        hdlight: boolean;
+        vostfr: boolean;
+        bdrip: boolean;
+        uhd: boolean;
+        threeD: boolean;
+        vf: boolean;
+    }
+}
+
+type ShowInfoDto = {
+    show: {
+        seasonsEpisodesNumbers: any;
+    }
+}
+
+type DownloadEpisodeTorrentDto = {
+    message: string;
+}
+
+type SearchShowEpisodeTorrents = SearchShowEpisodeTorrent[]
+
+type SearchShowEpisodeTorrent = {
+    torrents: Torrent[];
+}
+
+type ShowsState = {
+    shows: any;
+    showTitleToSearch: string;
+    navigation: any;
+    isInSearchView: any;
+    dialogTitle: string;
+    dialogMessage: string;
+    showDialog: boolean;
+    showInfoDialog: boolean;
+    addOrRemoveString: any;
+    showToAdd: Show | null;
+    showToRemove: Show | null;
+    snack: boolean;
+    snackBarMessage: string;
+    loading: boolean;
+    infoShow: any;
+    showToDisplayInfo: any;
+    openShowDownloadDialog: boolean;
+    showToDownload: Show | null;
+    episodeTorrentsLoading: boolean;
+    episodeTorrentsFull: any;
+    episodeTorrents: any;
+    seasonNumber: number;
+    episodeNumber: number;
+    qualityEpisode: any;
+    showInfoLoading: boolean;
+    seasonsEpisodesNumbers: any;
+    showLang: any;
+    uhd: boolean;
+    fullHd: boolean;
+    hd: boolean;
+    multi: boolean;
+    labelWidth: any;
+}
+
+class Shows extends Component<ShowsProps, ShowsState> {
+
+  constructor(props: ShowsProps)
   {
       super(props);
       this.state = {
+          showLang: null,
           shows: null,
-          showTitleToSearch: null,
+          showTitleToSearch: '',
           navigation: null,
           isInSearchView: null,
-          dialogTitle: null,
-          dialogMessage: null,
+          dialogTitle: '',
+          dialogMessage: '',
           showDialog: false,
           showInfoDialog: false,
           addOrRemoveString: null,
           showToAdd: null,
           showToRemove: null,
           snack: false,
-          snackBarMessage: null,
+          snackBarMessage: '',
           loading: false,
           infoShow: null,
-          // showLang: null,
           showToDisplayInfo: null,
           openShowDownloadDialog: false,
           showToDownload: null,
           episodeTorrentsLoading: false,
           episodeTorrentsFull: null,
           episodeTorrents: null,
-          seasonNumber: null,
-          episodeNumber: null,
+          seasonNumber: 0,
+          episodeNumber: 0,
           qualityEpisode: null,
-          showInfoLoading: false
+          showInfoLoading: false,
+          seasonsEpisodesNumbers: {},
+          uhd: false,
+          fullHd: false,
+          hd: false,
+          multi: false,
+          labelWidth: null
 
       };
-
       props.changeNavigation('shows');
-
   }
-
-  // componentDidUpdate() {
-  //   console.log('state is', this.state);
-  // }
-
 
     // Searching for a new tv show
     searchShow = async () => {
 
       this.setState({isInSearchView: true, loading: true, shows: []});
 
-      const showTitle = document.getElementById('show_title_to_search').value;
+      // @ts-ignore
+      const showTitle = document.getElementById('show_title_to_search')?.value;
 
       fetch('/api/search_shows?title=' + showTitle, {
           method: 'GET',
@@ -322,7 +408,7 @@ class Shows extends Component {
             })
     };
 
-    updateShowTitleToSearch = (evt) => {
+    updateShowTitleToSearch = (evt: any) => {
         this.setState({
             showTitleToSearch: evt.target.value
         });
@@ -336,7 +422,7 @@ class Shows extends Component {
         this.setState({showInfoDialog: false})
     };
 
-    showAddShowDialog = (e, show) => {
+    showAddShowDialog = (e: any, show: Show) => {
 
         this.setState({
             showDialog: true,
@@ -348,7 +434,7 @@ class Shows extends Component {
 
     };
 
-    showRemoveShowDialog = (e, show) => {
+    showRemoveShowDialog = (e: any, show: Show) => {
 
         this.setState({
             showDialog: true,
@@ -391,21 +477,13 @@ class Shows extends Component {
 
     };
 
-    onEnterKeyPressed = (event) => {
+    onEnterKeyPressed = (event: any) => {
         if (event.keyCode || event.which === 13) {
 
             this.searchShow();
 
         }
     };
-
-    // onEnterKeyPressedInShowDownload = (event) => {
-    //     if (event.keyCode || event.which === 13) {
-    //
-    //         this.searchShowEpisodeTorrents();
-    //
-    //     }
-    // };
 
     // Removing a tv show from database
     removeShow = async () => {
@@ -431,7 +509,7 @@ class Shows extends Component {
     };
 
     // Changing the "autoUpdate" state of the tv show | TODO add a try/catch block here
-    updateShow = async (show) => {
+    updateShow = async (show: Show) => {
 
         show.autoUpdate = !show.autoUpdate;
 
@@ -455,7 +533,7 @@ class Shows extends Component {
     /**
      * Opens the dialog with downloads parts - and fetch episodes numbers
      */
-    openShowDownloadDialog = async show => {
+    openShowDownloadDialog = async (show: Show) => {
 
         try {
 
@@ -470,7 +548,7 @@ class Shows extends Component {
                 }
             });
 
-            const showInfo = await response.json();
+            const showInfo: ShowInfoDto = await response.json();
 
             this.setState({
                 seasonsEpisodesNumbers: showInfo.show.seasonsEpisodesNumbers,
@@ -494,8 +572,8 @@ class Shows extends Component {
             openShowDownloadDialog: false,
             episodeTorrents: null,
             showToDownload: null,
-            episodeNumber: null,
-            seasonNumber: null,
+            episodeNumber: 0,
+            seasonNumber: 0,
             episodeTorrentsLoading: false,
             qualityEpisode: null});
     };
@@ -504,7 +582,7 @@ class Shows extends Component {
         this.setState({showTitleToSearch: ''})
     };
 
-    showTvShowInfoDialog = (show) => {
+    showTvShowInfoDialog = (show: Show) => {
 
         if (!this.state.isInSearchView) {
             this.setState({
@@ -517,7 +595,7 @@ class Shows extends Component {
     };
 
     // Changing the lang of the tv show (vostfr, french, multi)
-    changeShowLang = async event => {
+    changeShowLang = async (event: any) => {
 
         const show = this.state.showToDisplayInfo;
         show.lang = event.target.value;
@@ -542,13 +620,6 @@ class Shows extends Component {
         }
     };
 
-    // Util function for download show dialog textField - deprecated since not using any textField for that right now
-    handleChange = search => event => {
-        this.setState({
-            [search]: event.target.value,
-        });
-    };
-
     // Function triggered to fetch tv show episode available torrents
     searchShowEpisodeTorrents = async () => {
 
@@ -559,25 +630,25 @@ class Shows extends Component {
             let searchString = '';
 
             if (this.state.seasonNumber) {
-                searchString = `${this.state.showToDownload.title} S${this.state.seasonNumber}`;
+                searchString = `${this.state.showToDownload?.title} S${this.state.seasonNumber}`;
             } else {
-                searchString = `${this.state.showToDownload.title}`;
+                searchString = `${this.state.showToDownload?.title}`;
             }
 
             if (this.state.seasonNumber && this.state.episodeNumber) {
-                searchString = `${this.state.showToDownload.title} S${this.state.seasonNumber}E${this.state.episodeNumber}`;
+                searchString = `${this.state.showToDownload?.title} S${this.state.seasonNumber}E${this.state.episodeNumber}`;
             }
 
             let response = await fetch(`/api/torrents?title=${searchString}`, {
                 method: 'GET'
             });
 
-            const torrents = await response.json();
+            const torrents: SearchShowEpisodeTorrents = await response.json();
 
 
             const torrentsTaggued = torrents[0].torrents.map(torrent => {
 
-                torrent.tags = {};
+                // torrent.tags = {};
 
                 torrent.tags.multi = !!torrent.title.match(/multi/mi);
                 torrent.tags.french = !!torrent.title.match(/french/mi);
@@ -618,7 +689,7 @@ class Shows extends Component {
     };
 
     // Starts the download of the torrent for this episode of this tv show wanted
-    downloadEpisodeTorrent = async torrent => {
+    downloadEpisodeTorrent = async (torrent: Torrent) => {
 
         this.setState({episodeTorrentsLoading: true, episodeTorrents: null});
 
@@ -637,16 +708,16 @@ class Shows extends Component {
                     mediaInfos: {
                         lastSeason: this.state.seasonNumber,
                         lastEpisode: this.state.episodeNumber,
-                        name: this.state.showToDownload.title,
+                        name: this.state.showToDownload?.title,
                         isShow: true
                     },
                     id: torrent.title,
                 })
             });
 
-            response = await response.json();
+            const responseDto: DownloadEpisodeTorrentDto = await response.json();
 
-            if (response.message !== 'ok') {
+            if (responseDto.message !== 'ok') {
                 this.setState({snackBarMessage: 'Error while downloading torrent file', snack: true});
             } else {
                 this.setState({snackBarMessage: 'Torrent added - check progress in downloads', snack: true});
@@ -665,28 +736,34 @@ class Shows extends Component {
 
     };
 
-    handlerSeasonNumberChange = event => {
+    handlerSeasonNumberChange = (event: any) => {
+        // @ts-ignore
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    handlerEpisodeNumberChange = event => {
+    handlerEpisodeNumberChange = (event: any) => {
+        // @ts-ignore
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    handlerQualityEpisodeChange = event => {
+    handlerQualityEpisodeChange = (event: any) => {
+        // @ts-ignore
         this.setState({ [event.target.name]: event.target.value });
     };
 
     createSeasonsNumbersTable = () => {
         let table = [];
+
+        // @ts-ignore
         table.push(<MenuItem value={null}>{""}</MenuItem>);
 
         if (this.state.seasonsEpisodesNumbers) {
-            const seasonsNumber = this.state.seasonsEpisodesNumbers.filter(season => season.season_number === Math.max.apply(Math, this.state.seasonsEpisodesNumbers.map(function(o) { return o.season_number; })))[0].season_number;
+            const seasonsNumber = this.state.seasonsEpisodesNumbers.filter((season: any) => season.season_number === Math.max.apply(Math, this.state.seasonsEpisodesNumbers.map(function(o: any) { return o.season_number; })))[0].season_number;
 
             for (let i = 0; i < seasonsNumber; i++) {
 
-                const number = parseInt(i + 1).toString().padStart(2, '0');
+                // TODO: WTF ?
+                const number = parseInt(String(i + 1)).toString().padStart(2, '0');
 
                 table.push(<MenuItem value={number}>{number}</MenuItem>);
             }
@@ -698,15 +775,17 @@ class Shows extends Component {
 
     createEpisodesNumbersTable = () => {
         let table = [];
+
+        // @ts-ignore
         table.push(<MenuItem value={null}>{""}</MenuItem>);
 
         if (this.state.seasonsEpisodesNumbers && this.state.seasonNumber) {
 
-            const episodesNumber = this.state.seasonsEpisodesNumbers.filter(season => season.season_number === parseInt(this.state.seasonNumber))[0].episode_count;
+            const episodesNumber = this.state.seasonsEpisodesNumbers.filter((season: any) => season.season_number === this.state.seasonNumber)[0].episode_count;
 
             for (let i = 0; i < episodesNumber; i++) {
 
-                const number = parseInt(i + 1).toString().padStart(2, '0');
+                const number = parseInt(String(i + 1)).toString().padStart(2, '0');
 
 
                 table.push(<MenuItem value={number}>{number}</MenuItem>);
@@ -717,12 +796,16 @@ class Shows extends Component {
 
     };
 
-    filterTorrents = filter => {
+    filterTorrents = (filter: any) => {
 
+        // TODO: change the way of doing this !
+        // @ts-ignore
         this.setState({
+            // @ts-ignore
             [filter]: !this.state[filter]
         }, () => {
-            const trueFilter = [];
+
+            const trueFilter: any[] = [];
 
             if (this.state.uhd) {
                 trueFilter.push('uhd');
@@ -740,7 +823,7 @@ class Shows extends Component {
                 trueFilter.push('multi');
             }
 
-            const torrentsFiltered = this.state.episodeTorrentsFull[0].torrents.map(torrent => {
+            const torrentsFiltered = this.state.episodeTorrentsFull[0].torrents.map((torrent: any) => {
 
                 let shouldBeDisplayed = false;
 
@@ -765,7 +848,7 @@ class Shows extends Component {
             const torrentsTagguedToReturn = [];
 
             torrentsTagguedToReturn.push({
-                torrents : torrentsFiltered.filter(torrent => torrent !== undefined),
+                torrents : torrentsFiltered.filter((torrent: any) => torrent !== undefined),
                 provider: 'ygg'
             });
 
@@ -791,7 +874,7 @@ class Shows extends Component {
               <Dialog
                   fullScreen
                   open={this.state.openShowDownloadDialog}
-                  onClose={this.handleClose}
+                  // onClose={this.handleClose}
                   TransitionComponent={Transition}
               >
 
@@ -799,6 +882,7 @@ class Shows extends Component {
                       onClick={() => this.closeShowDownloadDialog()}
                       variant="fab"
                       mini
+                      // @ts-ignore
                       style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>
                       <Close />
                   </Button>
@@ -928,7 +1012,7 @@ class Shows extends Component {
                                               </div>
 
                                               <List component="nav" dense>
-                                                  {this.state.episodeTorrents.map(provider => {
+                                                  {this.state.episodeTorrents.map((provider: any) => {
                                                       return (
                                                           <div>
                                                               <h3 style={{textAlign: 'center'}}>
@@ -937,7 +1021,7 @@ class Shows extends Component {
 
                                                               {
                                                                   provider.torrents.length !== 0 ?
-                                                                      provider.torrents.map(torrent => {
+                                                                      provider.torrents.map((torrent: any) => {
                                                                           return (
                                                                               <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
 
@@ -1132,7 +1216,7 @@ class Shows extends Component {
               </Dialog>
 
 
-              <div style={{flexGrow: '1'}}>
+              <div style={{flexGrow: 1}}>
                   <AppBar
                       position="static"
                       color="default">
@@ -1156,7 +1240,7 @@ class Shows extends Component {
                               {this.state.showTitleToSearch !== null && this.state.showTitleToSearch !== '' ?
                                   <Close onClick={this.clearTitle}/>
                                   :
-                                  <Search onClick={this.state.showTitleToSearch !== null && this.state.showTitleToSearch !== '' ? this.searchShow : null}/>
+                                  <Search onClick={() => this.state.showTitleToSearch !== null && this.state.showTitleToSearch !== '' ? this.searchShow : null}/>
                               }
 
                           </IconButton>
@@ -1188,11 +1272,12 @@ class Shows extends Component {
                                   image={"https://image.tmdb.org/t/p/w500" + show.posterPath}
                                   title={show.title}
                                   onClick={() => this.openShowDownloadDialog(show)}
-                                  clickable="true"
+                                  // clickable='true'
                               >
                                   <Badge
                                       style={show.episode ? {position: 'absolute', top: '0', right: '0', marginRight: '10%', marginTop: '10%'} : {display: 'none'}}
-                                      badgeContent={<CheckCircle style={{fontSize: '20', color: '#f44336'}}/>}
+                                      // badgeContent={<CheckCircle style={{fontSize: '20', color: '#f44336'}}/>}
+                                      children={<CheckCircle style={{fontSize: '20', color: '#f44336'}}/>}
                                   />
                               </CardMedia>
 

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { auth } from './index';
 import Button from "@material/react-button";
 

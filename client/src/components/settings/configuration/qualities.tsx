@@ -11,7 +11,7 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 
 type QualitiesProps = {
     firstQuality: any;
-    handlerQualityChange: () => {};
+    handlerQualityChange: (event: any) => void;
     labelWidth: any;
     secondQuality: any;
     thirdQuality: any;

@@ -8,6 +8,7 @@ import {Alldebrid} from "./debriders/Alldebrid";
 
 type DebridersProps = {
   realdebrid: boolean;
+  alldebrid: boolean;
   realdebridDisconnect: () => {};
 }
 

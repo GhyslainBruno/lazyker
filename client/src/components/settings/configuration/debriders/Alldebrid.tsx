@@ -2,7 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React from "react";
 import { useSelector, useDispatch } from 'react-redux'
 import {Dispatch} from 'redux';
-import {fetchNewPinCode, isConnected} from "../../../../feature/debriders/alldebridSlice";
+import {fetchAlldebridDisconnect, fetchNewPinCode, isConnected} from "../../../../feature/debriders/alldebridSlice";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import CancelCircle from "@material-ui/icons/CancelOutlined";
 import Button from "@material-ui/core/Button";
@@ -59,7 +59,7 @@ const openInNewTab = (url: string) => {
 const ConnectionButton = (props: ConnectionButtonProps) => {
   switch (props.connectionState) {
     case 'connected': {
-      return <Button variant="outlined" onClick={() => props.dispatch(isConnected(false))}>Disconnect</Button>
+      return <Button variant="outlined" onClick={() => props.dispatch(fetchAlldebridDisconnect())}>Disconnect</Button>
     }
 
     case 'disconnected': {

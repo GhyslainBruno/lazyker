@@ -15,6 +15,17 @@ type NewPinDto = {
   }
 }
 
+export const fetchAlldebridDisconnect = createAsyncThunk(
+  'alldebrid/fetchAlldebridDisconnect',
+  async (state, thunkAPI) => {
+    try {
+      return await ky.get('/api/alldebrid/disconnect', { headers: {token: await auth.getIdToken()} }).json();
+    } catch(error) {
+      console.error(error);
+    }
+  }
+)
+
 export const fetchNewPinCode = createAsyncThunk(
   'alldebrid/fetchNewPinCode',
   async (state, thunkAPI) => {
@@ -100,6 +111,7 @@ export const alldebridSlice = createSlice({
       state.loading = false;
     },
 
+
     [fetchPinCodeStatus.fulfilled.type]: (state, action) => {
       if (action.payload.activated) {
         state.isConnected = 'connected';
@@ -112,6 +124,17 @@ export const alldebridSlice = createSlice({
 
     },
     [fetchPinCodeStatus.rejected.type]: (state, action) => {
+
+    },
+
+
+    [fetchAlldebridDisconnect.fulfilled.type]: (state, action) => {
+      state.isConnected = 'disconnected';
+    },
+    [fetchAlldebridDisconnect.pending.type]: (state, action) => {
+
+    },
+    [fetchAlldebridDisconnect.rejected.type]: (state, action) => {
 
     },
   }

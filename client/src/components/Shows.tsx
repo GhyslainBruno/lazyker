@@ -285,7 +285,7 @@ type ShowsState = {
     episodeNumber: number;
     qualityEpisode: any;
     showInfoLoading: boolean;
-    seasonsEpisodesNumbers: any;
+    seasonsEpisodesNumbers: any[];
     showLang: any;
     uhd: boolean;
     fullHd: boolean;
@@ -326,7 +326,7 @@ class Shows extends Component<ShowsProps, ShowsState> {
           episodeNumber: 0,
           qualityEpisode: null,
           showInfoLoading: false,
-          seasonsEpisodesNumbers: {},
+          seasonsEpisodesNumbers: [],
           uhd: false,
           fullHd: false,
           hd: false,
@@ -756,7 +756,7 @@ class Shows extends Component<ShowsProps, ShowsState> {
         // @ts-ignore
         table.push(<MenuItem value={null}>{""}</MenuItem>);
 
-        if (this.state.seasonsEpisodesNumbers) {
+        if (this.state.seasonsEpisodesNumbers.length > 0) {
             const seasonsNumber = this.state.seasonsEpisodesNumbers.filter((season: any) => season.season_number === Math.max.apply(Math, this.state.seasonsEpisodesNumbers.map(function(o: any) { return o.season_number; })))[0].season_number;
 
             for (let i = 0; i < seasonsNumber; i++) {
@@ -778,9 +778,9 @@ class Shows extends Component<ShowsProps, ShowsState> {
         // @ts-ignore
         table.push(<MenuItem value={null}>{""}</MenuItem>);
 
-        if (this.state.seasonsEpisodesNumbers && this.state.seasonNumber) {
+        if (this.state.seasonsEpisodesNumbers.length > 0 && this.state.seasonNumber !== 0) {
 
-            const episodesNumber = this.state.seasonsEpisodesNumbers.filter((season: any) => season.season_number === this.state.seasonNumber)[0].episode_count;
+            const episodesNumber = this.state.seasonsEpisodesNumbers.filter(season => season.season_number === +this.state.seasonNumber)[0].episode_count
 
             for (let i = 0; i < episodesNumber; i++) {
 

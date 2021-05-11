@@ -592,7 +592,7 @@ const MovieInfoDialog = (props: MyProps) => {
                             </div>
 
                             { movieInfo.trailer ?
-                                <ReactPlayer ref={player} url={movieInfo.trailer} playing={trailerPlaying} controls={true} width="100%" />
+                                <ReactPlayer ref={player} url={movieInfo.trailer} light={true} playing={trailerPlaying} controls={true} width="100%" />
                             :
                                 <p> No trailer found </p>
                             }

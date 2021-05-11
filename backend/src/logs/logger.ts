@@ -1,13 +1,14 @@
 // Imports the Google Cloud client library
 import {User} from '../entities/user';
 
-const Logging = require('@google-cloud/logging');
+// const Logging = require('@google-cloud/logging');
+import {Logging} from '@google-cloud/logging';
 // Your Google Cloud Platform project ID
 const projectId = 'lazyker-568c4';
+
 // Creates a client
 const logging = new Logging({
-    keyFilename: './backend/logs/lazyker-1eebc13a0386.json',
-    projectId: projectId,
+    projectId: projectId
 });
 
 /**
@@ -39,14 +40,7 @@ export const info = async (textToLog: string, user: User) => {
         const entry = log.entry(metadata, text);
 
         // Writes the log entry
-        log
-            .write(entry)
-            .then((): any => {
-                return null
-            })
-            .catch((error: any) => {
-                throw error
-            });
+        await log.write(entry);
     }
 
 };

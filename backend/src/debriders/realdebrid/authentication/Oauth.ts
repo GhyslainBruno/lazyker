@@ -36,6 +36,7 @@ export const connectUser = async (code: any, user: any) => {
         return token
     } catch(error) {
         await logger.info('Realdebrid connection ERROR - ' + error.message, user);
+        throw new Error('Realdebrid connection ERROR - ' + error.message);
     }
 };
 

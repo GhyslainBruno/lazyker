@@ -55,7 +55,7 @@ module.exports = (app: any) => {
             await realdebrid.connectUser(code, user);
             res.send({message: 'Connected'});
         } catch(error) {
-            res.status(500).send({message: error});
+            res.status(500).send({message: error.message});
         }
     });
 

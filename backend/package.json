@@ -21,7 +21,7 @@
   "author": "BRUNO Ghyslain",
   "license": "MIT",
   "dependencies": {
-    "@google-cloud/logging": "^3.0.2",
+    "@google-cloud/logging": "^9.2.3",
     "@types/got": "^9.6.11",
     "@types/parse-torrent": "^5.8.3",
     "@types/request-promise": "^4.1.47",

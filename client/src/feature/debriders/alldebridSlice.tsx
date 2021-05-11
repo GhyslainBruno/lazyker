@@ -28,8 +28,6 @@ export const fetchNewPinCode = createAsyncThunk(
   }
 )
 
-
-// TODO: find a better way to pass multiple params to a thunk than making transit data through all application !
 type FetchPinCodeStatusProps = {
   pin: string;
   check: string;

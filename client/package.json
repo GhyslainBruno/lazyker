@@ -18,7 +18,7 @@
     "firebase": "^5.4.2",
     "gapi-client": "0.0.3",
     "googleapis": "^34.0.0",
-    "ky": "^0.28.0",
+    "ky": "^0.27.0",
     "materialize-css": "^1.0.0-rc.1",
     "qs": "^6.5.2",
     "react": "^16.11.0",

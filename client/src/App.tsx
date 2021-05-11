@@ -381,7 +381,7 @@ export default class App extends Component<AppProps, AppState> {
                             this.state.authUser ?
                                 <div className="mainApp mui-fixed">
                                     <Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation} />}/>
-                                    <Route exact path='/movies/:id' render={(props) => <Movies changeNavigation={this.changeNavigation} {...props} />}/>
+                                    <Route exact path='/movies/:id' render={(props: any) => <Movies changeNavigation={this.changeNavigation} {...props} />}/>
                                     <Route exact path='/movies' render={(props: any) => <Movies changeNavigation={this.changeNavigation} {...props} />}/>
                                     <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
                                     <Route exact path='/settings' render={(props: any) => <Settings changeNavigation={this.changeNavigation} {...props} />}/>

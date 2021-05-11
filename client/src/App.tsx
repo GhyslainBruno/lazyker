@@ -1,3 +1,4 @@
+import {appsactivity_v1} from 'googleapis';
 import React, { Component } from 'react';
 import { auth as authTest }from './firebase/firebase';
 import './App.css';
@@ -16,6 +17,7 @@ import { SignInForm } from "./components/SignIn";
 import  HomePage from "./components/HomePage";
 import PasswordReset from "./components/authentication/PasswordReset";
 import CircularProgress from "@material-ui/core/CircularProgress";
+// @ts-ignore
 import Redirect from "react-router-dom/es/Redirect";
 import Snackbar from "@material-ui/core/Snackbar";
 import Dialog from "@material-ui/core/Dialog";
@@ -41,11 +43,11 @@ const theme = createMuiTheme({
     },
 });
 
-function Transition(props) {
+function Transition(props: any) {
     return <Slide direction="up" {...props} />;
 }
 
-const LinkDialogText = (props) => {
+const LinkDialogText = (props: any) => {
     const red = '#e89488';
     const blue = '#8c96c7';
     const white = '#ffffff';
@@ -81,9 +83,28 @@ const LinkDialogText = (props) => {
     );
 };
 
-class App extends Component {
+type AppProps = {
 
-    constructor(props) {
+}
+
+type AppState = {
+    navigation: any;
+    authUser: any;
+    userLoading: boolean;
+    showAccountLinkDialog: boolean;
+    snackBarMessage: string;
+    snack: boolean;
+    linkDialogMessage: any;
+    showPassword: boolean;
+    emailOfUserThatAlreadyExists: any;
+    providerAlreadyUsed: any;
+    providerToLink: any;
+    password: any;
+}
+
+export default class App extends Component<AppProps, AppState> {
+
+    constructor(props: AppProps) {
         super(props);
 
         this.state = {
@@ -91,10 +112,14 @@ class App extends Component {
             authUser: null,
             userLoading: true,
             showAccountLinkDialog: false,
-            snackBarMessage: null,
+            snackBarMessage: '',
             snack: false,
             linkDialogMessage: null,
-            showPassword: false
+            showPassword: false,
+            emailOfUserThatAlreadyExists: null,
+            providerAlreadyUsed: null,
+            providerToLink: null,
+            password: null,
         }
     }
 
@@ -110,20 +135,22 @@ class App extends Component {
                 // Here we check if we want to link 2 accounts providers / if not -> nothing is done
                 if (sessionStorage.getItem('isAccountToLink')) {
 
-                    let credentials = {};
+                    let credentials: any = {};
                     // let provider = {};
 
                     switch (sessionStorage.getItem('globalProvider')) {
                         case 'google.com':
-                            credentials = firebase.auth.GoogleAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials')).accessToken);
+                            credentials = firebase.auth.GoogleAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials') as string).accessToken);
                             // provider = new authTest.GoogleAuthProvider();
                             break;
                         case 'password':
-                            credentials = firebase.auth.EmailAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials')).accessToken);
+                            // TODO: fix this
+                            // @ts-ignore
+                            credentials = firebase.auth.EmailAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials') as string).accessToken);
                             // provider = new authTest.GoogleAuthProvider();
                             break;
                         case 'facebook.com':
-                            credentials = firebase.auth.FacebookAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials')).accessToken);
+                            credentials = firebase.auth.FacebookAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials') as string).accessToken);
                             // provider = auth.facebookProvider();
                             break;
                         default:
@@ -131,7 +158,7 @@ class App extends Component {
                     }
 
                     // result.user.linkWithRedirect(provider)
-                    result.user.linkWithCredential(credentials)
+                    result.user?.linkWithCredential(credentials)
                         .then(function(test) {
                             sessionStorage.removeItem('isAccountToLink');
                             sessionStorage.removeItem('globalProvider');
@@ -166,20 +193,21 @@ class App extends Component {
 
             if (sessionStorage.getItem('isAccountToLink')) {
 
-                let credentials = {};
+                let credentials: any = {};
                 // let provider = {};
 
                 switch (sessionStorage.getItem('globalProvider')) {
                     case 'google.com':
-                        credentials = firebase.auth.GoogleAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials')).accessToken);
+                        credentials = firebase.auth.GoogleAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials') as string).accessToken);
                         // provider = new authTest.GoogleAuthProvider();
                         break;
                     case 'password':
-                        credentials = firebase.auth.EmailAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials')).accessToken);
+                        // @ts-ignore
+                        credentials = firebase.auth.EmailAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials') as string).accessToken);
                         // provider = new authTest.GoogleAuthProvider();
                         break;
                     case 'facebook.com':
-                        credentials = firebase.auth.FacebookAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials')).accessToken);
+                        credentials = firebase.auth.FacebookAuthProvider.credential(JSON.parse(sessionStorage.getItem('pendingCredentials') as string).accessToken);
                         // provider = auth.facebookProvider();
                         break;
                     default:
@@ -187,7 +215,7 @@ class App extends Component {
                 }
 
                 // result.user.linkWithRedirect(provider)
-                authUser.linkWithCredential(credentials)
+                authUser?.linkWithCredential(credentials)
                     .then(function(test) {
                         sessionStorage.removeItem('isAccountToLink');
                         sessionStorage.removeItem('globalProvider');
@@ -215,7 +243,7 @@ class App extends Component {
         });
     }
 
-    customizeDialogAndPassCredentials = (email, providerToLink, globalProvider, error) => {
+    customizeDialogAndPassCredentials = (email: any, providerToLink: any, globalProvider: any, error: any) => {
 
         this.setState({
             emailOfUserThatAlreadyExists: email,
@@ -265,7 +293,7 @@ class App extends Component {
         this.setState({showAccountLinkDialog: false});
     };
 
-    changeNavigation = (target) => {
+    changeNavigation = (target: any) => {
         this.setState({ navigation: target });
     };
 
@@ -352,11 +380,11 @@ class App extends Component {
 
                             this.state.authUser ?
                                 <div className="mainApp mui-fixed">
-                                    <Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation}/>}/>
+                                    <Route exact path='/shows' render={() =><Shows changeNavigation={this.changeNavigation} />}/>
                                     <Route exact path='/movies/:id' render={(props) => <Movies changeNavigation={this.changeNavigation} {...props} />}/>
-                                    <Route exact path='/movies' render={(props) => <Movies changeNavigation={this.changeNavigation} {...props} />}/>
+                                    <Route exact path='/movies' render={(props: any) => <Movies changeNavigation={this.changeNavigation} {...props} />}/>
                                     <Route exact path='/downloads' render={() => <Downloads changeNavigation={this.changeNavigation}/>}/>
-                                    <Route exact path='/settings' render={() => <Settings changeNavigation={this.changeNavigation}/>}/>
+                                    <Route exact path='/settings' render={(props: any) => <Settings changeNavigation={this.changeNavigation} {...props} />}/>
                                     <Route exact path='/privacy_policy' render={() => <Privacy/>}/>
                                     {/*<Route exact path='/' render={()=> <Movies changeNavigation={this.changeNavigation} />}/>*/}
                                     <Route exact path='/' render={() => <Redirect to="/movies?genre=popular" />}/>
@@ -367,9 +395,10 @@ class App extends Component {
                                 :
                                 <div className="mainApp mui-fixed" style={{top: '50%'}}>
                                     <Route exact path='/signup' render={(props) =><SignUpForm {...props}/>}/>
-                                    <Route exact path='/pw-forget' render={() =><PasswordReset />}/>
+                                    <Route exact path='/pw-forget' render={(props: any) =><PasswordReset {...props} />}/>
                                     <Route exact path='/privacy_policy' render={() => <Privacy/>}/>
-                                    <Route path='/signin' render={() =><SignInForm />}/>
+                                    <Route path='/signin' render={(props: any) =><SignInForm {...props} />}/>
+                                    {/*//@ts-ignore*/}
                                     <Route path={/^(?!.*(pw-forget|signup|signin|privacy_policy)).*$/} render={() =><HomePage />}/>
                                 </div>
 
@@ -381,6 +410,3 @@ class App extends Component {
         )
     }
 }
-
-
-export default App

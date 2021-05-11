@@ -210,7 +210,6 @@ const styles = {
 
 type ShowsProps = {
     changeNavigation: (location: any) => void;
-    displaySnackMessage: (message: string) => void;
 }
 
 type Show = {
@@ -682,7 +681,7 @@ class Shows extends Component<ShowsProps, ShowsState> {
 
             this.setState({episodeTorrentsLoading: false, episodeTorrents: torrentsTagguedToReturn, episodeTorrentsFull: torrentsTagguedToReturn});
         } catch(error) {
-            this.props.displaySnackMessage('Error while getting episode torrents');
+            this.setState({snackBarMessage: 'Error while getting episode torrents', snack: true});
             this.setState({episodeTorrentsLoading: false})
         }
 

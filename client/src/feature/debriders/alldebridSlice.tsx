@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import ky from 'ky';
+// import ky from 'ky';
 
 
 export const alldebridSlice = createSlice({
@@ -38,8 +38,8 @@ export const { isConnected, pinCodeLoading, pinCodeReceived } = alldebridSlice.a
 // Define a thunk that dispatches those action creators
 const fetchPinCode = () => async (dispatch: any) => {
   dispatch(pinCodeLoading(true))
-  const response = await ky.get('/api/alldebrid/new_pin', {json: {foo: true}}).json();
-  dispatch(pinCodeReceived(response))
+  // const response = await ky.get('/api/alldebrid/new_pin', {json: {foo: true}}).json();
+  // dispatch(pinCodeReceived(response))
 }
 
 export default alldebridSlice.reducer

@@ -22,7 +22,7 @@ const styles = {
 
 type MovieProps = {
     history: any;
-    changeNavigation: (location: any) => {};
+    changeNavigation: (location: any) => void;
     match: {
         params: {
             id: any
@@ -48,7 +48,7 @@ type MovieState = {
     oldScroll: number;
     movieGenres: MovieGenre[];
     movieGenresLoading: boolean;
-    moviesGenre: MovieGenre
+    moviesGenre: MovieGenre;
     showInfoDialog: boolean;
     providersMovies: any;
     qualities: any;

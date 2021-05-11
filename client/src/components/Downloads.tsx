@@ -5,7 +5,7 @@ import MoviesInProgress from './downloads/MoviesInProgress';
 import CurrentDownloads from './downloads/CurrentDownloads';
 
 type DownloadsProps = {
-    changeNavigation: (location: any) => {};
+    changeNavigation: (location: any) => void;
 }
 
 type DownloadsState = {

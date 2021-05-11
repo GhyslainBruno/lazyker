@@ -70,7 +70,7 @@ const SearchMoviesAppBar = (props: SearchMoviesAppBarProps) => {
                 </Toolbar>
             </AppBar>
 
-            <Paper elevation={1} style={props.movieGenres !== null ? {padding: '5px'} : {display: 'none'}}>
+            <Paper elevation={1} style={props.movieGenres.length > 0 ? {padding: '5px'} : {display: 'none'}}>
 
                 <CircularProgress style={props.movieGenresLoading ? {display: 'inline-block'} : {display: 'none'}}/>
 

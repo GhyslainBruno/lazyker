@@ -263,7 +263,7 @@ const Settings = (props: SettingsProps) => {
                     setStorage('')
                 }
 
-                if (settings.debriders.alldebrid.apiKey) {
+                if (settings?.debriders?.alldebrid?.apiKey) {
                     dispatch(isConnected('connected'));
                 } else {
                     dispatch(isConnected('disconnected'));

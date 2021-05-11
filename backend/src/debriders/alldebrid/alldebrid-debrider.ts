@@ -1,5 +1,4 @@
 import got from 'got';
-import * as url from 'url';
 import {Database} from '../../database/database';
 import {DebriderEnum} from '../../database/debrider-enum';
 import {TorrentInDebriderInfos} from '../../entities/torrent-in-debrider-infos';
@@ -141,6 +140,10 @@ export class AllDebrid implements IDebrider {
     } catch(error) {
       console.log(error.message);
     }
+  }
+
+  static async disconnect(user: User): Promise<void> {
+    await Database.removeDebrider(user, DebriderEnum.ALLDEBRID);
   }
 
   static async getPinCode(): Promise<CreatePinDto> {

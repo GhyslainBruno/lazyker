@@ -15,4 +15,8 @@ export class Database {
     return await usersRef.child(user.uid).child('settings').child('debriders').child(debrider).set({apiKey: apiKey});
   }
 
+  static async removeDebrider(user: User, debrider: DebriderEnum) {
+    return await usersRef.child(user.uid).child('settings').child('debriders').child(debrider).remove();
+  }
+
 }

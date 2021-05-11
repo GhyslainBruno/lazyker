@@ -420,7 +420,8 @@ const MovieInfoDialog = (props: MyProps) => {
                     size="small"
                     style={{
                         position: 'absolute',
-                        // zIndex: '1',
+                        // @ts-ignore
+                        zIndex: '1',
                         right: '5px',
                         top: '5px',
                         backgroundColor: '#757575',

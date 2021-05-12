@@ -7,7 +7,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import {useDispatch, useSelector} from 'react-redux';
-import {isConnected} from '../feature/debriders/alldebridSlice';
+import {isConnected} from '../feature/debriders/Alldebrid.slice';
 import SignOutButton from "../firebase/SignOutBtn";
 import { auth } from '../firebase';
 import queryString from "qs";

@@ -2,7 +2,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import React from "react";
 import { useSelector, useDispatch } from 'react-redux'
 import {Dispatch} from 'redux';
-import {fetchAlldebridDisconnect, fetchNewPinCode, isConnected} from "../../../../feature/debriders/alldebridSlice";
+import {fetchAlldebridDisconnect, fetchNewPinCode} from "../../../../feature/debriders/Alldebrid.slice";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import CancelCircle from "@material-ui/icons/CancelOutlined";
 import Button from "@material-ui/core/Button";

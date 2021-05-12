@@ -1,3 +1,4 @@
+import Fab from '@material-ui/core/Fab';
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -294,7 +295,7 @@ type ShowsState = {
     labelWidth: any;
 }
 
-class Shows extends Component<ShowsProps, ShowsState> {
+export default class Shows extends Component<ShowsProps, ShowsState> {
 
   constructor(props: ShowsProps)
   {
@@ -877,14 +878,14 @@ class Shows extends Component<ShowsProps, ShowsState> {
                   TransitionComponent={Transition}
               >
 
-                  <Button
+                  <Fab
                       onClick={() => this.closeShowDownloadDialog()}
-                      variant="fab"
+                      size={'small'}
                       mini
                       // @ts-ignore
                       style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>
                       <Close />
-                  </Button>
+                  </Fab>
 
                   <div className="movieInfoDialog">
 
@@ -949,42 +950,6 @@ class Shows extends Component<ShowsProps, ShowsState> {
                                               <FormHelperText>Episode number</FormHelperText>
                                           </FormControl>
                                       </Grid>
-
-                                      {/*// Quality selector - not used for now*/}
-                                      {/*<Grid item xs={4} style={{padding: '6px'}}>*/}
-                                      {/*<FormControl style={{minWidth: '80px'}} variant="outlined">*/}
-                                      {/*<Select*/}
-                                      {/*disabled*/}
-                                      {/*value={this.state.qualityEpisode}*/}
-                                      {/*onChange={this.handlerQualityEpisodeChange}*/}
-                                      {/*input={*/}
-                                      {/*<OutlinedInput*/}
-                                      {/*labelWidth={this.state.labelWidth}*/}
-                                      {/*name="qualityEpisode"*/}
-                                      {/*id="quality-episode"*/}
-                                      {/*/>*/}
-                                      {/*}>*/}
-
-                                      {/*<MenuItem value="">*/}
-                                      {/*<em>None</em>*/}
-                                      {/*</MenuItem>*/}
-                                      {/*<MenuItem value={'hdtv'}>HDTV</MenuItem>*/}
-                                      {/*<MenuItem value={'720'}>720p</MenuItem>*/}
-                                      {/*<MenuItem value={'1080'}>1080p</MenuItem>*/}
-                                      {/*<MenuItem value={'multi'}>Multi</MenuItem>*/}
-                                      {/*<MenuItem value={'vf'}>VF</MenuItem>*/}
-                                      {/*<MenuItem value={'vostfr'}>VOSTFR</MenuItem>*/}
-
-                                      {/*</Select>*/}
-                                      {/*<FormHelperText>Quality</FormHelperText>*/}
-                                      {/*</FormControl>*/}
-                                      {/*</Grid>*/}
-
-                                      {/*<Grid item xs={1}>*/}
-                                          {/*<IconButton>*/}
-                                              {/*<Search onClick={() => this.searchShowEpisodeTorrents()}/>*/}
-                                          {/*</IconButton>*/}
-                                      {/*</Grid>*/}
 
                                   </Grid>
 
@@ -1119,10 +1084,6 @@ class Shows extends Component<ShowsProps, ShowsState> {
 
                                                                                           onClick={() => this.downloadEpisodeTorrent(torrent)}/>
                                                                                   </ListItem>
-
-                                                                                  {/*<ListItem button style={{overflow: 'hidden'}}>*/}
-                                                                                  {/*    <ListItemText primary={torrent.title} onClick={() => this.downloadEpisodeTorrent(torrent)}/>*/}
-                                                                                  {/*</ListItem>*/}
                                                                               </Paper>
                                                                           )})
                                                                       :
@@ -1282,7 +1243,7 @@ class Shows extends Component<ShowsProps, ShowsState> {
 
                               {this.state.isInSearchView ?
 
-                                  <CardActions style={{display: 'flex'}} disableActionSpacing>
+                                  <CardActions style={{display: 'flex'}} disableSpacing>
                                       <Button aria-label="add" style={{width: '100%'}} onClick={(e) => this.showAddShowDialog(e, show)}>
                                           <AddCircle />
                                       </Button>
@@ -1290,7 +1251,7 @@ class Shows extends Component<ShowsProps, ShowsState> {
 
                                   :
 
-                                  <CardActions style={{display: 'flex'}} disableActionSpacing>
+                                  <CardActions style={{display: 'flex'}} disableSpacing>
 
                                       <Button onClick={(e) => this.updateShow(show)} style={{minWidth: '0', flex: '1'}}>
 
@@ -1339,4 +1300,3 @@ class Shows extends Component<ShowsProps, ShowsState> {
 }
 
 
-export default Shows

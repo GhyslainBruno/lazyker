@@ -434,14 +434,13 @@ const MovieInfoDialog = (props: MyProps) => {
                 </Fab>
 
 
-                <Button
+                <Fab
                     onClick={() => getMovieInfo(props.selectedMovie)}
-                    variant="fab"
-                    mini
+                    size="small"
                     // @ts-ignore
                     style={isInTorrentOrDdl ? {margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", left: '0'} : {display: 'none'}}>
                     <ArrowBack />
-                </Button>
+                </Fab>
 
                 <div style={{textAlign: 'center'}}>
 

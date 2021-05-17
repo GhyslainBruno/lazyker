@@ -2,7 +2,7 @@ import Grid from "@material-ui/core/Grid";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import Button from "@material-ui/core/Button";
 import CancelCircle from "@material-ui/icons/CancelOutlined";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import React from "react";
 import {Alldebrid} from "./debriders/Alldebrid";
 
@@ -17,7 +17,7 @@ const Debriders = (props: DebridersProps) => {
     const redirectAlldebridUri = 'https://alldebrid.com/pin/?pin=JYYC';
 
     return (
-        <ExpansionPanelDetails>
+        <AccordionDetails>
             <Grid container spacing={0}>
 
                 <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
@@ -70,7 +70,7 @@ const Debriders = (props: DebridersProps) => {
               <Alldebrid/>
 
             </Grid>
-        </ExpansionPanelDetails>
+        </AccordionDetails>
     )
 };
 export default Debriders

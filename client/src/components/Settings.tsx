@@ -1,6 +1,7 @@
+import Button from '@material-ui/core/Button';
 import React, {Component, useEffect, useState} from 'react';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -8,6 +9,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import {useDispatch, useSelector} from 'react-redux';
 import {isConnected} from '../feature/debriders/Alldebrid.slice';
+import {closeSnackBar} from '../feature/snack/Snackbar.slice';
 import SignOutButton from "../firebase/SignOutBtn";
 import { auth } from '../firebase';
 import queryString from "qs";
@@ -17,7 +19,12 @@ import Qualities from "./settings/configuration/qualities";
 import Storage from "./settings/configuration/storage";
 import Debriders from "./settings/configuration/debriders";
 import PrivacyPolicies from "./settings/privacy_policies";
+import MuiAlert from '@material-ui/lab/Alert';
 import Save from "./settings/save";
+
+function Alert(props: any) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 let auth2: any = null;
 
@@ -81,7 +88,18 @@ type SettingsProps = {
     history: any;
 }
 
+// TODO: extract it !!!
+type Store = {
+    snack: {
+        opened: boolean;
+        message: string;
+    }
+}
+
 const Settings = (props: SettingsProps) => {
+
+    const settingsSnackBarOpenedState = useSelector((state: Store): boolean => {return state.snack.opened});
+    const settingsSnackBarMessage = useSelector((state: Store): string => {return state.snack.message});
 
     const dispatch = useDispatch()
 
@@ -456,6 +474,7 @@ const Settings = (props: SettingsProps) => {
     return (
       <div style={{width: '100%', marginBottom: '10vh'}}>
 
+          {/* TODO: remove this old snack bar - it could still be used at some places, be careful */}
           <Snackbar
             open={snack}
             onClose={() => setSnack(false)}
@@ -463,15 +482,26 @@ const Settings = (props: SettingsProps) => {
             message={snackBarMessage}
           />
 
+          <Snackbar
+            open={settingsSnackBarOpenedState}
+            autoHideDuration={2000}
+            onClose={() => dispatch(closeSnackBar({}))}
+            >
+              <Alert severity="success">
+                  {settingsSnackBarMessage}
+              </Alert>
+          </Snackbar>
+
+
           <h1>Settings</h1>
 
           <div>
-              <ExpansionPanel style={{textAlign: 'center'}}
-                              onChange={(event, expanded) => expanded ? loadSettings() : null}>
+              <Accordion style={{textAlign: 'center'}}
+                         onChange={(event, expanded) => expanded ? loadSettings() : null}>
 
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                       <Typography>Configuration</Typography>
-                  </ExpansionPanelSummary>
+                  </AccordionSummary>
 
                   <CircularProgress style={settingsLoading ? {
                       display: 'inline-block',
@@ -542,7 +572,7 @@ const Settings = (props: SettingsProps) => {
                     null
                   }
 
-              </ExpansionPanel>
+              </Accordion>
 
               <Logs
                 displaySnackMessage={displaySnackMessage}

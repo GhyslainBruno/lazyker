@@ -27,6 +27,7 @@ export const UptoboxTokenDialog = () => {
             autoComplete="current-password"
             variant="outlined"
             style={{width: '100%'}}
+            value={token}
             onChange={event => dispatch(updateToken(event.target.value))}
           />
         </DialogContentText>

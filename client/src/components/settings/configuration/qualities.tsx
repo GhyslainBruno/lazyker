@@ -7,7 +7,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 
 type QualitiesProps = {
     firstQuality: any;
@@ -21,7 +21,7 @@ type QualitiesProps = {
 
 const Qualities = (props: QualitiesProps) => {
     return (
-        <ExpansionPanelDetails style={{textAlign: 'center'}}>
+        <AccordionDetails style={{textAlign: 'center'}}>
 
             <Grid container spacing={0}>
 
@@ -36,7 +36,6 @@ const Qualities = (props: QualitiesProps) => {
                             onChange={props.handlerQualityChange}
                             input={
                                 <OutlinedInput
-                                    labelWidth={props.labelWidth}
                                     name="firstQuality"
                                     id="first-quality"
                                 />
@@ -61,7 +60,6 @@ const Qualities = (props: QualitiesProps) => {
                             onChange={props.handlerQualityChange}
                             input={
                                 <OutlinedInput
-                                    labelWidth={props.labelWidth}
                                     name="secondQuality"
                                     id="second-quality"
                                 />
@@ -86,7 +84,6 @@ const Qualities = (props: QualitiesProps) => {
                             onChange={props.handlerQualityChange}
                             input={
                                 <OutlinedInput
-                                    labelWidth={props.labelWidth}
                                     name="thirdQuality"
                                     id="third-quality"
                                 />
@@ -118,7 +115,7 @@ const Qualities = (props: QualitiesProps) => {
                         style={{margin: '0 auto'}}/>
                 </Grid>
             </Grid>
-        </ExpansionPanelDetails>
+        </AccordionDetails>
     )
 };
 export default Qualities

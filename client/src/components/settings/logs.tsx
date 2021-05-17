@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import {auth} from "../../firebase";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
-import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
+import AccordionActions from "@material-ui/core/AccordionActions";
 import Button from "@material-ui/core/Button";
 import ClearLogs from "@material-ui/icons/ClearAll";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import Accordion from "@material-ui/core/Accordion";
 
 type LoadOutputDto = LogDto[]
 
@@ -91,13 +91,13 @@ const Logs = (props: LogsProps) => {
     };
 
     return (
-        <ExpansionPanel onChange={(event, expanded) => expanded ? loadOutput() : null}>
+        <Accordion onChange={(event, expanded) => expanded ? loadOutput() : null}>
 
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography>Output</Typography>
-            </ExpansionPanelSummary>
+            </AccordionSummary>
 
-            <ExpansionPanelDetails style={{maxHeight: '50vh', overflow: 'auto'}}>
+            <AccordionDetails style={{maxHeight: '50vh', overflow: 'auto'}}>
                 <div style={loading ? {display: 'inline-block', width: '100%', textAlign: 'center'} : {display: 'none'}}>
                     <CircularProgress />
                 </div>
@@ -120,20 +120,20 @@ const Logs = (props: LogsProps) => {
 
                 </List>
 
-            </ExpansionPanelDetails>
+            </AccordionDetails>
 
             <Divider />
 
-            <ExpansionPanelActions>
+            <AccordionActions>
                 <Button
                     size="small"
                     onClick={clearLogs}>
 
                     <ClearLogs />
                 </Button>
-            </ExpansionPanelActions>
+            </AccordionActions>
 
-        </ExpansionPanel>
+        </Accordion>
     );
 };
 

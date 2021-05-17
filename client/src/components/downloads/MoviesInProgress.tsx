@@ -1,7 +1,7 @@
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import List from "@material-ui/core/List";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ListItem from "@material-ui/core/ListItem";
@@ -10,7 +10,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import Error from "@material-ui/icons/Error";
 import Delete from "@material-ui/icons/Delete";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import Accordion from "@material-ui/core/Accordion";
 import React from "react";
 import * as auth from "../../firebase/auth";
 import firebase from "firebase";
@@ -81,11 +81,11 @@ class MoviesInProgress extends React.Component<MyProps, MyState> {
     render() {
         return (
 
-            <ExpansionPanel onChange={(event, expanded) => expanded ? this.loadMoviesInProgress() : null}>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Accordion onChange={(event, expanded) => expanded ? this.loadMoviesInProgress() : null}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>Medias in progress</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails style={{textAlign: 'center'}}>
+                </AccordionSummary>
+                <AccordionDetails style={{textAlign: 'center'}}>
 
                     <List component="nav" style={{width: '100%'}}>
 
@@ -127,8 +127,8 @@ class MoviesInProgress extends React.Component<MyProps, MyState> {
 
                     </List>
 
-                </ExpansionPanelDetails>
-            </ExpansionPanel>
+                </AccordionDetails>
+            </Accordion>
         )
     }
 }

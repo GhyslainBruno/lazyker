@@ -4,6 +4,8 @@ import ky from 'ky';
 import {Dispatch} from 'redux';
 import {auth} from '../../firebase';
 import {ConnectedStateEnum} from '../ConnectedState.enum';
+import {fetchPinCodeStatus} from '../debriders/Alldebrid.slice';
+import {displayMessage} from '../snack/Snackbar.slice';
 
 export const storeToken = createAsyncThunk(
   'uptobox/storeToken',
@@ -23,9 +25,9 @@ export const listenTokenState = async (dispatch: Dispatch<any>) => {
     .child(await auth.getUid())
     .child('/settings/storage/uptobox/token')
     .on('value', (snapshot: any) => {
-      console.log(snapshot.val());
       if (snapshot.val() !== null) {
         dispatch(updateConnectedState(ConnectedStateEnum.CONNECTED));
+        dispatch(updateToken(snapshot.val()));
       } else {
         dispatch(updateConnectedState(ConnectedStateEnum.DISCONNECTED));
       }
@@ -34,13 +36,15 @@ export const listenTokenState = async (dispatch: Dispatch<any>) => {
 
 export const saveToken = createAsyncThunk(
   "uptobox/saveToken",
-  async (state: any) => {
+  async (state: any, thunkAPI) => {
     await firebase
       .database()
       .ref('/users')
       .child(await auth.getUid())
       .child('/settings/storage/uptobox/token')
       .set(state);
+
+    thunkAPI.dispatch(displayMessage({message: 'Token saved'}));
 });
 
 export const deleteToken = createAsyncThunk(
@@ -62,7 +66,9 @@ export const uptoboxSlice = createSlice({
     movieFolder: '',
     showsFolder: '',
     connectedState: ConnectedStateEnum.DISCONNECTED,
-    isTokenDialogOpened: false
+    isTokenDialogOpened: false,
+    displaySnackBar: false,
+    snackBarMessage: ''
   },
   reducers: {
     updateToken: (state, action) => {
@@ -88,15 +94,14 @@ export const uptoboxSlice = createSlice({
     },
 
     [saveToken.fulfilled.type]: (state, action) => {
-      // state.token = action.payload.token;
-      console.log('foo');
+      state.isTokenDialogOpened = false;
     },
     [saveToken.pending.type]: (state, action) => {
-      // state.token = action.payload.token;
-      console.log('foo');
+      state.isTokenDialogOpened = true;
+      console.log('loading...');
     },
     [saveToken.rejected.type]: (state, action) => {
-      // state.token = action.payload.token;
+      state.isTokenDialogOpened = false;
       console.log('foo');
     },
   }

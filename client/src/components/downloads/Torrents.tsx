@@ -1,12 +1,12 @@
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import List from "@material-ui/core/List";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import IconButton from "@material-ui/core/IconButton";
 import Error from "@material-ui/icons/Error";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import Accordion from "@material-ui/core/Accordion";
 import React from "react";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import PlayArrow from "@material-ui/icons/PlayArrow";
@@ -259,7 +259,7 @@ class Torrents extends React.Component<MyProps, MyState> {
     render() {
         return (
 
-            <ExpansionPanel onChange={(event, expanded) => expanded ? this.firstTorrentsLoad() : this.stopsRealTimeTorrents()}>
+            <Accordion onChange={(event, expanded) => expanded ? this.firstTorrentsLoad() : this.stopsRealTimeTorrents()}>
 
                 <Dialog
                     open={this.state.showDeleteDialog}
@@ -283,10 +283,10 @@ class Torrents extends React.Component<MyProps, MyState> {
                     </DialogActions>
                 </Dialog>
 
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>RealDebrid Torrents</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails style={{textAlign: 'center'}}>
+                </AccordionSummary>
+                <AccordionDetails style={{textAlign: 'center'}}>
 
                     <List component="nav" style={{width: '100%'}}>
 
@@ -418,8 +418,8 @@ class Torrents extends React.Component<MyProps, MyState> {
 
                     </List>
 
-                </ExpansionPanelDetails>
-            </ExpansionPanel>
+                </AccordionDetails>
+            </Accordion>
         )
     }
 }

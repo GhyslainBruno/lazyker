@@ -1,13 +1,13 @@
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionActions from '@material-ui/core/AccordionActions';
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import List from "@material-ui/core/List";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import IconButton from "@material-ui/core/IconButton";
 import Error from "@material-ui/icons/Error";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import Accordion from "@material-ui/core/Accordion";
 import React from "react";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import PlayCircle from "@material-ui/icons/PlayCircleOutline";
@@ -329,7 +329,7 @@ class CurrentDownloads extends React.Component<MyProps, MyState> {
     render() {
         return (
 
-            <ExpansionPanel onChange={(event, expanded) => expanded ? this.loadCurrentDownloads() : null}>
+            <Accordion onChange={(event, expanded) => expanded ? this.loadCurrentDownloads() : null}>
 
                 <Dialog
                     open={this.state.showRemoveDialog}
@@ -353,10 +353,10 @@ class CurrentDownloads extends React.Component<MyProps, MyState> {
                     </DialogActions>
                 </Dialog>
 
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>Current downloads</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails style={{textAlign: 'center'}}>
+                </AccordionSummary>
+                <AccordionDetails style={{textAlign: 'center'}}>
 
                     <List component="nav" style={{width: '100%'}}>
 
@@ -441,13 +441,13 @@ class CurrentDownloads extends React.Component<MyProps, MyState> {
 
                     </List>
 
-                </ExpansionPanelDetails>
+                </AccordionDetails>
 
                 {this.state.currentDownloads !== null ? this.state.currentDownloads.length > 0 ?
 
-                    <ExpansionPanelActions>
+                    <AccordionActions>
                         <Button size="small"><Clear onClick={(event) => this.clearDownloads(event)}/></Button>
-                    </ExpansionPanelActions>
+                    </AccordionActions>
 
                     :
 
@@ -457,7 +457,7 @@ class CurrentDownloads extends React.Component<MyProps, MyState> {
 
                     null
                 }
-            </ExpansionPanel>
+            </Accordion>
         )
     }
 }

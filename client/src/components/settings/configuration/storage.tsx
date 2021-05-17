@@ -16,7 +16,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import InputAdornment from "@material-ui/core/InputAdornment/InputAdornment";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Visibility from "@material-ui/icons/Visibility";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import React from "react";
 import {Uptobox} from './storage/uptobox/Uptobox';
 
@@ -60,7 +60,7 @@ type StorageProps = {
 
 const Storage = (props: StorageProps) => {
     return (
-        <ExpansionPanelDetails>
+        <AccordionDetails>
             <Grid container spacing={0}>
                 <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
                     Storage
@@ -396,7 +396,7 @@ const Storage = (props: StorageProps) => {
                 }
 
             </Grid>
-        </ExpansionPanelDetails>
+        </AccordionDetails>
     )
 };
 

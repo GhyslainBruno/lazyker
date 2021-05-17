@@ -7,16 +7,13 @@ import {ConnectedStateEnum} from '../ConnectedState.enum';
 import {fetchPinCodeStatus} from '../debriders/Alldebrid.slice';
 import {displayMessage} from '../snack/Snackbar.slice';
 
-export const storeToken = createAsyncThunk(
-  'uptobox/storeToken',
-  async (state, thunkAPI) => {
+export const storeToken = createAsyncThunk('uptobox/storeToken', async (state, thunkAPI) => {
     try {
       return await ky.get('/api/alldebrid/new_pin').json();
     } catch(error) {
       console.error(error);
     }
-  }
-)
+  })
 
 export const listenTokenState = async (dispatch: Dispatch<any>) => {
   firebase
@@ -34,9 +31,7 @@ export const listenTokenState = async (dispatch: Dispatch<any>) => {
     })
 }
 
-export const saveToken = createAsyncThunk(
-  "uptobox/saveToken",
-  async (state: any, thunkAPI) => {
+export const saveToken = createAsyncThunk("uptobox/saveToken", async (state: any, thunkAPI) => {
     await firebase
       .database()
       .ref('/users')
@@ -47,15 +42,15 @@ export const saveToken = createAsyncThunk(
     thunkAPI.dispatch(displayMessage({message: 'Token saved'}));
 });
 
-export const deleteToken = createAsyncThunk(
-  "uptobox/deleteToken",
-  async () => {
+export const deleteToken = createAsyncThunk("uptobox/deleteToken", async (state: any, thunkAPI) => {
     await firebase
       .database()
       .ref('/users')
       .child(await auth.getUid())
       .child('/settings/storage/uptobox/token')
       .remove();
+
+  thunkAPI.dispatch(displayMessage({message: 'Token deleted :-('}));
   });
 
 export const uptoboxSlice = createSlice({
@@ -67,6 +62,7 @@ export const uptoboxSlice = createSlice({
     showsFolder: '',
     connectedState: ConnectedStateEnum.DISCONNECTED,
     isTokenDialogOpened: false,
+    isDeleteTokenDialogOpened: false,
     displaySnackBar: false,
     snackBarMessage: ''
   },
@@ -76,6 +72,9 @@ export const uptoboxSlice = createSlice({
     },
     openTokenDialog: (state, action) => {
       state.isTokenDialogOpened = action.payload
+    },
+    openDeleteTokenDialog: (state, action) => {
+      state.isDeleteTokenDialogOpened = action.payload
     },
     updateConnectedState: (state, action) => {
       state.connectedState = action.payload
@@ -98,16 +97,24 @@ export const uptoboxSlice = createSlice({
     },
     [saveToken.pending.type]: (state, action) => {
       state.isTokenDialogOpened = true;
-      console.log('loading...');
     },
     [saveToken.rejected.type]: (state, action) => {
       state.isTokenDialogOpened = false;
-      console.log('foo');
+    },
+
+    [deleteToken.fulfilled.type]: (state, action) => {
+      state.isDeleteTokenDialogOpened = false;
+    },
+    [deleteToken.pending.type]: (state, action) => {
+      state.isDeleteTokenDialogOpened = true;
+    },
+    [deleteToken.rejected.type]: (state, action) => {
+      state.isDeleteTokenDialogOpened = false;
     },
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { updateToken, openTokenDialog, updateConnectedState } = uptoboxSlice.actions
+export const { updateToken, openTokenDialog, openDeleteTokenDialog, updateConnectedState } = uptoboxSlice.actions
 
 export default uptoboxSlice.reducer

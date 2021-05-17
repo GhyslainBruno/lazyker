@@ -2,6 +2,7 @@ import {makeStyles} from '@material-ui/core';
 import React from 'react';
 import {UptoboxConnectionButton} from './UptoboxConnectionButton';
 import {UptoboxConnectionState} from './UptoboxConnectionState';
+import {UptoboxDeleteTokenDialog} from './UptoboxDeleteTokenDialog';
 import {UptoboxTokenDialog} from './UptoboxTokenDialog';
 
 const useStyles = makeStyles({
@@ -22,6 +23,8 @@ export const UptoboxLinkedComponent = () => {
     <div style={{display: 'flex'}}>
 
       <UptoboxTokenDialog />
+
+      <UptoboxDeleteTokenDialog />
 
       <div className={classes.container}>
         <div className={classes.itemText}>

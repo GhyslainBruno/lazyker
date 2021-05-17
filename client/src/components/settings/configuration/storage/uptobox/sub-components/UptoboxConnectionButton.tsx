@@ -6,7 +6,12 @@ import LinkOff from '@material-ui/icons/LinkOff';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {ConnectedStateEnum} from '../../../../../../feature/ConnectedState.enum';
-import {deleteToken, openTokenDialog, updateConnectedState} from '../../../../../../feature/storage/Uptobox.slice';
+import {
+  deleteToken,
+  openDeleteTokenDialog,
+  openTokenDialog,
+  updateConnectedState
+} from '../../../../../../feature/storage/Uptobox.slice';
 
 const useStyles = makeStyles({
   container: {
@@ -32,7 +37,7 @@ export const UptoboxConnectionButton = () => {
           <IconButton onClick={() => dispatch(openTokenDialog(true))}>
             <Edit />
           </IconButton>
-          <IconButton onClick={() => dispatch(deleteToken())}>
+          <IconButton onClick={() => dispatch(openDeleteTokenDialog(true))}>
             <LinkOff />
           </IconButton>
         </div>

@@ -1,6 +1,7 @@
 import got from 'got';
 import {MediaInfos} from '../../entities/media-infos';
 import {TorrentInDebriderInfos} from '../../entities/torrent-in-debrider-infos';
+import {User} from '../../entities/user';
 import {IStorage} from '../i-storage';
 
 export class UptoboxFileCode extends String {
@@ -120,4 +121,7 @@ export class Uptobox implements IStorage {
 
   }
 
+  static async storeToken(token: string, user: User): Promise<void> {
+
+  }
 }

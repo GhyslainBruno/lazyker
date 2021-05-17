@@ -116,6 +116,18 @@ module.exports = (app: any) => {
         }
     });
 
+    app.get('/api/uptobox/connect', async(req: any, res: any) => {
+        try {
+            const user = await admin.auth().verifyIdToken(req.headers.token);
+            await AllDebrid.disconnect(user);
+            res.send({
+                message: 'disconnected'
+            })
+        } catch(error) {
+            res.status(500).send({message: error});
+        }
+    });
+
     /**
      * Gets and stores a Gdrive access token to database from single use client token
      */

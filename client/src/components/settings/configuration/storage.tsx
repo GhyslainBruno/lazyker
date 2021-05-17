@@ -18,7 +18,7 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Visibility from "@material-ui/icons/Visibility";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import React from "react";
-import {Uptobox} from './storage/Uptobox';
+import {Uptobox} from './storage/uptobox/Uptobox';
 
 type StorageProps = {
 
@@ -250,7 +250,7 @@ const Storage = (props: StorageProps) => {
                         }
                     </div>
                     :
-                    props.storage === 'uptobox' ?
+                  props.storage.hasOwnProperty('uptobox') || props.storage === 'uptobox' ?
 
                       <Uptobox/>
 

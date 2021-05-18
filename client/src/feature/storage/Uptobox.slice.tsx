@@ -50,7 +50,7 @@ export const deleteToken = createAsyncThunk("uptobox/deleteToken", async (state:
       .child('/settings/storage/uptobox/token')
       .remove();
 
-  thunkAPI.dispatch(displayMessage({message: 'Token deleted :-('}));
+  thunkAPI.dispatch(displayMessage({message: 'Token deleted'}));
   });
 
 export const uptoboxSlice = createSlice({

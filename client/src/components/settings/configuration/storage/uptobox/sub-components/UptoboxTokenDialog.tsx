@@ -20,17 +20,15 @@ export const UptoboxTokenDialog = () => {
 
       <DialogContent>
 
-        <DialogContentText>
-          <TextField
-            className="authFieldPassword"
-            label='Token'
-            autoComplete="current-password"
-            variant="outlined"
-            style={{width: '100%'}}
-            value={token}
-            onChange={event => dispatch(updateToken(event.target.value))}
-          />
-        </DialogContentText>
+        <TextField
+          className="authFieldPassword"
+          label='Token'
+          variant="outlined"
+          style={{width: '100%'}}
+          value={token}
+          onChange={event => dispatch(updateToken(event.target.value))}
+        />
+
       </DialogContent>
 
       <DialogActions>

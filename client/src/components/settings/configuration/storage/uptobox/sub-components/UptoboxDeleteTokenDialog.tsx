@@ -13,7 +13,7 @@ import {
 } from '../../../../../../feature/storage/Uptobox.slice';
 
 export const UptoboxDeleteTokenDialog = () => {
-  const isDeleteTokenDialogOpened = useSelector((state: any) => state.storage.isDeleteTokenDialogOpened);
+  const isDeleteTokenDialogOpened = useSelector((state: any) => state.uptobox.isDeleteTokenDialogOpened);
   const dispatch = useDispatch();
 
   return (

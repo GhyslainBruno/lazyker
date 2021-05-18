@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 })
 
 export const UptoboxConnectionState = () => {
-  const connectedState = useSelector((state: any) => state.storage.connectedState);
+  const connectedState = useSelector((state: any) => state.uptobox.connectedState);
   const dispatch = useDispatch();
   const classes = useStyles();
 

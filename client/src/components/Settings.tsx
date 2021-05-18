@@ -1,4 +1,3 @@
-import Button from '@material-ui/core/Button';
 import React, {Component, useEffect, useState} from 'react';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -524,8 +523,6 @@ const Settings = (props: SettingsProps) => {
                         <Divider/>
 
                         <Storage
-                          storage={storage}
-                          setStorage={setStorage}
                           googleDriveConnectLoading={googleDriveConnectLoading}
                           settingsLoading={settingsLoading}
                           moviesGdriveFolderName={moviesGdriveFolderName}

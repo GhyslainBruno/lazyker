@@ -26,7 +26,7 @@ const useStyles = makeStyles({
 })
 
 export const UptoboxConnectionButton = () => {
-  const connectedState = useSelector((state: any) => state.storage.connectedState);
+  const connectedState = useSelector((state: any) => state.uptobox.connectedState);
   const dispatch = useDispatch();
   const classes = useStyles();
 

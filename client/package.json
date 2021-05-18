@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^2.0.3",
+    "@material-ui/lab": "^4.0.0-alpha.58",
     "@material/react-button": "^0.4.2",
     "@material/react-text-field": "^0.4.2",
     "@material/theme": "^0.39.1",

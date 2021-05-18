@@ -17,15 +17,13 @@ import InputAdornment from "@material-ui/core/InputAdornment/InputAdornment";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Visibility from "@material-ui/icons/Visibility";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
-import React from "react";
+import React, {useEffect} from "react";
+import {useDispatch, useSelector} from 'react-redux';
+import {StorageEnum} from '../../../feature/storage/Storage.enum';
+import {fetchStorage, saveStorage, updateStorage} from '../../../feature/storage/Storage.slice';
 import {Uptobox} from './storage/uptobox/Uptobox';
 
 type StorageProps = {
-
-    // TODO: should be an enum at the very least
-    storage: string;
-    // TODO: should be an enum at the very least
-    setStorage: (storage: string) => void;
     googleDriveConnectLoading: boolean;
     settingsLoading: boolean;
     moviesGdriveFolderName: string | null;
@@ -37,9 +35,6 @@ type StorageProps = {
     gdriveToken: any;
     googleDriveConnect: () => {};
     googleDriveDisConnect: () => {};
-    // uptoboxToken: any;
-    // uptoboxDisconnect: () => {};
-    // uptoboxConnect: () => {};
     moviesPath: any;
     setMoviesPath: (event: any) => void;
     tvShowsPath: any;
@@ -59,6 +54,14 @@ type StorageProps = {
 }
 
 const Storage = (props: StorageProps) => {
+
+    const storageSelected = useSelector((state: any) => state.storage.storageSelected);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(fetchStorage());
+    }, []);
+
     return (
         <AccordionDetails>
             <Grid container spacing={0}>
@@ -70,26 +73,23 @@ const Storage = (props: StorageProps) => {
 
                     <Chip
                       label="Uptobox"
-                      variant={props.storage === "uptobox" ? "default" : "outlined"}
+                      variant={storageSelected === StorageEnum.UPTOBOX ? "default" : "outlined"}
                       style={{margin: '3px'}}
-                      // clickable="true"
-                      onClick={() => {props.setStorage('uptobox')}}/>
+                      onClick={() => {dispatch(saveStorage(StorageEnum.UPTOBOX))}}/>
                     <Chip
                         label="Google Drive"
-                        variant={props.storage === "gdrive" ? "default" : "outlined"}
+                        variant={storageSelected === StorageEnum.GOOGLE_DRIVE ? "default" : "outlined"}
                         style={{margin: '3px'}}
-                        // clickable="true"
-                        onClick={() => {props.setStorage('gdrive')}}/>
+                        onClick={() => {dispatch(saveStorage(StorageEnum.GOOGLE_DRIVE))}}/>
                     <Chip
                         label="NAS Synology"
-                        variant={props.storage === "nas" ? "default" : "outlined"}
+                        variant={storageSelected === StorageEnum.NAS ? "default" : "outlined"}
                         style={{margin: '3px'}}
-                        // clickable="true"
-                        // onClick={() => {props.setStorage('nas')}}
+                        onClick={() => {dispatch(saveStorage(StorageEnum.NAS))}}
                     />
                 </Grid>
 
-                {props.storage === 'gdrive' ?
+                {storageSelected === StorageEnum.GOOGLE_DRIVE ?
                     <div style={{width: '100%'}}>
                         { props.googleDriveConnectLoading ?
                             <CircularProgress style={props.settingsLoading ? {display: 'inline-block', margin: '5px'} : {display: 'none'}} />
@@ -250,37 +250,9 @@ const Storage = (props: StorageProps) => {
                         }
                     </div>
                     :
-                  props.storage.hasOwnProperty('uptobox') || props.storage === 'uptobox' ?
+                  storageSelected === StorageEnum.UPTOBOX ?
 
                       <Uptobox/>
-
-                      // <div style={{width: '100%'}}>
-                      //     <div style={{display: 'flex'}}>
-                      //         <div style={{flex: '1'}}>
-                      //             Link
-                      //         </div>
-                      //         <div style={{flex: '1'}}>
-                      //             {
-                      //                 props.uptoboxToken !== null ?
-                      //                   <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
-                      //                   :
-                      //                   <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
-                      //             }
-                      //         </div>
-                      //         <div style={{flex: '1'}}>
-                      //             {
-                      //                 props.uptoboxToken !== null ?
-                      //                   <IconButton onClick={props.uptoboxDisconnect}>
-                      //                       <LinkOff/>
-                      //                   </IconButton>
-                      //                   :
-                      //                   <IconButton onClick={props.uptoboxConnect}>
-                      //                       <Link/>
-                      //                   </IconButton>
-                      //             }
-                      //         </div>
-                      //     </div>
-                      // </div>
                       :
                       <div>
                           <Grid container spacing={0}>

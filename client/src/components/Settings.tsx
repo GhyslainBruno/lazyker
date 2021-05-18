@@ -104,10 +104,10 @@ const Settings = (props: SettingsProps) => {
     const dispatch = useDispatch()
 
     const [labelWidth, setLabelWidth] = useState(null);
-    const [firstQuality, setFirstQuality] = useState(null);
+    const [firstQuality, setFirstQuality] = useState('');
     const [realdebrid, setRealdebrid] = useState(false);
-    const [secondQuality, setSecondQuality] = useState(null);
-    const [thirdQuality, setThirdQuality] = useState(null);
+    const [secondQuality, setSecondQuality] = useState('');
+    const [thirdQuality, setThirdQuality] = useState('');
     const [snack, setSnack] = useState(false);
     const [h265, seth265] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -191,9 +191,9 @@ const Settings = (props: SettingsProps) => {
                 setSnack(true)
                 setSnackBarMessage('Please configure lazyker')
                 setSettingsLoading(false)
-                setFirstQuality(null)
-                setSecondQuality(null)
-                setThirdQuality(null)
+                setFirstQuality('')
+                setSecondQuality('')
+                setThirdQuality('')
                 setRealdebrid(false)
                 seth265(false)
                 setMoviesPath('')
@@ -251,9 +251,9 @@ const Settings = (props: SettingsProps) => {
                     setThirdQuality(settings.qualities.third)
                     seth265(settings.qualities.h265)
                 } else {
-                    setFirstQuality(null)
-                    setSecondQuality(null)
-                    setThirdQuality(null)
+                    setFirstQuality('')
+                    setSecondQuality('')
+                    setThirdQuality('')
                     seth265(false)
                 }
 

@@ -261,6 +261,10 @@ class Torrents extends React.Component<MyProps, MyState> {
 
             <Accordion onChange={(event, expanded) => expanded ? this.firstTorrentsLoad() : this.stopsRealTimeTorrents()}>
 
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>RealDebrid Torrents</Typography>
+                </AccordionSummary>
+
                 <Dialog
                     open={this.state.showDeleteDialog}
                     onClose={this.closeDeleteDialog}
@@ -283,9 +287,6 @@ class Torrents extends React.Component<MyProps, MyState> {
                     </DialogActions>
                 </Dialog>
 
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>RealDebrid Torrents</Typography>
-                </AccordionSummary>
                 <AccordionDetails style={{textAlign: 'center'}}>
 
                     <List component="nav" style={{width: '100%'}}>

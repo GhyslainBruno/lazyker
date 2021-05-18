@@ -331,6 +331,10 @@ class CurrentDownloads extends React.Component<MyProps, MyState> {
 
             <Accordion onChange={(event, expanded) => expanded ? this.loadCurrentDownloads() : null}>
 
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>Current downloads</Typography>
+                </AccordionSummary>
+
                 <Dialog
                     open={this.state.showRemoveDialog}
                     onClose={this.closeRemoveDialog}
@@ -352,10 +356,6 @@ class CurrentDownloads extends React.Component<MyProps, MyState> {
                         </Button>
                     </DialogActions>
                 </Dialog>
-
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>Current downloads</Typography>
-                </AccordionSummary>
                 <AccordionDetails style={{textAlign: 'center'}}>
 
                     <List component="nav" style={{width: '100%'}}>

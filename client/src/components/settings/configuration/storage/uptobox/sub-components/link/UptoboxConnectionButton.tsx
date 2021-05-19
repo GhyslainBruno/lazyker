@@ -5,13 +5,13 @@ import Link from '@material-ui/icons/Link';
 import LinkOff from '@material-ui/icons/LinkOff';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {ConnectedStateEnum} from '../../../../../../feature/ConnectedState.enum';
+import {ConnectedStateEnum} from '../../../../../../../feature/ConnectedState.enum';
 import {
   deleteToken,
   openDeleteTokenDialog,
   openTokenDialog,
   updateConnectedState
-} from '../../../../../../feature/storage/Uptobox.slice';
+} from '../../../../../../../feature/storage/Uptobox.slice';
 
 const useStyles = makeStyles({
   container: {

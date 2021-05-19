@@ -1,5 +1,5 @@
 import React from "react";
-import {UptoboxLinkedComponent} from './sub-components/UptoboxLinkedComponent';
+import {UptoboxLinkedComponent} from './sub-components/link/UptoboxLinkedComponent';
 
 export const Uptobox = () => {
 

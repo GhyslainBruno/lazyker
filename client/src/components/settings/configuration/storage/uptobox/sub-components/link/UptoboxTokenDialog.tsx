@@ -6,7 +6,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {openTokenDialog, saveToken, updateToken} from '../../../../../../feature/storage/Uptobox.slice';
+import {openTokenDialog, saveToken, updateToken} from '../../../../../../../feature/storage/Uptobox.slice';
 
 export const UptoboxTokenDialog = () => {
   const isTokenDialogOpened = useSelector((state: any) => state.uptobox.isTokenDialogOpened);

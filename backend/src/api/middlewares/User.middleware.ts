@@ -9,7 +9,6 @@ export const UserMiddleware = async (request: Request, response: Response, next:
     const firebaseUser = await admin.auth().verifyIdToken(request.headers.token);
 
     const user = new User(firebaseUser);
-    console.log('here');
     await user.aggregateUserSettings();
 
     // @ts-ignore
@@ -21,6 +20,7 @@ export const UserMiddleware = async (request: Request, response: Response, next:
 };
 
 // export function routesAuth(): MethodDecorator {
+
 //   return function (
 //     target: Object,
 //     propertyKey: string | symbol,

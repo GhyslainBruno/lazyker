@@ -12,7 +12,7 @@ admin.initializeApp({
 
 import {UserMiddleware} from './api/middlewares/User.middleware';
 
-process.on('SIGTERM', () => process.exit());
+// process.on('SIGTERM', () => process.exit());
 
 const express = require('express');
 const bodyParser = require('body-parser');

@@ -53,18 +53,34 @@ export const deleteToken = createAsyncThunk("uptobox/deleteToken", async (state:
   thunkAPI.dispatch(displayMessage({message: 'Token deleted'}));
   });
 
+export const fetchFilesList = createAsyncThunk("uptobox/fetchFilesList", async () => {
+  try {
+    return await ky.get('/api/uptobox/files?path=//', { headers: {token: await auth.getIdToken()} }).json();
+  } catch(error) {
+    console.error(error);
+  }
+});
+
 export const uptoboxSlice = createSlice({
   name: 'uptobox',
   initialState: {
     token: '',
     loading: false,
-    movieFolder: '',
+    moviesFolder: '',
     showsFolder: '',
     connectedState: ConnectedStateEnum.DISCONNECTED,
+    moviesState: ConnectedStateEnum.DISCONNECTED,
     isTokenDialogOpened: false,
+    isMovieDialogOpened: false,
     isDeleteTokenDialogOpened: false,
     displaySnackBar: false,
-    snackBarMessage: ''
+    snackBarMessage: '',
+    areUptoboxMoviesFetching: false,
+    uptoboxMovies: {
+      currentFolder: '',
+      folders: [],
+      files: []
+    }
   },
   reducers: {
     updateToken: (state, action) => {
@@ -78,7 +94,16 @@ export const uptoboxSlice = createSlice({
     },
     updateConnectedState: (state, action) => {
       state.connectedState = action.payload
-    }
+    },
+    updateMoviesFolder: (state, action) => {
+      state.moviesState = action.payload
+    },
+    updateMoviesState: (state, action) => {
+      state.moviesState = action.payload
+    },
+    openMoviesDialog: (state, action) => {
+      state.isMovieDialogOpened = action.payload
+    },
   },
   extraReducers: {
     [storeToken.fulfilled.type]: (state, action) => {
@@ -111,10 +136,21 @@ export const uptoboxSlice = createSlice({
     [deleteToken.rejected.type]: (state, action) => {
       state.isDeleteTokenDialogOpened = false;
     },
+
+    [fetchFilesList.fulfilled.type]: (state, action) => {
+      state.areUptoboxMoviesFetching = false;
+      state.uptoboxMovies = action.payload;
+    },
+    [fetchFilesList.pending.type]: (state, action) => {
+      state.areUptoboxMoviesFetching = true;
+    },
+    [fetchFilesList.rejected.type]: (state, action) => {
+      state.areUptoboxMoviesFetching = false;
+    },
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { updateToken, openTokenDialog, openDeleteTokenDialog, updateConnectedState } = uptoboxSlice.actions
+export const { updateToken, openTokenDialog, openDeleteTokenDialog, updateConnectedState, updateMoviesState, updateMoviesFolder, openMoviesDialog } = uptoboxSlice.actions
 
 export default uptoboxSlice.reducer

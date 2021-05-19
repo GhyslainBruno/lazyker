@@ -83,11 +83,10 @@ interface LinkMagnetDto {
 
 
 // TODO extract in value object
-class UptoboxLink extends String {
+class UptoboxLink {
   url: string;
 
   constructor(url: string) {
-    super();
     this.url = url;
   }
 
@@ -98,11 +97,10 @@ class UptoboxLink extends String {
 }
 
 // TODO extract in value object
-class FileName extends String {
+class FileName {
   name: string;
 
   constructor(name: string) {
-    super();
     this.name = name;
   }
 }

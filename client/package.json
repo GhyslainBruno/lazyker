@@ -16,13 +16,13 @@
     "@types/react-dom": "^17.0.3",
     "@types/react-router-dom": "^5.1.7",
     "@types/screenfull": "^4.1.0",
-    "firebase": "^5.4.2",
+    "firebase": "^8.6.1",
     "gapi-client": "0.0.3",
     "googleapis": "^34.0.0",
     "ky": "^0.27.0",
     "materialize-css": "^1.0.0-rc.1",
     "qs": "^6.5.2",
-    "react": "^16.11.0",
+    "react": "^17.0.2",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.11.0",
     "react-google-picker": "0.0.9",
@@ -67,5 +67,8 @@
     "extends": [
       "react-app"
     ]
+  },
+  "resolutions": {
+    "react-scripts/eslint-webpack-plugin": "2.4.1"
   }
 }

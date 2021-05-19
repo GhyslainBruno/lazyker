@@ -4,11 +4,10 @@ import {TorrentInDebriderInfos} from '../../entities/torrent-in-debrider-infos';
 import {User} from '../../entities/user';
 import {IStorage} from '../i-storage';
 
-export class UptoboxFileCode extends String {
+export class UptoboxFileCode {
   code: string;
 
   constructor(code: string) {
-    super(code);
     this.code = code;
   }
 }
@@ -59,6 +58,62 @@ interface UptoboxFolderInfos {
     totalFileSize: number;
     totalFileCount: number;
   }
+}
+
+interface UptoboxFolderDto {
+  fld_id: string,
+  fld_name: string,
+  hash: string,
+  name: string,
+}
+
+interface UptoboxFileDto {
+  file_code: string,
+  file_created: Date,
+  file_descr: string,
+  file_downloads: number,
+  file_last_download: Date,
+  file_name: string,
+  file_password: string,
+  file_public: boolean,
+  file_size: number,
+  id: number,
+  last_stream: Date,
+  nb_stream: number,
+  transcoded: number,
+}
+
+interface UptoboxFilesListDto {
+  data: {
+    currentFolder: {
+      fileCount: number,
+      fld_id: string,
+      fld_name: string,
+      fld_parent_id: string,
+      hash: string,
+      name: string,
+      totalFileSize: string,
+    },
+    folders: UptoboxFolderDto[],
+    files: UptoboxFileDto[]
+  }
+}
+
+interface UptoboxFolder {
+  folderPath: string;
+  folderId: string;
+  name: string;
+}
+
+interface UptoboxFile {
+  code: string;
+  name: string;
+}
+
+interface UptoboxFilesList {
+  currentFolder: any,
+  folders: UptoboxFolder[],
+  files: UptoboxFile[],
 }
 
 
@@ -121,7 +176,24 @@ export class Uptobox implements IStorage {
 
   }
 
-  static async storeToken(token: string, user: User): Promise<void> {
+  // static async storeToken(token: string, user: User): Promise<void> {
+  //
+  // }
 
+  async listFiles(path: string, user: User): Promise<UptoboxFilesList> {
+    try {
+      const response = await got(`https://uptobox.com/api/user/files?token=${user.settings.storage.uptobox.token}&path=${path}&limit=50`, { json: true });
+      const filesInfosDto = response.body as UptoboxFilesListDto;
+      const filesInfosDtoData = filesInfosDto.data;
+
+      return {
+        currentFolder: filesInfosDtoData.currentFolder,
+        folders: filesInfosDtoData.folders.map((folder: UptoboxFolderDto) => <UptoboxFolder>{ folderPath: folder.fld_name, folderId: folder.fld_id, name: folder.name }),
+        files: filesInfosDtoData.files.map((file: UptoboxFileDto) => <UptoboxFile>{ code: file.file_code, name: file.file_name }),
+      } as UptoboxFilesList;
+
+    } catch(error) {
+      console.error(error.message);
+    }
   }
 }

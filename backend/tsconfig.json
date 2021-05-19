@@ -1,4 +1,7 @@
 {
+  "ts-node": {
+    "transpileOnly": true
+  },
   "compilerOptions": {
     "inlineSourceMap": true,
     "sourceMap": true,

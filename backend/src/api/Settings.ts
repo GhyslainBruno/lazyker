@@ -4,6 +4,7 @@ import {AllDebrid} from '../debriders/alldebrid/alldebrid-debrider';
 import * as realdebrid from '../debriders/realdebrid/debrid_links';
 import {CheckPinStatusDto} from '../dtos/check-pin-status.dto';
 import * as gdrive from '../storage/gdrive/gdrive';
+import {Uptobox} from '../storage/uptobox/uptobox';
 
 // Get a database reference to our blog
 const db = admin.database();
@@ -107,7 +108,6 @@ module.exports = (app: any) => {
 
     app.get('/api/alldebrid/disconnect', async(req: any, res: any) => {
         try {
-            // const user = await admin.auth().verifyIdToken(req.headers.token);
             const user = req.user;
             await AllDebrid.disconnect(user);
             res.send({
@@ -120,7 +120,6 @@ module.exports = (app: any) => {
 
     app.get('/api/uptobox/connect', async(req: any, res: any) => {
         try {
-            // const user = await admin.auth().verifyIdToken(req.headers.token);
             const user = req.user;
             await AllDebrid.disconnect(user);
             res.send({
@@ -130,6 +129,17 @@ module.exports = (app: any) => {
             res.status(500).send({message: error});
         }
     });
+
+    app.get('/api/uptobox/files', async (req: any, res: any) => {
+        try {
+            const user = req.user;
+            const uptobox = new Uptobox();
+            const filesList = await uptobox.listFiles(req.query.path, user);
+            res.send(filesList)
+        } catch(error) {
+
+        }
+    })
 
     /**
      * Gets and stores a Gdrive access token to database from single use client token

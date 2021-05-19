@@ -178,7 +178,7 @@ export default class App extends Component<AppProps, AppState> {
             .catch(async error => {
 
                 if (error.code === 'auth/account-exists-with-different-credential') {
-                    authTest.fetchProvidersForEmail(error.email)
+                    authTest.fetchSignInMethodsForEmail(error.email)
                         .then(accountsForThisEmail => {
                             this.customizeDialogAndPassCredentials(error.email, accountsForThisEmail[0], error.credential.providerId, error);
                         })

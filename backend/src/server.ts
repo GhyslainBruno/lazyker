@@ -10,6 +10,10 @@ admin.initializeApp({
     databaseURL: "https://lazyker-568c4.firebaseio.com"
 });
 
+import {UserMiddleware} from './api/middlewares/User.middleware';
+
+process.on('SIGTERM', () => process.exit());
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -27,6 +31,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+app.use(UserMiddleware);
 
 
 /**

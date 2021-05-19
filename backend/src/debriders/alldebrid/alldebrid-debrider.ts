@@ -111,12 +111,12 @@ class FileName extends String {
 
 export class AllDebrid implements IDebrider {
 
-  async getUptoboxLink(magnetId: number): Promise<UptoboxLink> {
+  async getUptoboxLink(magnetId: number, user: User): Promise<UptoboxLink> {
     try {
 
       // TODO: we should take the user api key
 
-      const response = await got(`https://api.alldebrid.com/v4/magnet/status?agent=lazyker&apikey=abswtHHkX4v0cKE2P0Qd&id=${magnetId}`, { json: true })
+      const response = await got(`https://api.alldebrid.com/v4/magnet/status?agent=lazyker&apikey=${user.settings.debriders.alldebrid.apiKey}&id=${magnetId}`, { json: true })
 
       const body = response.body as GetMagnetStatusDto;
 
@@ -131,7 +131,7 @@ export class AllDebrid implements IDebrider {
 
       // TODO: we should take the user api key
 
-      const response = await got(`https://api.alldebrid.com/v4/magnet/upload?agent=lazyker&apikey=abswtHHkX4v0cKE2P0Qd&magnets[]=${magnetLink}`, { json: true })
+      const response = await got(`https://api.alldebrid.com/v4/magnet/upload?agent=lazyker&apikey=${user.settings.debriders.alldebrid.apiKey}&magnets[]=${magnetLink}`, { json: true })
 
       const body = response.body as AddMagnetDto;
 

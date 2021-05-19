@@ -7,7 +7,7 @@ import {IDebrider} from './i-debrider';
 
 export class Debrider {
 
-  user: any;
+  user: User;
   debrider: IDebrider;
   storage: IStorage;
   token: string;
@@ -20,7 +20,7 @@ export class Debrider {
    * @param user
    */
   // TODO: make it to only use "user" as constructor parameter
-  constructor(debriderType: new (...args: any[]) => any, storageType: new (...args: any[]) => any, user: any) {
+  constructor(debriderType: new (...args: any[]) => any, storageType: new (...args: any[]) => any, user: User) {
 
     switch (storageType) {
       case Uptobox: {
@@ -50,7 +50,7 @@ export class Debrider {
     this.user = user;
   }
 
-  async addMagnet(magnetLink: string, user: any): Promise<TorrentInDebriderInfos> {
+  async addMagnet(magnetLink: string, user: User): Promise<TorrentInDebriderInfos> {
     return await this.debrider.addMagnetLink(magnetLink, user);
   }
 

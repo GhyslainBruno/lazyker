@@ -3,6 +3,7 @@ import {AllDebrid} from '../../debriders/alldebrid/alldebrid-debrider';
 import {Debrider} from '../../debriders/debrider';
 import {MediaInfos} from '../../entities/media-infos';
 import {ScrapperTorrentInfos} from '../../entities/scrapper-torrent-infos';
+import {User} from '../../entities/user';
 import {Storage} from '../../storage/storage';
 import {Uptobox} from '../../storage/uptobox/uptobox';
 import {Torrent} from './torrent';
@@ -55,29 +56,9 @@ export const getTorrentsList = async (title: string) => {
  * @param scrapperTorrentInfos
  * @param mediaInfos
  */
-export const downloadTorrentFile = async (user: any, scrapperTorrentInfos: ScrapperTorrentInfos, mediaInfos: MediaInfos) => {
+export const downloadTorrentFile = async (user: User, scrapperTorrentInfos: ScrapperTorrentInfos, mediaInfos: MediaInfos) => {
 
     try {
-
-        // TODO : change this behaviour
-        // infos.provider = 'Yggtorrent';
-        // infos.link = infos.url;
-
-        user.uptobox = {
-            token: '9108d29c0ab88cdbb4964790106469921394u'
-        }
-
-        // const torrentForTorrentSearchApi = {
-        //     provider: 'Yggtorrent',
-        //     link: infos.url,
-        //     title: infos.title,
-        //     time: infos.time,
-        //     size: infos.size,
-        //     magnet: infos.magnet,
-        //     desc: infos.desc
-        // } as TorrentSearchApi
-
-        // const torrentForTorrentSearchApi = torrentInfos as TorrentSearchApi
 
         enableProvider('Yggtorrent', 'Ghyslain', 'foobar');
 

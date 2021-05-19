@@ -93,7 +93,8 @@ module.exports = (app: any) => {
      */
     app.get('/api/alldebrid/check_pin_status', async(req: any, res: any) => {
         try {
-            const user = await admin.auth().verifyIdToken(req.headers.token);
+            // const user = await admin.auth().verifyIdToken(req.headers.token);
+            const user = req.user;
             const checkPinStatusDto = req.query as CheckPinStatusDto;
             const status = await AllDebrid.checkPinCodeStatus(user, checkPinStatusDto.pin, checkPinStatusDto.check);
             res.send({
@@ -106,7 +107,8 @@ module.exports = (app: any) => {
 
     app.get('/api/alldebrid/disconnect', async(req: any, res: any) => {
         try {
-            const user = await admin.auth().verifyIdToken(req.headers.token);
+            // const user = await admin.auth().verifyIdToken(req.headers.token);
+            const user = req.user;
             await AllDebrid.disconnect(user);
             res.send({
                 message: 'disconnected'
@@ -118,7 +120,8 @@ module.exports = (app: any) => {
 
     app.get('/api/uptobox/connect', async(req: any, res: any) => {
         try {
-            const user = await admin.auth().verifyIdToken(req.headers.token);
+            // const user = await admin.auth().verifyIdToken(req.headers.token);
+            const user = req.user;
             await AllDebrid.disconnect(user);
             res.send({
                 message: 'disconnected'

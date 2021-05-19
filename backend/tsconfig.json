@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "inlineSourceMap": true,
     "sourceMap": true,
     "esModuleInterop": true,
     "allowJs": true,

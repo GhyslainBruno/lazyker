@@ -3,15 +3,16 @@ import {AllDebrid} from '../debriders/alldebrid/alldebrid-debrider';
 import {IDebrider} from '../debriders/i-debrider';
 import {MediaInfos} from '../entities/media-infos';
 import {TorrentInDebriderInfos} from '../entities/torrent-in-debrider-infos';
+import {User} from '../entities/user';
 import {IStorage} from './i-storage';
 import {Uptobox} from './uptobox/uptobox';
 
 export class Storage implements IStorage {
   debrider: IDebrider;
   storage: IStorage;
-  user: any
+  user: User
 
-  constructor(debriderType: new (...args: any[]) => any, storageType: new (...args: any[]) => any, user: any) {
+  constructor(debriderType: new (...args: any[]) => any, storageType: new (...args: any[]) => any, user: User) {
     switch (storageType) {
       case Uptobox: {
         this.storage = new Uptobox();
@@ -37,17 +38,17 @@ export class Storage implements IStorage {
     this.user = user;
   }
 
-  async addTorrent(mediaInfos: MediaInfos, torrentInfos: TorrentInDebriderInfos, user: any): Promise<any> {
+  async addTorrent(mediaInfos: MediaInfos, torrentInfos: TorrentInDebriderInfos, user: User): Promise<any> {
 
     // If the torrent is ready, add it automatically to storage
     if(this.storage instanceof Uptobox && this.debrider instanceof AllDebrid) {
 
       if (torrentInfos.isReady) {
         // Get the Uptobox link corresponding to the torrent file in Alldebrid
-        const uptoboxLink = await this.debrider.getUptoboxLink(torrentInfos.id);
+        const uptoboxLink = await this.debrider.getUptoboxLink(torrentInfos.id, user);
 
         // Add the media to the uptobox storage
-        const fileCode = await this.storage.addFile(uptoboxLink.getFileCode(), { uptobox: { token: '9108d29c0ab88cdbb4964790106469921394u' } });
+        const fileCode = await this.storage.addFile(uptoboxLink.getFileCode(), user);
 
         // Create a new folder naming that way : "title (year)"
         const folderId = await this.storage.createMovieFolder(mediaInfos, user);

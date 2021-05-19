@@ -65,9 +65,9 @@ interface UptoboxFolderInfos {
 
 export class Uptobox implements IStorage {
 
-  async addFile(fileCode: UptoboxFileCode, user: any): Promise<UptoboxFileCode> {
+  async addFile(fileCode: UptoboxFileCode, user: User): Promise<UptoboxFileCode> {
     try {
-      const response  = await got(`https://uptobox.com/api/user/file/alias?token=${user.uptobox.token}&file_code=${fileCode}`, { json: true });
+      const response  = await got(`https://uptobox.com/api/user/file/alias?token=${user.settings.storage.uptobox.token}&file_code=${fileCode}`, { json: true });
       const body = response.body as UptoboxAddFileToAccountDto;
       return new UptoboxFileCode(body.data.file_code);
     } catch(error) {
@@ -75,23 +75,23 @@ export class Uptobox implements IStorage {
     }
   }
 
-  async createMovieFolder(movieInfos: MediaInfos, user: any): Promise<UptoboxFolderId> {
+  async createMovieFolder(movieInfos: MediaInfos, user: User): Promise<UptoboxFolderId> {
     try {
       //TODO: use the folder ID choosen by the user instead
       const moviesFolderPath = '//medias/movies';
       const newFolderName = `${movieInfos.title} (${movieInfos.year})`;
 
       // TODO: retrieve the path for movies from user's data in database
-      await got.put(`https://uptobox.com/api/user/files?token=${user.uptobox.token}&path=${moviesFolderPath}&name=${newFolderName}`, { json: true });
+      await got.put(`https://uptobox.com/api/user/files?token=${user.settings.storage.uptobox.token}&path=${moviesFolderPath}&name=${newFolderName}`, { json: true });
       return await this.getFolderId(moviesFolderPath + '/' + newFolderName, user);
     } catch(error) {
       console.error(error.message);
     }
   }
 
-  async getFolderId(path: string, user: any): Promise<UptoboxFolderId> {
+  async getFolderId(path: string, user: User): Promise<UptoboxFolderId> {
     try {
-      const response = await got(`https://uptobox.com/api/user/files?token=${user.uptobox.token}&path=${path}&limit=1`, { json: true });
+      const response = await got(`https://uptobox.com/api/user/files?token=${user.settings.storage.uptobox.token}&path=${path}&limit=1`, { json: true });
       const folderInfos = response.body as UptoboxFolderInfos;
       return new UptoboxFolderId(folderInfos.data.currentFolder.fld_id);
     } catch(error) {
@@ -99,25 +99,25 @@ export class Uptobox implements IStorage {
     }
   }
 
-  async moveFile(fileCode: UptoboxFileCode, destinationFolderId: UptoboxFolderId, user: any): Promise<any> {
+  async moveFile(fileCode: UptoboxFileCode, destinationFolderId: UptoboxFolderId, user: User): Promise<any> {
     try {
 
       // TODO: retrieve the path for movies from user's data in database
-      return await got.patch(`https://uptobox.com/api/user/files?token=${user.uptobox.token}&file_codes=${fileCode.code}&destination_fld_id=${destinationFolderId.id}&action=move`, { json: true });
+      return await got.patch(`https://uptobox.com/api/user/files?token=${user.settings.storage.uptobox.token}&file_codes=${fileCode.code}&destination_fld_id=${destinationFolderId.id}&action=move`, { json: true });
     } catch(error) {
       console.error(error.message);
     }
   }
 
-  async renameFile(fileCode: UptoboxFileCode, newName: string, user: any): Promise<any> {
+  async renameFile(fileCode: UptoboxFileCode, newName: string, user: User): Promise<any> {
     try {
-      return await got.patch(`https://uptobox.com/api/user/files?token=${user.uptobox.token}&file_code=${fileCode.code}&new_name=${newName}`, { json: true });
+      return await got.patch(`https://uptobox.com/api/user/files?token=${user.settings.storage.uptobox.token}&file_code=${fileCode.code}&new_name=${newName}`, { json: true });
     } catch(error) {
       console.error(error.message);
     }
   }
 
-  async addTorrent(mediaInfos: MediaInfos, torrentInfos:TorrentInDebriderInfos, user:any): Promise<any> {
+  async addTorrent(mediaInfos: MediaInfos, torrentInfos:TorrentInDebriderInfos, user:User): Promise<any> {
 
   }
 

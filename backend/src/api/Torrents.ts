@@ -1,10 +1,3 @@
-// const realdebrid = require('../debriders/realdebrid/debrid_links');
-// const admin = require("firebase-admin");
-// const Movies = require('../movies/Movies');
-// const downloader = require('../synology/Download');
-// const downloader = require('../downloads/downloader');
-// const TvShows = require('../tvshows/TvShows');
-
 import * as realdebrid from '../debriders/realdebrid/debrid_links';
 import * as admin from 'firebase-admin';
 import {DownloadTorrentDto} from '../dtos/download-torrent-dto';
@@ -39,7 +32,9 @@ module.exports = (app: any) => {
     app.post('/api/torrents', async (req: any, res: any) => {
         try {
 
-            const user = await admin.auth().verifyIdToken(req.headers.token);
+            // const user = await admin.auth().verifyIdToken(req.headers.token);
+
+            const user = req.user;
 
             const downloadTorrentDto = req.body as DownloadTorrentDto;
             downloadTorrentDto.user = user;

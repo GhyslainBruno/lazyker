@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import firebase from 'firebase';
 import {auth} from '../../firebase';
-import {displayMessage} from '../snack/Snackbar.slice';
+import {displaySuccessNotification} from '../snack/Snackbar.slice';
 import {StorageEnum} from './Storage.enum';
 
 export const saveStorage = createAsyncThunk("storage/saveStorage", async (state: any, thunkAPI) => {
@@ -12,7 +12,7 @@ export const saveStorage = createAsyncThunk("storage/saveStorage", async (state:
     .child('/settings/storage/selected')
     .set(state);
 
-  thunkAPI.dispatch(displayMessage({message: 'Storage changed'}));
+  thunkAPI.dispatch(displaySuccessNotification({message: 'Storage changed'}));
 
   return state;
 });

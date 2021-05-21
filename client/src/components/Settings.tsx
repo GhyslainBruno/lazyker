@@ -8,6 +8,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import {useDispatch, useSelector} from 'react-redux';
 import {isConnected} from '../feature/debriders/Alldebrid.slice';
+import {SeverityEnum} from '../feature/snack/Severity.enum';
 import {closeSnackBar} from '../feature/snack/Snackbar.slice';
 import SignOutButton from "../firebase/SignOutBtn";
 import { auth } from '../firebase';
@@ -92,6 +93,7 @@ type Store = {
     snack: {
         opened: boolean;
         message: string;
+        severity: SeverityEnum;
     }
 }
 
@@ -99,6 +101,7 @@ const Settings = (props: SettingsProps) => {
 
     const settingsSnackBarOpenedState = useSelector((state: Store): boolean => {return state.snack.opened});
     const settingsSnackBarMessage = useSelector((state: Store): string => {return state.snack.message});
+    const settingsSnackBarSeverity = useSelector((state: Store): string => {return state.snack.severity});
 
     const dispatch = useDispatch()
 
@@ -486,7 +489,7 @@ const Settings = (props: SettingsProps) => {
             autoHideDuration={2000}
             onClose={() => dispatch(closeSnackBar({}))}
             >
-              <Alert severity="success">
+              <Alert severity={settingsSnackBarSeverity}>
                   {settingsSnackBarMessage}
               </Alert>
           </Snackbar>

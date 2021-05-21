@@ -5,7 +5,7 @@ import {Dispatch} from 'redux';
 import {auth} from '../../firebase';
 import {ConnectedStateEnum} from '../ConnectedState.enum';
 import {fetchPinCodeStatus} from '../debriders/Alldebrid.slice';
-import {displayMessage} from '../snack/Snackbar.slice';
+import {displayErrorNotification, displaySuccessNotification} from '../snack/Snackbar.slice';
 
 export const storeToken = createAsyncThunk('uptobox/storeToken', async (state, thunkAPI) => {
     try {
@@ -39,7 +39,7 @@ export const saveToken = createAsyncThunk("uptobox/saveToken", async (state: any
       .child('/settings/storage/uptobox/token')
       .set(state);
 
-    thunkAPI.dispatch(displayMessage({message: 'Token saved'}));
+    thunkAPI.dispatch(displaySuccessNotification({message: 'Token saved'}));
 });
 
 export const deleteToken = createAsyncThunk("uptobox/deleteToken", async (state: any, thunkAPI) => {
@@ -50,14 +50,16 @@ export const deleteToken = createAsyncThunk("uptobox/deleteToken", async (state:
       .child('/settings/storage/uptobox/token')
       .remove();
 
-  thunkAPI.dispatch(displayMessage({message: 'Token deleted'}));
+  thunkAPI.dispatch(displaySuccessNotification({message: 'Token deleted'}));
   });
 
-export const fetchFilesList = createAsyncThunk("uptobox/fetchFilesList", async () => {
+export const fetchFilesList = createAsyncThunk("uptobox/fetchFilesList", async (path: string, thunkAPI) => {
   try {
-    return await ky.get('/api/uptobox/files?path=//', { headers: {token: await auth.getIdToken()} }).json();
+    return await ky.get(`/api/uptobox/files?path=/${path}`, { headers: {token: await auth.getIdToken()} }).json();
   } catch(error) {
     console.error(error);
+    thunkAPI.dispatch(displayErrorNotification({message: error.message}));
+    throw error
   }
 });
 

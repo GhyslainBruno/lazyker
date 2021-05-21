@@ -21,7 +21,7 @@ export const UptoboxMoviesComponent = () => {
   return (
     <div style={{display: 'flex'}}>
 
-      <UptoboxSelectMovieDialog/>
+      <UptoboxSelectMovieDialog id={'/'} label={'Uptobox folders'}/>
 
       <div className={classes.container}>
         <div className={classes.itemText}>

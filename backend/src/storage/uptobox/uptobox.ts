@@ -100,8 +100,8 @@ interface UptoboxFilesListDto {
 }
 
 interface UptoboxFolder {
-  folderPath: string;
-  folderId: string;
+  path: string;
+  id: string;
   name: string;
 }
 
@@ -188,7 +188,7 @@ export class Uptobox implements IStorage {
 
       return {
         currentFolder: filesInfosDtoData.currentFolder,
-        folders: filesInfosDtoData.folders.map((folder: UptoboxFolderDto) => <UptoboxFolder>{ folderPath: folder.fld_name, folderId: folder.fld_id, name: folder.name }),
+        folders: filesInfosDtoData.folders.map((folder: UptoboxFolderDto) => <UptoboxFolder>{ path: folder.fld_name, id: folder.fld_id, name: folder.name }),
         files: filesInfosDtoData.files.map((file: UptoboxFileDto) => <UptoboxFile>{ code: file.file_code, name: file.file_name }),
       } as UptoboxFilesList;
 

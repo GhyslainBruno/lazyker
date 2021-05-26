@@ -41,7 +41,7 @@ export const UptoboxSelectMovieDialog = (props: UptoboxSelectMovieDialogProps) =
 
   return (
     <Dialog fullWidth={true} open={isMovieDialogOpened} onClose={() => dispatch(openMoviesDialog(false))}>
-      <DialogTitle id="alert-dialog-title">Select movies folder : {moviesFolderPath}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Select movies folder : {moviesFolderPath.replace('//','/')}</DialogTitle>
 
       <DialogContent>
 

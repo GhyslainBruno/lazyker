@@ -17,6 +17,12 @@ const useStyles = makeStyles({
     flex: 1,
     fontSize: 20,
     alignSelf: 'center'
+  },
+  chip: {
+    overflow: 'hidden',
+    maxWidth: '200px',
+    flex: 1,
+    alignSelf: 'center'
   }
 })
 
@@ -32,12 +38,16 @@ export const UptoboxMoviesState = () => {
 
   switch(moviesState) {
     case ConnectedStateEnum.CONNECTED: {
-      return <Chip
-        label={moviesFolderPath}
-        // TODO: understand why I need to ignore these errors
-        // @ts-ignore
-        onDelete={() => dispatch(deleteMoviesFolder())}
-      />
+     return (
+       <div className={classes.container}>
+         <Chip
+           className={classes.chip}
+           label={moviesFolderPath.replace('//','/')}
+           // TODO: understand why I need to ignore these errors
+           // @ts-ignore
+           onDelete={() => dispatch(deleteMoviesFolder())}
+         /> </div>
+     )
     }
 
     case ConnectedStateEnum.DISCONNECTED: {

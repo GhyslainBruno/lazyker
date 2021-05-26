@@ -27,7 +27,7 @@ type UptoboxMoviesFilesList = {
   files: []
 }
 
-export const MyTreeItem = (props: any) => {
+export const UptoboxFilesList = (props: any) => {
 
   // TODO: replace this array of any into array of react functional component
   const [childNodes, setChildNodes] = useState<any[]  | null>(null);
@@ -63,8 +63,8 @@ export const MyTreeItem = (props: any) => {
       // childId is the path of the folder
       if (childId) dispatch(updateMoviesFolderPath(childId));
       fetchFilesList(childId).then((result: UptoboxMoviesFilesList) => {
-          const folders = result.folders.map((folder: UptoboxFolder) => <MyTreeItem key={folder.id} name={folder.name} id={folder.path} />);
-          const files = result.files.map((file: UptoboxFile) => <MyTreeItem key={file.name} name={file.name} id={file.code} />);
+          const folders = result.folders.map((folder: UptoboxFolder) => <UptoboxFilesList key={folder.id} name={folder.name} id={folder.path} />);
+          const files = result.files.map((file: UptoboxFile) => <UptoboxFilesList key={file.name} name={file.name} id={file.code} />);
           setChildNodes(folders.concat(files));
       });
     }

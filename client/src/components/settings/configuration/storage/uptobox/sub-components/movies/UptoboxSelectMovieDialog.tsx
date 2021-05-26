@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   openMoviesDialog, saveMoviesFolder,
 } from '../../../../../../../ducks/storage/Uptobox.slice';
-import {MyTreeItem} from './MyTreeItem';
+import {UptoboxFilesList} from './UptoboxFilesList';
 
 const useStyles = makeStyles({
   root: {
@@ -45,7 +45,7 @@ export const UptoboxSelectMovieDialog = (props: UptoboxSelectMovieDialogProps) =
 
       <DialogContent>
 
-        <MyTreeItem id={'//'} key={0} name="Uptobox folders" />
+        <UptoboxFilesList id={'//'} key={0} name="Uptobox folders" />
 
       </DialogContent>
 

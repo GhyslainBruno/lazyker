@@ -58,35 +58,29 @@ export const getTorrentsList = async (title: string) => {
  */
 export const downloadTorrentFile = async (user: User, scrapperTorrentInfos: ScrapperTorrentInfos, mediaInfos: MediaInfos) => {
 
-    try {
+    enableProvider('Yggtorrent', 'Ghyslain', 'foobar');
 
-        enableProvider('Yggtorrent', 'Ghyslain', 'foobar');
+    // Weird stuff
+    scrapperTorrentInfos.provider = 'Yggtorrent';
 
-        // Weird stuff
-        scrapperTorrentInfos.provider = 'Yggtorrent';
+    await downloadTorrent(scrapperTorrentInfos, path.join(__dirname, '/torrent_temp/file.torrent'))
 
-        await downloadTorrent(scrapperTorrentInfos, path.join(__dirname, '/torrent_temp/file.torrent'))
+    const torrent = parseTorrent(fs.readFileSync(path.join(__dirname, '/torrent_temp/file.torrent')));
 
-        const torrent = parseTorrent(fs.readFileSync(path.join(__dirname, '/torrent_temp/file.torrent')));
+    // Create magnet link using torrent file infos
+    const magnetLink = parseTorrent.toMagnetURI(
+      torrent
+    );
 
-        // Create magnet link using torrent file infos
-        const magnetLink = parseTorrent.toMagnetURI(
-            torrent
-        );
+    // Removing torrent file
+    await removeAllFiles(path.join(__dirname, 'torrent_temp'));
 
-        // Removing torrent file
-        await removeAllFiles(path.join(__dirname, 'torrent_temp'));
+    // TODO: think about it to improve !
+    const debrider = new Debrider(AllDebrid, Uptobox, user);
+    const storage = new Storage(AllDebrid, Uptobox, user);
 
-        // TODO: think about it to improve !
-        const debrider = new Debrider(AllDebrid, Uptobox, user);
-        const storage = new Storage(AllDebrid, Uptobox, user);
-
-        const torrentInfos = await debrider.addMagnet(magnetLink, user);
-        await storage.addTorrent(mediaInfos, torrentInfos, user);
-
-    } catch(error) {
-        console.log(error.message)
-    }
+    const torrentInfos = await debrider.addMagnet(magnetLink, user);
+    await storage.addTorrent(mediaInfos, torrentInfos, user);
 }
 
 /**

@@ -121,13 +121,10 @@ interface UptoboxFilesList {
 export class Uptobox implements IStorage {
 
   async addFile(fileCode: UptoboxFileCode, user: User): Promise<UptoboxFileCode> {
-    try {
-      const response  = await got(`https://uptobox.com/api/user/file/alias?token=${user.settings.storage.uptobox.token}&file_code=${fileCode}`, { json: true });
-      const body = response.body as UptoboxAddFileToAccountDto;
-      return new UptoboxFileCode(body.data.file_code);
-    } catch(error) {
-      console.error(error.message);
-    }
+    const response  = await got(`https://uptobox.com/api/user/file/alias?token=${user.settings.storage.uptobox.token}&file_code=${fileCode.code}`, { json: true });
+    const body = response.body as UptoboxAddFileToAccountDto;
+    if (!body.data.file_code) throw new Error('Uptobox error : no file code');
+    return new UptoboxFileCode(body.data.file_code);
   }
 
   async createMovieFolder(movieInfos: MediaInfos, user: User): Promise<UptoboxFolderId> {

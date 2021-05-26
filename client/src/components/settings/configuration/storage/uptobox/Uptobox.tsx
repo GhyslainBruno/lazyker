@@ -6,8 +6,8 @@ export const Uptobox = () => {
 
   return (
     <div style={{width: '100%'}}>
-      <UptoboxMoviesComponent />
       <UptoboxLinkedComponent />
+      <UptoboxMoviesComponent />
     </div>
   )
 

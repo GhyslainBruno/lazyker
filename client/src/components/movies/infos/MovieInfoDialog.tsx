@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import DialogContent from "@material-ui/core/DialogContent";
 import Button from "@material-ui/core/Button";
 import Close from "@material-ui/icons/Close";
@@ -23,8 +23,8 @@ import Download from "@material-ui/icons/GetApp";
 import ReactPlayer from "react-player";
 import Dialog from "@material-ui/core/Dialog";
 // @ts-ignore
-import screenfull from "screenfull";
-import {findDOMNode} from "react-dom";
+// import screenfull from "screenfull";
+// import {findDOMNode} from "react-dom";
 import Slide from "@material-ui/core/Slide";
 import * as auth from "../../../firebase/auth";
 // @ts-ignore
@@ -75,6 +75,7 @@ interface MovieInfoDto {
     overview: string;
     genres: [{
         name: string;
+        id: number;
     }],
     trailer: any;
 }
@@ -117,7 +118,7 @@ const MovieInfoDialog = (props: MyProps) => {
     const [showInfoDialog, setShowInfoDialog] = useState(false);
     const [tmdbTitle, setTmdbTitle] = useState(null);
 
-    const player = useRef(null);
+    // const player = useRef();
 
     /**
      * Clears all the torrents / ddl results
@@ -231,8 +232,9 @@ const MovieInfoDialog = (props: MyProps) => {
      **/
     const startTrailer = () => {
         // @ts-ignore
-        screenfull.request(player.current?.wrapper);
+        // screenfull.request(player.current?.wrapper);
         setTrailerPlaying(true);
+        console.log('start trailer');
     };
 
     /**
@@ -592,7 +594,8 @@ const MovieInfoDialog = (props: MyProps) => {
                             </div>
 
                             { movieInfo.trailer ?
-                                <ReactPlayer ref={player} url={movieInfo.trailer} light={true} playing={trailerPlaying} controls={true} width="100%" />
+                                // <ReactPlayer url={movieInfo.trailer} light={true} playing={trailerPlaying} controls={true} width="100%" />
+                              <div>{movieInfo.trailer}</div>
                             :
                                 <p> No trailer found </p>
                             }

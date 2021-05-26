@@ -4,7 +4,6 @@ import ky from 'ky';
 import {Dispatch} from 'redux';
 import {auth} from '../../firebase';
 import {ConnectedStateEnum} from '../ConnectedState.enum';
-import {fetchPinCodeStatus} from '../debriders/Alldebrid.slice';
 import {displayErrorNotification, displaySuccessNotification} from '../snack/Snackbar.slice';
 
 export const storeToken = createAsyncThunk('uptobox/storeToken', async (state, thunkAPI) => {
@@ -31,6 +30,24 @@ export const listenTokenState = async (dispatch: Dispatch<any>) => {
     })
 }
 
+export const listenMoviesFolder = async (dispatch: Dispatch<any>) => {
+  firebase
+    .database()
+    .ref('/users')
+    .child(await auth.getUid())
+    .child('/settings/storage/uptobox/moviesFolder')
+    .on('value', (snapshot: any) => {
+      if (snapshot.val() !== null) {
+        dispatch(updateMoviesState(ConnectedStateEnum.CONNECTED));
+        dispatch(updateMoviesFolderPath(snapshot.val()));
+      } else {
+        dispatch(updateMoviesState(ConnectedStateEnum.DISCONNECTED));
+      }
+    })
+}
+
+
+
 export const saveToken = createAsyncThunk("uptobox/saveToken", async (state: any, thunkAPI) => {
     await firebase
       .database()
@@ -41,6 +58,19 @@ export const saveToken = createAsyncThunk("uptobox/saveToken", async (state: any
 
     thunkAPI.dispatch(displaySuccessNotification({message: 'Token saved'}));
 });
+
+export const saveMoviesFolder = createAsyncThunk("uptobox/saveMoviesFolder", async (state: any, thunkAPI) => {
+  await firebase
+    .database()
+    .ref('/users')
+    .child(await auth.getUid())
+    .child('/settings/storage/uptobox/moviesFolder')
+    .set(state);
+
+  thunkAPI.dispatch(displaySuccessNotification({message: 'Movies folder saved'}));
+});
+
+
 
 export const deleteToken = createAsyncThunk("uptobox/deleteToken", async (state: any, thunkAPI) => {
     await firebase
@@ -53,23 +83,25 @@ export const deleteToken = createAsyncThunk("uptobox/deleteToken", async (state:
   thunkAPI.dispatch(displaySuccessNotification({message: 'Token deleted'}));
   });
 
-export const fetchFilesList = createAsyncThunk("uptobox/fetchFilesList", async (path: string, thunkAPI) => {
-  try {
-    return await ky.get(`/api/uptobox/files?path=/${path}`, { headers: {token: await auth.getIdToken()} }).json();
-  } catch(error) {
-    console.error(error);
-    thunkAPI.dispatch(displayErrorNotification({message: error.message}));
-    throw error
-  }
+export const deleteMoviesFolder = createAsyncThunk("uptobox/deleteMoviesFolder", async (state: any, thunkAPI) => {
+  await firebase
+    .database()
+    .ref('/users')
+    .child(await auth.getUid())
+    .child('/settings/storage/uptobox/moviesFolder')
+    .remove();
+
+  return thunkAPI.dispatch(displaySuccessNotification({message: 'Movies folder deleted'}));
 });
+
 
 export const uptoboxSlice = createSlice({
   name: 'uptobox',
   initialState: {
     token: '',
     loading: false,
-    moviesFolder: '',
-    showsFolder: '',
+    moviesFolderPath: '',
+    showsFolderPath: '',
     connectedState: ConnectedStateEnum.DISCONNECTED,
     moviesState: ConnectedStateEnum.DISCONNECTED,
     isTokenDialogOpened: false,
@@ -97,11 +129,11 @@ export const uptoboxSlice = createSlice({
     updateConnectedState: (state, action) => {
       state.connectedState = action.payload
     },
-    updateMoviesFolder: (state, action) => {
-      state.moviesState = action.payload
+    updateMoviesFolderPath: (state, action) => {
+      state.moviesFolderPath = action.payload
     },
     updateMoviesState: (state, action) => {
-      state.moviesState = action.payload
+      state.moviesState = action.payload;
     },
     openMoviesDialog: (state, action) => {
       state.isMovieDialogOpened = action.payload
@@ -139,20 +171,38 @@ export const uptoboxSlice = createSlice({
       state.isDeleteTokenDialogOpened = false;
     },
 
-    [fetchFilesList.fulfilled.type]: (state, action) => {
-      state.areUptoboxMoviesFetching = false;
-      state.uptoboxMovies = action.payload;
+    [saveMoviesFolder.fulfilled.type]: (state, action) => {
+      state.isMovieDialogOpened = false;
     },
-    [fetchFilesList.pending.type]: (state, action) => {
-      state.areUptoboxMoviesFetching = true;
+    [saveMoviesFolder.pending.type]: (state, action) => {
+      state.isMovieDialogOpened = true;
     },
-    [fetchFilesList.rejected.type]: (state, action) => {
-      state.areUptoboxMoviesFetching = false;
+    [saveMoviesFolder.rejected.type]: (state, action) => {
+      state.isMovieDialogOpened = false;
     },
+
+    [deleteMoviesFolder.fulfilled.type]: (state, action) => {
+      state.moviesFolderPath = '';
+      state.moviesState = ConnectedStateEnum.DISCONNECTED
+    },
+    [deleteMoviesFolder.pending.type]: (state, action) => {
+    },
+    [deleteMoviesFolder.rejected.type]: (state, action) => {
+    },
+
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { updateToken, openTokenDialog, openDeleteTokenDialog, updateConnectedState, updateMoviesState, updateMoviesFolder, openMoviesDialog } = uptoboxSlice.actions
+export const {
+  updateToken,
+  openTokenDialog,
+  openDeleteTokenDialog,
+  updateConnectedState,
+  updateMoviesState,
+  updateMoviesFolderPath,
+  openMoviesDialog,
+  // deleteMoviesFolder
+} = uptoboxSlice.actions
 
 export default uptoboxSlice.reducer

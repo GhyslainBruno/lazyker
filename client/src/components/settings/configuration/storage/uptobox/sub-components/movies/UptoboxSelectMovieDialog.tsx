@@ -6,9 +6,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  openMoviesDialog,
-  updateMoviesState,
-} from '../../../../../../../feature/storage/Uptobox.slice';
+  openMoviesDialog, saveMoviesFolder,
+} from '../../../../../../../ducks/storage/Uptobox.slice';
 import {MyTreeItem} from './MyTreeItem';
 
 const useStyles = makeStyles({
@@ -27,13 +26,22 @@ type UptoboxSelectMovieDialogProps = {
 export const UptoboxSelectMovieDialog = (props: UptoboxSelectMovieDialogProps) => {
 
   const isMovieDialogOpened = useSelector((state: any) => state.uptobox.isMovieDialogOpened);
+  const moviesFolderPath = useSelector((state: any) => state.uptobox.moviesFolderPath);
 
   const dispatch = useDispatch();
   const classes = useStyles();
 
+  const handleSaveClick = () => {
+    dispatch(saveMoviesFolder(moviesFolderPath));
+  }
+
+  const handleDeleteClick = () => {
+    dispatch(openMoviesDialog(false));
+  }
+
   return (
     <Dialog fullWidth={true} open={isMovieDialogOpened} onClose={() => dispatch(openMoviesDialog(false))}>
-      <DialogTitle id="alert-dialog-title">Select movies folder</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Select movies folder : {moviesFolderPath}</DialogTitle>
 
       <DialogContent>
 
@@ -42,10 +50,10 @@ export const UptoboxSelectMovieDialog = (props: UptoboxSelectMovieDialogProps) =
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={() => dispatch(openMoviesDialog(false))} color="primary">
+        <Button onClick={handleDeleteClick} color="primary">
           Cancel
         </Button>
-        <Button onClick={() => dispatch(updateMoviesState('movies folder'))} color="primary" autoFocus>
+        <Button onClick={handleSaveClick} color="primary" autoFocus>
           Save
         </Button>
       </DialogActions>

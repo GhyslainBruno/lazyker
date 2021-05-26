@@ -3,8 +3,8 @@ import CancelCircle from '@material-ui/icons/CancelOutlined';
 import CheckCircle from '@material-ui/icons/CheckCircle';
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {ConnectedStateEnum} from '../../../../../../../feature/ConnectedState.enum';
-import {listenTokenState} from '../../../../../../../feature/storage/Uptobox.slice';
+import {ConnectedStateEnum} from '../../../../../../../ducks/ConnectedState.enum';
+import {listenTokenState} from '../../../../../../../ducks/storage/Uptobox.slice';
 
 const useStyles = makeStyles({
   container: {

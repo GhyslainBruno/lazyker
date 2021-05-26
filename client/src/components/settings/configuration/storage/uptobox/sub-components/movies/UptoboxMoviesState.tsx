@@ -1,10 +1,12 @@
 import {makeStyles} from '@material-ui/core';
+import Chip from '@material-ui/core/Chip/Chip';
 import CancelCircle from '@material-ui/icons/CancelOutlined';
-import CheckCircle from '@material-ui/icons/CheckCircle';
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {ConnectedStateEnum} from '../../../../../../../feature/ConnectedState.enum';
-import {listenTokenState} from '../../../../../../../feature/storage/Uptobox.slice';
+import {ConnectedStateEnum} from '../../../../../../../ducks/ConnectedState.enum';
+import {
+  deleteMoviesFolder, listenMoviesFolder,
+} from '../../../../../../../ducks/storage/Uptobox.slice';
 
 const useStyles = makeStyles({
   container: {
@@ -20,15 +22,22 @@ const useStyles = makeStyles({
 
 export const UptoboxMoviesState = () => {
   const moviesState = useSelector((state: any) => state.uptobox.moviesState);
+  const moviesFolderPath = useSelector((state: any) => state.uptobox.moviesFolderPath);
+  const dispatch = useDispatch();
   const classes = useStyles();
 
   useEffect(() => {
-
+    listenMoviesFolder(dispatch);
   }, []);
 
   switch(moviesState) {
     case ConnectedStateEnum.CONNECTED: {
-      return <div className={classes.container}><CheckCircle className={classes.itemIcon} style={{ color: '#00f429' }}/></div>
+      return <Chip
+        label={moviesFolderPath}
+        // TODO: understand why I need to ignore these errors
+        // @ts-ignore
+        onDelete={() => dispatch(deleteMoviesFolder())}
+      />
     }
 
     case ConnectedStateEnum.DISCONNECTED: {

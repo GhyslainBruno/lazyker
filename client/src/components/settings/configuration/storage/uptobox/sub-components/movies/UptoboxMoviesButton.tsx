@@ -3,8 +3,8 @@ import IconButton from '@material-ui/core/IconButton/IconButton';
 import Folder from '@material-ui/icons/FolderOpen';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {ConnectedStateEnum} from '../../../../../../../feature/ConnectedState.enum';
-import {openMoviesDialog, updateMoviesState} from '../../../../../../../feature/storage/Uptobox.slice';
+import {ConnectedStateEnum} from '../../../../../../../ducks/ConnectedState.enum';
+import {openMoviesDialog, updateMoviesState} from '../../../../../../../ducks/storage/Uptobox.slice';
 
 const useStyles = makeStyles({
   container: {

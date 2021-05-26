@@ -19,8 +19,8 @@ import Visibility from "@material-ui/icons/Visibility";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from 'react-redux';
-import {StorageEnum} from '../../../feature/storage/Storage.enum';
-import {fetchStorage, saveStorage, updateStorage} from '../../../feature/storage/Storage.slice';
+import {StorageEnum} from '../../../ducks/storage/Storage.enum';
+import {fetchStorage, saveStorage, updateStorage} from '../../../ducks/storage/Storage.slice';
 import {Uptobox} from './storage/uptobox/Uptobox';
 
 type StorageProps = {

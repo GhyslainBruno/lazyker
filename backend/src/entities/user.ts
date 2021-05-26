@@ -6,7 +6,8 @@ export type UserSettings = {
   storage: {
     selected: StorageEnum,
     uptobox: {
-      token: string
+      token: string,
+      moviesFolder: string
     }
   },
   debriders: {

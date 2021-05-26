@@ -133,7 +133,9 @@ export class Uptobox implements IStorage {
   async createMovieFolder(movieInfos: MediaInfos, user: User): Promise<UptoboxFolderId> {
     try {
       //TODO: use the folder ID choosen by the user instead
-      const moviesFolderPath = '//medias/movies';
+      // const moviesFolderPath = '//medias/movies';
+
+      const moviesFolderPath = user.settings.storage.uptobox.moviesFolder;
       const newFolderName = `${movieInfos.title} (${movieInfos.year})`;
 
       // TODO: retrieve the path for movies from user's data in database

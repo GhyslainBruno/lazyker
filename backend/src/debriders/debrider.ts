@@ -54,16 +54,4 @@ export class Debrider {
     return await this.debrider.addMagnetLink(magnetLink, user);
   }
 
-  // async connectUser(user: User): Promise<string> {
-  //
-  //   switch (typeof this.debrider) {
-  //     case AllDebrid:
-  //       return await this.debrider.connectUser(user);
-  //       break;
-  //
-  //     default:
-  //       break;
-  //   }
-  // }
-
 }

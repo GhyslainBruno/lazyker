@@ -8,6 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
+import {useDispatch} from 'react-redux';
 // @ts-ignore
 import imageNotFound from "../../../assets/notfound.png";
 import Card from "@material-ui/core/Card";
@@ -26,6 +27,7 @@ import Dialog from "@material-ui/core/Dialog";
 // import screenfull from "screenfull";
 // import {findDOMNode} from "react-dom";
 import Slide from "@material-ui/core/Slide";
+import {displayErrorNotification, displaySuccessNotification} from '../../../ducks/snack/Snackbar.slice';
 import * as auth from "../../../firebase/auth";
 // @ts-ignore
 import Link from "react-router-dom/es/Link";
@@ -118,6 +120,8 @@ const MovieInfoDialog = (props: MyProps) => {
     const [showInfoDialog, setShowInfoDialog] = useState(false);
     const [tmdbTitle, setTmdbTitle] = useState(null);
 
+    const dispatch = useDispatch();
+
     // const player = useRef();
 
     /**
@@ -173,9 +177,9 @@ const MovieInfoDialog = (props: MyProps) => {
             const responseJSON: DownloadTorrentFileDto = await response.json();
 
             if (responseJSON.message !== 'ok') {
-                props.displaySnackMessage('Error while downloading torrent file');
+                dispatch(displayErrorNotification('Error while downloading torrent'))
             } else {
-                props.displaySnackMessage('Torrent added - check progress in downloads');
+                dispatch(displaySuccessNotification('Torrent downloaded'));
             }
 
             setMovieInfoLoading(false);
@@ -185,7 +189,7 @@ const MovieInfoDialog = (props: MyProps) => {
             }, 2000);
 
         } catch(error) {
-            props.displaySnackMessage('Error while downloading torrent file');
+            dispatch(displayErrorNotification('Error while downloading'))
             setMovieInfoLoading(false);
             props.closeDialog();
         }

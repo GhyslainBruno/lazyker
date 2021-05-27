@@ -13,12 +13,12 @@ export const snackbarSlice = createSlice({
       state.opened = true;
       // TODO: make severity using an enum
       state.severity = SeverityEnum.SUCCESS;
-      state.message = action.payload.message;
+      state.message = action.payload;
     },
     displayErrorNotification: (state, action) => {
       state.opened = true;
       state.severity = SeverityEnum.ERROR;
-      state.message = action.payload.message;
+      state.message = action.payload;
     },
     closeSnackBar: (state, action) => {
       state.opened = false;

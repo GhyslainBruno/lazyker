@@ -67,7 +67,7 @@ class Navigation extends Component<NavigationProps> {
                         </BottomNavigation>
                         :
                         <div>
-                            <span>UNAUTHENTICATED</span>
+                            {/*<span>UNAUTHENTICATED</span>*/}
                         </div>
                 }
 

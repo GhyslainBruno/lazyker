@@ -24,6 +24,8 @@ const Debriders = (props: DebridersProps) => {
                     Debriders
                 </Grid>
 
+              <Alldebrid/>
+
                 {
                     props.realdebrid ?
                         <Grid item xs={12} style={{padding: '6px'}}>
@@ -66,8 +68,6 @@ const Debriders = (props: DebridersProps) => {
 
                         </Grid>
                 }
-
-              <Alldebrid/>
 
             </Grid>
         </AccordionDetails>

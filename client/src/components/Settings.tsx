@@ -22,10 +22,6 @@ import PrivacyPolicies from "./settings/privacy_policies";
 import MuiAlert from '@material-ui/lab/Alert';
 import Save from "./settings/save";
 
-function Alert(props: any) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
 let auth2: any = null;
 
 type LinkRealdebridUserDto = {
@@ -98,10 +94,6 @@ type Store = {
 }
 
 const Settings = (props: SettingsProps) => {
-
-    const settingsSnackBarOpenedState = useSelector((state: Store): boolean => {return state.snack.opened});
-    const settingsSnackBarMessage = useSelector((state: Store): string => {return state.snack.message});
-    const settingsSnackBarSeverity = useSelector((state: Store): string => {return state.snack.severity});
 
     const dispatch = useDispatch()
 
@@ -476,25 +468,6 @@ const Settings = (props: SettingsProps) => {
     return (
       <div style={{width: '100%', marginBottom: '10vh'}}>
 
-          {/* TODO: remove this old snack bar - it could still be used at some places, be careful */}
-          <Snackbar
-            open={snack}
-            onClose={() => setSnack(false)}
-            autoHideDuration={2000}
-            message={snackBarMessage}
-          />
-
-          <Snackbar
-            open={settingsSnackBarOpenedState}
-            autoHideDuration={2000}
-            onClose={() => dispatch(closeSnackBar({}))}
-            >
-              <Alert severity={settingsSnackBarSeverity}>
-                  {settingsSnackBarMessage}
-              </Alert>
-          </Snackbar>
-
-
           <h1>Settings</h1>
 
           <div>
@@ -512,18 +485,6 @@ const Settings = (props: SettingsProps) => {
 
                   {!settingsLoading ?
                     <div>
-
-                        <Qualities
-                          firstQuality={firstQuality}
-                          handlerQualityChange={handlerQualityChange}
-                          labelWidth={labelWidth}
-                          secondQuality={secondQuality}
-                          thirdQuality={thirdQuality}
-                          h265={h265}
-                          handleH265Change={handleH265Change}
-                        />
-
-                        <Divider/>
 
                         <Storage
                           googleDriveConnectLoading={googleDriveConnectLoading}
@@ -563,6 +524,16 @@ const Settings = (props: SettingsProps) => {
                         />
 
                         <Divider/>
+
+                        <Qualities
+                          firstQuality={firstQuality}
+                          handlerQualityChange={handlerQualityChange}
+                          labelWidth={labelWidth}
+                          secondQuality={secondQuality}
+                          thirdQuality={thirdQuality}
+                          h265={h265}
+                          handleH265Change={handleH265Change}
+                        />
 
                         <Save
                           setSettings={setSettings}

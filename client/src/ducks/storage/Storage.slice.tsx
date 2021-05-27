@@ -12,7 +12,7 @@ export const saveStorage = createAsyncThunk("storage/saveStorage", async (state:
     .child('/settings/storage/selected')
     .set(state);
 
-  thunkAPI.dispatch(displaySuccessNotification({message: 'Storage changed'}));
+  thunkAPI.dispatch(displaySuccessNotification('Storage changed'));
 
   return state;
 });

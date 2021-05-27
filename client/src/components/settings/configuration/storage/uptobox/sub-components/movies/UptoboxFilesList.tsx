@@ -47,7 +47,7 @@ export const UptoboxFilesList = (props: any) => {
         }
       }
     } catch(error) {
-      dispatch(displayErrorNotification({message: error.message}));
+      dispatch(displayErrorNotification(error.message));
       throw error
     }
   }

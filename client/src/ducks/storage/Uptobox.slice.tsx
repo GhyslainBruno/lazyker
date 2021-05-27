@@ -56,7 +56,7 @@ export const saveToken = createAsyncThunk("uptobox/saveToken", async (state: any
       .child('/settings/storage/uptobox/token')
       .set(state);
 
-    thunkAPI.dispatch(displaySuccessNotification({message: 'Token saved'}));
+    thunkAPI.dispatch(displaySuccessNotification('Token saved'));
 });
 
 export const saveMoviesFolder = createAsyncThunk("uptobox/saveMoviesFolder", async (state: any, thunkAPI) => {
@@ -67,7 +67,7 @@ export const saveMoviesFolder = createAsyncThunk("uptobox/saveMoviesFolder", asy
     .child('/settings/storage/uptobox/moviesFolder')
     .set(state);
 
-  thunkAPI.dispatch(displaySuccessNotification({message: 'Movies folder saved'}));
+  thunkAPI.dispatch(displaySuccessNotification('Movies folder saved'));
 });
 
 
@@ -80,7 +80,7 @@ export const deleteToken = createAsyncThunk("uptobox/deleteToken", async (state:
       .child('/settings/storage/uptobox/token')
       .remove();
 
-  thunkAPI.dispatch(displaySuccessNotification({message: 'Token deleted'}));
+  thunkAPI.dispatch(displaySuccessNotification('Token deleted'));
   });
 
 export const deleteMoviesFolder = createAsyncThunk("uptobox/deleteMoviesFolder", async (state: any, thunkAPI) => {
@@ -91,7 +91,7 @@ export const deleteMoviesFolder = createAsyncThunk("uptobox/deleteMoviesFolder",
     .child('/settings/storage/uptobox/moviesFolder')
     .remove();
 
-  return thunkAPI.dispatch(displaySuccessNotification({message: 'Movies folder deleted'}));
+  return thunkAPI.dispatch(displaySuccessNotification('Movies folder deleted'));
 });
 
 

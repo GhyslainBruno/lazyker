@@ -69,6 +69,7 @@ const Storage = (props: StorageProps) => {
                     Storage
                 </Grid>
 
+                {/* The Chips representing the different storages */}
                 <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
 
                     <Chip
@@ -89,12 +90,39 @@ const Storage = (props: StorageProps) => {
                     />
                 </Grid>
 
+                {/* The "body" of the different storages */}
                 {storageSelected === StorageEnum.GOOGLE_DRIVE ?
                     <div style={{width: '100%'}}>
                         { props.googleDriveConnectLoading ?
                             <CircularProgress style={props.settingsLoading ? {display: 'inline-block', margin: '5px'} : {display: 'none'}} />
                             :
                             <Grid item xs={12} style={{padding: '6px'}}>
+
+                                <div style={{display: 'flex'}}>
+                                    <div style={{flex: '1'}}>
+                                        Link
+                                    </div>
+                                    <div style={{flex: '1'}}>
+                                        {
+                                            props.gdriveToken !== null ?
+                                              <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
+                                              :
+                                              <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
+                                        }
+                                    </div>
+                                    <div style={{flex: '1'}}>
+                                        {
+                                            props.gdriveToken !== null ?
+                                              <IconButton onClick={props.googleDriveDisConnect}>
+                                                  <LinkOff/>
+                                              </IconButton>
+                                              :
+                                              <IconButton onClick={props.googleDriveConnect}>
+                                                  <Link/>
+                                              </IconButton>
+                                        }
+                                    </div>
+                                </div>
 
                                 <div style={{display: 'flex'}}>
                                     <div style={{flex: '1', marginTop: '10px'}}>
@@ -217,32 +245,6 @@ const Storage = (props: StorageProps) => {
                                             </IconButton>
 
                                         </GooglePicker>
-                                    </div>
-                                </div>
-
-                                <div style={{display: 'flex'}}>
-                                    <div style={{flex: '1'}}>
-                                        Link
-                                    </div>
-                                    <div style={{flex: '1'}}>
-                                        {
-                                            props.gdriveToken !== null ?
-                                                <CheckCircle style={{fontSize: '20', color: '#00f429'}}/>
-                                                :
-                                                <CancelCircle style={{fontSize: '20', color: '#f44336'}}/>
-                                        }
-                                    </div>
-                                    <div style={{flex: '1'}}>
-                                        {
-                                            props.gdriveToken !== null ?
-                                                <IconButton onClick={props.googleDriveDisConnect}>
-                                                    <LinkOff/>
-                                                </IconButton>
-                                                :
-                                                <IconButton onClick={props.googleDriveConnect}>
-                                                    <Link/>
-                                                </IconButton>
-                                        }
                                     </div>
                                 </div>
 

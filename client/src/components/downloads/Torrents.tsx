@@ -7,7 +7,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import IconButton from "@material-ui/core/IconButton";
 import Error from "@material-ui/icons/Error";
 import Accordion from "@material-ui/core/Accordion";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import PlayArrow from "@material-ui/icons/PlayArrow";
 import RemoveCircle from "@material-ui/icons/RemoveCircleOutline";
@@ -21,27 +21,30 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
+import {useDispatch} from 'react-redux';
+import {displayErrorNotification, displaySuccessNotification} from '../../ducks/snack/Snackbar.slice';
 import * as auth from "../../firebase/auth";
 import Tooltip from '@material-ui/core/Tooltip';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 
-function CloudDoneGreen(props: any) {
+const CloudDoneGreen = (props: any) => {
     return (
         <CloudDone style={{color: '#4CAF50'}}/>
     )
 }
 
-function ErrorRed(props: any) {
+const ErrorRed = (props: any) => {
     return(
         <Error style={{color: '#ff0000'}}/>
     )
 }
 
-type MyProps = {
+type TorrentsProps = {
     displaySnackMessage: (message: string) => void;
 };
-type MyState = {
+
+type TorrentsState = {
     torrents: any;
     torrentsLoading: boolean;
     torrentIdToRemove: any;
@@ -59,35 +62,24 @@ interface StartTorrentDownloadDto {
     message: string;
 }
 
-class Torrents extends React.Component<MyProps, MyState> {
+const Torrents = (props: TorrentsProps, state: TorrentsState) => {
 
-    constructor(props: any)
-    {
-        super(props);
-        this.state = {
-            torrents: null,
-            torrentsLoading: false,
-            torrentIdToRemove: null,
-            showDeleteDialog: false,
-            open: false,
-            torrentsInterval: 'torrentsInterval'
-        };
-    }
+    const [torrents, setTorrents] = useState<any>(null);
+    const [torrentsLoading, setTorrentsLoading] = useState(false);
+    const [torrentIdToRemove, setTorrentIdToRemove] = useState(null);
+    const [showDeleteDialogState, setShowDeleteDialog] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [torrentsInterval, setTorrentsInterval] = useState<any>('torrentsInterval');
 
-    componentWillUnmount() {
-        this.stopsRealTimeTorrents();
-    }
+    const dispatch = useDispatch();
 
-    handleTooltipClose = () => {
-        this.setState({ open: false });
-    };
+    useEffect(() => {
+        stopsRealTimeTorrents();
+    }, []);
 
-    handleTooltipOpen = () => {
-        this.setState({ open: true });
-    };
-
-    firstTorrentsLoad = async () => {
-        this.setState({torrentsLoading: true, torrents: null});
+    const firstTorrentsLoad = async () => {
+        setTorrentsLoading(true);
+        setTorrents(null);
 
         try {
             let response = await fetch('/api/realdebrid_torrents', {
@@ -97,107 +89,110 @@ class Torrents extends React.Component<MyProps, MyState> {
                 }
             });
 
-            this.loadRealTimeTorrents();
+            loadRealTimeTorrents();
 
             if (response.status === 200) {
                 const torrents = await response.json();
-                this.setState({torrents: torrents, torrentsLoading: false});
+                setTorrents(torrents);
+                setTorrentsLoading(false);
             } else {
-                this.setState({torrents: [], torrentsLoading: false});
-                this.props.displaySnackMessage('Error : Link your InterfaceDebrider account -> Settings > Configuration');
+                setTorrents([]);
+                setTorrentsLoading(false);
+                dispatch(displayErrorNotification('Link your debrider account in Settings'));
             }
 
         } catch(error) {
-            this.props.displaySnackMessage('Error getting Realdebrid torrents');
-            this.setState({torrentsLoading: false});
+            dispatch(displayErrorNotification('Error getting Realdebrid torrents'));
+            setTorrentsLoading(false);
         }
     };
 
-    loadTorrents = async () => {
-        this.setState({torrentsLoading: true, torrents: null});
+    const loadRealTimeTorrents = () => {
 
-        try {
-            let response = await fetch('/api/realdebrid_torrents', {
-                method: 'GET',
-                headers: {
-                    'token': await auth.getIdToken()
-                }
-            });
-
-            if (response.status === 200) {
-                const torrents = await response.json();
-                this.setState({torrents: torrents, torrentsLoading: false});
-            } else {
-                this.setState({torrents: [], torrentsLoading: false});
-                this.props.displaySnackMessage('Error : Link your InterfaceDebrider account -> Settings > Configuration');
-            }
-
-        } catch(error) {
-            this.props.displaySnackMessage('Error getting Realdebrid torrents');
-            this.setState({torrentsLoading: false});
-        }
-    };
-
-    loadRealTimeTorrents = () => {
-        this.setState({
-            torrentsInterval: setInterval(async () => {
-                try {
-                    let response = await fetch('/api/realdebrid_torrents', {
-                        method: 'GET',
-                        headers: {
-                            'token': await auth.getIdToken()
-                        }
-                    });
-
-                    if (response.status === 200) {
-                        const torrents = await response.json();
-                        this.setState({ torrents: torrents });
-                    } else {
-                        this.setState({ torrents: [], torrentsLoading: false });
-                        this.props.displaySnackMessage('Error : Link your InterfaceDebrider account -> Settings > Configuration');
+        setTorrentsInterval(setInterval(async () => {
+            try {
+                let response = await fetch('/api/realdebrid_torrents', {
+                    method: 'GET',
+                    headers: {
+                        'token': await auth.getIdToken()
                     }
+                });
 
-                } catch(error) {
-                    this.props.displaySnackMessage('Error getting Realdebrid torrents');
-                    this.setState({torrentsLoading: false});
+                if (response.status === 200) {
+                    const torrents = await response.json();
+                    setTorrents(torrents);
+                } else {
+                    setTorrents([]);
+                    setTorrentsLoading(false);
+                    dispatch(displayErrorNotification('Link your debrider account in Settings'));
                 }
-            }, 4000)
-        })
+
+            } catch(error) {
+                dispatch(displayErrorNotification('Error getting Realdebrid torrents'));
+                setTorrentsLoading(false);
+            }
+        }, 4000))
+
+        // this.setState({
+        //     torrentsInterval: setInterval(async () => {
+        //         try {
+        //             let response = await fetch('/api/realdebrid_torrents', {
+        //                 method: 'GET',
+        //                 headers: {
+        //                     'token': await auth.getIdToken()
+        //                 }
+        //             });
+        //
+        //             if (response.status === 200) {
+        //                 const torrents = await response.json();
+        //                 this.setState({ torrents: torrents });
+        //             } else {
+        //                 this.setState({ torrents: [], torrentsLoading: false });
+        //                 this.props.displaySnackMessage('Error : Link your InterfaceDebrider account -> Settings > Configuration');
+        //             }
+        //
+        //         } catch(error) {
+        //             this.props.displaySnackMessage('Error getting Realdebrid torrents');
+        //             this.setState({torrentsLoading: false});
+        //         }
+        //     }, 4000)
+        // })
     };
 
-    stopsRealTimeTorrents = () => {
-        clearInterval(this.state.torrentsInterval);
+    const stopsRealTimeTorrents = () => {
+        clearInterval(torrentsInterval);
     };
 
-    showDeleteDialog = async (torrentId: any) => {
-        this.setState({showDeleteDialog: true, torrentIdToRemove: torrentId});
+    const showDeleteDialog = async (torrentId: any) => {
+        setShowDeleteDialog(true);
+        setTorrentIdToRemove(torrentId);
     };
 
-    closeDeleteDialog = () => {
-        this.setState({showDeleteDialog: false, torrentIdToRemove: null})
+    const closeDeleteDialog = () => {
+        setShowDeleteDialog(false);
+        setTorrentIdToRemove(null);
     };
 
-    deleteTorrent = async () => {
-        this.setState({torrentsLoading: true, torrents: null, showDeleteDialog: false});
+    const deleteTorrent = async () => {
+        setTorrentsLoading(true);
+        setTorrents(null);
+        setShowDeleteDialog(false);
 
         try {
-            await fetch('/api/realdebrid_torrents?torrentId=' + this.state.torrentIdToRemove, {
+            await fetch('/api/realdebrid_torrents?torrentId=' + torrentIdToRemove, {
                 method: 'DELETE',
                 headers: {
                     'token': await auth.getIdToken()
                 }
             });
-            // const torrents = await response.json();
-            // this.setState({torrents: torrents, torrentsLoading: false})
-            this.setState({torrentsLoading: false});
+            setTorrentsLoading(false);
         } catch(error) {
-
-            this.props.displaySnackMessage('Error getting Realdebrid torrents');
-            this.setState({torrentsLoading: false});
+            dispatch(displayErrorNotification('Error while deleting your torrent'));
+            setTorrentsLoading(false);
         }
     };
 
-    startTorrentStreaming = async (torrent: any) => {
+    const startTorrentStreaming = async (torrent: any) => {
         try {
             let response = await fetch('/api/streaming_torrent', {
                 method: 'POST',
@@ -213,17 +208,19 @@ class Torrents extends React.Component<MyProps, MyState> {
             const responseJSON: StreamingTorrentDto = await response.json();
 
             if (responseJSON.error) {
-                this.props.displaySnackMessage('File not streamable');
+                dispatch(displayErrorNotification('File not streamable'));
             } else {
                 window.location = responseJSON.streamingLink;
             }
         } catch (error) {
-            this.props.displaySnackMessage('Impossible to stream this torrent');
+            dispatch(displayErrorNotification('Impossible to stream this torrent'));
         }
     };
 
-    startTorrentDownload = async (torrent: any) => {
-        this.setState({torrentsLoading: true, torrents: null, showDeleteDialog: false});
+    const startTorrentDownload = async (torrent: any) => {
+        setTorrentsLoading(true);
+        setTorrents(null);
+        setShowDeleteDialog(false);
 
         try {
             let response = await fetch('/api/realdebrid_torrent_download', {
@@ -240,189 +237,158 @@ class Torrents extends React.Component<MyProps, MyState> {
             const responseJSON: StartTorrentDownloadDto = await response.json();
 
             if (responseJSON.message !== 'ok') {
-                this.props.displaySnackMessage(responseJSON.message);
-                this.setState({torrentsLoading: false});
-                // this.loadTorrents();
+                dispatch(displayErrorNotification(responseJSON.message));
+                setTorrentsLoading(false);
             } else {
-                this.props.displaySnackMessage('Added to current downloads');
-                this.setState({torrentsLoading: false});
-                // this.loadTorrents();
+                dispatch(displaySuccessNotification('Added to current downloads'));
+                setTorrentsLoading(false);
             }
 
         } catch(error) {
-            this.setState({torrentsLoading: false});
-            this.props.displaySnackMessage(error.message);
-            // this.loadTorrents();
+            setTorrentsLoading(false);
+            dispatch(displayErrorNotification(error.message));
         }
     };
 
-    render() {
-        return (
+    return (
+      <Accordion onChange={(event, expanded) => expanded ? firstTorrentsLoad() : stopsRealTimeTorrents()}>
 
-            <Accordion onChange={(event, expanded) => expanded ? this.firstTorrentsLoad() : this.stopsRealTimeTorrents()}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>RealDebrid Torrents</Typography>
+          </AccordionSummary>
 
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>RealDebrid Torrents</Typography>
-                </AccordionSummary>
+          <Dialog
+            open={showDeleteDialogState}
+            onClose={closeDeleteDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description">
 
-                <Dialog
-                    open={this.state.showDeleteDialog}
-                    onClose={this.closeDeleteDialog}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description">
+              <DialogTitle id="alert-dialog-title">Remove item</DialogTitle>
 
-                    <DialogTitle id="alert-dialog-title">Remove item</DialogTitle>
+              <DialogContent>
+                  <DialogContentText id="alert-dialog-description">Do you really want to remove this torrent ?</DialogContentText>
+              </DialogContent>
 
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">Do you really want to remove this torrent ?</DialogContentText>
-                    </DialogContent>
+              <DialogActions>
+                  <Button onClick={closeDeleteDialog} color="primary">
+                      Cancel
+                  </Button>
+                  <Button onClick={deleteTorrent} color="primary" autoFocus>
+                      Remove
+                  </Button>
+              </DialogActions>
+          </Dialog>
 
-                    <DialogActions>
-                        <Button onClick={this.closeDeleteDialog} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={this.deleteTorrent} color="primary" autoFocus>
-                            Remove
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+          <AccordionDetails style={{textAlign: 'center'}}>
 
-                <AccordionDetails style={{textAlign: 'center'}}>
+              <List component="nav" style={{width: '100%'}}>
 
-                    <List component="nav" style={{width: '100%'}}>
+                  <CircularProgress style={torrentsLoading ? {display: 'inline-block'} : {display: 'none'}} />
 
-                        <CircularProgress style={this.state.torrentsLoading ? {display: 'inline-block'} : {display: 'none'}} />
+                  {torrents !== null ?
+                    torrents.length > 0 ?
+                      !torrentsLoading ?
+                        torrents.map((torrent: any) => {
+                            return (
+                              <div>
+                                  <div style={{display: 'inline-flex', width: '100%', textAlign: 'left', padding: '5px'}}>
+                                      <div className="torrentsTitlesDownload" style={{flex: '1'}}>
 
-                        {this.state.torrents !== null ?
-                            this.state.torrents.length > 0 ?
-                                !this.state.torrentsLoading ?
-                                    this.state.torrents.map((torrent: any) => {
-                                        return (
-                                            <div>
-                                                <div style={{display: 'inline-flex', width: '100%', textAlign: 'left', padding: '5px'}}>
-                                                    <div className="torrentsTitlesDownload" style={{flex: '1'}}>
+                                          {/* Trying to use click tooltip, not functional for now */}
+                                          {/*<ClickAwayListener onClickAway={this.handleTooltipClose}>*/}
+                                          {/*<div>*/}
+                                          {/*<Tooltip*/}
+                                          {/*PopperProps={{*/}
+                                          {/*disablePortal: false,*/}
+                                          {/*}}*/}
+                                          {/*onClose={this.handleTooltipClose}*/}
+                                          {/*open={this.state.open}*/}
+                                          {/*disableFocusListener*/}
+                                          {/*disableHoverListener*/}
+                                          {/*disableTouchListener*/}
+                                          {/*title={torrent.filename}*/}
+                                          {/*>*/}
+                                          {/*<p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} onClick={this.handleTooltipOpen}>{torrent.filename}</p>*/}
+                                          {/*</Tooltip>*/}
+                                          {/*</div>*/}
+                                          {/*</ClickAwayListener>*/}
 
-                                                        {/* Trying to use click tooltip, not functional for now */}
-                                                        {/*<ClickAwayListener onClickAway={this.handleTooltipClose}>*/}
-                                                        {/*<div>*/}
-                                                        {/*<Tooltip*/}
-                                                        {/*PopperProps={{*/}
-                                                        {/*disablePortal: false,*/}
-                                                        {/*}}*/}
-                                                        {/*onClose={this.handleTooltipClose}*/}
-                                                        {/*open={this.state.open}*/}
-                                                        {/*disableFocusListener*/}
-                                                        {/*disableHoverListener*/}
-                                                        {/*disableTouchListener*/}
-                                                        {/*title={torrent.filename}*/}
-                                                        {/*>*/}
-                                                        {/*<p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} onClick={this.handleTooltipOpen}>{torrent.filename}</p>*/}
-                                                        {/*</Tooltip>*/}
-                                                        {/*</div>*/}
-                                                        {/*</ClickAwayListener>*/}
+                                          <Tooltip title={torrent.filename}>
+                                              <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>
+                                          </Tooltip>
 
-                                                        <Tooltip title={torrent.filename}>
-                                                            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>
-                                                        </Tooltip>
+                                          {/* Without any tooltip - old way */}
+                                          {/*<p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>*/}
+                                      </div>
 
-                                                        {/* Without any tooltip - old way */}
-                                                        {/*<p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>*/}
-                                                    </div>
+                                      <div style={{width: '8%', padding: '12px', textAlign: 'center'}}>
+                                          <div>
+                                              {(torrent.status === 'downloading' ||
+                                                torrent.status === 'uploading'
+                                              )?
+                                                <CloudDownload/>
+                                                :
+                                                (torrent.status === 'error' ||
+                                                  torrent.status === 'magnet_error' ||
+                                                  torrent.status === 'virus'
+                                                ) ?
+                                                  <ErrorRed/>
+                                                  :
+                                                  (torrent.status === 'waiting_files_selection' ||
+                                                    torrent.status === 'magnet_conversion' ||
+                                                    torrent.status === 'queued'
+                                                  ) ?
+                                                    <Delayed/>
+                                                    :
+                                                    torrent.status === 'downloaded' ?
+                                                      <CloudDoneGreen/>
+                                                      :
+                                                      torrent.status === 'compressing' ?
+                                                        <CloudDownload/>
+                                                        :
+                                                        torrent.status === 'dead' ?
+                                                          <ErrorRed/>
+                                                          :
+                                                          null
+                                              }
+                                          </div>
+                                      </div>
 
-                                                    <div style={{width: '8%', padding: '12px', textAlign: 'center'}}>
-                                                        <div>
-                                                            {(torrent.status === 'downloading' ||
-                                                                torrent.status === 'uploading'
-                                                            )?
-                                                                <CloudDownload/>
-                                                                :
-                                                                (torrent.status === 'error' ||
-                                                                    torrent.status === 'magnet_error' ||
-                                                                    torrent.status === 'virus'
-                                                                ) ?
-                                                                    <ErrorRed/>
-                                                                    :
-                                                                    (torrent.status === 'waiting_files_selection' ||
-                                                                        torrent.status === 'magnet_conversion' ||
-                                                                        torrent.status === 'queued'
-                                                                    ) ?
-                                                                        <Delayed/>
-                                                                        :
-                                                                        torrent.status === 'downloaded' ?
-                                                                            <CloudDoneGreen/>
-                                                                            :
-                                                                            torrent.status === 'compressing' ?
-                                                                                <CloudDownload/>
-                                                                                :
-                                                                                torrent.status === 'dead' ?
-                                                                                    <ErrorRed/>
-                                                                                    :
-                                                                                    null
-                                                            }
-                                                        </div>
-                                                    </div>
+                                      <div style={{textAlign: 'center', margin: 'auto'}} className="buttonsDownload">
+                                          <IconButton style={{padding: '5px'}}>
+                                              <RemoveCircle onClick={() => showDeleteDialog(torrent.id)}/>
+                                          </IconButton>
 
-                                                    <div style={{textAlign: 'center', margin: 'auto'}} className="buttonsDownload">
-                                                        <IconButton style={{padding: '5px'}}>
-                                                            <RemoveCircle onClick={() => this.showDeleteDialog(torrent.id)}/>
-                                                        </IconButton>
+                                          <IconButton style={{padding: '5px'}} disabled={torrent.status !== 'downloaded'}>
+                                              <Download onClick={() => startTorrentDownload(torrent)}/>
+                                          </IconButton>
 
-                                                        <IconButton style={{padding: '5px'}} disabled={torrent.status !== 'downloaded'}>
-                                                            <Download onClick={() => this.startTorrentDownload(torrent)}/>
-                                                        </IconButton>
+                                          {/* TODO: use a generic streaming url (not only realdebrid service) */}
+                                          <IconButton style={{padding: '5px'}} disabled={torrent.status !== 'downloaded'} onClick={() => startTorrentStreaming(torrent)}>
+                                              <PlayArrow/>
+                                          </IconButton>
+                                      </div>
+                                  </div>
 
-                                                        {/* TODO: use a generic streaming url (not only realdebrid service) */}
-                                                        <IconButton style={{padding: '5px'}} disabled={torrent.status !== 'downloaded'} onClick={() => this.startTorrentStreaming(torrent)}>
-                                                            <PlayArrow/>
-                                                        </IconButton>
+                                  <div style={{paddingRight: '5px', paddingLeft: '5px'}}>
+                                      <LinearProgress variant="determinate" value={torrent.progress} />
+                                  </div>
+                              </div>
+                            )
+                        })
+                        :
+                        null
+                      :
+                      <div style={{padding: '10px', fontSize: '0.9rem', color: 'grey'}}>no torrents</div>
+                    :
+                    null
+                  }
 
-                                                        {/*<IconButton style={{padding: '5px'}}>*/}
-                                                        {/*<RemoveCircle  onClick={() => this.showRemoveDialog(currentDownload.id)}/>*/}
-                                                        {/*</IconButton>*/}
-                                                    </div>
-                                                </div>
+              </List>
 
-                                                <div style={{paddingRight: '5px', paddingLeft: '5px'}}>
-                                                    <LinearProgress variant="determinate" value={torrent.progress} />
-                                                </div>
-                                            </div>
-                                            // <ListItem button>
-                                            //     <ListItemText primary={torrent.filename}/>
-                                            //
-                                            //     <div style={{paddingRight: '5px', paddingLeft: '5px'}}>
-                                            //         <LinearProgress variant="determinate" value={50} />
-                                            //     </div>
-                                            //
-                                            //     <ListItemSecondaryAction>
-                                            //         {torrent.status === 'error' ?
-                                            //             <IconButton>
-                                            //                 <Error style={{color: '#ff0000'}}/>
-                                            //             </IconButton>
-                                            //             :
-                                            //             null
-                                            //         }
-                                            //
-                                            //         <IconButton>
-                                            //             <Delete onClick={() => this.deleteTorrent(torrent)} />
-                                            //         </IconButton>
-                                            //     </ListItemSecondaryAction>
-                                            // </ListItem>
-                                        )
-                                    })
-                                    :
-                                    null
-                                :
-                                <div style={{padding: '10px', fontSize: '0.9rem', color: 'grey'}}>no torrents</div>
-                            :
-                            null
-                        }
-
-                    </List>
-
-                </AccordionDetails>
-            </Accordion>
-        )
-    }
+          </AccordionDetails>
+      </Accordion>
+    )
 }
 
 export default Torrents

@@ -4,6 +4,7 @@ import Folder from '@material-ui/icons/FolderOpen';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {ConnectedStateEnum} from '../../../../../../../ducks/ConnectedState.enum';
+import {displayErrorNotification} from '../../../../../../../ducks/snack/Snackbar.slice';
 import {openMoviesDialog, updateMoviesState} from '../../../../../../../ducks/storage/Uptobox.slice';
 
 const useStyles = makeStyles({
@@ -20,14 +21,18 @@ const useStyles = makeStyles({
 
 export const UptoboxMoviesButton = () => {
 
-  const moviesState = useSelector((state: any) => state.uptobox.moviesState);
+  const uptoboxConnectedState = useSelector((state: any) => state.uptobox.connectedState);
   const dispatch = useDispatch();
   const classes = useStyles();
+
+  const handleButtonClick = () => {
+    uptoboxConnectedState === ConnectedStateEnum.CONNECTED ? dispatch(openMoviesDialog(true)) : dispatch(displayErrorNotification('Link your account first'));
+  }
 
   return (
     <div className={classes.container}>
       <div className={classes.itemIcon}>
-        <IconButton onClick={() => dispatch(openMoviesDialog(true))}>
+        <IconButton onClick={handleButtonClick}>
           <Folder/>
         </IconButton>
       </div>

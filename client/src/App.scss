@@ -7,10 +7,6 @@ $mdc-theme-secondary: red;
 $mdc-theme-on-primary: red;
 $mdc-theme-on-secondary: red;
 
-@import '@material/react-text-field/index';
-@import '@material/react-button/index';
-@import "@material/button/mixins";
-
 /* Trying to use custom scroll bar */
 /* width */
 ::-webkit-scrollbar {

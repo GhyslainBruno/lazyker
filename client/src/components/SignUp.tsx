@@ -21,6 +21,7 @@ const INITIAL_STATE = {
     email: '',
     passwordOne: '',
     passwordTwo: '',
+    // @ts-ignore
     error: null,
     showPassword: false,
     signUpLoading: false

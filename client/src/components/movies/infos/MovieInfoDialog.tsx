@@ -21,7 +21,7 @@ import Play from "@material-ui/icons/PlayArrow";
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Star from "@material-ui/icons/Star";
 import Download from "@material-ui/icons/GetApp";
-import ReactPlayer from "react-player";
+// import ReactPlayer from "react-player";
 import Dialog from "@material-ui/core/Dialog";
 // @ts-ignore
 // import screenfull from "screenfull";

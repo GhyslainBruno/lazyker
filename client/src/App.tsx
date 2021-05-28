@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {SeverityEnum} from './ducks/snack/Severity.enum';
 import {closeSnackBar, displaySuccessNotification} from './ducks/snack/Snackbar.slice';
 import { auth as authTest }from './firebase/firebase';
-import './App.css';
+import './App.scss';
 import Shows from './components/Shows';
 import Navigation from './components/Navigation';
 import Movies from './components/Movies';

@@ -42,6 +42,7 @@ const INITIAL_STATE = {
     password: '',
     showPassword: false,
     signInLoading: false,
+    // @ts-ignore
     error: null,
 };
 

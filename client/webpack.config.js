@@ -44,18 +44,21 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/'
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./public/index.html"
+      hash: true,
+      filename: "index.html",  //target html
+      template: "./public/index.html" //source html
     })
   ],
   devServer: {
     port: 3000,
-    historyApiFallback: true,
     proxy: { // proxy URLs to backend development server
-      '/': 'http://localhost:80'
+      '/api/*': 'http://localhost:80'
     },
+    historyApiFallback: true,
   },
   devtool: 'source-map',
 };

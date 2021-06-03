@@ -99,7 +99,7 @@ const portUsed = 80;
 
 http.createServer(app)
     .listen(portUsed, function () {
-        console.log('Listening on port ' + portUsed + ' ! Go to https://localhost:' + portUsed)
+        console.log('Listening on port ' + portUsed + ' ! Go to https://localhost:' + portUsed + ' | on architecture ' + process.arch);
     });
 
 module.exports = app;

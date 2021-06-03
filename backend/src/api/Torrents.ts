@@ -21,7 +21,7 @@ module.exports = (app: any) => {
             res.send(await Movies.getTorrentsList(req.query.title));
         } catch(error) {
             res.status(500).send({
-                message: error
+                message: error.message
             })
         }
     });

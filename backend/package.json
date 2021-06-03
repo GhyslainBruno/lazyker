@@ -14,7 +14,7 @@
     "test": "jest --config src/jest.config.js --forceExit --detectOpenHandles",
     "kill:debug": "kill -9 `lsof -nP +c 15 | grep LISTEN | grep :9229 | awk '{print $2}'`",
     "start": "npm run debug",
-    "debug": "npx ts-node-dev --respawn --inspect -- ./src/server.ts"
+    "debug": "NODE_ENV=development npx ts-node-dev --respawn --inspect -- ./src/server.ts"
   },
   "jestSonar": {
     "reportPath": "coverage"

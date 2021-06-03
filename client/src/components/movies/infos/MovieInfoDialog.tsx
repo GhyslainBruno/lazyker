@@ -225,7 +225,7 @@ const MovieInfoDialog = (props: MyProps) => {
 
         } catch(error) {
             props.closeDialog();
-            props.displaySnackMessage('Error while getting qualities');
+            dispatch(displayErrorNotification('Error while getting qualities'));
             // this.setState({movieInfoLoading: false})
             setMovieInfoLoading(false);
         }
@@ -326,7 +326,7 @@ const MovieInfoDialog = (props: MyProps) => {
             setTorrentsListFull(torrentsTagguedToReturn);
             setTorrentsList(torrentsTagguedToReturn)
         } catch(error) {
-            props.displaySnackMessage('Error while getting qualities');
+            dispatch(displayErrorNotification('Error while getting torrents'));
             setMovieInfoLoading(false);
         }
     };
@@ -395,7 +395,7 @@ const MovieInfoDialog = (props: MyProps) => {
             setProvidersMovies(null);
             setQualities(null);
         } catch (error) {
-            props.displaySnackMessage('Error while starting the download');
+            dispatch(displayErrorNotification('Error while starting the download'));
         }
 
     };

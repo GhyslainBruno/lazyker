@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import VerticalLinearStepper from "./VerticalStepper";
+import LazykerIcon from '../../icon.png';
 
 function HomePage() {
     return (
@@ -9,7 +10,7 @@ function HomePage() {
 
             <div className="iconHomePageContainer">
 
-                <Avatar alt="Lazyker icon" src={require('../assets/icon.png')} className="iconHomePage" />
+                <Avatar alt="Lazyker icon" src={LazykerIcon} className="iconHomePage" />
 
                 <p style={{fontSize: '30px'}}>
                     Lazyker

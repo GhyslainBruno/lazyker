@@ -1,25 +1,22 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Snackbar from '@material-ui/core/Snackbar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {isConnected} from '../ducks/debriders/Alldebrid.slice';
 import {SeverityEnum} from '../ducks/snack/Severity.enum';
-import {closeSnackBar, displayErrorNotification} from '../ducks/snack/Snackbar.slice';
+import { displayErrorNotification } from '../ducks/snack/Snackbar.slice';
 import SignOutButton from "../firebase/SignOutBtn";
 import { auth } from '../firebase';
 import queryString from "qs";
-// import gapi from 'gapi-client';
 import Logs from "./settings/logs";
 import Qualities from "./settings/configuration/qualities";
 import Storage from "./settings/configuration/storage";
 import Debriders from "./settings/configuration/debriders";
 import PrivacyPolicies from "./settings/privacy_policies";
-import MuiAlert from '@material-ui/lab/Alert';
 import Save from "./settings/save";
 
 let auth2: any = null;
@@ -525,15 +522,15 @@ const Settings = (props: SettingsProps) => {
 
                         <Divider/>
 
-                        <Qualities
-                          firstQuality={firstQuality}
-                          handlerQualityChange={handlerQualityChange}
-                          labelWidth={labelWidth}
-                          secondQuality={secondQuality}
-                          thirdQuality={thirdQuality}
-                          h265={h265}
-                          handleH265Change={handleH265Change}
-                        />
+                        {/*<Qualities*/}
+                        {/*  firstQuality={firstQuality}*/}
+                        {/*  handlerQualityChange={handlerQualityChange}*/}
+                        {/*  labelWidth={labelWidth}*/}
+                        {/*  secondQuality={secondQuality}*/}
+                        {/*  thirdQuality={thirdQuality}*/}
+                        {/*  h265={h265}*/}
+                        {/*  handleH265Change={handleH265Change}*/}
+                        {/*/>*/}
 
                         <Save
                           setSettings={setSettings}

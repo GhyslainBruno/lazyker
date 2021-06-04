@@ -395,8 +395,7 @@ const App = (props: AppProps, state: AppState) => {
                           <Route exact path='/pw-forget' render={(props: any) =><PasswordReset {...props} />}/>
                           <Route exact path='/privacy_policy' render={() => <Privacy/>}/>
                           <Route path='/signin' render={(props: any) =><SignInForm {...props} />}/>
-                          {/*//@ts-ignore*/}
-                          <Route path={/^(?!.*(pw-forget|signup|signin|privacy_policy)).*$/} render={() =><HomePage />}/>
+                          <Route exact path='/' render={() =><HomePage />}/>
                       </div>
 
               }

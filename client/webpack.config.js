@@ -2,6 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  mode: 'development',
+  devtool: 'source-map',
   entry: './src/index.tsx',
   module: {
     rules: [
@@ -43,14 +45,11 @@ module.exports = {
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/'
+    path: path.resolve(__dirname, 'dist')
   },
   plugins: [
     new HtmlWebpackPlugin({
-      hash: true,
-      filename: "index.html",  //target html
-      template: "./public/index.html" //source html
+      template: "./public/index.html"
     })
   ],
   devServer: {
@@ -60,5 +59,4 @@ module.exports = {
     },
     historyApiFallback: true,
   },
-  devtool: 'source-map',
 };

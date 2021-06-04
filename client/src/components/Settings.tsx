@@ -9,11 +9,11 @@ import Divider from '@material-ui/core/Divider';
 import {useDispatch, useSelector} from 'react-redux';
 import {isConnected} from '../ducks/debriders/Alldebrid.slice';
 import {SeverityEnum} from '../ducks/snack/Severity.enum';
-import {closeSnackBar} from '../ducks/snack/Snackbar.slice';
+import {closeSnackBar, displayErrorNotification} from '../ducks/snack/Snackbar.slice';
 import SignOutButton from "../firebase/SignOutBtn";
 import { auth } from '../firebase';
 import queryString from "qs";
-import gapi from 'gapi-client';
+// import gapi from 'gapi-client';
 import Logs from "./settings/logs";
 import Qualities from "./settings/configuration/qualities";
 import Storage from "./settings/configuration/storage";
@@ -131,6 +131,7 @@ const Settings = (props: SettingsProps) => {
             props.changeNavigation('settings');
 
             gapi.load('auth2', function() {
+                // @ts-ignore
                 auth2 = gapi.auth2.init({
                     discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
                     clientId: '348584284-25m9u9qbgmapjd3vtt5oaai7mir5t7vu.apps.googleusercontent.com',
@@ -359,10 +360,11 @@ const Settings = (props: SettingsProps) => {
 
     const googleDriveConnect = async () => {
 
-        const code = await auth2.grantOfflineAccess();
-
         try {
-            let response = await fetch('/api/gdrive_auth', {
+
+            const code = await auth2.grantOfflineAccess();
+
+            await fetch('/api/gdrive_auth', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -376,11 +378,9 @@ const Settings = (props: SettingsProps) => {
 
             await setSettings();
 
-            response = await response.json();
             await loadSettings();
         } catch (error) {
-            setSnack(true);
-            setSnackBarMessage('Error connecting to Google Drive');
+            dispatch(displayErrorNotification('Error connecting to Google Drive'))
             setGoogleDriveConnectLoading(false);
         }
 

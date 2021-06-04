@@ -328,6 +328,7 @@ const MovieInfoDialog = (props: MyProps) => {
         } catch(error) {
             dispatch(displayErrorNotification('Error while getting torrents'));
             setMovieInfoLoading(false);
+            getMovieInfo(props.selectedMovie);
         }
     };
 

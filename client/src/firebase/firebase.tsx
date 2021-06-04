@@ -16,11 +16,11 @@ const config = {
 if (!firebase.apps.length) {
     firebase.initializeApp(config);
 
-    navigator.serviceWorker
-        .register('src/registerServiceWorker.tsx')
-        .then((registration) => {
-            firebaseMessaging.messaging().useServiceWorker(registration);
-        });
+    // navigator.serviceWorker
+    //     .register('src/registerServiceWorker.tsx')
+    //     .then((registration) => {
+    //         firebaseMessaging.messaging().useServiceWorker(registration);
+    //     });
 
     // Commenting this part for using lazyker on iOS
     //const messaging = firebaseMessaging.messaging();

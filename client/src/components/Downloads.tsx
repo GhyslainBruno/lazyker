@@ -59,9 +59,7 @@ class Downloads extends Component<DownloadsProps, DownloadsState> {
                     />
 
                     {/* Current Downloads  */}
-                    <CurrentDownloads
-                        displaySnackMessage={this.displaySnackMessage}
-                    />
+                    <CurrentDownloads />
                 </div>
 
             </div>

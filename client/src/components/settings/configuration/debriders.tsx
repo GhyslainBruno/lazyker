@@ -13,8 +13,13 @@ type DebridersProps = {
 
 const Debriders = (props: DebridersProps) => {
 
-    const redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foobar';
-    const redirectAlldebridUri = 'https://alldebrid.com/pin/?pin=JYYC';
+    // Production redirect Realdebrid URL - TODO: change the domain name by an environment variable
+    let redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foobar';
+
+    // Only for development purposes
+    if (process.env.NODE_ENV === 'development') {
+        redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=http%3A%2F%2Flocalhost:3000/link_rd&response_type=code&state=foobar';
+    }
 
     return (
         <AccordionDetails>

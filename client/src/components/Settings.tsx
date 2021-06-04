@@ -140,7 +140,7 @@ const Settings = (props: SettingsProps) => {
             });
 
             if (props.location !== undefined) {
-                if (props.location.pathname === '/api/link_rd') {
+                if (props.location.pathname === '/link_rd') {
                     const params = queryString.parse(props.location.search.replace(/^\?/,''));
 
                     try {

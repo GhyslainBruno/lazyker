@@ -37,11 +37,11 @@ const MoviesGrid = (props: MoviesGridProps) => {
                     }
 
                     <Grid container spacing={0}>
-                        {props.tmdbMovies.map(movie => {
+                        {props.tmdbMovies.map((movie, index) => {
 
                             return (
 
-                                <Grid item xs={4} style={{padding: '6px'}}>
+                                <Grid item xs={4} style={{padding: '6px'}} key={index}>
 
                                     <Link to={{pathname: `/movies/${movie.id}`, search: `?genre=${props.moviesGenre.id}`}} style={{ textDecoration: 'none', color: 'white' }}>
                                         <Card>

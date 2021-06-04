@@ -96,7 +96,7 @@ export default function VerticalLinearStepper() {
                     <Step key={label}>
                         <StepLabel>{label}</StepLabel>
                         <StepContent>
-                            <Typography>{getStepContent(index)}</Typography>
+                            <Typography component={'span'}>{getStepContent(index)}</Typography>
                             <div>
                                 <div>
                                     <Button

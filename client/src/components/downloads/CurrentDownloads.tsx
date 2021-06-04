@@ -262,7 +262,7 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
             const storageSnapshot = await firebase.database().ref('/users').child(await auth.getUid()).child('/settings/storage').once('value');
             setStorage(storageSnapshot.val());
 
-            switch (storage.selected) {
+            switch (storageSnapshot.val().selected) {
 
                 case 'gdrive':
                     firebase.database().ref('/users').child(await auth.getUid()).child('/settings/downloads').on('value', (snapshot: any) => {

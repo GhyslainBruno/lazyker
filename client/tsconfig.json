@@ -14,7 +14,8 @@
     "noEmit": true,
     "jsx": "react",
     "esModuleIntertop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true
   },
   "include": ["./src"]
 }

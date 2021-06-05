@@ -1,57 +1,54 @@
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionActions from '@material-ui/core/AccordionActions';
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import Typography from "@material-ui/core/Typography";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import List from "@material-ui/core/List";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import IconButton from "@material-ui/core/IconButton";
-import Error from "@material-ui/icons/Error";
 import Accordion from "@material-ui/core/Accordion";
-import React, {useState} from "react";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import PlayCircle from "@material-ui/icons/PlayCircleOutline";
-import PauseCircle from "@material-ui/icons/PauseCircleOutline";
-import RemoveCircle from "@material-ui/icons/RemoveCircleOutline";
-import Download from "@material-ui/icons/GetApp";
-import Delayed from "@material-ui/icons/WatchLater";
-import PauseFilled from "@material-ui/icons/PauseCircleFilled";
-import Done from "@material-ui/icons/CheckCircle";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import AccordionActions from '@material-ui/core/AccordionActions';
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import IconButton from "@material-ui/core/IconButton";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import List from "@material-ui/core/List";
+import Typography from "@material-ui/core/Typography";
+import Done from "@material-ui/icons/CheckCircle";
 import Clear from '@material-ui/icons/ClearAll';
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import {useDispatch} from 'react-redux';
-import {displayErrorNotification, displaySuccessNotification} from '../../ducks/snack/Snackbar.slice';
-import * as auth from "../../firebase/auth";
+import Error from "@material-ui/icons/Error";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Download from "@material-ui/icons/GetApp";
+import PauseFilled from "@material-ui/icons/PauseCircleFilled";
+import PauseCircle from "@material-ui/icons/PauseCircleOutline";
+import PlayCircle from "@material-ui/icons/PlayCircleOutline";
+import RemoveCircle from "@material-ui/icons/RemoveCircleOutline";
+import Delayed from "@material-ui/icons/WatchLater";
 import firebase from "firebase";
+import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from 'react-redux';
+import {displayErrorNotification, displaySuccessNotification} from '../../ducks/snack/Snackbar.slice';
+import {StorageEnum} from '../../ducks/storage/Storage.enum';
+import {getStorageSelected, updateStorage} from '../../ducks/storage/Storage.slice';
+import * as auth from "../../firebase/auth";
+import {Database} from '../../firebase/Database';
 
 const usersRef = firebase.database().ref('/users');
 
-type CurrentDownloadsProps = {};
+const CurrentDownloads = () => {
 
-type CurrentDownloadsState = {
-    currentDownloads: any;
-    snack: boolean;
-    snackBarMessage: null | string;
-    currentDownloadsLoading: boolean;
-    showRemoveDialog: boolean;
-    downloadTaskIdToRemove: any;
-    storage: any;
-};
-
-const CurrentDownloads = (props: CurrentDownloadsProps) => {
-
-    const [currentDownloads, setCurrentDownloads] = useState(null);
+    const [currentDownloads, setCurrentDownloads] = useState<any|null>(null);
     const [currentDownloadsLoading, setCurrentDownloadsLoading] = useState(false);
     const [showRemoveDialog, setShowRemoveDialog] = useState(false);
-    const [downloadTaskIdToRemove, setDownloadTaskIdToRemove] = useState(null);
-    const [storage, setStorage] = useState(null);
+    const [downloadTaskIdToRemove, setDownloadTaskIdToRemove] = useState<any|null>(null);
+    const storageSelected = useSelector(getStorageSelected);
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        (async function() {
+            dispatch(updateStorage(await Database.getSelectedStorage()))
+        }())
+    }, []);
 
     /**
      * Resume a particular download
@@ -61,17 +58,15 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
     const resumeDownload = async (download: any) => {
 
         try {
-            switch (storage) {
-                case 'gdrive':
-
+            switch (storageSelected) {
+                case StorageEnum.GOOGLE_DRIVE:
                     await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).update({
                         event: 'resume'
                     });
                     dispatch(displaySuccessNotification('Resumed'));
                     break;
 
-                case 'nas':
-
+                case StorageEnum.NAS:
                     setCurrentDownloadsLoading(true);
                     setCurrentDownloads(null);
 
@@ -91,6 +86,12 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
                     dispatch(displaySuccessNotification('Resumed'));
                     await loadCurrentDownloads();
                     break;
+
+                default :
+                    dispatch(displayErrorNotification('No Storage selected in Configuration'));
+                    setCurrentDownloads([]);
+                    setCurrentDownloadsLoading(false);
+                    break;
             }
         } catch(error) {
             dispatch(displayErrorNotification('Error resuming this download'));
@@ -104,8 +105,8 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
      */
     const pauseDownload = async (download: any) => {
         try {
-            switch (storage) {
-                case 'gdrive':
+            switch (storageSelected) {
+                case StorageEnum.GOOGLE_DRIVE:
 
                     await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).update({
                         event: 'pause'
@@ -113,7 +114,7 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
                     dispatch(displaySuccessNotification('Paused'));
                     break;
 
-                case 'nas':
+                case StorageEnum.NAS:
                     setCurrentDownloadsLoading(true);
                     setCurrentDownloads(null);
 
@@ -133,6 +134,11 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
                     await loadCurrentDownloads();
                     break;
 
+                default :
+                    dispatch(displayErrorNotification('No Storage selected in Configuration'));
+                    setCurrentDownloads([]);
+                    setCurrentDownloadsLoading(false);
+                    break;
             }
         } catch(error) {
             dispatch(displayErrorNotification('Error pausing this download'));
@@ -149,8 +155,8 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
         const download = downloadTaskIdToRemove;
 
         try {
-            switch (storage) {
-                case 'gdrive':
+            switch (storageSelected) {
+                case StorageEnum.GOOGLE_DRIVE:
                     if (download.status === 'error') {
                         await usersRef.child(await auth.getUid()).child('/settings/downloads/' + download.id).remove();
                     } else if (download.status === 'finished') {
@@ -163,7 +169,7 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
                     dispatch(displaySuccessNotification('Removed'));
                     break;
 
-                case 'nas':
+                case StorageEnum.NAS:
                     let response = await fetch('/api/remove_download', {
                         method: 'POST',
                         headers: {
@@ -182,6 +188,11 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
                     await loadCurrentDownloads();
                     break;
 
+                default :
+                    dispatch(displayErrorNotification('No Storage selected in Configuration'));
+                    setCurrentDownloads([]);
+                    setCurrentDownloadsLoading(false);
+                    break;
             }
         } catch(error) {
             dispatch(displayErrorNotification('Error removing this download'));
@@ -190,32 +201,29 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
 
     /**
      * Clears every done downloads
-     * @param event
      * @returns {Promise<void>}
      */
-    const clearDownloads = async (event: any) => {
+    const handleClearDownloads = async () => {
 
         try {
-            switch (storage) {
-                case 'gdrive':
+            switch (storageSelected) {
+                case StorageEnum.GOOGLE_DRIVE:
                     const finishedDownloads = await usersRef.child(await auth.getUid()).child('/settings/downloads').orderByChild("status").equalTo('finished').once('value');
 
                     for (let finishedDownload in finishedDownloads.val()) {
-
                         usersRef.child(await auth.getUid()).child('/settings/downloads').child(finishedDownload).remove();
                     }
 
                     const errorDownloads = await usersRef.child(await auth.getUid()).child('/settings/downloads').orderByChild("status").equalTo('error').once('value');
 
                     for (let errorDownload in errorDownloads.val()) {
-
                         usersRef.child(await auth.getUid()).child('/settings/downloads').child(errorDownload).remove();
                     }
 
                     dispatch(displaySuccessNotification('Downloads cleared'));
                     break;
 
-                case 'nas':
+                case StorageEnum.NAS:
                     const downloadsToRemove = currentDownloads.tasks.filter((dl: any) => dl.status === "finished").map((dl: any) => dl.id).join(',');
 
                     if (downloadsToRemove.length > 0) {
@@ -245,6 +253,12 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
                         await loadCurrentDownloads();
                     }
                     break;
+
+                default:
+                    dispatch(displayErrorNotification('No Storage selected in Configuration'));
+                    setCurrentDownloads([]);
+                    setCurrentDownloadsLoading(false);
+                    break;
             }
         } catch(error) {
             dispatch(displayErrorNotification('Unknown error'));
@@ -259,12 +273,9 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
         setCurrentDownloads(null);
 
         try {
-            const storageSnapshot = await firebase.database().ref('/users').child(await auth.getUid()).child('/settings/storage').once('value');
-            setStorage(storageSnapshot.val());
+            switch (storageSelected) {
 
-            switch (storageSnapshot.val().selected) {
-
-                case 'gdrive':
+                case StorageEnum.GOOGLE_DRIVE:
                     firebase.database().ref('/users').child(await auth.getUid()).child('/settings/downloads').on('value', (snapshot: any) => {
 
                         const downloads: [] = [];
@@ -280,7 +291,7 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
                     setCurrentDownloadsLoading(false);
                     break;
 
-                case 'nas' :
+                case StorageEnum.NAS :
                     let response = await fetch('/api/current_downloads', {
                         method: 'GET',
                         headers: {
@@ -299,8 +310,8 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
                     }
                     break;
 
-                default :
-                    dispatch(displayErrorNotification('Error: No Storage selected in Configuration'));
+                default:
+                    dispatch(displayErrorNotification('No Storage selected in Configuration'));
                     setCurrentDownloads([]);
                     setCurrentDownloadsLoading(false);
                     break;
@@ -357,9 +368,9 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
 
                   <CircularProgress style={currentDownloadsLoading ? {display: 'inline-block'} : {display: 'none'}} />
 
-                  {currentDownloads !== null ? currentDownloads.length > 0 ? currentDownloads.map((currentDownload: any) => {
+                  {currentDownloads !== null ? currentDownloads.length > 0 ? currentDownloads.map((currentDownload: any, index: number) => {
                         return (
-                          <div>
+                          <div key={index}>
                               <div style={{display: 'flex', width: '100%', textAlign: 'left', padding: '5px', flexWrap: 'wrap', justifyContent: 'space-between'}}>
 
                                   {/* Title */}
@@ -402,16 +413,27 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
 
                                       {/* Download buttons */}
                                       <div style={{textAlign: 'center', margin: 'auto'}} className="buttonsDownload">
-                                          <IconButton style={{padding: '5px'}} disabled={currentDownload.status !== 'paused'}>
-                                              <PlayCircle onClick={() => resumeDownload(currentDownload)}/>
+                                          <IconButton
+                                            style={{padding: '5px'}}
+                                            disabled={currentDownload.status !== 'paused'}
+                                            onClick={() => resumeDownload(currentDownload)}
+                                          >
+                                              <PlayCircle/>
                                           </IconButton>
 
-                                          <IconButton style={{padding: '5px'}} disabled={currentDownload.status !== 'finishing' && currentDownload.status !== 'extracting' && currentDownload.status !== 'downloading'}>
-                                              <PauseCircle onClick={() => pauseDownload(currentDownload)}/>
+                                          <IconButton
+                                            style={{padding: '5px'}}
+                                            disabled={currentDownload.status !== 'finishing' && currentDownload.status !== 'extracting' && currentDownload.status !== 'downloading'}
+                                            onClick={() => pauseDownload(currentDownload)}
+                                          >
+                                              <PauseCircle/>
                                           </IconButton>
 
-                                          <IconButton style={{padding: '5px'}}>
-                                              <RemoveCircle  onClick={() => handleShowRemoveDialog(currentDownload)}/>
+                                          <IconButton
+                                            style={{padding: '5px'}}
+                                            onClick={() => handleShowRemoveDialog(currentDownload)}
+                                          >
+                                              <RemoveCircle />
                                           </IconButton>
                                       </div>
                                   </div>
@@ -438,7 +460,7 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
           {currentDownloads !== null ? currentDownloads.length > 0 ?
 
             <AccordionActions>
-                <Button size="small"><Clear onClick={(event) => clearDownloads(event)}/></Button>
+                <Button size="small"><Clear onClick={handleClearDownloads}/></Button>
             </AccordionActions>
 
             :
@@ -455,14 +477,6 @@ const CurrentDownloads = (props: CurrentDownloadsProps) => {
 
 export default CurrentDownloads
 
-const DoneGreen = (props: any) => {
-    return (
-        <Done style={{color: '#4CAF50'}}/>
-    )
-}
+const DoneGreen = () => ( <Done style={{color: '#4CAF50'}}/> )
 
-const ErrorRed = (props: any) => {
-    return(
-        <Error style={{color: '#ff0000'}}/>
-    )
-}
+const ErrorRed = () => ( <Error style={{color: '#ff0000'}}/> );

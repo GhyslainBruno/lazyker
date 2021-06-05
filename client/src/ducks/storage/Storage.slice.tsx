@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSelector, createSlice} from '@reduxjs/toolkit';
 import firebase from 'firebase';
 import {auth} from '../../firebase';
 import {displaySuccessNotification} from '../snack/Snackbar.slice';
@@ -61,6 +61,10 @@ export const storageSlice = createSlice({
   }
 })
 
+const getSlice = (state: any) => state.storage;
+
 export const { updateStorage } = storageSlice.actions
+
+export const getStorageSelected = createSelector([getSlice], state => state.storageSelected);
 
 export default storageSlice.reducer

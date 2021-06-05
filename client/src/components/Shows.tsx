@@ -1,17 +1,13 @@
 import Fab from '@material-ui/core/Fab';
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -26,8 +22,6 @@ import SyncDisabled from '@material-ui/icons/SyncDisabledOutlined';
 import ArrowBack from '@material-ui/icons/ArrowBackOutlined';
 import CheckCircle from '@material-ui/icons/CheckCircle';
 import Language from '@material-ui/icons/LanguageOutlined';
-import Brightness1 from '@material-ui/icons/Brightness1';
-import Modal from '@material-ui/core/Modal';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -35,14 +29,11 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Input from '@material-ui/core/Input';
 import Snackbar from '@material-ui/core/Snackbar';
-import Avatar from '@material-ui/core/Avatar';
-import green from '@material-ui/core/colors/green';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import Badge from '@material-ui/core/Badge';
 import Slide from '@material-ui/core/Slide';
 import '../App.scss';
@@ -50,10 +41,7 @@ import * as auth from "../firebase/auth";
 import Paper from "@material-ui/core/Paper";
 import OutlinedInput from "@material-ui/core/OutlinedInput/OutlinedInput";
 import Chip from "@material-ui/core/Chip";
-
-function Transition(props: any) {
-    return <Slide direction="up" {...props} />;
-}
+import SlideUp from './UI-components/SlideUp';
 
 const styles = {
     outlinedChip : {
@@ -292,7 +280,6 @@ type ShowsState = {
     fullHd: boolean;
     hd: boolean;
     multi: boolean;
-    labelWidth: any;
 }
 
 export default class Shows extends Component<ShowsProps, ShowsState> {
@@ -331,8 +318,7 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
           uhd: false,
           fullHd: false,
           hd: false,
-          multi: false,
-          labelWidth: null
+          multi: false
 
       };
       props.changeNavigation('shows');
@@ -755,7 +741,7 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
         let table = [];
 
         // @ts-ignore
-        table.push(<MenuItem value={null}>{""}</MenuItem>);
+        table.push(<MenuItem value={null} key={0}>{""}</MenuItem>);
 
         if (this.state.seasonsEpisodesNumbers.length > 0) {
             const seasonsNumber = this.state.seasonsEpisodesNumbers.filter((season: any) => season.season_number === Math.max.apply(Math, this.state.seasonsEpisodesNumbers.map(function(o: any) { return o.season_number; })))[0].season_number;
@@ -765,7 +751,7 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                 // TODO: WTF ?
                 const number = parseInt(String(i + 1)).toString().padStart(2, '0');
 
-                table.push(<MenuItem value={number}>{number}</MenuItem>);
+                table.push(<MenuItem value={number} key={++i}>{number}</MenuItem>);
             }
 
             return table
@@ -777,7 +763,7 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
         let table = [];
 
         // @ts-ignore
-        table.push(<MenuItem value={null}>{""}</MenuItem>);
+        table.push(<MenuItem value={null} key={0}>{""}</MenuItem>);
 
         if (this.state.seasonsEpisodesNumbers.length > 0 && this.state.seasonNumber !== 0) {
 
@@ -788,7 +774,7 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                 const number = parseInt(String(i + 1)).toString().padStart(2, '0');
 
 
-                table.push(<MenuItem value={number}>{number}</MenuItem>);
+                table.push(<MenuItem value={number} key={++i}>{number}</MenuItem>);
             }
 
             return table
@@ -871,17 +857,17 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                   message={this.state.snackBarMessage}
               />
 
+              {/* Dialog to select and download show episode */}
               <Dialog
                   fullScreen
                   open={this.state.openShowDownloadDialog}
                   // onClose={this.handleClose}
-                  TransitionComponent={Transition}
+                  TransitionComponent={SlideUp}
               >
 
                   <Fab
                       onClick={() => this.closeShowDownloadDialog()}
                       size={'small'}
-                      mini
                       // @ts-ignore
                       style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>
                       <Close />
@@ -914,7 +900,6 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                                                   onChange={this.handlerSeasonNumberChange}
                                                   input={
                                                       <OutlinedInput
-                                                          labelWidth={this.state.labelWidth}
                                                           name="seasonNumber"
                                                           id="season-number"
                                                       />
@@ -936,7 +921,6 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                                                   onChange={this.handlerEpisodeNumberChange}
                                                   input={
                                                       <OutlinedInput
-                                                          labelWidth={this.state.labelWidth}
                                                           name="episodeNumber"
                                                           id="episode-number"
                                                       />
@@ -954,8 +938,8 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                                   </Grid>
 
                                   <div style={{width: '100%', textAlign: 'center'}}>
-                                      <IconButton>
-                                          <Search onClick={() => this.searchShowEpisodeTorrents()}/>
+                                      <IconButton onClick={() => this.searchShowEpisodeTorrents()}>
+                                          <Search />
                                       </IconButton>
                                   </div>
 
@@ -975,6 +959,7 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                                                   <Chip label={'Multi'} style={this.state.multi ? styles.blurayFull : styles.bluray} clickable={true} onClick={() => this.filterTorrents('multi')}/>
                                               </div>
 
+                                              {/* List of torrents episodes */}
                                               <List component="nav" dense>
                                                   {this.state.episodeTorrents.map((provider: any) => {
                                                       return (
@@ -985,9 +970,9 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
 
                                                               {
                                                                   provider.torrents.length !== 0 ?
-                                                                      provider.torrents.map((torrent: any) => {
+                                                                      provider.torrents.map((torrent: any, index: number) => {
                                                                           return (
-                                                                              <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
+                                                                              <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}} key={index}>
 
                                                                                   <ListItem button
                                                                                             style={{overflow: 'hidden'}}>
@@ -1113,6 +1098,7 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
 
               </Dialog>
 
+              {/* Add or remove show */}
               <Dialog
                   open={this.state.showDialog}
                   onClose={this.closeDialog}
@@ -1135,6 +1121,7 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                   </DialogActions>
               </Dialog>
 
+              {/* Dialog to change language */}
               <Dialog
                   open={this.state.showInfoDialog}
                   onClose={this.closeInfoDialog}
@@ -1181,8 +1168,11 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                       position="static"
                       color="default">
                       <Toolbar>
-                          <IconButton style={this.state.isInSearchView ? {visibility: 'visible', marginRight: '16px'} : {visibility: 'hidden', marginRight: '16px'}}>
-                              <ArrowBack onClick={this.loadShowsInDb}/>
+                          <IconButton
+                            onClick={this.loadShowsInDb}
+                            style={this.state.isInSearchView ? {visibility: 'visible', marginRight: '16px'} : {visibility: 'hidden', marginRight: '16px'}}
+                          >
+                              <ArrowBack />
                           </IconButton>
 
                           <Input
@@ -1196,14 +1186,15 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                               onKeyPress={(event) => {this.onEnterKeyPressed(event)}}
                           />
 
-                          <IconButton>
                               {this.state.showTitleToSearch !== null && this.state.showTitleToSearch !== '' ?
-                                  <Close onClick={this.clearTitle}/>
+                                <IconButton onClick={this.clearTitle}>
+                                  <Close />
+                                </IconButton>
                                   :
-                                  <Search onClick={() => this.state.showTitleToSearch !== null && this.state.showTitleToSearch !== '' ? this.searchShow : null}/>
+                                <IconButton onClick={() => this.state.showTitleToSearch !== null && this.state.showTitleToSearch !== '' ? this.searchShow : null}>
+                                  <Search />
+                                </IconButton>
                               }
-
-                          </IconButton>
 
                       </Toolbar>
                   </AppBar>
@@ -1215,13 +1206,13 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
 
                   { this.state.shows.total > 0 ?
 
-                      Object.keys(this.state.shows.shows).map(showFirebase => {
+                      Object.keys(this.state.shows.shows).map((showFirebase, index) => {
 
                           const show = this.state.shows.shows[showFirebase];
 
                       return (
 
-                      <Grid item xs={4} style={{padding: '6px'}}>
+                      <Grid item xs={4} style={{padding: '6px'}} key={index}>
 
                           <Card>
 
@@ -1267,9 +1258,7 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                                       </Button>
 
                                       <Button onClick={() => this.showTvShowInfoDialog(show)} style={{minWidth: '0', flex: '1'}}>
-
                                           <Language />
-
                                       </Button>
 
                                   </CardActions>

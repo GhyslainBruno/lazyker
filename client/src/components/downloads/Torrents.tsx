@@ -288,37 +288,14 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
                   {torrents !== null ?
                     torrents.length > 0 ?
                       !torrentsLoading ?
-                        torrents.map((torrent: any) => {
+                        torrents.map((torrent: any, index: number) => {
                             return (
-                              <div>
+                              <div key={index}>
                                   <div style={{display: 'inline-flex', width: '100%', textAlign: 'left', padding: '5px'}}>
                                       <div className="torrentsTitlesDownload" style={{flex: '1'}}>
-
-                                          {/* Trying to use click tooltip, not functional for now */}
-                                          {/*<ClickAwayListener onClickAway={this.handleTooltipClose}>*/}
-                                          {/*<div>*/}
-                                          {/*<Tooltip*/}
-                                          {/*PopperProps={{*/}
-                                          {/*disablePortal: false,*/}
-                                          {/*}}*/}
-                                          {/*onClose={this.handleTooltipClose}*/}
-                                          {/*open={this.state.open}*/}
-                                          {/*disableFocusListener*/}
-                                          {/*disableHoverListener*/}
-                                          {/*disableTouchListener*/}
-                                          {/*title={torrent.filename}*/}
-                                          {/*>*/}
-                                          {/*<p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} onClick={this.handleTooltipOpen}>{torrent.filename}</p>*/}
-                                          {/*</Tooltip>*/}
-                                          {/*</div>*/}
-                                          {/*</ClickAwayListener>*/}
-
                                           <Tooltip title={torrent.filename}>
                                               <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>
                                           </Tooltip>
-
-                                          {/* Without any tooltip - old way */}
-                                          {/*<p style={{fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{torrent.filename}</p>*/}
                                       </div>
 
                                       <div style={{width: '8%', padding: '12px', textAlign: 'center'}}>
@@ -355,16 +332,27 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
                                       </div>
 
                                       <div style={{textAlign: 'center', margin: 'auto'}} className="buttonsDownload">
-                                          <IconButton style={{padding: '5px'}}>
-                                              <RemoveCircle onClick={() => showDeleteDialog(torrent.id)}/>
+                                          <IconButton
+                                            style={{padding: '5px'}}
+                                            onClick={() => showDeleteDialog(torrent.id)}
+                                          >
+                                              <RemoveCircle />
                                           </IconButton>
 
-                                          <IconButton style={{padding: '5px'}} disabled={torrent.status !== 'downloaded'}>
-                                              <Download onClick={() => startTorrentDownload(torrent)}/>
+                                          <IconButton
+                                            style={{padding: '5px'}}
+                                            disabled={torrent.status !== 'downloaded'}
+                                            onClick={() => startTorrentDownload(torrent)}
+                                          >
+                                              <Download />
                                           </IconButton>
 
                                           {/* TODO: use a generic streaming url (not only realdebrid service) */}
-                                          <IconButton style={{padding: '5px'}} disabled={torrent.status !== 'downloaded'} onClick={() => startTorrentStreaming(torrent)}>
+                                          <IconButton
+                                            style={{padding: '5px'}}
+                                            disabled={torrent.status !== 'downloaded'}
+                                            onClick={() => startTorrentStreaming(torrent)}
+                                          >
                                               <PlayArrow/>
                                           </IconButton>
                                       </div>

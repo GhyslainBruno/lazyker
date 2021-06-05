@@ -11,7 +11,7 @@ import Movies from './components/Movies';
 import Downloads from './components/Downloads';
 import Settings from './components/Settings';
 import Privacy from './components/privacy/PrivacyPolicies';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
@@ -378,24 +378,28 @@ const App = (props: AppProps, state: AppState) => {
 
                     authUser ?
                       <div className="mainApp mui-fixed">
-                          <Route exact path='/shows' render={() =><Shows changeNavigation={changeNavigation} />}/>
-                          <Route exact path='/movies/:id' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
-                          <Route exact path='/movies' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
-                          <Route exact path='/downloads' render={() => <Downloads changeNavigation={changeNavigation}/>}/>
-                          <Route exact path='/settings' render={(props: any) => <Settings changeNavigation={changeNavigation} {...props} />}/>
-                          <Route exact path='/privacy_policy' render={() => <Privacy/>}/>
-                          <Route exact path='/' render={() => <Redirect to="/movies?genre=popular" />}/>
-                          <Route exact path='/signin' render={() => <Redirect to="/movies?genre=popular" />}/>
-                          <Route path='/link_rd' render={(props)=> <Settings changeNavigation={changeNavigation} {...props} />}/>
+                          <Switch>
+                              <Route path='/shows' render={() =><Shows changeNavigation={changeNavigation} />}/>
+                              <Route path='/movies' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
+                              <Route path='/downloads' render={() => <Downloads changeNavigation={changeNavigation}/>}/>
+                              <Route path='/settings' render={(props: any) => <Settings changeNavigation={changeNavigation} {...props} />}/>
+                              <Route path='/privacy_policy' render={() => <Privacy/>}/>
+                              <Route path='/' render={() => <Redirect to="/movies?genre=popular" />}/>
+                              <Route path='/signin' render={() => <Redirect to="/movies?genre=popular" />}/>
+                              <Route path='/link_rd' render={(props)=> <Settings changeNavigation={changeNavigation} {...props} />}/>
+                          </Switch>
+                          <Route path='/movies/:id' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
                           <Route path='/' render={() => <Navigation navigation={navigation} authUser={authUser} />}/>
                       </div>
                       :
                       <div className="mainApp mui-fixed" style={{top: '50%'}}>
-                          <Route exact path='/signup' render={(props) =><SignUpForm {...props}/>}/>
-                          <Route exact path='/pw-forget' render={(props: any) =><PasswordReset {...props} />}/>
-                          <Route exact path='/privacy_policy' render={() => <Privacy/>}/>
-                          <Route path='/signin' render={(props: any) =><SignInForm {...props} />}/>
-                          <Route exact path='/' render={() =><HomePage />}/>
+                          <Switch>
+                              <Route path='/signup' render={(props) =><SignUpForm {...props}/>}/>
+                              <Route path='/pw-forget' render={(props: any) =><PasswordReset {...props} />}/>
+                              <Route path='/privacy_policy' render={() => <Privacy/>}/>
+                              <Route path='/signin' render={(props: any) =><SignInForm {...props} />}/>
+                              <Route render={() =><HomePage />}/>
+                          </Switch>
                       </div>
 
               }

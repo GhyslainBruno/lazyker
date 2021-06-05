@@ -349,7 +349,7 @@ class Movies extends Component<MovieProps, MovieState> {
         if (event.relatedTarget === null) {
             this.setState({movieGenres: []});
         } else if (event.relatedTarget.className.match("movieGenre")) {
-            console.log('not cleaning')
+            // console.log('not cleaning')
         } else {
             this.setState({movieGenres: []});
         }

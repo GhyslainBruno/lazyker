@@ -80,9 +80,16 @@ const SearchMoviesAppBar = (props: SearchMoviesAppBarProps) => {
         <CircularProgress style={props.movieGenresLoading ? {display: 'inline-block'} : {display: 'none'}}/>
 
         {
-          props.movieGenres !== null ? props.movieGenres.map(movieGenre => {
+          props.movieGenres !== null ? props.movieGenres.map((movieGenre, index) => {
               return (
-                <Chip label={movieGenre.name} style={props.styles.outlinedChip} className="movieGenre" clickable={true} onClick={() => props.searchMovieGenre(movieGenre)} />
+                <Chip
+                  key={index}
+                  label={movieGenre.name}
+                  style={props.styles.outlinedChip}
+                  className="movieGenre"
+                  clickable={true}
+                  onClick={() => props.searchMovieGenre(movieGenre)}
+                />
               )
             })
             :

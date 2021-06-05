@@ -10,9 +10,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
-// Trying the new material spec
-// import Button from '@material/react-button/dist';
 import Paper from '@material-ui/core/Paper';
 import { Providers} from "./SignInProviders";
 import Visibility from '@material-ui/icons/Visibility';
@@ -20,21 +17,12 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import Slide from '@material-ui/core/Slide';
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-    // @ts-ignore
-    return <Slide direction="up" ref={ref} {...props} />;
-});
+import SlideUp from './UI-components/SlideUp';
 
 const SignInPage = (history: any) =>
     <div>
         <SignInForm history={history} />
     </div>;
-
-const byPropKey = (propertyName: any, value: any) => () => ({
-    [propertyName]: value,
-});
 
 // TODO: why using this ? -> should be deleted with redux
 const INITIAL_STATE = {
@@ -121,7 +109,7 @@ class SignInForm extends Component<SignInFormProps, SignInFormState> {
                     fullScreen
                     // TODO: understand how to user TransitionComponent with TS instead of ignoring the TS errors
                     // @ts-ignore
-                    TransitionComponent={Transition}
+                    TransitionComponent={SlideUp}
                     open={this.state.presentationDialogOpen}
                     onClose={this.handleClose}
                     aria-labelledby="alert-dialog-title"
@@ -237,8 +225,6 @@ const ResetPassword = () =>
         {' '}
         <Link style={{color: '#f98e8d'}} to={routes.PASSWORD_FORGET}>Reset password</Link>
     </p>;
-
-export default withRouter(SignInPage);
 
 export {
     SignInForm,

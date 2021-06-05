@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import DialogContent from "@material-ui/core/DialogContent";
 import Button from "@material-ui/core/Button";
 import Close from "@material-ui/icons/Close";
@@ -32,6 +32,7 @@ import * as auth from "../../../firebase/auth";
 // @ts-ignore
 import Link from "react-router-dom/es/Link";
 import Fab from '@material-ui/core/Fab';
+import SlideUp from '../../UI-components/SlideUp';
 import MovieTorrentsList from "./MovieTorrentsList";
 
 const styles = {
@@ -40,16 +41,6 @@ const styles = {
         backgroundColor: 'transparent',
         margin: '5px'
     }
-};
-
-/**
- * Transition used to display dialog (useful ?)
- * @param props
- * @returns {*}
- * @constructor
- */
-const Transition = (props: any) => {
-    return <Slide direction="up" {...props} />;
 };
 
 /**
@@ -415,7 +406,7 @@ const MovieInfoDialog = (props: MyProps) => {
     return (
         <Dialog
             fullScreen
-            TransitionComponent={Transition}
+            TransitionComponent={SlideUp}
             open={showInfoDialog}
             onClose={() => closeDialog}
             aria-labelledby="alert-dialog-title"

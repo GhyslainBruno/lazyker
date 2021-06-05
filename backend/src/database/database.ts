@@ -1,9 +1,7 @@
 import * as admin from 'firebase-admin';
+import {StorageEnum} from '../entities/storage.enum';
 import {User, UserSettings} from '../entities/user';
 import {DebriderEnum} from './debrider-enum';
-
-// const db = admin.database();
-// const usersRef = db.ref("/users");
 
 export class Database {
 
@@ -11,15 +9,39 @@ export class Database {
   static usersRef = Database.db.ref("/users");
 
   static async store(user: User, path: string, objectToStore: any):Promise<any> {
-    return await Database.usersRef.child(user.uid).child(path).set(objectToStore);
+    return await Database.usersRef
+      .child(user.uid)
+      .child(path)
+      .set(objectToStore);
   }
 
   static async storeAlldebridApiKey(user: User, debrider: DebriderEnum, apiKey: any): Promise<any> {
-    return await Database.usersRef.child(user.uid).child('settings').child('debriders').child(debrider).set({apiKey: apiKey});
+    return await Database.usersRef
+      .child(user.uid)
+      .child('settings')
+      .child('debriders')
+      .child(debrider)
+      .set({apiKey: apiKey});
   }
 
   static async removeDebrider(user: User, debrider: DebriderEnum) {
-    return await Database.usersRef.child(user.uid).child('settings').child('debriders').child(debrider).remove();
+    return await Database.usersRef
+      .child(user.uid)
+      .child('settings')
+      .child('debriders')
+      .child(debrider)
+      .remove();
+  }
+
+  static async getSelectedStorage(user: User): Promise<StorageEnum> {
+    const storageSnapshot = await Database.usersRef
+      .child(user.uid)
+      .child('settings')
+      .child('storage')
+      .child('selected')
+      .once('value');
+
+    return storageSnapshot.val() as StorageEnum
   }
 
   // static async uptoboxToken(user: User): Promise<string> {

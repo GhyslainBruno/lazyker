@@ -1,3 +1,6 @@
+import {Database} from '../database/database';
+import {StorageEnum} from '../entities/storage.enum';
+
 const realdebrid = require('../debriders/realdebrid/debrid_links');
 const gdrive = require('../storage/gdrive/gdrive');
 const synology = require('../storage/synology/Download');
@@ -26,7 +29,9 @@ export const startRealdebridTorrentDownload = async (torrent: any, name: any, us
         await pMap(torrent.links, async (link: any) => {
             // Here, if several links  in the torrent -> torrent.links.length > 1
             const unrestrictedLink = await realdebrid.unrestricLinkNoDB(link, user);
-            const storage = await usersRef.child(user.uid).child('/settings/storage').once('value');
+
+            // const storage = await usersRef.child(user.uid).child('/settings/storage').once('value');
+            const selectedStorage = await Database.getSelectedStorage(user);
 
             const torrentInfos = await usersRef.child(user.uid).child(`/torrentsDownloaded/${torrent.id}`).once('value');
 
@@ -34,18 +39,21 @@ export const startRealdebridTorrentDownload = async (torrent: any, name: any, us
             // TODO find a more elegant way to do that
 
             await sleep(1000);
-            switch (storage.val()) {
+            switch (selectedStorage) {
 
-                case 'gdrive':
+                case StorageEnum.GOOGLE_DRIVE :
                     // Removed the "await" so that if many links have to be downloaded, no need to wait for the "packet" return
                     gdrive.downloadMovieFile(unrestrictedLink, user, name, torrentInfos.val(), unrestrictedLink, res);
                     break;
 
-                case 'nas' :
+                case StorageEnum.NAS :
 
                     // TODO add res in here otherwise NAS won't be supported anymore
                     await synology.startRealdebridTorrentDownload(unrestrictedLink, name, user);
                     break;
+
+                default:
+                    throw new Error('Unknown storage');
             }
         }, {concurrency: 1});
 

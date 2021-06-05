@@ -462,16 +462,16 @@ const MovieInfoDialog = (props: MyProps) => {
                         providersMovies !== null  ?
                             providersMovies[0].results.length > 0 ?
                                 <div>
-                                    {providersMovies.map(provider => {
+                                    {providersMovies.map((provider, index) => {
                                         return (
-                                            <div className="movieInfoDialog">
+                                            <div className="movieInfoDialog" key={index}>
                                                 <h2>{provider.provider}</h2>
                                                 <Grid container spacing={0}>
                                                     {
-                                                        provider.results.map(movie => {
+                                                        provider.results.map((movie, index) => {
                                                             movie.validImage = movie.image.match(/^http/g) === null ? imageNotFound : movie.image;
                                                             return (
-                                                                <Grid item xs={4} style={{padding: '6px'}}>
+                                                                <Grid item xs={4} style={{padding: '6px'}} key={index}>
                                                                     <Card>
                                                                         <CardMedia
                                                                             onClick={() => findProviderQualities(movie.title, movie, provider.provider)}
@@ -582,9 +582,9 @@ const MovieInfoDialog = (props: MyProps) => {
 
                             <div style={{marginBottom: '15px'}}>
                                 <p className="dataMovieInfo" style={{textAlign: 'left'}}>Genre(s) :</p>
-                                {movieInfo.genres.map(genre => {
+                                {movieInfo.genres.map((genre, index) => {
                                     return (
-                                        <Chip label={genre.name} style={styles.outlinedChip} />
+                                        <Chip label={genre.name} style={styles.outlinedChip} key={index} />
                                     )
                                 })}
                             </div>
@@ -613,9 +613,9 @@ const MovieInfoDialog = (props: MyProps) => {
 
                             <List component="nav">
 
-                                {qualities.map(quality => {
+                                {qualities.map((quality, index) => {
                                     return (
-                                        <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}}>
+                                        <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}} key={index}>
                                             <ListItem button>
                                                 <ListItemText primary={quality.quality + quality.lang} onClick={() => startDownload(props.selectedMovie, quality)}/>
                                             </ListItem>

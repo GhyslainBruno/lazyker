@@ -13,7 +13,8 @@ import Delete from "@material-ui/icons/Delete";
 import Accordion from "@material-ui/core/Accordion";
 import React from "react";
 import * as auth from "../../firebase/auth";
-import firebase from "firebase";
+import firebase from 'firebase/app';
+import 'firebase/database';
 
 const usersRef = firebase.database().ref('/users');
 

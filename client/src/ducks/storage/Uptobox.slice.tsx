@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/database';
 import ky from 'ky';
 import {Dispatch} from 'redux';
 import {auth} from '../../firebase';

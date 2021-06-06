@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSelector, createSlice} from '@reduxjs/toolkit';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/database';
 import {auth} from '../../firebase';
 import {displaySuccessNotification} from '../snack/Snackbar.slice';
 import {StorageEnum} from './Storage.enum';

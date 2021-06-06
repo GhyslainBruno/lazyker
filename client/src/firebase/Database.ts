@@ -1,4 +1,5 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/database';
 import {StorageEnum} from '../ducks/storage/Storage.enum';
 import * as auth from './auth';
 

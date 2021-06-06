@@ -105,10 +105,10 @@ const Logs = (props: LogsProps) => {
 
                 <List dense={true}>
 
-                    {logs.map(log => {
+                    {logs.map((log, index) => {
 
                         return (
-                            <ListItem>
+                            <ListItem key={index}>
                                 <ListItemText
                                     primary={log.text}
                                     secondary={new Date(log.time).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour:'numeric', minute: 'numeric' })}

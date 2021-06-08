@@ -169,7 +169,6 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
     const [showLang, setShowLang] = useState(null);
     const [shows, setShows] = useState<Show[]|null>(null);
     const [showTitleToSearch, setShowTitleToSearch] = useState('');
-    const [navigation, setNavigation] = useState(null);
     const [isInSearchView, setIsInSearchView] = useState(false);
     const [dialogTitle, setDialogTitle] = useState('');
     const [dialogMessage, setDialogMessage] = useState('');
@@ -178,25 +177,18 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
     const [addOrRemoveString, setAddOrRemoveString] = useState('');
     const [showToAdd, setShowToAdd] = useState<Show|null>(null);
     const [showToRemove, setShowToRemove] = useState<Show|null>(null);
-    const [snack, setSnack] = useState(false);
-    const [snackBarMessage, setSnackBarMessage] = useState('');
     const [loading, setLoading] = useState(false);
-    const [infoShow, setInfoShow] = useState(null);
     const [showToDisplayInfo, setShowToDisplayInfo] = useState<Show|null>(null);
     const [openShowDownloadDialog, setOpenShowDownloadDialog] = useState(false);
     const [showToDownload, setShowToDownload] = useState<Show|null>(null);
     const [episodeTorrentsLoading, setEpisodeTorrentsLoading] = useState(false);
     const [episodeTorrentsFull, setEpisodeTorrentsFull] = useState<TaggedTorrents|null>(null);
     const [episodeTorrents, setEpisodeTorrents] = useState<TaggedTorrents|null>(null);
-    const [seasonNumber, setSeasonNumber] = useState(0);
-    const [episodeNumber, setEpisodeNumber] = useState(0);
+    const [seasonNumber, setSeasonNumber] = useState('');
+    const [episodeNumber, setEpisodeNumber] = useState('');
     const [qualityEpisode, setQualityEpisode] = useState(null);
     const [showInfoLoading, setShowInfoLoading] = useState(false);
     const [seasonsEpisodesNumbers, setSeasonsEpisodesNumbers]= useState<any[]>([]);
-    const [uhd, setHhd] = useState(false);
-    const [fullHd, setFullHd] = useState(false);
-    const [hd, setHd] = useState(false);
-    const [multi, setMulti] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -438,8 +430,8 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
         setOpenShowDownloadDialog(false);
         setEpisodeTorrents(null);
         setShowToDownload(null);
-        setEpisodeNumber(0);
-        setSeasonNumber(0);
+        setEpisodeNumber('');
+        setSeasonNumber('');
         setEpisodeTorrentsLoading(false);
         setQualityEpisode(null);
     };
@@ -681,7 +673,7 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
         // @ts-ignore
         table.push(<MenuItem value={null} key={0}>{""}</MenuItem>);
 
-        if (seasonsEpisodesNumbers.length > 0 && seasonNumber !== 0) {
+        if (seasonsEpisodesNumbers.length > 0 && seasonNumber !== '') {
 
             const episodesNumber = seasonsEpisodesNumbers.filter(season => season.season_number === +seasonNumber)[0].episode_count
 
@@ -696,63 +688,6 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
             return table
         }
 
-    };
-
-    // TODO: make it work again
-    const filterTorrents = (filter: any) => {
-
-        const trueFilter: any[] = [];
-
-        if (uhd) {
-            trueFilter.push('uhd');
-        }
-
-        if (fullHd) {
-            trueFilter.push('fullHd');
-        }
-
-        if (hd) {
-            trueFilter.push('hd');
-        }
-
-        if (multi) {
-            trueFilter.push('multi');
-        }
-
-        if (episodeTorrentsFull) {
-            const torrentsFiltered = episodeTorrentsFull[0].torrents.map((torrent) => {
-
-                let shouldBeDisplayed = false;
-
-                if (trueFilter.length > 0) {
-                    trueFilter.map(filter => {
-                        // @ts-ignore
-                        if (Object.keys(torrent.tags).filter((key) => torrent.tags[key]).includes(filter)) {
-                            shouldBeDisplayed = true;
-                        }
-                    });
-                } else {
-                    shouldBeDisplayed = true;
-                }
-
-                torrent.isDisplayed = shouldBeDisplayed;
-
-                if (torrent.isDisplayed) {
-                    return torrent;
-                }
-
-            });
-
-            const torrentsTaggedToReturn: TaggedTorrents = [];
-
-            torrentsTaggedToReturn.push({
-                // @ts-ignore
-                torrents : torrentsFiltered.filter((torrent: any) => torrent !== undefined),
-                provider: 'ygg'
-            });
-
-            setEpisodeTorrents(torrentsTaggedToReturn);
-        }
     };
 
     if (shows != null) {
@@ -774,12 +709,7 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
                 searchShowEpisodeTorrents={searchShowEpisodeTorrents}
                 episodeTorrentsLoading={episodeTorrentsLoading}
                 episodeTorrents={episodeTorrents}
-                uhd={uhd}
-                fullHd={fullHd}
-                hd={hd}
-                multi={multi}
                 downloadEpisodeTorrent={downloadEpisodeTorrent}
-                filterTorrents={filterTorrents}
                 />
 
               <ShowsAddOrRemoveDialog

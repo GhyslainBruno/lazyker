@@ -28,7 +28,8 @@ module.exports = (app: any) => {
 
             // Adding a "total" property
             if (shows) {
-                res.send({shows: shows, total: Object.keys(shows).length});
+                const showsFormattedToReturn = Object.keys(shows).map(showId => shows[showId]);
+                res.send({shows: showsFormattedToReturn, total: showsFormattedToReturn.length});
             } else {
                 res.send({total: 0});
             }

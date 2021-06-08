@@ -156,10 +156,10 @@ const styles = {
 
 type MovieTorrentsListProps = {
     providers: any;
-    downloadTorrent: (torrent: Torrent) => {};
+    downloadTorrent: (torrent: MovieTorrent) => void;
 }
 
-type Torrent = {
+type MovieTorrent = {
     provider: any;
     torrents: [{
         tags: any;
@@ -174,7 +174,7 @@ const MovieTorrentsList = (props: MovieTorrentsListProps) => {
     const [hd, setHd] = useState(false);
     const [fullHd, setFullHd] = useState(false);
     const [multi, setMulti] = useState(false);
-    const [torrents, setTorrents] = useState<Torrent[]>(props.providers);
+    const [torrents, setTorrents] = useState<MovieTorrent[]>(props.providers);
     const [torrentsFiltered, setTorrentsFiltered] = useState(props.providers);
 
     useEffect(() => {
@@ -248,9 +248,9 @@ const MovieTorrentsList = (props: MovieTorrentsListProps) => {
             <List component="nav" dense >
 
                 {
-                    torrentsFiltered.map((provider: any) => {
+                    torrentsFiltered.map((provider: any, index: number) => {
                         return (
-                            <div>
+                            <div key={index}>
                                 <h3>
                                     {provider.provider}
                                 </h3>
@@ -258,9 +258,12 @@ const MovieTorrentsList = (props: MovieTorrentsListProps) => {
                                 {
                                     provider.torrents.length > 0 ?
 
-                                        provider.torrents.map((torrent: any) => {
+                                        provider.torrents.map((torrent: any, index: number) => {
                                             return (
-                                                <Paper elevation={1} style={
+                                                <Paper
+                                                  key={index}
+                                                  elevation={1}
+                                                  style={
                                                     torrent.isDisplayed ?
                                                         {
                                                             margin: '5px',
@@ -280,8 +283,8 @@ const MovieTorrentsList = (props: MovieTorrentsListProps) => {
 
 
                                                         <ListItemText
-
                                                             style={{padding: '0'}}
+                                                            disableTypography
 
                                                             primary= {
                                                                 <div style={{

@@ -1,5 +1,5 @@
 import Fab from '@material-ui/core/Fab';
-import React, { Component } from 'react';
+import React, {ChangeEvent, Component, useEffect, useState} from 'react';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -37,199 +37,76 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Badge from '@material-ui/core/Badge';
 import Slide from '@material-ui/core/Slide';
 import '../App.scss';
+import {useDispatch} from 'react-redux';
+import {displayErrorNotification, displaySuccessNotification} from '../ducks/snack/Snackbar.slice';
 import * as auth from "../firebase/auth";
 import Paper from "@material-ui/core/Paper";
 import OutlinedInput from "@material-ui/core/OutlinedInput/OutlinedInput";
 import Chip from "@material-ui/core/Chip";
+import ShowsInfoDialog from './shows/infos/ShowsInfoDialog';
+import ShowsAddOrRemoveDialog from './shows/ShowsAddOrRemoveDialog';
+import ShowsGrid from './shows/ShowsGrid';
 import SlideUp from './UI-components/SlideUp';
 
-const styles = {
-    outlinedChip : {
-        border: 'thin solid grey',
-        backgroundColor: 'transparent',
-        margin: '5px'
-    },
-    // Video quality
-    multiChipFull: {
-        border: 'thin solid #ffe317',
-        backgroundColor: '#ffe317',
-        opacity: '0.7',
-        margin: '2px',
-        // color: '#ffe317'
-    },
-    h264Full: {
-        border: 'thin solid #ffa489',
-        backgroundColor: '#ffa489',
-        opacity: '0.7',
-        margin: '2px'
-    },
-    blurayFull: {
-        border: 'thin solid #b4ff56',
-        backgroundColor: '#b4ff56',
-        opacity: '0.7',
-        margin: '2px'
-    },
-    multiChip: {
-        border: 'thin solid #ffe317',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#ffe317'
-    },
-    hdChip: {
-        border: 'thin solid #1bd860',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#1bd860'
-    },
-    fullHdChip: {
-        border: 'thin solid #c7c21d',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#c7c21d'
-    },
-    aacChip: {
-        border: 'thin solid #1ebd97',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#1ebd97'
-    },
-    dtsChip: {
-        border: 'thin solid #ff7858',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#ff7858'
-    },
-    frenchChip: {
-        border: 'thin solid #01dcff',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#01dcff'
-    },
-    voChip: {
-        border: 'thin solid #ac3fff',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#ac3fff'
-    },
-    h264: {
-        border: 'thin solid #ffa489',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#ffa489'
-    },
-    h265: {
-        border: 'thin solid #d55e37',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#d55e37'
-    },
-    bluray: {
-        border: 'thin solid #b4ff56',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#b4ff56'
-    },
-    vfq: {
-        border: 'thin solid #d68bff',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#d68bff'
-    },
-    hdlight: {
-        border: 'thin solid #6bff96',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#6bff96'
-    },
-    vostfr: {
-        border: 'thin solid #5070ff',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#5070ff'
-    },
-    ac3: {
-        border: 'thin solid #32ffa1',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#32ffa1'
-    },
-    bdrip: {
-        border: 'thin solid #a9cb4b',
-        backgroundColor: 'transparent',
-        opacity: '0.7',
-        margin: '2px',
-        color: '#a9cb4b'
-    },
-    uhd: {
-        border: 'thin solid #ff631d',
-        opacity: '0.7',
-        backgroundColor: 'transparent',
-        margin: '2px',
-        color: '#ff631d'
-    },
-    vf: {
-        border: 'thin solid #2f3dff',
-        opacity: '0.7',
-        backgroundColor: 'transparent',
-        margin: '2px',
-        color: '#2f3dff'
-    },
-    threeD: {
-        border: 'thin solid #ac9826',
-        opacity: '0.7',
-        backgroundColor: 'transparent',
-        margin: '2px',
-        color: '#ac9826'
-    }
-};
+// TODO: Should be useful in filter torrent functions
+export const getKeyValue = <T extends object, U extends keyof T>(key: U) => (obj: T) => obj[key];
 
 type ShowsProps = {
     changeNavigation: (location: any) => void;
 }
 
-type Show = {
+export type Show = {
     id: any;
     title: string;
     autoUpdate: boolean;
     lang: any;
+    episode: boolean;
+    posterPath: string;
 }
 
-type Torrent = {
+export type Tags = {
+    multi: boolean;
+    french: boolean;
+    vo: boolean;
+    aac: boolean;
+    dts: boolean;
+    fullHd: boolean;
+    hd: boolean;
+    h264: boolean;
+    h265: boolean;
+    vfq: boolean;
+    hdlight: boolean;
+    vostfr: boolean;
+    bdrip: boolean;
+    uhd: boolean;
+    threeD: boolean;
+    vf: boolean;
+}
+
+export type ShowTorrent = {
     url: string;
     provider: any;
     title: string;
-    tags: {
-        multi: boolean;
-        french: boolean;
-        vo: boolean;
-        aac: boolean;
-        dts: boolean;
-        fullHd: boolean;
-        hd: boolean;
-        h264: boolean;
-        h265: boolean;
-        vfq: boolean;
-        hdlight: boolean;
-        vostfr: boolean;
-        bdrip: boolean;
-        uhd: boolean;
-        threeD: boolean;
-        vf: boolean;
-    }
+    // tags: any;
+    isDisplayed: boolean;
+    completed: string;
+    leech: string;
+    seed: string;
+    size: string;
+    tags: Tags
+}
+
+type TaggedProviderTorrents = {
+    // TODO: change by an enum
+    provider: string;
+    torrents: ShowTorrent[];
+}
+
+export type TaggedTorrents = TaggedProviderTorrents[]
+
+type GetUserShowsDTO = {
+    shows: Show[];
+    total: number;
 }
 
 type ShowInfoDto = {
@@ -245,7 +122,7 @@ type DownloadEpisodeTorrentDto = {
 type SearchShowEpisodeTorrents = SearchShowEpisodeTorrent[]
 
 type SearchShowEpisodeTorrent = {
-    torrents: Torrent[];
+    torrents: ShowTorrent[];
 }
 
 type ShowsState = {
@@ -282,164 +159,172 @@ type ShowsState = {
     multi: boolean;
 }
 
-export default class Shows extends Component<ShowsProps, ShowsState> {
+type SearchShowsDto = {
+    shows: Show[];
+    total: number;
+}
 
-  constructor(props: ShowsProps)
-  {
-      super(props);
-      this.state = {
-          showLang: null,
-          shows: null,
-          showTitleToSearch: '',
-          navigation: null,
-          isInSearchView: null,
-          dialogTitle: '',
-          dialogMessage: '',
-          showDialog: false,
-          showInfoDialog: false,
-          addOrRemoveString: null,
-          showToAdd: null,
-          showToRemove: null,
-          snack: false,
-          snackBarMessage: '',
-          loading: false,
-          infoShow: null,
-          showToDisplayInfo: null,
-          openShowDownloadDialog: false,
-          showToDownload: null,
-          episodeTorrentsLoading: false,
-          episodeTorrentsFull: null,
-          episodeTorrents: null,
-          seasonNumber: 0,
-          episodeNumber: 0,
-          qualityEpisode: null,
-          showInfoLoading: false,
-          seasonsEpisodesNumbers: [],
-          uhd: false,
-          fullHd: false,
-          hd: false,
-          multi: false
+const Shows = (props: ShowsProps, state: ShowsState) => {
 
-      };
-      props.changeNavigation('shows');
-  }
+    const [showLang, setShowLang] = useState(null);
+    const [shows, setShows] = useState<Show[]|null>(null);
+    const [showTitleToSearch, setShowTitleToSearch] = useState('');
+    const [navigation, setNavigation] = useState(null);
+    const [isInSearchView, setIsInSearchView] = useState(false);
+    const [dialogTitle, setDialogTitle] = useState('');
+    const [dialogMessage, setDialogMessage] = useState('');
+    const [showDialog, setShowDialog] = useState(false);
+    const [showInfoDialog, setShowInfoDialog] = useState(false);
+    const [addOrRemoveString, setAddOrRemoveString] = useState('');
+    const [showToAdd, setShowToAdd] = useState<Show|null>(null);
+    const [showToRemove, setShowToRemove] = useState<Show|null>(null);
+    const [snack, setSnack] = useState(false);
+    const [snackBarMessage, setSnackBarMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [infoShow, setInfoShow] = useState(null);
+    const [showToDisplayInfo, setShowToDisplayInfo] = useState<Show|null>(null);
+    const [openShowDownloadDialog, setOpenShowDownloadDialog] = useState(false);
+    const [showToDownload, setShowToDownload] = useState<Show|null>(null);
+    const [episodeTorrentsLoading, setEpisodeTorrentsLoading] = useState(false);
+    const [episodeTorrentsFull, setEpisodeTorrentsFull] = useState<TaggedTorrents|null>(null);
+    const [episodeTorrents, setEpisodeTorrents] = useState<TaggedTorrents|null>(null);
+    const [seasonNumber, setSeasonNumber] = useState(0);
+    const [episodeNumber, setEpisodeNumber] = useState(0);
+    const [qualityEpisode, setQualityEpisode] = useState(null);
+    const [showInfoLoading, setShowInfoLoading] = useState(false);
+    const [seasonsEpisodesNumbers, setSeasonsEpisodesNumbers]= useState<any[]>([]);
+    const [uhd, setHhd] = useState(false);
+    const [fullHd, setFullHd] = useState(false);
+    const [hd, setHd] = useState(false);
+    const [multi, setMulti] = useState(false);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        (async function () {
+            await loadShowsInDb();
+            await clearNewEpisodesTags();
+        })()
+    }, []);
 
     // Searching for a new tv show
-    searchShow = async () => {
+    const searchShow = async () => {
+        setIsInSearchView(true);
+        setLoading(true);
+        setShows([]);
 
-      this.setState({isInSearchView: true, loading: true, shows: []});
+        // @ts-ignore
+        const showTitle = document.getElementById('show_title_to_search')?.value;
 
-      // @ts-ignore
-      const showTitle = document.getElementById('show_title_to_search')?.value;
-
-      fetch('/api/search_shows?title=' + showTitle, {
-          method: 'GET',
-          headers: {
-              'token': await auth.getIdToken()
-          }
-      })
+        fetch('/api/search_shows?title=' + showTitle, {
+            method: 'GET',
+            headers: {
+                'token': await auth.getIdToken()
+            }
+        })
           .then(response => {
               return response.json()
           })
-          .then(data => {
-              this.setState({shows: data, loading: false});
+          .then((data: SearchShowsDto) => {
+              setShows(data.shows);
+              setLoading(false);
           })
           .catch(error => {
-              this.setState({snack: true, snackBarMessage: 'Error searching shows', loading: false, isInSearchView: false})
+              dispatch(displayErrorNotification('Error searching shows'));
+              setLoading(false);
+              setIsInSearchView(false);
           })
 
-  };
+    };
 
     // Loading shows from database
-    loadShowsInDb = async () => {
-        this.setState({loading: true, shows: [], showTitleToSearch: ''});
+    // TODO: stop using backend for such things, for god' sake !! -> 0 interest
+    const loadShowsInDb = async () => {
+        setLoading(true);
+        setShows([]);
+        setShowTitleToSearch('');
 
         try {
 
-            let response = await fetch('/api/shows', {
-                method: 'GET',
-                headers: {
-                    'token': await auth.getIdToken()
-                }
-            }
-        );
-            response = await response.json();
-            this.setState({ shows: response , loading: false, isInSearchView: false});
+            // TODO: use a proper type for the fetch returns
+            const response = await fetch('/api/shows', {
+                  method: 'GET',
+                  headers: {
+                      'token': await auth.getIdToken()
+                  }
+              }
+            );
+            const responseJSON: GetUserShowsDTO = await response.json();
+
+            setShows(responseJSON.shows);
+            setLoading(false);
+            setIsInSearchView(false);
 
         } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error getting shows', loading: false, isInSearchView: false})
+            dispatch(displayErrorNotification('Error getting shows'));
+            setLoading(false);
+            setIsInSearchView(false);
         }
 
     };
 
-    async componentWillMount() {
-        await this.loadShowsInDb();
-        await this.clearNewEpisodesTags();
-    }
-
-    clearNewEpisodesTags = async () => {
+    const clearNewEpisodesTags = async () => {
         fetch('/api/clear_new_episodes',{
             headers: {
                 'token': await auth.getIdToken()
             }
         })
-            .then(response => {
-                return response.json()
-            })
-            .then(data => {
-                return null
-            })
-            .catch(error => {
-                this.setState({snack: true, snackBarMessage: 'Error clearing new episodes tags', loading: false, isInSearchView: false})
-            })
+          .then(response => {
+              return response.json()
+          })
+          .then(data => {
+              return null
+          })
+          .catch(error => {
+              dispatch(displayErrorNotification('Error clearing new episodes tags'));
+              setLoading(false);
+              setIsInSearchView(false);
+          })
     };
 
-    updateShowTitleToSearch = (evt: any) => {
-        this.setState({
-            showTitleToSearch: evt.target.value
-        });
+    const updateShowTitleToSearch = (evt: any) => {
+        setShowTitleToSearch(evt.target.value);
     };
 
-    closeDialog = () => {
-        this.setState({showDialog: false})
+    const closeDialog = () => {
+        setShowDialog(false);
     };
 
-    closeInfoDialog = () => {
-        this.setState({showInfoDialog: false})
+    const closeInfoDialog = () => {
+        setShowInfoDialog(false);
     };
 
-    showAddShowDialog = (e: any, show: Show) => {
-
-        this.setState({
-            showDialog: true,
-            dialogTitle: 'Add show',
-            dialogMessage: 'Do you want to add ' + show.title + ' to your list of shows ?',
-            addOrRemoveString: 'Add',
-            showToAdd: show
-        });
-
+    const showAddShowDialog = (show: Show) => {
+        setShowDialog(true);
+        setDialogTitle('Add show');
+        setDialogMessage('Do you want to add ' + show.title + ' to your list of shows ?');
+        setAddOrRemoveString('Add');
+        setShowToAdd(show);
     };
 
-    showRemoveShowDialog = (e: any, show: Show) => {
-
-        this.setState({
-            showDialog: true,
-            dialogTitle: 'Remove show',
-            dialogMessage: 'Do you want to remove ' + show.title + ' of your list of shows ?',
-            addOrRemoveString: 'Remove',
-            showToRemove: show
-        });
-
+    const showRemoveShowDialog = (show: Show) => {
+        setShowDialog(true);
+        setDialogTitle('Remove show');
+        setDialogMessage('Do you want to remove ' + show.title + ' of your list of shows ?');
+        setAddOrRemoveString('Remove');
+        setShowToRemove(show);
     };
 
     // Adding a new tv show to database
-    addShow = async () => {
+    const addShow = async () => {
 
         try {
 
-            this.closeDialog();
-            this.setState({loading: true, shows: []});
-            const show = this.state.showToAdd;
+            closeDialog();
+            setLoading(true);
+            setShows([]);
+
+            const show = showToAdd;
 
             await fetch('/api/show', {
                 method: 'POST',
@@ -453,30 +338,31 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                 })
             });
 
-            this.setState({loading: false});
-
-            this.loadShowsInDb();
+            setLoading(false);
+            await loadShowsInDb();
 
         } catch(error) {
-            this.setState({snack: true, snackBarMessage: 'Error adding show', loading: false, isInSearchView: false})
+            dispatch(displayErrorNotification('Error adding show'));
+            setLoading(false);
+            setIsInSearchView(false);
         }
 
     };
 
-    onEnterKeyPressed = (event: any) => {
+    const onEnterKeyPressed = (event: any) => {
         if (event.keyCode || event.which === 13) {
 
-            this.searchShow();
+            searchShow();
 
         }
     };
 
     // Removing a tv show from database
-    removeShow = async () => {
+    const removeShow = async () => {
 
-        this.closeDialog();
+        closeDialog();
 
-        const show = this.state.showToRemove;
+        const show = showToRemove;
 
         await fetch('/api/show', {
             method: 'DELETE',
@@ -490,16 +376,16 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
             })
         });
 
-        this.loadShowsInDb();
+        loadShowsInDb();
 
     };
 
     // Changing the "autoUpdate" state of the tv show | TODO add a try/catch block here
-    updateShow = async (show: Show) => {
+    const updateShow = async (show: Show) => {
 
         show.autoUpdate = !show.autoUpdate;
 
-        let response = await fetch('/api/show', {
+        await fetch('/api/show', {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -511,19 +397,19 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
             })
         });
 
-        response = await response.json();
-
-        this.setState({snack: true, snackBarMessage: show.title + ' updated'})
+        dispatch(displaySuccessNotification(`${show.title} updated`));
     };
 
     /**
      * Opens the dialog with downloads parts - and fetch episodes numbers
      */
-    openShowDownloadDialog = async (show: Show) => {
+    const handleOpenShowDownloadDialog = async (show: Show) => {
 
         try {
 
-            this.setState({openShowDownloadDialog: true, showToDownload: show, showInfoLoading: true});
+            setOpenShowDownloadDialog(true);
+            setShowToDownload(show);
+            setShowInfoLoading(true);
 
             const response = await fetch('/api/show/' + show.id, {
                 method: 'GET',
@@ -536,16 +422,11 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
 
             const showInfo: ShowInfoDto = await response.json();
 
-            this.setState({
-                seasonsEpisodesNumbers: showInfo.show.seasonsEpisodesNumbers,
-                showInfoLoading: false
-            });
-
-
+            setSeasonsEpisodesNumbers(showInfo.show.seasonsEpisodesNumbers);
+            setShowInfoLoading(false);
         } catch (error) {
-            this.setState({
-                showInfoLoading: false
-            });
+            setShowInfoLoading(false);
+            dispatch(displayErrorNotification('Can\'t get show infos'));
         }
 
     };
@@ -553,86 +434,121 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
     /**
      * Closes the dialog with downloads parts
      * */
-    closeShowDownloadDialog = () => {
-        this.setState({
-            openShowDownloadDialog: false,
-            episodeTorrents: null,
-            showToDownload: null,
-            episodeNumber: 0,
-            seasonNumber: 0,
-            episodeTorrentsLoading: false,
-            qualityEpisode: null});
+    const closeShowDownloadDialog = () => {
+        setOpenShowDownloadDialog(false);
+        setEpisodeTorrents(null);
+        setShowToDownload(null);
+        setEpisodeNumber(0);
+        setSeasonNumber(0);
+        setEpisodeTorrentsLoading(false);
+        setQualityEpisode(null);
     };
 
-    clearTitle = () => {
-        this.setState({showTitleToSearch: ''})
-    };
+    const showTvShowInfoDialog = (show: Show) => {
 
-    showTvShowInfoDialog = (show: Show) => {
-
-        if (!this.state.isInSearchView) {
-            this.setState({
-                showToDisplayInfo: show,
-                showInfoDialog: true,
-                showLang: show.lang
-            });
+        if (!isInSearchView) {
+            setShowInfoDialog(true);
+            setShowToDisplayInfo(show);
+            setShowLang(show.lang);
         }
 
     };
 
     // Changing the lang of the tv show (vostfr, french, multi)
-    changeShowLang = async (event: any) => {
+    const changeShowLang = async (event: ChangeEvent<{ value: unknown }>) => {
 
-        const show = this.state.showToDisplayInfo;
-        show.lang = event.target.value;
+        const show = showToDisplayInfo;
 
-        try {
-            await fetch('/api/show', {
-                method: 'PUT',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'token': await auth.getIdToken()
-                },
-                body: JSON.stringify({
-                    show: show
-                })
-            });
+        if (show !== null) {
+            show.lang = event.target.value;
 
-            this.setState({snack: true, snackBarMessage: show.title + ' lang updated', showLang: show.lang})
+            try {
+                await fetch('/api/show', {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'token': await auth.getIdToken()
+                    },
+                    body: JSON.stringify({
+                        show: show
+                    })
+                });
 
-        } catch (error) {
-            this.setState({snack: true, snackBarMessage: 'Error changing lang', loading: false, isInSearchView: false})
+                setShowLang(show.lang);
+                dispatch(displaySuccessNotification(`${show.title} lang updated`));
+            } catch (error) {
+                dispatch(displayErrorNotification('Error changing lang'));
+                setLoading(false);
+                setIsInSearchView(false);
+            }
+        } else {
+            dispatch(displayErrorNotification('Bad show'));
         }
+
     };
 
     // Function triggered to fetch tv show episode available torrents
-    searchShowEpisodeTorrents = async () => {
+    const searchShowEpisodeTorrents = async () => {
 
-        this.setState({episodeTorrentsLoading: true, episodeTorrents: null});
+        setEpisodeTorrentsLoading(true);
+        setEpisodeTorrents(null);
 
         try {
-            // add  ${this.state.qualityEpisode} to use quality
+            // add  ${qualityEpisode} to use quality
             let searchString = '';
 
-            if (this.state.seasonNumber) {
-                searchString = `${this.state.showToDownload?.title} S${this.state.seasonNumber}`;
+            if (seasonNumber) {
+                searchString = `${showToDownload?.title} S${seasonNumber}`;
             } else {
-                searchString = `${this.state.showToDownload?.title}`;
+                searchString = `${showToDownload?.title}`;
             }
 
-            if (this.state.seasonNumber && this.state.episodeNumber) {
-                searchString = `${this.state.showToDownload?.title} S${this.state.seasonNumber}E${this.state.episodeNumber}`;
+            if (seasonNumber && episodeNumber) {
+                searchString = `${showToDownload?.title} S${seasonNumber}E${episodeNumber}`;
             }
 
-            let response = await fetch(`/api/torrents?title=${searchString}`, {
-                method: 'GET'
-            });
+            // let response = await fetch(`/api/torrents?title=${searchString}`, {
+            //     method: 'GET'
+            // });
 
-            const torrents: SearchShowEpisodeTorrents = await response.json();
+            // const torrents: SearchShowEpisodeTorrents = await response.json();
 
+            const torrents = [{
+                'provider': 'ygg',
+                'torrents': [
+                    {
+                        tags: {},
+                        completed: "64",
+                        leech: "0",
+                        provider: "ygg",
+                        seed: "10",
+                        size: "266.95Mo",
+                        title: "Avengers Infinity War (2018) MULTi VFQ 1080p BluRay REMUX AVC DTS.GHT (Avengers : La guerre de l'infini) vf 4k ac3",
+                        url: "https://www2.yggtorrent.ch/torrent/audio/musique/233399-alan+silvestri+avengers+infinity+war+original+motion+picture+soundtrack+2018web+mp3+320kbps"
+                    }, {
+                        tags: {},
+                        completed: "35",
+                        leech: "0",
+                        provider: "ygg",
+                        seed: "9",
+                        size: "592.12Mo",
+                        title: "Alan Silvestri – Avengers: Infinity War (Original Motion Picture Soundtrack) (2018)(web.flac.16bit) 720p ",
+                        url: "https://www2.yggtorrent.ch/torrent/audio/musique/233400-alan+silvestri+avengers+infinity+war+original+motion+picture+soundtrack+2018web+flac+16bit"
+                    }, {
+                        tags: {},
+                        completed: "747",
+                        leech: "1",
+                        provider: "ygg",
+                        seed: "134",
+                        size: "1.73Go",
+                        title: "Avengers Infinity War (2018) French AAC BluRay 720p x264.GHT (Avengers:  La guerre de l'infini) vfq ac3 aac vf 1080p 4k uhd ",
+                        url: "https://www2.yggtorrent.ch/torrent/film-video/film/295275-avengers+infinity+war+2018+french+aac+bluray+720p+x264+ght+avengers+la+guerre+de+linfini"
+                    }
+                ] as ShowTorrent[]
+            }]
 
-            const torrentsTaggued = torrents[0].torrents.map(torrent => {
+            const torrentsTagged = torrents[0].torrents.map(torrent => {
 
                 // torrent.tags = {};
 
@@ -658,26 +574,28 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                 return torrent;
             });
 
-            const torrentsTagguedToReturn = [];
+            const torrentsTaggedToReturn: TaggedTorrents = [];
 
-            torrentsTagguedToReturn.push({
-                torrents : torrentsTaggued,
+            torrentsTaggedToReturn.push({
+                torrents : torrentsTagged,
                 provider: 'ygg'
             });
 
-
-            this.setState({episodeTorrentsLoading: false, episodeTorrents: torrentsTagguedToReturn, episodeTorrentsFull: torrentsTagguedToReturn});
+            setEpisodeTorrentsLoading(false);
+            setEpisodeTorrents(torrentsTaggedToReturn);
+            setEpisodeTorrentsFull(torrentsTaggedToReturn);
         } catch(error) {
-            this.setState({snackBarMessage: 'Error while getting episode torrents', snack: true});
-            this.setState({episodeTorrentsLoading: false})
+            dispatch(displayErrorNotification('Error while getting episode torrents'));
+            setEpisodeTorrentsLoading(false);
         }
 
     };
 
     // Starts the download of the torrent for this episode of this tv show wanted
-    downloadEpisodeTorrent = async (torrent: Torrent) => {
+    const downloadEpisodeTorrent = async (torrent: ShowTorrent) => {
 
-        this.setState({episodeTorrentsLoading: true, episodeTorrents: null});
+        setEpisodeTorrentsLoading(true);
+        setEpisodeTorrents(null);
 
         try {
             let response = await fetch('/api/episode_torrents', {
@@ -692,9 +610,9 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                     provider: torrent.provider,
                     title: torrent.title,
                     mediaInfos: {
-                        lastSeason: this.state.seasonNumber,
-                        lastEpisode: this.state.episodeNumber,
-                        name: this.state.showToDownload?.title,
+                        lastSeason: seasonNumber,
+                        lastEpisode: episodeNumber,
+                        name: showToDownload?.title,
                         isShow: true
                     },
                     id: torrent.title,
@@ -704,54 +622,52 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
             const responseDto: DownloadEpisodeTorrentDto = await response.json();
 
             if (responseDto.message !== 'ok') {
-                this.setState({snackBarMessage: 'Error while downloading torrent file', snack: true});
+                dispatch(displayErrorNotification('Error while downloading torrent file'))
             } else {
-                this.setState({snackBarMessage: 'Torrent added - check progress in downloads', snack: true});
+                dispatch(displayErrorNotification('Torrent added - check progress in downloads'))
             }
 
-            this.setState({episodeTorrentsLoading: false});
+            setEpisodeTorrentsLoading(false);
 
             setTimeout(() => {
-                this.closeShowDownloadDialog();
+                closeShowDownloadDialog();
             }, 2000);
 
         } catch(error) {
-            this.setState({snackBarMessage: 'Error while downloading torrent file', snack: true, episodeTorrentsLoading: false});
-            this.closeShowDownloadDialog();
+            dispatch(displayErrorNotification('Error while downloading torrent file'))
+            setEpisodeTorrentsLoading(false);
+            closeShowDownloadDialog();
         }
-
     };
 
-    handlerSeasonNumberChange = (event: any) => {
+    const handlerSeasonNumberChange = (event: any) => {
+        setSeasonNumber(event.target.value);
+    };
+
+    const handlerEpisodeNumberChange = (event: any) => {
+        setEpisodeNumber(event.target.value);
+    };
+
+    const handlerQualityEpisodeChange = (event: any) => {
         // @ts-ignore
-        this.setState({ [event.target.name]: event.target.value });
+        setState({ [event.target.name]: event.target.value });
     };
 
-    handlerEpisodeNumberChange = (event: any) => {
-        // @ts-ignore
-        this.setState({ [event.target.name]: event.target.value });
-    };
-
-    handlerQualityEpisodeChange = (event: any) => {
-        // @ts-ignore
-        this.setState({ [event.target.name]: event.target.value });
-    };
-
-    createSeasonsNumbersTable = () => {
-        let table = [];
+    const createSeasonsNumbersTable = (): JSX.Element[] | undefined => {
+        let table: JSX.Element[] = [];
 
         // @ts-ignore
         table.push(<MenuItem value={null} key={0}>{""}</MenuItem>);
 
-        if (this.state.seasonsEpisodesNumbers.length > 0) {
-            const seasonsNumber = this.state.seasonsEpisodesNumbers.filter((season: any) => season.season_number === Math.max.apply(Math, this.state.seasonsEpisodesNumbers.map(function(o: any) { return o.season_number; })))[0].season_number;
+        if (seasonsEpisodesNumbers.length > 0) {
+            const seasonsNumber = seasonsEpisodesNumbers.filter((season: any) => season.season_number === Math.max.apply(Math, seasonsEpisodesNumbers.map(function(o: any) { return o.season_number; })))[0].season_number;
 
             for (let i = 0; i < seasonsNumber; i++) {
 
                 // TODO: WTF ?
                 const number = parseInt(String(i + 1)).toString().padStart(2, '0');
 
-                table.push(<MenuItem value={number} key={++i}>{number}</MenuItem>);
+                table. push(<MenuItem value={number} key={i + 1}>{number}</MenuItem>);
             }
 
             return table
@@ -759,22 +675,22 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
 
     };
 
-    createEpisodesNumbersTable = () => {
+    const createEpisodesNumbersTable = (): JSX.Element[] | undefined => {
         let table = [];
 
         // @ts-ignore
         table.push(<MenuItem value={null} key={0}>{""}</MenuItem>);
 
-        if (this.state.seasonsEpisodesNumbers.length > 0 && this.state.seasonNumber !== 0) {
+        if (seasonsEpisodesNumbers.length > 0 && seasonNumber !== 0) {
 
-            const episodesNumber = this.state.seasonsEpisodesNumbers.filter(season => season.season_number === +this.state.seasonNumber)[0].episode_count
+            const episodesNumber = seasonsEpisodesNumbers.filter(season => season.season_number === +seasonNumber)[0].episode_count
 
             for (let i = 0; i < episodesNumber; i++) {
 
                 const number = parseInt(String(i + 1)).toString().padStart(2, '0');
 
 
-                table.push(<MenuItem value={number} key={++i}>{number}</MenuItem>);
+                table.push(<MenuItem value={number} key={i + 1}>{number}</MenuItem>);
             }
 
             return table
@@ -782,39 +698,35 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
 
     };
 
-    filterTorrents = (filter: any) => {
+    // TODO: make it work again
+    const filterTorrents = (filter: any) => {
 
-        // TODO: change the way of doing this !
-        // @ts-ignore
-        this.setState({
-            // @ts-ignore
-            [filter]: !this.state[filter]
-        }, () => {
+        const trueFilter: any[] = [];
 
-            const trueFilter: any[] = [];
+        if (uhd) {
+            trueFilter.push('uhd');
+        }
 
-            if (this.state.uhd) {
-                trueFilter.push('uhd');
-            }
+        if (fullHd) {
+            trueFilter.push('fullHd');
+        }
 
-            if (this.state.fullHd) {
-                trueFilter.push('fullHd');
-            }
+        if (hd) {
+            trueFilter.push('hd');
+        }
 
-            if (this.state.hd) {
-                trueFilter.push('hd');
-            }
+        if (multi) {
+            trueFilter.push('multi');
+        }
 
-            if (this.state.multi) {
-                trueFilter.push('multi');
-            }
-
-            const torrentsFiltered = this.state.episodeTorrentsFull[0].torrents.map((torrent: any) => {
+        if (episodeTorrentsFull) {
+            const torrentsFiltered = episodeTorrentsFull[0].torrents.map((torrent) => {
 
                 let shouldBeDisplayed = false;
 
                 if (trueFilter.length > 0) {
                     trueFilter.map(filter => {
+                        // @ts-ignore
                         if (Object.keys(torrent.tags).filter((key) => torrent.tags[key]).includes(filter)) {
                             shouldBeDisplayed = true;
                         }
@@ -831,302 +743,64 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
 
             });
 
-            const torrentsTagguedToReturn = [];
+            const torrentsTaggedToReturn: TaggedTorrents = [];
 
-            torrentsTagguedToReturn.push({
+            torrentsTaggedToReturn.push({
+                // @ts-ignore
                 torrents : torrentsFiltered.filter((torrent: any) => torrent !== undefined),
                 provider: 'ygg'
             });
 
-            this.setState({episodeTorrents: torrentsTagguedToReturn});
-        });
-
+            setEpisodeTorrents(torrentsTaggedToReturn);
+        }
     };
 
-    render() {
-
-        if (this.state.shows != null) {
-          return (
-
+    if (shows != null) {
+        return (
           <div className="Foo" style={{textAlign: "center", paddingBottom: '10%'}}>
 
-              <Snackbar
-                  open={this.state.snack}
-                  onClose={() => this.setState({snack: false})}
-                  autoHideDuration={2000}
-                  message={this.state.snackBarMessage}
-              />
-
               {/* Dialog to select and download show episode */}
-              <Dialog
-                  fullScreen
-                  open={this.state.openShowDownloadDialog}
-                  // onClose={this.handleClose}
-                  TransitionComponent={SlideUp}
-              >
+              <ShowsInfoDialog
+                openShowDownloadDialog={openShowDownloadDialog}
+                closeShowDownloadDialog={closeShowDownloadDialog}
+                showToDownload={showToDownload}
+                showInfoLoading={showInfoLoading}
+                seasonNumber={seasonNumber}
+                handlerSeasonNumberChange={handlerSeasonNumberChange}
+                episodeNumber={episodeNumber}
+                handlerEpisodeNumberChange={handlerEpisodeNumberChange}
+                createSeasonsNumbersTable={createSeasonsNumbersTable}
+                createEpisodesNumbersTable={createEpisodesNumbersTable}
+                searchShowEpisodeTorrents={searchShowEpisodeTorrents}
+                episodeTorrentsLoading={episodeTorrentsLoading}
+                episodeTorrents={episodeTorrents}
+                uhd={uhd}
+                fullHd={fullHd}
+                hd={hd}
+                multi={multi}
+                downloadEpisodeTorrent={downloadEpisodeTorrent}
+                filterTorrents={filterTorrents}
+                />
 
-                  <Fab
-                      onClick={() => this.closeShowDownloadDialog()}
-                      size={'small'}
-                      // @ts-ignore
-                      style={{margin: '5px', position: 'fixed', zIndex: '2', backgroundColor: '#757575', color: "white", right: '0'}}>
-                      <Close />
-                  </Fab>
-
-                  <div className="movieInfoDialog">
-
-                      <h1 style={{textAlign: 'center'}}>{this.state.showToDownload ? this.state.showToDownload.title : null}</h1>
-
-                      {
-                          this.state.showInfoLoading ?
-
-                              <div style={{textAlign: 'center'}}>
-                                  <CircularProgress style={this.state.showInfoLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
-                              </div>
-
-                              :
-
-                              <div>
-                                  <Grid container spacing={0}>
-
-                                      <Grid item xs={12} style={{padding: '6px', color: 'white', textAlign: 'center'}}>
-                                          Select the episode wanted
-                                      </Grid>
-
-                                      <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
-                                          <FormControl style={{minWidth: '80px'}} variant="outlined">
-                                              <Select
-                                                  value={this.state.seasonNumber}
-                                                  onChange={this.handlerSeasonNumberChange}
-                                                  input={
-                                                      <OutlinedInput
-                                                          name="seasonNumber"
-                                                          id="season-number"
-                                                      />
-                                                  }>
-
-                                                  {
-                                                      this.createSeasonsNumbersTable()
-                                                  }
-
-                                              </Select>
-                                              <FormHelperText>Season number</FormHelperText>
-                                          </FormControl>
-                                      </Grid>
-
-                                      <Grid item xs={6} style={{padding: '6px', textAlign: 'center'}}>
-                                          <FormControl style={{minWidth: '80px'}} variant="outlined">
-                                              <Select
-                                                  value={this.state.episodeNumber}
-                                                  onChange={this.handlerEpisodeNumberChange}
-                                                  input={
-                                                      <OutlinedInput
-                                                          name="episodeNumber"
-                                                          id="episode-number"
-                                                      />
-                                                  }>
-
-                                                  {
-                                                      this.createEpisodesNumbersTable()
-                                                  }
-
-                                              </Select>
-                                              <FormHelperText>Episode number</FormHelperText>
-                                          </FormControl>
-                                      </Grid>
-
-                                  </Grid>
-
-                                  <div style={{width: '100%', textAlign: 'center'}}>
-                                      <IconButton onClick={() => this.searchShowEpisodeTorrents()}>
-                                          <Search />
-                                      </IconButton>
-                                  </div>
-
-                                  <div style={{textAlign: 'center'}}>
-                                      <CircularProgress style={this.state.episodeTorrentsLoading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
-                                  </div>
-
-
-                                  {
-                                      this.state.episodeTorrents !== null ?
-
-                                          <div>
-                                              <div style={{textAlign: 'center'}}>
-                                                  <Chip label={'4K'} style={this.state.uhd ? styles.h264Full : styles.h264} clickable={true} onClick={() => this.filterTorrents('uhd')}/>
-                                                  <Chip label={'1080p'} style={this.state.fullHd ? styles.h264Full : styles.h264} clickable={true} onClick={() => this.filterTorrents('fullHd')}/>
-                                                  <Chip label={'720p'} style={this.state.hd ? styles.multiChipFull : styles.multiChip} clickable={true} onClick={() => this.filterTorrents('hd')}/>
-                                                  <Chip label={'Multi'} style={this.state.multi ? styles.blurayFull : styles.bluray} clickable={true} onClick={() => this.filterTorrents('multi')}/>
-                                              </div>
-
-                                              {/* List of torrents episodes */}
-                                              <List component="nav" dense>
-                                                  {this.state.episodeTorrents.map((provider: any) => {
-                                                      return (
-                                                          <div>
-                                                              <h3 style={{textAlign: 'center'}}>
-                                                                  {provider.provider}
-                                                              </h3>
-
-                                                              {
-                                                                  provider.torrents.length !== 0 ?
-                                                                      provider.torrents.map((torrent: any, index: number) => {
-                                                                          return (
-                                                                              <Paper elevation={1} style={{margin: '5px', backgroundColor: '#757575'}} key={index}>
-
-                                                                                  <ListItem button
-                                                                                            style={{overflow: 'hidden'}}>
-
-
-                                                                                      <ListItemText
-
-                                                                                          style={{padding: '0'}}
-
-                                                                                          primary= {
-                                                                                              <div style={{
-                                                                                                  overflow: 'hidden',
-                                                                                                  textOverflow: 'ellipsis',
-                                                                                                  whiteSpace: 'nowrap'
-                                                                                              }}>
-                                                                                                  {torrent.title}
-                                                                                              </div>
-                                                                                          }
-
-                                                                                          secondary={
-
-                                                                                              <div style={{
-                                                                                                  overflow: 'auto',
-                                                                                                  whiteSpace: 'nowrap'
-                                                                                              }}
-                                                                                                   className="torrentsChips">
-
-                                                                                                  {/* Video quality */}
-
-                                                                                                  {
-                                                                                                      torrent.tags.threeD ? <Chip label={'3D'} style={styles.multiChip} /> : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.uhd ? <Chip label={'4k'} style={styles.h264} /> : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.fullHd ? <Chip label={'1080p'} style={styles.h264} /> : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.hd ? <Chip label={'720p'} style={styles.multiChip} /> : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.hdlight ? <Chip label={'hdlight'} style={styles.multiChip} /> : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.bdrip ? <Chip label={'bdrip'} style={styles.multiChip} /> : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.h264 ? <Chip label={'h264'} style={styles.multiChip} /> : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.h265 ? <Chip label={'h265'} style={styles.h264} /> : null
-                                                                                                  }
-
-
-                                                                                                  {/* Language */}
-
-                                                                                                  {
-                                                                                                      torrent.tags.multi ? <Chip label={'multi'} style={styles.bluray} /> : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.vo ?  (torrent.tags.vostfr ? <Chip label={'vostfr'} style={styles.frenchChip} /> : <Chip label={'vo'} style={styles.frenchChip} />) : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.vf ? (torrent.tags.vfq ? <Chip label={'vfq'} style={styles.frenchChip} /> : <Chip label={'vf'} style={styles.frenchChip} />) : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.french ? <Chip label={'french'} style={styles.frenchChip} /> : null
-                                                                                                  }
-
-                                                                                                  {/* Audio quality */}
-
-                                                                                                  {
-                                                                                                      torrent.tags.aac ? <Chip label={'aac'} style={styles.hdChip} /> : null
-                                                                                                  }
-
-                                                                                                  {
-                                                                                                      torrent.tags.dts ? <Chip label={'dts'} style={styles.hdChip} /> : null
-                                                                                                  }
-
-                                                                                              </div>
-
-                                                                                          }
-
-                                                                                          onClick={() => this.downloadEpisodeTorrent(torrent)}/>
-                                                                                  </ListItem>
-                                                                              </Paper>
-                                                                          )})
-                                                                      :
-                                                                      <div style={{
-                                                                          fontSize: '0.9rem',
-                                                                          color: 'grey',
-                                                                          textAlign: 'center'
-                                                                      }}>No torrent found</div>
-
-                                                              }
-                                                          </div>
-                                                      )
-                                                  })}
-                                              </List>
-
-                                          </div>
-
-                                          :
-                                          null
-                                  }
-                              </div>
-
-                      }
-
-
-                  </div>
-
-              </Dialog>
-
-              {/* Add or remove show */}
-              <Dialog
-                  open={this.state.showDialog}
-                  onClose={this.closeDialog}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description">
-
-                  <DialogTitle id="alert-dialog-title">{this.state.dialogTitle}</DialogTitle>
-
-                  <DialogContent>
-                      <DialogContentText id="alert-dialog-description">{this.state.dialogMessage}</DialogContentText>
-                  </DialogContent>
-
-                  <DialogActions>
-                      <Button onClick={this.closeDialog} color="primary">
-                          Cancel
-                      </Button>
-                      <Button onClick={this.state.isInSearchView ? this.addShow : this.removeShow} color="primary" autoFocus>
-                          {this.state.addOrRemoveString}
-                      </Button>
-                  </DialogActions>
-              </Dialog>
+              <ShowsAddOrRemoveDialog
+                addShow={addShow}
+                showToAdd={showToAdd}
+                removeShow={removeShow}
+                showToRemove={showToRemove}
+                isInSearchView={isInSearchView}
+                showDialog={showDialog}
+                addOrRemoveString={addOrRemoveString}
+                closeDialog={closeDialog}
+                dialogMessage={dialogMessage}
+                dialogTitle={dialogTitle}
+              />
 
               {/* Dialog to change language */}
               <Dialog
-                  open={this.state.showInfoDialog}
-                  onClose={this.closeInfoDialog}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description">
+                open={showInfoDialog}
+                onClose={closeInfoDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description">
 
                   <DialogTitle id="alert-dialog-title">Info</DialogTitle>
 
@@ -1138,12 +812,12 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                           <FormControl>
                               <InputLabel htmlFor="age-simple">Language</InputLabel>
                               <Select
-                                  value={this.state.showLang}
-                                  onChange={this.changeShowLang}
-                                  inputProps={{
-                                      name: 'showLang',
-                                      id: 'show-lang',
-                                  }}
+                                value={showLang}
+                                onChange={(event) => changeShowLang(event)}
+                                inputProps={{
+                                    name: 'showLang',
+                                    id: 'show-lang',
+                                }}
                               >
                                   <MenuItem value={'vostfr'}>vostfr</MenuItem>
                                   <MenuItem value={'french'}>french</MenuItem>
@@ -1156,136 +830,69 @@ export default class Shows extends Component<ShowsProps, ShowsState> {
                   </DialogContent>
 
                   <DialogActions>
-                      <Button onClick={this.closeInfoDialog} color="primary" autoFocus>
+                      <Button onClick={closeInfoDialog} color="primary" autoFocus>
                           ok
                       </Button>
                   </DialogActions>
               </Dialog>
 
-
+              {/* Shows App Bar */}
               <div style={{flexGrow: 1}}>
                   <AppBar
-                      position="static"
-                      color="default">
+                    position="static"
+                    color="default">
                       <Toolbar>
                           <IconButton
-                            onClick={this.loadShowsInDb}
-                            style={this.state.isInSearchView ? {visibility: 'visible', marginRight: '16px'} : {visibility: 'hidden', marginRight: '16px'}}
+                            onClick={loadShowsInDb}
+                            style={isInSearchView ? {visibility: 'visible', marginRight: '16px'} : {visibility: 'hidden', marginRight: '16px'}}
                           >
                               <ArrowBack />
                           </IconButton>
 
                           <Input
-                              id="show_title_to_search"
-                              value={this.state.showTitleToSearch}
-                              placeholder="TV Show title"
-                              type="search"
-                              onChange={evt => this.updateShowTitleToSearch(evt)}
-                              disableUnderline={true}
-                              style={{width: '80%'}}
-                              onKeyPress={(event) => {this.onEnterKeyPressed(event)}}
+                            id="show_title_to_search"
+                            value={showTitleToSearch}
+                            placeholder="TV Show title"
+                            type="search"
+                            onChange={evt => updateShowTitleToSearch(evt)}
+                            disableUnderline={true}
+                            style={{width: '80%'}}
+                            onKeyPress={(event) => {onEnterKeyPressed(event)}}
                           />
 
-                              {this.state.showTitleToSearch !== null && this.state.showTitleToSearch !== '' ?
-                                <IconButton onClick={this.clearTitle}>
-                                  <Close />
-                                </IconButton>
-                                  :
-                                <IconButton onClick={() => this.state.showTitleToSearch !== null && this.state.showTitleToSearch !== '' ? this.searchShow : null}>
-                                  <Search />
-                                </IconButton>
-                              }
+                          {showTitleToSearch !== null && showTitleToSearch !== '' ?
+                            <IconButton onClick={() => setShowTitleToSearch('')}>
+                                <Close />
+                            </IconButton>
+                            :
+                            <IconButton onClick={() => showTitleToSearch !== null && showTitleToSearch !== '' ? searchShow : null}>
+                                <Search />
+                            </IconButton>
+                          }
 
                       </Toolbar>
                   </AppBar>
               </div>
 
-              <CircularProgress style={this.state.loading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
+              <CircularProgress style={loading ? {display: 'inline-block', marginTop: '40px'} : {display: 'none'}}/>
 
-              <Grid container spacing={0} style={{marginTop: '10px'}}>
-
-                  { this.state.shows.total > 0 ?
-
-                      Object.keys(this.state.shows.shows).map((showFirebase, index) => {
-
-                          const show = this.state.shows.shows[showFirebase];
-
-                      return (
-
-                      <Grid item xs={4} style={{padding: '6px'}} key={index}>
-
-                          <Card>
-
-                              {/*<Badge badgeContent={<CheckCircle style={{fontSize: '20'}}/>}/>*/}
-
-                              <CardMedia
-                                  style={{paddingTop: '150%', position: 'relative'}}
-                                  image={"https://image.tmdb.org/t/p/w500" + show.posterPath}
-                                  title={show.title}
-                                  onClick={() => this.openShowDownloadDialog(show)}
-                                  // clickable='true'
-                              >
-                                  <Badge
-                                      style={show.episode ? {position: 'absolute', top: '0', right: '0', marginRight: '10%', marginTop: '10%'} : {display: 'none'}}
-                                      // badgeContent={<CheckCircle style={{fontSize: '20', color: '#f44336'}}/>}
-                                      children={<CheckCircle style={{fontSize: '20', color: '#f44336'}}/>}
-                                  />
-                              </CardMedia>
-
-                              {this.state.isInSearchView ?
-
-                                  <CardActions style={{display: 'flex'}} disableSpacing>
-                                      <Button aria-label="add" style={{width: '100%'}} onClick={(e) => this.showAddShowDialog(e, show)}>
-                                          <AddCircle />
-                                      </Button>
-                                  </CardActions>
-
-                                  :
-
-                                  <CardActions style={{display: 'flex'}} disableSpacing>
-
-                                      <Button onClick={(e) => this.updateShow(show)} style={{minWidth: '0', flex: '1'}}>
-
-                                          {show.autoUpdate ?
-                                              <Sync style={{fontSize: '20'}}/>
-                                              :
-                                              <SyncDisabled style={{fontSize: '20'}}/>
-                                          }
-                                      </Button>
-
-                                      <Button onClick={(e) => this.showRemoveShowDialog(e, show)} style={{minWidth: '0', flex: '1'}}>
-                                          <Delete style={{fontSize: '20'}}/>
-                                      </Button>
-
-                                      <Button onClick={() => this.showTvShowInfoDialog(show)} style={{minWidth: '0', flex: '1'}}>
-                                          <Language />
-                                      </Button>
-
-                                  </CardActions>
-                              }
-
-                          </Card>
-                      </Grid>
-
-                      )
-
-                  })
-
-                  :
-
-                      <div style={this.state.loading ? {display: 'none'} : {display: 'inline-block', padding: '30px', color: 'grey', marginRight: 'auto', marginLeft: 'auto'}}>no results found</div>
-
-                  }
-
-              </Grid>
+              <ShowsGrid
+                shows={shows}
+                loading={loading}
+                showTvShowInfoDialog={showTvShowInfoDialog}
+                handleOpenShowDownloadDialog={handleOpenShowDownloadDialog}
+                isInSearchView={isInSearchView}
+                showAddShowDialog={showAddShowDialog}
+                showRemoveShowDialog={showRemoveShowDialog}
+                updateShow={updateShow}
+              />
 
           </div>
         );
-        } else {
-          return null
-        }
-
-      }
+    } else {
+        return null
+    }
 }
 
+export default Shows;
 

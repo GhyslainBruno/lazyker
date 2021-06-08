@@ -1,59 +1,30 @@
-import Fab from '@material-ui/core/Fab';
-import React, {ChangeEvent, Component, useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import FormHelperText from '@material-ui/core/FormHelperText';
-import CardMedia from '@material-ui/core/CardMedia';
-import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Search from '@material-ui/icons/SearchOutlined';
-import AddCircle from '@material-ui/icons/AddCircleOutlined';
 import Remove from '@material-ui/icons/RemoveOutlined';
 import Close from '@material-ui/icons/CloseOutlined';
-import Delete from '@material-ui/icons/DeleteOutlined';
-import Sync from '@material-ui/icons/SyncOutlined';
-import SyncDisabled from '@material-ui/icons/SyncDisabledOutlined';
 import ArrowBack from '@material-ui/icons/ArrowBackOutlined';
-import CheckCircle from '@material-ui/icons/CheckCircle';
-import Language from '@material-ui/icons/LanguageOutlined';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Input from '@material-ui/core/Input';
-import Snackbar from '@material-ui/core/Snackbar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import Badge from '@material-ui/core/Badge';
-import Slide from '@material-ui/core/Slide';
 import '../App.scss';
 import {useDispatch} from 'react-redux';
 import {displayErrorNotification, displaySuccessNotification} from '../ducks/snack/Snackbar.slice';
 import * as auth from "../firebase/auth";
-import Paper from "@material-ui/core/Paper";
-import OutlinedInput from "@material-ui/core/OutlinedInput/OutlinedInput";
-import Chip from "@material-ui/core/Chip";
 import ShowsInfoDialog from './shows/infos/ShowsInfoDialog';
 import ShowsAddOrRemoveDialog from './shows/ShowsAddOrRemoveDialog';
 import ShowsGrid from './shows/ShowsGrid';
-import SlideUp from './UI-components/SlideUp';
-
-// TODO: Should be useful in filter torrent functions
-export const getKeyValue = <T extends object, U extends keyof T>(key: U) => (obj: T) => obj[key];
-
-type ShowsProps = {
-    changeNavigation: (location: any) => void;
-}
 
 export type Show = {
     id: any;
@@ -125,46 +96,12 @@ type SearchShowEpisodeTorrent = {
     torrents: ShowTorrent[];
 }
 
-type ShowsState = {
-    shows: any;
-    showTitleToSearch: string;
-    navigation: any;
-    isInSearchView: any;
-    dialogTitle: string;
-    dialogMessage: string;
-    showDialog: boolean;
-    showInfoDialog: boolean;
-    addOrRemoveString: any;
-    showToAdd: Show | null;
-    showToRemove: Show | null;
-    snack: boolean;
-    snackBarMessage: string;
-    loading: boolean;
-    infoShow: any;
-    showToDisplayInfo: any;
-    openShowDownloadDialog: boolean;
-    showToDownload: Show | null;
-    episodeTorrentsLoading: boolean;
-    episodeTorrentsFull: any;
-    episodeTorrents: any;
-    seasonNumber: number;
-    episodeNumber: number;
-    qualityEpisode: any;
-    showInfoLoading: boolean;
-    seasonsEpisodesNumbers: any[];
-    showLang: any;
-    uhd: boolean;
-    fullHd: boolean;
-    hd: boolean;
-    multi: boolean;
-}
-
 type SearchShowsDto = {
     shows: Show[];
     total: number;
 }
 
-const Shows = (props: ShowsProps, state: ShowsState) => {
+const Shows = () => {
 
     const [showLang, setShowLang] = useState(null);
     const [shows, setShows] = useState<Show[]|null>(null);
@@ -199,7 +136,9 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
         })()
     }, []);
 
-    // Searching for a new tv show
+    /**
+     * Searching for a new tv show
+     */
     const searchShow = async () => {
         setIsInSearchView(true);
         setLoading(true);
@@ -229,8 +168,10 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
 
     };
 
-    // Loading shows from database
-    // TODO: stop using backend for such things, for god' sake !! -> 0 interest
+    /**
+     * Loading shows from database
+     * TODO: stop using backend for such things, for god' sake !! -> 0 interest
+     */
     const loadShowsInDb = async () => {
         setLoading(true);
         setShows([]);
@@ -307,7 +248,9 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
         setShowToRemove(show);
     };
 
-    // Adding a new tv show to database
+    /**
+     * Adding a new tv show to database
+     */
     const addShow = async () => {
 
         try {
@@ -349,7 +292,9 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
         }
     };
 
-    // Removing a tv show from database
+    /**
+     * Removing a tv show from database
+     */
     const removeShow = async () => {
 
         closeDialog();
@@ -372,7 +317,11 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
 
     };
 
-    // Changing the "autoUpdate" state of the tv show | TODO add a try/catch block here
+    /**
+     * Changing the "autoUpdate" state of the tv show
+     * TODO add a try/catch block here
+     * @param show
+     */
     const updateShow = async (show: Show) => {
 
         show.autoUpdate = !show.autoUpdate;
@@ -446,7 +395,10 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
 
     };
 
-    // Changing the lang of the tv show (vostfr, french, multi)
+    /**
+     * Changing the lang of the tv show (vostfr, french, multi)
+     * @param event
+     */
     const changeShowLang = async (event: ChangeEvent<{ value: unknown }>) => {
 
         const show = showToDisplayInfo;
@@ -480,14 +432,15 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
 
     };
 
-    // Function triggered to fetch tv show episode available torrents
+    /**
+     * Function triggered to fetch tv show episode available torrents
+     */
     const searchShowEpisodeTorrents = async () => {
 
         setEpisodeTorrentsLoading(true);
         setEpisodeTorrents(null);
 
         try {
-            // add  ${qualityEpisode} to use quality
             let searchString = '';
 
             if (seasonNumber) {
@@ -500,45 +453,45 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
                 searchString = `${showToDownload?.title} S${seasonNumber}E${episodeNumber}`;
             }
 
-            // let response = await fetch(`/api/torrents?title=${searchString}`, {
-            //     method: 'GET'
-            // });
+            let response = await fetch(`/api/torrents?title=${searchString}`, {
+                method: 'GET'
+            });
 
-            // const torrents: SearchShowEpisodeTorrents = await response.json();
+            const torrents: SearchShowEpisodeTorrents = await response.json();
 
-            const torrents = [{
-                'provider': 'ygg',
-                'torrents': [
-                    {
-                        tags: {},
-                        completed: "64",
-                        leech: "0",
-                        provider: "ygg",
-                        seed: "10",
-                        size: "266.95Mo",
-                        title: "Avengers Infinity War (2018) MULTi VFQ 1080p BluRay REMUX AVC DTS.GHT (Avengers : La guerre de l'infini) vf 4k ac3",
-                        url: "https://www2.yggtorrent.ch/torrent/audio/musique/233399-alan+silvestri+avengers+infinity+war+original+motion+picture+soundtrack+2018web+mp3+320kbps"
-                    }, {
-                        tags: {},
-                        completed: "35",
-                        leech: "0",
-                        provider: "ygg",
-                        seed: "9",
-                        size: "592.12Mo",
-                        title: "Alan Silvestri – Avengers: Infinity War (Original Motion Picture Soundtrack) (2018)(web.flac.16bit) 720p ",
-                        url: "https://www2.yggtorrent.ch/torrent/audio/musique/233400-alan+silvestri+avengers+infinity+war+original+motion+picture+soundtrack+2018web+flac+16bit"
-                    }, {
-                        tags: {},
-                        completed: "747",
-                        leech: "1",
-                        provider: "ygg",
-                        seed: "134",
-                        size: "1.73Go",
-                        title: "Avengers Infinity War (2018) French AAC BluRay 720p x264.GHT (Avengers:  La guerre de l'infini) vfq ac3 aac vf 1080p 4k uhd ",
-                        url: "https://www2.yggtorrent.ch/torrent/film-video/film/295275-avengers+infinity+war+2018+french+aac+bluray+720p+x264+ght+avengers+la+guerre+de+linfini"
-                    }
-                ] as ShowTorrent[]
-            }]
+            // const torrents = [{
+            //     'provider': 'ygg',
+            //     'torrents': [
+            //         {
+            //             tags: {},
+            //             completed: "64",
+            //             leech: "0",
+            //             provider: "ygg",
+            //             seed: "10",
+            //             size: "266.95Mo",
+            //             title: "Avengers Infinity War (2018) MULTi VFQ 1080p BluRay REMUX AVC DTS.GHT (Avengers : La guerre de l'infini) vf 4k ac3",
+            //             url: "https://www2.yggtorrent.ch/torrent/audio/musique/233399-alan+silvestri+avengers+infinity+war+original+motion+picture+soundtrack+2018web+mp3+320kbps"
+            //         }, {
+            //             tags: {},
+            //             completed: "35",
+            //             leech: "0",
+            //             provider: "ygg",
+            //             seed: "9",
+            //             size: "592.12Mo",
+            //             title: "Alan Silvestri – Avengers: Infinity War (Original Motion Picture Soundtrack) (2018)(web.flac.16bit) 720p ",
+            //             url: "https://www2.yggtorrent.ch/torrent/audio/musique/233400-alan+silvestri+avengers+infinity+war+original+motion+picture+soundtrack+2018web+flac+16bit"
+            //         }, {
+            //             tags: {},
+            //             completed: "747",
+            //             leech: "1",
+            //             provider: "ygg",
+            //             seed: "134",
+            //             size: "1.73Go",
+            //             title: "Avengers Infinity War (2018) French AAC BluRay 720p x264.GHT (Avengers:  La guerre de l'infini) vfq ac3 aac vf 1080p 4k uhd ",
+            //             url: "https://www2.yggtorrent.ch/torrent/film-video/film/295275-avengers+infinity+war+2018+french+aac+bluray+720p+x264+ght+avengers+la+guerre+de+linfini"
+            //         }
+            //     ] as ShowTorrent[]
+            // }]
 
             const torrentsTagged = torrents[0].torrents.map(torrent => {
 
@@ -583,7 +536,10 @@ const Shows = (props: ShowsProps, state: ShowsState) => {
 
     };
 
-    // Starts the download of the torrent for this episode of this tv show wanted
+    /**
+     * Starts the download of the torrent for this episode of this tv show wanted
+     * @param torrent
+     */
     const downloadEpisodeTorrent = async (torrent: ShowTorrent) => {
 
         setEpisodeTorrentsLoading(true);

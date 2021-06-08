@@ -75,6 +75,10 @@ type TaggedProviderTorrents = {
 
 export type TaggedTorrents = TaggedProviderTorrents[]
 
+type ShowsProps = {
+    changeNavigation: (location: string) => void;
+}
+
 type GetUserShowsDTO = {
     shows: Show[];
     total: number;
@@ -101,7 +105,7 @@ type SearchShowsDto = {
     total: number;
 }
 
-const Shows = () => {
+const Shows = (props: ShowsProps) => {
 
     const [showLang, setShowLang] = useState(null);
     const [shows, setShows] = useState<Show[]|null>(null);
@@ -133,7 +137,9 @@ const Shows = () => {
         (async function () {
             await loadShowsInDb();
             await clearNewEpisodesTags();
-        })()
+        })();
+
+        props.changeNavigation('shows');
     }, []);
 
     /**

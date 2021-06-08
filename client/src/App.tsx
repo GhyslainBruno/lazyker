@@ -121,7 +121,7 @@ const App = (props: AppProps, state: AppState) => {
 
     const dispatch = useDispatch();
 
-    const [navigation, setNavigation] = useState(null);
+    const [navigation, setNavigation] = useState('');
     const [authUser, setAuthUser] = useState<any>(null);
     const [userLoading, setUserLoading] = useState(true);
     const [showAccountLinkDialog, setShowAccountLinkDialog] = useState(false);
@@ -298,7 +298,7 @@ const App = (props: AppProps, state: AppState) => {
         setShowAccountLinkDialog(false)
     };
 
-    const changeNavigation = (target: any) => {
+    const changeNavigation = (target: string) => {
         setNavigation(target)
     };
 

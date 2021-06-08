@@ -22,7 +22,7 @@ const styles = {
 
 type MovieProps = {
     history: any;
-    changeNavigation: (location: any) => void;
+    changeNavigation: (location: string) => void;
     match: {
         params: {
             id: any
@@ -225,9 +225,10 @@ class Movies extends Component<MovieProps, MovieState> {
 
         const urlParams = qs.parse(this.props.location.search);
 
-        if (urlParams.genre) {
+        if (urlParams.genre && urlParams.genre.constructor !== Array) {
 
             const genre: MovieGenre = {
+                // @ts-ignore
                 id: urlParams.genre,
                 name: ''
             };

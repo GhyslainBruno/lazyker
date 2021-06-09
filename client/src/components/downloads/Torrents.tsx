@@ -254,7 +254,7 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
       <Accordion onChange={(event, expanded) => expanded ? firstTorrentsLoad() : stopsRealTimeTorrents()}>
 
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>RealDebrid Torrents</Typography>
+              <Typography>Debrider Torrents</Typography>
           </AccordionSummary>
 
           <Dialog

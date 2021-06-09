@@ -17,4 +17,6 @@ export class Database {
 
     return storageSnapshot.val() as StorageEnum
   }
+
+
 }

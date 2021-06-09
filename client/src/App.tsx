@@ -387,9 +387,9 @@ const App = (props: AppProps, state: AppState) => {
                               <Route path='/privacy_policy' render={() => <Privacy/>}/>
                               <Route path='/' render={() => <Redirect to="/movies?genre=popular" />}/>
                               <Route path='/signin' render={() => <Redirect to="/movies?genre=popular" />}/>
-                              <Route path='/link_rd' render={(props)=> <Settings changeNavigation={changeNavigation} {...props} />}/>
+                              <Route exact path='/link_rd' render={(props)=> <Settings changeNavigation={changeNavigation} {...props} />}/>
+                              <Route path='/movies/:id' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
                           </Switch>
-                          <Route path='/movies/:id' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
                           <Route path='/' render={() => <Navigation navigation={navigation} authUser={authUser} />}/>
                       </div>
                       :

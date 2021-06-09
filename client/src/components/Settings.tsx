@@ -9,9 +9,10 @@ import {useDispatch} from 'react-redux';
 import {isConnected} from '../ducks/debriders/Alldebrid.slice';
 import {SeverityEnum} from '../ducks/snack/Severity.enum';
 import { displayErrorNotification } from '../ducks/snack/Snackbar.slice';
-import SignOutButton from "../firebase/SignOutBtn";
+import SignOutButton from '../firebase/SignOutBtn';
 import { auth } from '../firebase';
-import queryString from "qs";
+// @ts-ignore
+import queryString from 'qs';
 import Logs from "./settings/logs";
 import Qualities from "./settings/configuration/qualities";
 import Storage from "./settings/configuration/storage";
@@ -22,10 +23,6 @@ import Save from "./settings/save";
 let auth2: any = null;
 
 type LinkRealdebridUserDto = {
-    message: string;
-}
-
-type ReadldebridDisconnectDto = {
     message: string;
 }
 
@@ -96,7 +93,6 @@ const Settings = (props: SettingsProps) => {
 
     const [labelWidth, setLabelWidth] = useState(null);
     const [firstQuality, setFirstQuality] = useState('');
-    const [realdebrid, setRealdebrid] = useState(false);
     const [secondQuality, setSecondQuality] = useState('');
     const [thirdQuality, setThirdQuality] = useState('');
     const [snack, setSnack] = useState(false);
@@ -186,7 +182,6 @@ const Settings = (props: SettingsProps) => {
                 setFirstQuality('')
                 setSecondQuality('')
                 setThirdQuality('')
-                setRealdebrid(false)
                 seth265(false)
                 setMoviesPath('')
                 setTvShowsPath('')
@@ -279,7 +274,6 @@ const Settings = (props: SettingsProps) => {
                     dispatch(isConnected('disconnected'));
                 }
 
-                setRealdebrid(settings.hasOwnProperty('realdebrid'))
                 setSettingsLoading(false)
             }
         } catch(error) {
@@ -433,30 +427,6 @@ const Settings = (props: SettingsProps) => {
         setParentTvShowsGdriveFolderId(folder.parentI)
     };
 
-    const realdebridDisconnect = async () => {
-        try {
-            let response = await fetch('/api/unlink', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'token': await auth.getIdToken()
-                }
-            });
-
-            const responseDto: ReadldebridDisconnectDto = await response.json();
-
-            await loadSettings();
-
-            setSnack(true);
-            setSnackBarMessage(responseDto.message)
-
-        } catch(error) {
-            setSnack(true);
-            setSnackBarMessage('Error disconnecting realdebrid')
-        }
-    };
-
     const displaySnackMessage = (message: string) => {
         setSnack(true);
         setSnackBarMessage(message);
@@ -515,10 +485,7 @@ const Settings = (props: SettingsProps) => {
 
                         <Divider/>
 
-                        <Debriders
-                          realdebrid={realdebrid}
-                          realdebridDisconnect={realdebridDisconnect}
-                        />
+                        <Debriders />
 
                         <Divider/>
 

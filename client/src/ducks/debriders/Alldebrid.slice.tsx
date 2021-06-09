@@ -15,6 +15,18 @@ type NewPinDto = {
   }
 }
 
+type FetchPinCodeStatusProps = {
+  pin: string;
+  check: string;
+}
+
+type FetchPinCodeStatusDto = {
+  pin_status: {
+    activated: boolean;
+    expires_in: number;
+  }
+}
+
 export const fetchAlldebridDisconnect = createAsyncThunk(
   'alldebrid/fetchAlldebridDisconnect',
   async (state, thunkAPI) => {
@@ -39,18 +51,6 @@ export const fetchNewPinCode = createAsyncThunk(
   }
 )
 
-type FetchPinCodeStatusProps = {
-  pin: string;
-  check: string;
-}
-
-type FetchPinCodeStatusDto = {
-  pin_status: {
-    activated: boolean;
-    expires_in: number;
-  }
-}
-
 export const fetchPinCodeStatus = createAsyncThunk(
   'alldebrid/fetchPinCodeStatus',
   async (form: FetchPinCodeStatusProps) => {
@@ -63,7 +63,6 @@ export const fetchPinCodeStatus = createAsyncThunk(
     }
   }
 )
-
 
 export const alldebridSlice = createSlice({
   name: 'alldebrid',

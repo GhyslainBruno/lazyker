@@ -5,10 +5,8 @@ import {Dispatch} from 'redux';
 import {auth} from '../../firebase';
 import {ConnectedStateEnum} from '../ConnectedState.enum';
 import {displaySuccessNotification} from '../snack/Snackbar.slice';
-import {deleteToken} from '../storage/Uptobox.slice';
 
 export const listenRealdebridIsConnectedState = async (dispatch: Dispatch<any>, getState: any) => {
-
     firebase
         .database()
         .ref('/users')
@@ -33,8 +31,8 @@ export const disconnectRealdebrid = createAsyncThunk("realdebrid/disconnect", as
         .child(await auth.getUid())
         .child('settings')
         .child('debriders')
-        .child('token')
         .child('realdebrid')
+        .child('token')
         .remove();
 
     thunkAPI.dispatch(displaySuccessNotification('Disconnected'));
@@ -68,8 +66,10 @@ export const realdebridSlice = createSlice({
  */
 const getSlice = (state: any) => state.storage;
 
+// Why when using "createSelector" the component seems not be re rendered when data changes in redux state ?
+// --> created selector unusable for now
 export const getRealdebridConnectedState = createSelector([getSlice], state => state.connectedState);
 
 export const { updateRealdebridConnectedState } = realdebridSlice.actions;
 
-export default realdebridSlice;
+export default realdebridSlice.reducer;

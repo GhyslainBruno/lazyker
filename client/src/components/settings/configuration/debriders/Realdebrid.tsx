@@ -4,6 +4,7 @@ import CancelCircle from '@material-ui/icons/CancelOutlined';
 import CheckCircle from '@material-ui/icons/CheckCircle';
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from 'react-redux';
+import {ConnectedStateEnum} from '../../../../ducks/ConnectedState.enum';
 import {
     disconnectRealdebrid,
     getRealdebridConnectedState,
@@ -14,50 +15,32 @@ type RealdebridProps = {
 
 }
 
-type ReadldebridDisconnectDto = {
+type RealdebridDisconnectDto = {
     message: string;
 }
 
 const Realdebrid = (props: RealdebridProps) => {
 
     const dispatch = useDispatch();
-    const isConnected = useSelector(getRealdebridConnectedState);
+    // To use when understood why created selector in slice "breaks the re render"
+    // const isConnected = useSelector(getRealdebridConnectedState);
+    const connectedState = useSelector((state: any) => state.realdebrid.connectedState)
 
     // Production redirect Realdebrid URL - TODO: change the domain name by an environment variable
     let redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foobar';
 
     // Only for development purposes
     if (process.env.NODE_ENV === 'development') {
-        redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=http%3A%2F%2Flocalhost:3001/link_rd&response_type=code&state=foobar';
+        redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=http%3A%2F%2Flocalhost:3000/link_rd&response_type=code&state=foobar';
     }
 
     useEffect(() => {
         dispatch(listenRealdebridIsConnectedState);
     }, []);
 
-    // const realdebridDisconnect = async () => {
-    //     try {
-    //         let response = await fetch('/api/unlink', {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Accept': 'application/json',
-    //                 'Content-Type': 'application/json',
-    //                 'token': await auth.getIdToken()
-    //             }
-    //         });
-    //
-    //         const responseDto: ReadldebridDisconnectDto = await response.json();
-    //
-    //         dispatch(displaySuccessNotification(responseDto.message));
-    //
-    //     } catch(error) {
-    //         dispatch(displayErrorNotification('Error disconnecting realdebrid'));
-    //     }
-    // };
-
     return (
-        <div>
-            { isConnected ?
+        <Grid container spacing={0}>
+            { connectedState === ConnectedStateEnum.CONNECTED ?
                 <Grid item xs={12} style={{padding: '6px'}}>
 
                     <div style={{display: 'flex'}}>
@@ -70,7 +53,8 @@ const Realdebrid = (props: RealdebridProps) => {
                         </div>
 
                         <div style={{flex: '1'}}>
-                            <Button variant="outlined" onClick={dispatch(disconnectRealdebrid)}>
+                            {/*// @ts-ignore*/}
+                            <Button variant="outlined" onClick={() => dispatch(disconnectRealdebrid())}>
                                 Disconnect
                             </Button>
                         </div>
@@ -98,7 +82,7 @@ const Realdebrid = (props: RealdebridProps) => {
 
                 </Grid>
             }
-        </div>
+        </Grid>
     )
 }
 

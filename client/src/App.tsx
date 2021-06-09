@@ -383,11 +383,11 @@ const App = (props: AppProps, state: AppState) => {
                               <Route path='/shows' render={() =><Shows changeNavigation={changeNavigation} />}/>
                               <Route path='/movies' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
                               <Route path='/downloads' render={() => <Downloads changeNavigation={changeNavigation}/>}/>
+                              <Route path='/link_rd' render={(props)=> <Settings changeNavigation={changeNavigation} {...props} />}/>
                               <Route path='/settings' render={(props: any) => <Settings changeNavigation={changeNavigation} {...props} />}/>
                               <Route path='/privacy_policy' render={() => <Privacy/>}/>
                               <Route path='/' render={() => <Redirect to="/movies?genre=popular" />}/>
                               <Route path='/signin' render={() => <Redirect to="/movies?genre=popular" />}/>
-                              <Route exact path='/link_rd' render={(props)=> <Settings changeNavigation={changeNavigation} {...props} />}/>
                               <Route path='/movies/:id' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
                           </Switch>
                           <Route path='/' render={() => <Navigation navigation={navigation} authUser={authUser} />}/>

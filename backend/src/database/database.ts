@@ -54,4 +54,18 @@ export class Database {
     return snapshot.val();
   }
 
+  static async getAlldebridApiKey(user: User): Promise<string> {
+    const storageSnapshot = await Database.usersRef
+        .child(user.uid)
+        .child('settings')
+        .child('debriders')
+        .child('alldebrid')
+        .child('apiKey')
+        .once('value');
+
+    return storageSnapshot.val();
+  }
+
+  // static async
+
 }

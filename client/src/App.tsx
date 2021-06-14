@@ -379,6 +379,7 @@ const App = (props: AppProps, state: AppState) => {
 
                     authUser ?
                       <div className="mainApp mui-fixed">
+                          <Route path='/movies/:id' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
                           <Switch>
                               <Route path='/shows' render={() =><Shows changeNavigation={changeNavigation} />}/>
                               <Route path='/movies' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
@@ -388,7 +389,6 @@ const App = (props: AppProps, state: AppState) => {
                               <Route path='/privacy_policy' render={() => <Privacy/>}/>
                               <Route path='/' render={() => <Redirect to="/movies?genre=popular" />}/>
                               <Route path='/signin' render={() => <Redirect to="/movies?genre=popular" />}/>
-                              <Route path='/movies/:id' render={(props: any) => <Movies changeNavigation={changeNavigation} {...props} />}/>
                           </Switch>
                           <Route path='/' render={() => <Navigation navigation={navigation} authUser={authUser} />}/>
                       </div>

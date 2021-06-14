@@ -40,36 +40,42 @@ export class Storage implements IStorage {
 
   async addTorrent(mediaInfos: MediaInfos, torrentInfos: TorrentInDebriderInfos, user: User): Promise<any> {
 
-    // If the torrent is ready, add it automatically to storage
-    if(this.storage instanceof Uptobox && this.debrider instanceof AllDebrid) {
+    try {
+      // If the torrent is ready, add it automatically to storage
+      if(this.storage instanceof Uptobox && this.debrider instanceof AllDebrid) {
 
-      if (torrentInfos.isReady) {
-        // Get the Uptobox link corresponding to the torrent file in Alldebrid
-        const uptoboxLink = await this.debrider.getUptoboxLink(torrentInfos.id, user);
+        if (torrentInfos.isReady) {
+          // Get the Uptobox link corresponding to the torrent file in Alldebrid
+          const uptoboxLink = await this.debrider.getUptoboxLink(torrentInfos.id, user);
 
-        // Add the media to the uptobox storage
-        const fileCode = await this.storage.addFile(uptoboxLink.getFileCode(), user);
+          // Add the media to the uptobox storage
+          const fileCode = await this.storage.addFile(uptoboxLink.getFileCode(), user);
 
-        // Create a new folder naming that way : "title (year)"
-        const folderId = await this.storage.createMovieFolder(mediaInfos, user);
+          // Create a new folder named that way : "title (year)"
+          const folderId = await this.storage.createMovieFolder(mediaInfos, user);
 
-        // Move the previously added torrent to the wanted location (which is inside the previously created folder)
-        await this.storage.moveFile(fileCode, folderId, user);
+          // Move the previously added torrent to the wanted location (which is inside the previously created folder)
+          await this.storage.moveFile(fileCode, folderId, user);
 
-        const newFileName = mediaInfos.title + ' (' + mediaInfos.year + ')';
+          // Create a new file name to be used by the torrent added
+          const newFileName = encodeURIComponent(mediaInfos.title + ' (' + mediaInfos.year + ')');
 
-        await this.storage.renameFile(fileCode, newFileName, user);
+          // Rename the torrent
+          await this.storage.renameFile(fileCode, newFileName, user);
 
-        // If torrent is not ready yet, then add infos in database to be able to add it to storage when it's ready
-      } else {
+          // If torrent is not ready yet, then add infos in database to be able to add it to storage when it's ready
+        } else {
 
-        // Adding in db torrent's information to be able to create a directory (for the download) with a proper name
-        // (not only using torrent name for that)
+          // Adding in db torrent's information to be able to create a directory (for the download) with a proper name
+          // (not only using torrent name for that)
 
-        await Database.store(user, `/torrentsDownloaded/${torrentInfos.id}`, {torrentInfos, mediaInfo: mediaInfos})
+          await Database.store(user, `/torrentsDownloaded/${torrentInfos.id}`, {torrentInfos, mediaInfo: mediaInfos})
+
+        }
 
       }
-
+    } catch(error) {
+      throw new Error('Error in storage class -> ' + error.message);
     }
   }
 }

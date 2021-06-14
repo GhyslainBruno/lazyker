@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import ky from 'ky';
+import {DebriderTorrentDto} from '../../components/downloads/Torrents';
 import {auth} from '../../firebase';
 
 let pinStatusPoller: any = {};
@@ -25,6 +26,14 @@ type FetchPinCodeStatusDto = {
     activated: boolean;
     expires_in: number;
   }
+}
+
+type FetchDebriderTorrentsProps = {
+
+}
+
+type FetchDebriderTorrentsDto = {
+
 }
 
 export const fetchAlldebridDisconnect = createAsyncThunk(
@@ -54,14 +63,16 @@ export const fetchNewPinCode = createAsyncThunk(
 export const fetchPinCodeStatus = createAsyncThunk(
   'alldebrid/fetchPinCodeStatus',
   async (form: FetchPinCodeStatusProps) => {
-    try {
-      const response: FetchPinCodeStatusDto = await ky.get(`/api/alldebrid/check_pin_status?pin=${form.pin}&check=${form.check}`, { headers: {token: await auth.getIdToken()} }).json();
-      return response.pin_status;
-    } catch(error) {
-      console.error(error);
-      throw error;
-    }
+    const response: FetchPinCodeStatusDto = await ky.get(`/api/alldebrid/check_pin_status?pin=${form.pin}&check=${form.check}`, { headers: {token: await auth.getIdToken()} }).json();
+    return response.pin_status;
   }
+)
+
+export const fetchDebriderTorrents = createAsyncThunk(
+    'debrider/fetchDebriderTorrents',
+    async (from: FetchDebriderTorrentsProps): Promise<DebriderTorrentDto[]> => {
+      return await ky.get('/api/debrider/torrents', {headers: {token: await auth.getIdToken()}}).json();
+    }
 )
 
 export const alldebridSlice = createSlice({
@@ -128,6 +139,16 @@ export const alldebridSlice = createSlice({
 
 
     [fetchAlldebridDisconnect.fulfilled.type]: (state, action) => {
+      state.isConnected = 'disconnected';
+    },
+    [fetchAlldebridDisconnect.pending.type]: (state, action) => {
+
+    },
+    [fetchAlldebridDisconnect.rejected.type]: (state, action) => {
+
+    },
+
+    [fetchDebriderTorrents.fulfilled.type]: (state, action) => {
       state.isConnected = 'disconnected';
     },
     [fetchAlldebridDisconnect.pending.type]: (state, action) => {

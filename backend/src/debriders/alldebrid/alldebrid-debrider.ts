@@ -1,7 +1,11 @@
 import got from 'got';
 import {Database} from '../../database/database';
 import {DebriderEnum} from '../../database/debrider-enum';
+import {AlldebridTorrentsDto} from '../../dtos/alldebrid-torrents.dto';
+import {TorrentFromFrontDto} from '../../dtos/torrent-from-front.dto';
+import {TorrentToFrontDTO} from '../../dtos/torrent-to-front.dto';
 import {TorrentInDebriderInfos} from '../../entities/torrent-in-debrider-infos';
+import {TorrentStatusEnum} from '../../entities/torrent-status.enum';
 import {User} from '../../entities/user';
 import {UptoboxFileCode} from '../../storage/uptobox/uptobox';
 import {IDebrider} from '../i-debrider';
@@ -80,8 +84,6 @@ interface LinkMagnetDto {
   ]
 }
 
-
-
 // TODO extract in value object
 class UptoboxLink {
   url: string;
@@ -137,6 +139,92 @@ export class AllDebrid implements IDebrider {
 
     } catch(error) {
       console.log(error.message);
+    }
+  }
+
+  static async listTorrents(user: User): Promise<TorrentToFrontDTO[]> {
+
+    try {
+      const apikey = await Database.getAlldebridApiKey(user);
+
+      const response = await got(`https://api.alldebrid.com/v4/magnet/status?agent=lazyker&apikey=${apikey}`, { json: true });
+
+      const alldebridTorrents = response.body as AlldebridTorrentsDto;
+
+      return alldebridTorrents.data.magnets.map(alldebridTorrent => {
+
+        let status: TorrentStatusEnum;
+
+        switch(alldebridTorrent.statusCode) {
+          case 0: {
+            status = TorrentStatusEnum.QUEUED;
+            break;
+          }
+          case 1: {
+            status = TorrentStatusEnum.DOWNLOADING;
+            break;
+          }
+          case 2: {
+            status = TorrentStatusEnum.DOWNLOADING;
+            break;
+          }
+          case 3: {
+            status = TorrentStatusEnum.DOWNLOADING;
+            break;
+          }
+          case 4: {
+            status = TorrentStatusEnum.DOWNLOADED;
+            break;
+          }
+          case 5: {
+            status = TorrentStatusEnum.ERROR;
+            break;
+          }
+          case 6: {
+            status = TorrentStatusEnum.ERROR;
+            break;
+          }
+          case 7: {
+            status = TorrentStatusEnum.ERROR;
+            break;
+          }
+          case 8: {
+            status = TorrentStatusEnum.ERROR;
+            break;
+          }
+          case 9: {
+            status = TorrentStatusEnum.ERROR;
+            break;
+          }
+          case 10: {
+            status = TorrentStatusEnum.ERROR;
+            break;
+          }
+          case 11: {
+            status = TorrentStatusEnum.ERROR;
+            break;
+          }
+        }
+
+        return {
+          filename: alldebridTorrent.filename,
+          status: status,
+          id: alldebridTorrent.id.toString(),
+          progress: (alldebridTorrent.size/alldebridTorrent.downloaded)*100
+        } as TorrentToFrontDTO
+      });
+
+    } catch(error) {
+      console.log(error.message);
+    }
+  }
+
+  static async deleteTorrent(user: User, torrentId: string): Promise<void> {
+    try {
+      const apikey = await Database.getAlldebridApiKey(user);
+      await got(`https://api.alldebrid.com/v4/magnet/delete?agent=lazyker&apikey=${apikey}&id=${torrentId}`, { json: true });
+    } catch(error) {
+      throw new Error('Error in alldebrid-debrider -> ' + error.message);
     }
   }
 

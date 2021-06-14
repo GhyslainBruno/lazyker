@@ -9,6 +9,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
 import {useDispatch} from 'react-redux';
+import YouTube from 'react-youtube';
 // @ts-ignore
 import imageNotFound from "../../../assets/notfound.png";
 import Card from "@material-ui/core/Card";
@@ -21,7 +22,7 @@ import Play from "@material-ui/icons/PlayArrow";
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Star from "@material-ui/icons/Star";
 import Download from "@material-ui/icons/GetApp";
-// import ReactPlayer from "react-player";
+import ReactPlayer from "react-player";
 import Dialog from "@material-ui/core/Dialog";
 // @ts-ignore
 // import screenfull from "screenfull";
@@ -590,6 +591,21 @@ const MovieInfoDialog = (props: MyProps) => {
                             </div>
 
                             { movieInfo.trailer ?
+                                // <YouTube
+                                //     videoId={string}                  // defaults -> null
+                                //     id={string}                       // defaults -> null
+                                    // className={string}                // defaults -> null
+                                    // containerClassName={string}       // defaults -> ''
+                                    // opts={obj}                        // defaults -> {}
+                                    // onReady={func}                    // defaults -> noop
+                                    // onPlay={func}                     // defaults -> noop
+                                    // onPause={func}                    // defaults -> noop
+                                    // onEnd={func}                      // defaults -> noop
+                                    // onError={func}                    // defaults -> noop
+                                    // onStateChange={func}              // defaults -> noop
+                                    // onPlaybackRateChange={func}       // defaults -> noop
+                                    // onPlaybackQualityChange={func}    // defaults -> noop
+                                // />
                                 // <ReactPlayer url={movieInfo.trailer} light={true} playing={trailerPlaying} controls={true} width="100%" />
                               <div>{movieInfo.trailer}</div>
                             :

@@ -5,6 +5,7 @@ import {User} from '../entities/user';
 import {Logging} from '@google-cloud/logging';
 // Your Google Cloud Platform project ID
 const projectId = 'lazyker-568c4';
+import keyFileName from './lazyker-1eebc13a0386.json';
 
 // Creates a client
 const logging = new Logging({

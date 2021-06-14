@@ -108,7 +108,14 @@ async function getRealdebridAuthToken(user: any) {
 
     try {
         const uid = user.uid;
-        let token = await usersRef.child(uid).child('/settings/realdebrid/token').once('value');
+        let token = await usersRef
+            .child(uid)
+            .child('settings')
+            .child('debriders')
+            .child('realdebrid')
+            .child('token')
+            .once('value');
+
         token = token.val();
 
         if (token) {
@@ -647,7 +654,7 @@ export const getTorrents = async (user: any) => {
  * Deletes a particular torrent in realdebrid service
  * @returns {Promise<void>}
  */
-export const deleteTorrent = async (torrentId: any, user: any): Promise<any> => {
+export const deleteTorrent = async (user: any, torrentId: any): Promise<any> => {
     try {
 
         const token = await getRealdebridAuthToken(user);

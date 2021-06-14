@@ -1,8 +1,11 @@
+import {Database} from '../database/database';
+import {Debrider} from '../debriders/debrider';
 import * as realdebrid from '../debriders/realdebrid/debrid_links';
 import * as admin from 'firebase-admin';
 import {DownloadTorrentDto} from '../dtos/download-torrent-dto';
 import {MediaInfos} from '../entities/media-infos';
 import {ScrapperTorrentInfos} from '../entities/scrapper-torrent-infos';
+import {StorageEnum} from '../entities/storage.enum';
 import * as Movies from '../movies/Movies';
 import * as downloader from '../downloads/downloader'
 import {TorrentProviderEnum} from '../scrappers/ygg/torrent-provider-enum';
@@ -32,18 +35,15 @@ module.exports = (app: any) => {
     app.post('/api/torrents', async (req: any, res: any) => {
         try {
 
-            // const user = await admin.auth().verifyIdToken(req.headers.token);
-
-            const user = req.user;
+            const { user } = req;
 
             const downloadTorrentDto = req.body as DownloadTorrentDto;
             downloadTorrentDto.user = user;
 
-            console.log('bar');
-
             // Putting this particular movie into "inProgress" state into firebase database
             await usersRef.child(user.uid).child('/movies').child(req.body.mediaInfos.movieId).set({title: req.body.mediaInfos.title, state: 'finding_links', id: req.body.mediaInfos.movieId});
             await Movies.downloadTorrentFile(downloadTorrentDto);
+
             res.send({message: 'ok'});
         } catch(error) {
             res.status(500).send({
@@ -71,12 +71,13 @@ module.exports = (app: any) => {
     });
 
     /**
-     * Get list of torrents in realdebrid service
+     * Get a list of torrents from debrider service chose by user
      */
-    app.get('/api/realdebrid_torrents', async (req: any, res: any) => {
+    app.get('/api/debrider/torrents', async (req: any, res: any) => {
         try {
-            const user = await admin.auth().verifyIdToken(req.headers.token);
-            res.send(await realdebrid.getTorrents(user));
+            const { user } = req;
+            const torrents = await Debrider.getTorrents(user);
+            res.send(torrents);
         } catch(error) {
             res.status(500).send({ message: error })
         }
@@ -147,14 +148,21 @@ module.exports = (app: any) => {
         }
     });
 
-    /**
-     * Remove a particular realdebrid torrent
-     */
-    app.delete('/api/realdebrid_torrents', async (req: any, res: any) => {
+    app.delete('/api/debrider/torrent', async (req: any, res: any) => {
         try {
-            const user = await admin.auth().verifyIdToken(req.headers.token);
-            await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();
-            await realdebrid.deleteTorrent(req.query.torrentId, user);
+            const { user } = req;
+            const { torrentId } = req.query;
+
+            // Don't know why it was used, keeping it just in case
+            // await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();
+
+            const storage: StorageEnum = req.query.storage;
+
+            // await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();
+            // await realdebrid.deleteTorrent(req.query.torrentId, user);
+
+            await Debrider.deleteTorrent(user, torrentId, storage);
+
             res.send({
                 message: 'ok'
             });

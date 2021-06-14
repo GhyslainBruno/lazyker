@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
 import {StorageEnum} from '../ducks/storage/Storage.enum';
+import {DebriderEnum} from '../ducks/torrents/debrider.enum';
 import * as auth from './auth';
 
 export class Database {
@@ -18,5 +19,27 @@ export class Database {
     return storageSnapshot.val() as StorageEnum
   }
 
+  static async getSelectedDebrider(): Promise<DebriderEnum> {
+    const selectedStorage = await Database.getSelectedStorage();
+
+    switch (selectedStorage) {
+      case StorageEnum.UPTOBOX: {
+        return DebriderEnum.ALLDEBRID;
+      }
+
+      case StorageEnum.GOOGLE_DRIVE: {
+        return DebriderEnum.REALDEBRID;
+      }
+
+      case StorageEnum.NAS: {
+        return DebriderEnum.REALDEBRID;
+      }
+
+      default: {
+        return DebriderEnum.REALDEBRID;
+      }
+    }
+
+  }
 
 }

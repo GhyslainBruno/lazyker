@@ -25,7 +25,7 @@ import {useDispatch} from 'react-redux';
 import {displayErrorNotification, displaySuccessNotification} from '../../ducks/snack/Snackbar.slice';
 import * as auth from "../../firebase/auth";
 import Tooltip from '@material-ui/core/Tooltip';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import {Database} from '../../firebase/Database';
 
 
 const CloudDoneGreen = (props: any) => {
@@ -62,11 +62,22 @@ interface StartTorrentDownloadDto {
     message: string;
 }
 
+export type DebriderTorrentDto = {
+    filename: string;
+    // TODO: change that to an enum
+    status: string;
+    // Maybe use a value object for this property
+    id: string;
+    // Between 0 to 100
+    progress: number;
+}
+
 const Torrents = (props: TorrentsProps, state: TorrentsState) => {
 
-    const [torrents, setTorrents] = useState<any>(null);
+    const [torrents, setTorrents] = useState<DebriderTorrentDto[] | null>(null);
     const [torrentsLoading, setTorrentsLoading] = useState(false);
     const [torrentIdToRemove, setTorrentIdToRemove] = useState(null);
+    const [torrentToRemove, setTorrentToRemove] = useState<DebriderTorrentDto | null>(null);
     const [showDeleteDialogState, setShowDeleteDialog] = useState(false);
     const [open, setOpen] = useState(false);
     const [torrentsInterval, setTorrentsInterval] = useState<any>('torrentsInterval');
@@ -82,7 +93,7 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
         setTorrents(null);
 
         try {
-            let response = await fetch('/api/realdebrid_torrents', {
+            let response = await fetch('/api/debrider/torrents', {
                 method: 'GET',
                 headers: {
                     'token': await auth.getIdToken()
@@ -92,7 +103,7 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
             loadRealTimeTorrents();
 
             if (response.status === 200) {
-                const torrents = await response.json();
+                const torrents: DebriderTorrentDto[] = await response.json();
                 setTorrents(torrents);
                 setTorrentsLoading(false);
             } else {
@@ -107,11 +118,12 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
         }
     };
 
+    // TODO: refactor this duplicated code
     const loadRealTimeTorrents = () => {
 
         setTorrentsInterval(setInterval(async () => {
             try {
-                let response = await fetch('/api/realdebrid_torrents', {
+                let response = await fetch('/api/debrider/torrents', {
                     method: 'GET',
                     headers: {
                         'token': await auth.getIdToken()
@@ -119,8 +131,9 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
                 });
 
                 if (response.status === 200) {
-                    const torrents = await response.json();
+                    const torrents: DebriderTorrentDto[] = await response.json();
                     setTorrents(torrents);
+                    setTorrentsLoading(false);
                 } else {
                     setTorrents([]);
                     setTorrentsLoading(false);
@@ -163,14 +176,14 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
         clearInterval(torrentsInterval);
     };
 
-    const showDeleteDialog = async (torrentId: any) => {
+    const showDeleteDialog = async (torrent: DebriderTorrentDto) => {
         setShowDeleteDialog(true);
-        setTorrentIdToRemove(torrentId);
+        setTorrentToRemove(torrent);
     };
 
     const closeDeleteDialog = () => {
         setShowDeleteDialog(false);
-        setTorrentIdToRemove(null);
+        setTorrentToRemove(null);
     };
 
     const deleteTorrent = async () => {
@@ -179,13 +192,18 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
         setShowDeleteDialog(false);
 
         try {
-            await fetch('/api/realdebrid_torrents?torrentId=' + torrentIdToRemove, {
+
+            const storage = await Database.getSelectedStorage();
+
+            await fetch(`/api/debrider/torrent?storage=${storage}&torrentId=${torrentToRemove?.id}`, {
                 method: 'DELETE',
                 headers: {
                     'token': await auth.getIdToken()
                 }
             });
+
             setTorrentsLoading(false);
+            dispatch(displaySuccessNotification(torrentToRemove?.filename + ' deleted'));
         } catch(error) {
             dispatch(displayErrorNotification('Error while deleting your torrent'));
             setTorrentsLoading(false);
@@ -288,7 +306,7 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
                   {torrents !== null ?
                     torrents.length > 0 ?
                       !torrentsLoading ?
-                        torrents.map((torrent: any, index: number) => {
+                        torrents.map((torrent, index) => {
                             return (
                               <div key={index}>
                                   <div style={{display: 'inline-flex', width: '100%', textAlign: 'left', padding: '5px'}}>
@@ -334,7 +352,7 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
                                       <div style={{textAlign: 'center', margin: 'auto'}} className="buttonsDownload">
                                           <IconButton
                                             style={{padding: '5px'}}
-                                            onClick={() => showDeleteDialog(torrent.id)}
+                                            onClick={() => showDeleteDialog(torrent)}
                                           >
                                               <RemoveCircle />
                                           </IconButton>

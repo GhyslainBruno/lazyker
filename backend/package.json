@@ -1,7 +1,6 @@
 {
   "name": "lazyker",
   "version": "1.0.0",
-  "type": "module",
   "bin": {
     "lazyker": "src/server.ts"
   },

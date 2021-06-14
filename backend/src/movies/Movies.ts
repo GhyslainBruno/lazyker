@@ -77,6 +77,8 @@ export const downloadTorrentFile = async (downloadTorrentDto: DownloadTorrentDto
             const firstInProgressMovieCorrespondig =  inProgressMovie[Object.keys(inProgressMovie)[0]];
             await usersRef.child(user.uid).child('/movies').child(firstInProgressMovieCorrespondig.id).child('/state').set('error');
         }
+
+        throw new Error('Error downloading this movie -> ' + error.message);
     }
 
 };

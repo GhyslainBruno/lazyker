@@ -1,5 +1,6 @@
 import {Database} from '../database/database';
 import {StorageEnum} from '../entities/storage.enum';
+import {User} from '../entities/user';
 
 const realdebrid = require('../debriders/realdebrid/debrid_links');
 const gdrive = require('../storage/gdrive/gdrive');
@@ -21,7 +22,7 @@ const sleep = wait.sleep;
  * @param res
  * @returns {Promise<void>}
  */
-export const startRealdebridTorrentDownload = async (torrent: any, name: any, user: any, res: any) => {
+export const startRealdebridTorrentDownload = async (torrent: any, name: string, user: User, res: any) => {
     try {
 
         utils.initPassage();
@@ -30,7 +31,6 @@ export const startRealdebridTorrentDownload = async (torrent: any, name: any, us
             // Here, if several links  in the torrent -> torrent.links.length > 1
             const unrestrictedLink = await realdebrid.unrestricLinkNoDB(link, user);
 
-            // const storage = await usersRef.child(user.uid).child('/settings/storage').once('value');
             const selectedStorage = await Database.getSelectedStorage(user);
 
             const torrentInfos = await usersRef.child(user.uid).child(`/torrentsDownloaded/${torrent.id}`).once('value');

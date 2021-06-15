@@ -1,6 +1,8 @@
 import * as admin from 'firebase-admin';
 import {StorageEnum} from '../entities/storage.enum';
+import {TorrentInDebriderInfos} from '../entities/torrent-in-debrider-infos';
 import {User, UserSettings} from '../entities/user';
+import {Torrent} from '../scrappers/ygg/torrent';
 import {DebriderEnum} from './debrider-enum';
 
 export class Database {
@@ -66,6 +68,13 @@ export class Database {
     return storageSnapshot.val();
   }
 
-  // static async
+  static async storeTorrentDownloading(user: User, torrent: TorrentInDebriderInfos):Promise<void> {
+    return await Database.usersRef
+        .child(user.uid)
+        .child('settings')
+        .child('debriders')
+        .child(debrider)
+        .set({apiKey: apiKey});
+  }
 
 }

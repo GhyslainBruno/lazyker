@@ -88,7 +88,9 @@ module.exports = (app: any) => {
      */
     app.post('/api/realdebrid_torrent_download', async (req: any, res: any) => {
         try {
-            const user = await admin.auth().verifyIdToken(req.headers.token);
+            // const user = await admin.auth().verifyIdToken(req.headers.token);
+            const { user } = req;
+
             await downloader.startRealdebridTorrentDownload(req.body.torrent, req.body.torrent.filename.replace(/\.[^/.]+$/, ""), user, res);
         } catch(error) {
 

@@ -55,7 +55,7 @@ export async function getGDriveAccessToken(code: any, user: any) {
  * @param query
  * @returns {Promise<*>}
  */
-async function getFilesList(user: any, parent: any, query = `'${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`) {
+async function getFilesList(user: any, parent: any, query = `'${parent.tvShowsGdriveFolderId || parent.id}' in parents and trashed = false`) {
 
     const params = {
         // Using this to specify only folders

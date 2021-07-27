@@ -1,5 +1,5 @@
 import {Database} from '../database/database';
-import {DebriderEnum} from '../database/debrider-enum';
+import {DebridersEnum} from '../entities/debriders.enum';
 import {Debrider} from '../debriders/debrider';
 import * as realdebrid from '../debriders/realdebrid/debrid_links';
 import * as admin from 'firebase-admin';
@@ -160,7 +160,7 @@ module.exports = (app: any) => {
             // Don't know why it was used, keeping it just in case
             // await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();
 
-            const debrider: DebriderEnum = req.query.debrider;
+            const debrider: DebridersEnum = req.query.debrider;
 
             // await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();
             // await realdebrid.deleteTorrent(req.query.torrentId, user);

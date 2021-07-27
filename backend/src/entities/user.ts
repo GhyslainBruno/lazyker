@@ -1,6 +1,6 @@
 import admin from 'firebase-admin';
 import {Database} from '../database/database';
-import {DebriderEnum} from '../database/debrider-enum';
+import {DebridersEnum} from './debriders.enum';
 import {StorageEnum} from './storage.enum';
 
 export type UserSettings = {
@@ -12,7 +12,7 @@ export type UserSettings = {
     }
   },
   debriders: {
-    selected : DebriderEnum,
+    selected : DebridersEnum,
     alldebrid: {
       apiKey: string
     }

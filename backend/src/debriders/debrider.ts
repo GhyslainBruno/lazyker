@@ -1,5 +1,5 @@
 import {Database} from '../database/database';
-import {DebriderEnum} from '../database/debrider-enum';
+import {DebridersEnum} from '../entities/debriders.enum';
 import {TorrentToFrontDTO} from '../dtos/torrent-to-front.dto';
 import {MediaInfos} from '../entities/media-infos';
 import {StorageEnum} from '../entities/storage.enum';
@@ -69,11 +69,11 @@ export class Debrider {
     // Selecting debrider service based on storages, for now
     // (later it should be a property juste like storages)
     switch (selectedDebrider) {
-      case DebriderEnum.ALLDEBRID: {
+      case DebridersEnum.ALLDEBRID: {
         return await AllDebrid.listTorrents(user);
       }
 
-      case DebriderEnum.REALDEBRID: {
+      case DebridersEnum.REALDEBRID: {
         return await realdebrid.getTorrents(user)
       }
 
@@ -84,14 +84,14 @@ export class Debrider {
     }
   }
 
-  static async deleteTorrent(user: User, torrentId: string, debrider: DebriderEnum): Promise<void> {
+  static async deleteTorrent(user: User, torrentId: string, debrider: DebridersEnum): Promise<void> {
 
     switch (debrider) {
-      case DebriderEnum.ALLDEBRID: {
+      case DebridersEnum.ALLDEBRID: {
         return await AllDebrid.deleteTorrent(user, torrentId);
       }
 
-      case DebriderEnum.REALDEBRID: {
+      case DebridersEnum.REALDEBRID: {
         return await realdebrid.deleteTorrent(user, torrentId);
       }
 

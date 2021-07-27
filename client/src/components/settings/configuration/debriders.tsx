@@ -1,11 +1,9 @@
 import Chip from '@material-ui/core/Chip/Chip';
 import Grid from "@material-ui/core/Grid";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
-import React from "react";
+import React, {useEffect} from "react";
 import {useDispatch, useSelector} from 'react-redux';
-import {getDebriderSelected, saveDebrider} from '../../../ducks/debriders/Debrider.slice';
-import {StorageEnum} from '../../../ducks/storages/Storage.enum';
-import {getStorageSelected, saveStorage} from '../../../ducks/storages/Storage.slice';
+import {fetchDebrider, getDebriderSelected, saveDebrider} from '../../../ducks/debriders/Debrider.slice';
 import {DebriderEnum} from '../../../ducks/torrents/debrider.enum';
 import {Alldebrid} from "./debriders/Alldebrid";
 import Realdebrid from './debriders/Realdebrid';
@@ -16,6 +14,10 @@ const Debriders = (props: DebridersProps) => {
 
     const selectedDebrider = useSelector(getDebriderSelected);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(fetchDebrider());
+    }, []);
 
     return (
         <AccordionDetails>

@@ -1,6 +1,6 @@
 import got from 'got';
 import {Database} from '../../database/database';
-import {DebriderEnum} from '../../database/debrider-enum';
+import {DebridersEnum} from '../../entities/debriders.enum';
 import {AlldebridTorrentsDto} from '../../dtos/alldebrid-torrents.dto';
 import {TorrentFromFrontDto} from '../../dtos/torrent-from-front.dto';
 import {TorrentToFrontDTO} from '../../dtos/torrent-to-front.dto';
@@ -229,7 +229,7 @@ export class AllDebrid implements IDebrider {
   }
 
   static async disconnect(user: User): Promise<void> {
-    await Database.removeDebrider(user, DebriderEnum.ALLDEBRID);
+    await Database.removeDebrider(user, DebridersEnum.ALLDEBRID);
   }
 
   static async getPinCode(): Promise<CreatePinDto> {
@@ -267,7 +267,7 @@ export class AllDebrid implements IDebrider {
   static async storeAlldebridToken(user: User, apiKey: string): Promise<string> {
     try {
 
-      await Database.storeAlldebridApiKey(user, DebriderEnum.ALLDEBRID, apiKey);
+      await Database.storeAlldebridApiKey(user, DebridersEnum.ALLDEBRID, apiKey);
 
       return apiKey;
 

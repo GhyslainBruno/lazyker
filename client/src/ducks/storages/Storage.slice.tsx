@@ -67,6 +67,6 @@ const getSlice = (state: any) => state.storages;
 
 export const { updateStorage } = storageSlice.actions
 
-export const getStorageSelected = createSelector([getSlice], state => state.storageSelected);
+export const getStorageSelected = createSelector([getSlice], state => state.main.storageSelected);
 
 export default storageSlice.reducer

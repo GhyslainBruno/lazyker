@@ -22,7 +22,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import {useDispatch, useSelector} from 'react-redux';
-import {getDebriderSelected} from '../../ducks/debriders/Debrider.slice';
+import {fetchDebrider, getDebriderSelected} from '../../ducks/debriders/Debrider.slice';
 import {displayErrorNotification, displaySuccessNotification} from '../../ducks/snack/Snackbar.slice';
 import * as auth from "../../firebase/auth";
 import Tooltip from '@material-ui/core/Tooltip';
@@ -88,6 +88,7 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        dispatch(fetchDebrider());
         stopsRealTimeTorrents();
     }, []);
 

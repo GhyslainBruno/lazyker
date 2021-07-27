@@ -1,11 +1,11 @@
 import * as admin from 'firebase-admin';
+import {DebridersEnum} from '../entities/debriders.enum';
 import {DownloadedTorrentInDb} from '../entities/downloaded-torrent-in-db';
 import {MediaInfos} from '../entities/media-infos';
 import {StorageEnum} from '../entities/storage.enum';
 import {TorrentInDebriderInfos} from '../entities/torrent-in-debrider-infos';
 import {User, UserSettings} from '../entities/user';
 import {Torrent} from '../scrappers/ygg/torrent';
-import {DebriderEnum} from './debrider-enum';
 
 export class Database {
 
@@ -19,7 +19,7 @@ export class Database {
       .set(objectToStore);
   }
 
-  static async storeAlldebridApiKey(user: User, debrider: DebriderEnum, apiKey: any): Promise<any> {
+  static async storeAlldebridApiKey(user: User, debrider: DebridersEnum, apiKey: any): Promise<any> {
     return await Database.usersRef
       .child(user.uid)
       .child('settings')
@@ -28,7 +28,7 @@ export class Database {
       .set({apiKey: apiKey});
   }
 
-  static async removeDebrider(user: User, debrider: DebriderEnum) {
+  static async removeDebrider(user: User, debrider: DebridersEnum) {
     return await Database.usersRef
       .child(user.uid)
       .child('settings')
@@ -48,7 +48,7 @@ export class Database {
     return storageSnapshot.val() as StorageEnum
   }
 
-  static async getSelectedDebrider(user: User): Promise<DebriderEnum> {
+  static async getSelectedDebrider(user: User): Promise<DebridersEnum> {
     const storageSnapshot = await Database.usersRef
         .child(user.uid)
         .child('settings')
@@ -56,13 +56,8 @@ export class Database {
         .child('selected')
         .once('value');
 
-    return storageSnapshot.val() as DebriderEnum
+    return storageSnapshot.val() as DebridersEnum
   }
-
-  // static async uptoboxToken(user: User): Promise<string> {
-  //   const snapshot = await Database.usersRef.child(user.uid).child('settings').child('storages').child('uptobox').child('token').once('value');
-  //   return snapshot.val();
-  // }
 
   static async getUserSettings(user: User): Promise<UserSettings> {
     const snapshot = await Database.usersRef.child(user.uid).child('settings').once('value');

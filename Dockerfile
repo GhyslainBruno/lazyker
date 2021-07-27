@@ -103,4 +103,4 @@ ENV NODE_ENV=production
 EXPOSE 80
 
 # Starting server in production mode
-CMD ["node","backend/server.ts"]
+CMD ["npx", "ts-node", "backend/src/server.ts"]

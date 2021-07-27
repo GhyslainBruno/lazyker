@@ -41,14 +41,14 @@ export class Storage implements IStorage {
   async addTorrent(mediaInfos: MediaInfos, torrentInfos: TorrentInDebriderInfos, user: User): Promise<any> {
 
     try {
-      // If the torrent is ready, add it automatically to storage
+      // If the torrent is ready, add it automatically to storages
       if(this.storage instanceof Uptobox && this.debrider instanceof AllDebrid) {
 
         if (torrentInfos.isReady) {
           // Get the Uptobox link corresponding to the torrent file in Alldebrid
           const uptoboxLink = await this.debrider.getUptoboxLink(torrentInfos.id, user);
 
-          // Add the media to the uptobox storage
+          // Add the media to the uptobox storages
           const fileCode = await this.storage.addFile(uptoboxLink.getFileCode(), user);
 
           // Create a new folder named that way : "title (year)"
@@ -63,19 +63,20 @@ export class Storage implements IStorage {
           // Rename the torrent
           await this.storage.renameFile(fileCode, newFileName, user);
 
-          // If torrent is not ready yet, then add infos in database to be able to add it to storage when it's ready
+          // If torrent is not ready yet, then add infos in database to be able to add it to storages when it's ready
         } else {
 
           // Adding in db torrent's information to be able to create a directory (for the download) with a proper name
           // (not only using torrent name for that)
+          // await Database.store(user, `/torrentsDownloaded/${torrentInfos.id}`, {torrentInfos, mediaInfo: mediaInfos})
 
-          await Database.store(user, `/torrentsDownloaded/${torrentInfos.id}`, {torrentInfos, mediaInfo: mediaInfos})
+          await Database.storeDownloadedTorrentInDebrider(user, torrentInfos, mediaInfos);
 
         }
 
       }
     } catch(error) {
-      throw new Error('Error in storage class -> ' + error.message);
+      throw new Error('Error in storages class -> ' + error.message);
     }
   }
 }

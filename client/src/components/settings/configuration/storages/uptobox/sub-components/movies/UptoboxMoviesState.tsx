@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ConnectedStateEnum} from '../../../../../../../ducks/ConnectedState.enum';
 import {
   deleteMoviesFolder, listenMoviesFolder,
-} from '../../../../../../../ducks/storage/Uptobox.slice';
+} from '../../../../../../../ducks/storages/Uptobox.slice';
 
 const useStyles = makeStyles({
   container: {
@@ -25,8 +25,8 @@ const useStyles = makeStyles({
 })
 
 export const UptoboxMoviesState = () => {
-  const moviesState = useSelector((state: any) => state.uptobox.moviesState);
-  const moviesFolderPath = useSelector((state: any) => state.uptobox.moviesFolderPath);
+  const moviesState = useSelector((state: any) => state.storages.uptobox.moviesState);
+  const moviesFolderPath = useSelector((state: any) => state.storages.uptobox.moviesFolderPath);
   const dispatch = useDispatch();
   const classes = useStyles();
 

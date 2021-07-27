@@ -5,7 +5,7 @@
 // const dsmCommunication = require('../../../synology/Download');
 //
 // /**
-//  * Get FilesList from storage
+//  * Get FilesList from storages
 //  * @param path
 //  * @param syno
 //  * @returns {Promise<void>}
@@ -93,7 +93,7 @@
 // const getTvShowsToUpdateFromFiles = async (showsFromFiles, showsFromDb, tvShowsPath) => {
 //
 //     if (showsFromDb === null) throw Error("No Tv Shows specified in Database");
-//     if (showsFromFiles === null) throw Error("No Tv Shows to update in storage");
+//     if (showsFromFiles === null) throw Error("No Tv Shows to update in storages");
 //     if (tvShowsPath === null) throw Error("No Tv Shows path specified in settings");
 //
 //     try {
@@ -141,7 +141,7 @@
 // };
 //
 // /**
-//  * Get a connection to storage device
+//  * Get a connection to storages device
 //  * @param user
 //  * @returns {Promise<void>}
 //  */
@@ -154,7 +154,7 @@
 // };
 //
 // /**
-//  * Start a download on the storage instance
+//  * Start a download on the storages instance
 //  * @param lastEpisodes
 //  * @param storageInstance
 //  * @param user

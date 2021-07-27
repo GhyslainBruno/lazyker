@@ -1,4 +1,6 @@
 import * as admin from 'firebase-admin';
+import {DownloadedTorrentInDb} from '../entities/downloaded-torrent-in-db';
+import {MediaInfos} from '../entities/media-infos';
 import {StorageEnum} from '../entities/storage.enum';
 import {TorrentInDebriderInfos} from '../entities/torrent-in-debrider-infos';
 import {User, UserSettings} from '../entities/user';
@@ -47,7 +49,7 @@ export class Database {
   }
 
   // static async uptoboxToken(user: User): Promise<string> {
-  //   const snapshot = await Database.usersRef.child(user.uid).child('settings').child('storage').child('uptobox').child('token').once('value');
+  //   const snapshot = await Database.usersRef.child(user.uid).child('settings').child('storages').child('uptobox').child('token').once('value');
   //   return snapshot.val();
   // }
 
@@ -68,13 +70,9 @@ export class Database {
     return storageSnapshot.val();
   }
 
-  static async storeTorrentDownloading(user: User, torrent: TorrentInDebriderInfos):Promise<void> {
-    return await Database.usersRef
-        .child(user.uid)
-        .child('settings')
-        .child('debriders')
-        .child(debrider)
-        .set({apiKey: apiKey});
+  static async storeDownloadedTorrentInDebrider(user: User, torrent: TorrentInDebriderInfos, mediaInfos: MediaInfos):Promise<void> {
+    const downloadedTorrentInDb = new DownloadedTorrentInDb(mediaInfos, torrent);
+    return await Database.store(user, `/torrentsDownloadedInDebrider/${user.settings.debriders.selected}/${downloadedTorrentInDb.id}`,downloadedTorrentInDb);
   }
 
 }

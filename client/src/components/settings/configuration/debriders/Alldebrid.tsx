@@ -78,9 +78,9 @@ const ConnectionButton = (props: ConnectionButtonProps) => {
 
 export const Alldebrid = () => {
 
-  const pinStatus = useSelector((state: any) => state.debriders.pinStatus);
-  const isConnectedState = useSelector((state: any) => state.debriders.isConnected);
-  const loading = useSelector((state: any) => state.debriders.loading);
+  const pinStatus = useSelector((state: any) => state.debriders.alldebrid.pinStatus);
+  const isConnectedState = useSelector((state: any) => state.debriders.alldebrid.isConnected);
+  const loading = useSelector((state: any) => state.debriders.alldebrid.loading);
   const dispatch = useDispatch()
 
 
@@ -91,7 +91,7 @@ export const Alldebrid = () => {
 
         <div style={{display: 'flex'}}>
           <div style={{flex: '1', marginTop: '10px'}}>
-            Alldebrid
+            Connection
           </div>
 
           <div style={{flex: '1', marginTop: '10px'}}>

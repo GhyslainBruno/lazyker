@@ -1,4 +1,5 @@
 import {Database} from '../database/database';
+import {DebriderEnum} from '../database/debrider-enum';
 import {Debrider} from '../debriders/debrider';
 import * as realdebrid from '../debriders/realdebrid/debrid_links';
 import * as admin from 'firebase-admin';
@@ -37,11 +38,12 @@ module.exports = (app: any) => {
 
             const { user } = req;
 
+            // ! User should not be part of "DownloadTorrentDto" type !
             const downloadTorrentDto = req.body as DownloadTorrentDto;
             downloadTorrentDto.user = user;
 
             // Putting this particular movie into "inProgress" state into firebase database
-            await usersRef.child(user.uid).child('/movies').child(req.body.mediaInfos.movieId).set({title: req.body.mediaInfos.title, state: 'finding_links', id: req.body.mediaInfos.movieId});
+            // await usersRef.child(user.uid).child('/movies').child(req.body.mediaInfos.movieId).set({title: req.body.mediaInfos.title, state: 'finding_links', id: req.body.mediaInfos.movieId});
             await Movies.downloadTorrentFile(downloadTorrentDto);
 
             res.send({message: 'ok'});
@@ -158,12 +160,12 @@ module.exports = (app: any) => {
             // Don't know why it was used, keeping it just in case
             // await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();
 
-            const storage: StorageEnum = req.query.storage;
+            const debrider: DebriderEnum = req.query.debrider;
 
             // await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();
             // await realdebrid.deleteTorrent(req.query.torrentId, user);
 
-            await Debrider.deleteTorrent(user, torrentId, storage);
+            await Debrider.deleteTorrent(user, torrentId, debrider);
 
             res.send({
                 message: 'ok'

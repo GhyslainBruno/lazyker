@@ -12,7 +12,7 @@ const pMap = require('p-map');
 export const getTvShowsToUpdateFromGdrive = async (showsFromGdrive: any, showsFromDb: any, tvShowsFolder: any) => {
 
     if (showsFromDb === null) throw Error("No Tv Shows specified in Database");
-    if (showsFromGdrive === null) throw Error("No Tv Shows to update in storage");
+    if (showsFromGdrive === null) throw Error("No Tv Shows to update in storages");
     if (tvShowsFolder === null) throw Error("No Tv Shows path specified in settings");
 
     try {

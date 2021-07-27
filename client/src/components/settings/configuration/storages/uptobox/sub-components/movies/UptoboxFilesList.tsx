@@ -6,7 +6,7 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import TreeItem from "@material-ui/lab/TreeItem";
 import {useDispatch} from 'react-redux';
 import {displayErrorNotification} from '../../../../../../../ducks/snack/Snackbar.slice';
-import {updateMoviesFolderPath} from '../../../../../../../ducks/storage/Uptobox.slice';
+import {updateMoviesFolderPath} from '../../../../../../../ducks/storages/Uptobox.slice';
 import {auth} from '../../../../../../../firebase';
 const { useState } = React;
 

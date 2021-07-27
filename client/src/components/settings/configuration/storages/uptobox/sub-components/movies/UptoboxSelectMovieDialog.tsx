@@ -7,7 +7,7 @@ import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   openMoviesDialog, saveMoviesFolder,
-} from '../../../../../../../ducks/storage/Uptobox.slice';
+} from '../../../../../../../ducks/storages/Uptobox.slice';
 import {UptoboxFilesList} from './UptoboxFilesList';
 
 const useStyles = makeStyles({
@@ -25,8 +25,8 @@ type UptoboxSelectMovieDialogProps = {
 
 export const UptoboxSelectMovieDialog = (props: UptoboxSelectMovieDialogProps) => {
 
-  const isMovieDialogOpened = useSelector((state: any) => state.uptobox.isMovieDialogOpened);
-  const moviesFolderPath = useSelector((state: any) => state.uptobox.moviesFolderPath);
+  const isMovieDialogOpened = useSelector((state: any) => state.storages.uptobox.isMovieDialogOpened);
+  const moviesFolderPath = useSelector((state: any) => state.storages.uptobox.moviesFolderPath);
 
   const dispatch = useDispatch();
   const classes = useStyles();

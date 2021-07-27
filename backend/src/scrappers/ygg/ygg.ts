@@ -79,7 +79,7 @@ export const downloadTorrentFile = async (user: User, scrapperTorrentInfos: Scra
     const debrider = new Debrider(AllDebrid, Uptobox, user);
     const storage = new Storage(AllDebrid, Uptobox, user);
 
-    const torrentInfos = await debrider.addMagnet(magnetLink, user);
+    const torrentInfos = await debrider.addMagnet(magnetLink, mediaInfos, user);
     await storage.addTorrent(mediaInfos, torrentInfos, user);
 }
 

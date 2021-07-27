@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
-import {StorageEnum} from '../ducks/storage/Storage.enum';
+import {StorageEnum} from '../ducks/storages/Storage.enum';
 import {DebriderEnum} from '../ducks/torrents/debrider.enum';
 import * as auth from './auth';
 

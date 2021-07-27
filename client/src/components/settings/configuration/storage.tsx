@@ -2,6 +2,7 @@ import Grid from "@material-ui/core/Grid";
 import Chip from "@material-ui/core/Chip/Chip";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import CancelCircle from "@material-ui/icons/CancelOutlined";
+// @ts-ignore
 import GooglePicker from "react-google-picker";
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import Folder from "@material-ui/icons/FolderOpen";
@@ -19,9 +20,9 @@ import Visibility from "@material-ui/icons/Visibility";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from 'react-redux';
-import {StorageEnum} from '../../../ducks/storage/Storage.enum';
-import {fetchStorage, saveStorage, updateStorage} from '../../../ducks/storage/Storage.slice';
-import {Uptobox} from './storage/uptobox/Uptobox';
+import {StorageEnum} from '../../../ducks/storages/Storage.enum';
+import {fetchStorage, saveStorage, updateStorage} from '../../../ducks/storages/Storage.slice';
+import {Uptobox} from './storages/uptobox/Uptobox';
 
 type StorageProps = {
     googleDriveConnectLoading: boolean;
@@ -55,7 +56,7 @@ type StorageProps = {
 
 const Storage = (props: StorageProps) => {
 
-    const storageSelected = useSelector((state: any) => state.storage.storageSelected);
+    const storageSelected = useSelector((state: any) => state.storages.main.storageSelected);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -71,7 +72,6 @@ const Storage = (props: StorageProps) => {
 
                 {/* The Chips representing the different storages */}
                 <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
-
                     <Chip
                       label="Uptobox"
                       variant={storageSelected === StorageEnum.UPTOBOX ? "default" : "outlined"}

@@ -49,9 +49,9 @@ class Downloads extends Component<DownloadsProps, DownloadsState> {
 
                 <div>
                     {/* Movies in Progress */}
-                    <MoviesInProgress
-                        displaySnackMessage={this.displaySnackMessage}
-                    />
+                    {/*<MoviesInProgress*/}
+                    {/*    displaySnackMessage={this.displaySnackMessage}*/}
+                    {/*/>*/}
 
                     {/* Torrents */}
                     <Torrents

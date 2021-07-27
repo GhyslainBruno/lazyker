@@ -1,9 +1,12 @@
+import Chip from '@material-ui/core/Chip/Chip';
 import Grid from "@material-ui/core/Grid";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import React from "react";
-import {useSelector} from 'react-redux';
-import {StorageEnum} from '../../../ducks/storage/Storage.enum';
-import {getStorageSelected} from '../../../ducks/storage/Storage.slice';
+import {useDispatch, useSelector} from 'react-redux';
+import {getDebriderSelected, saveDebrider} from '../../../ducks/debriders/Debrider.slice';
+import {StorageEnum} from '../../../ducks/storages/Storage.enum';
+import {getStorageSelected, saveStorage} from '../../../ducks/storages/Storage.slice';
+import {DebriderEnum} from '../../../ducks/torrents/debrider.enum';
 import {Alldebrid} from "./debriders/Alldebrid";
 import Realdebrid from './debriders/Realdebrid';
 
@@ -11,7 +14,8 @@ type DebridersProps = {}
 
 const Debriders = (props: DebridersProps) => {
 
-    const selectedStorage = useSelector(getStorageSelected);
+    const selectedDebrider = useSelector(getDebriderSelected);
+    const dispatch = useDispatch();
 
     return (
         <AccordionDetails>
@@ -21,22 +25,29 @@ const Debriders = (props: DebridersProps) => {
                     Debrider
                 </Grid>
 
+                {/* The Chips representing the different debriders */}
+                <Grid item xs={12} style={{padding: '6px', textAlign: 'center', color: 'white'}}>
+                    <Chip
+                        label="Alldebrid"
+                        variant={selectedDebrider === DebriderEnum.ALLDEBRID ? "default" : "outlined"}
+                        style={{margin: '3px'}}
+                        onClick={() => {dispatch(saveDebrider(DebriderEnum.ALLDEBRID))}}/>
+                    <Chip
+                        label="Realdebrid"
+                        variant={selectedDebrider === DebriderEnum.REALDEBRID ? "default" : "outlined"}
+                        style={{margin: '3px'}}
+                        onClick={() => {dispatch(saveDebrider(DebriderEnum.REALDEBRID))}}/>
+                </Grid>
+
                 {
-                    selectedStorage === StorageEnum.UPTOBOX ?
+                    selectedDebrider === DebriderEnum.ALLDEBRID ?
                         <Alldebrid />
                         :
                         null
                 }
 
                 {
-                    selectedStorage === StorageEnum.GOOGLE_DRIVE ?
-                        <Realdebrid />
-                        :
-                        null
-                }
-
-                {
-                    selectedStorage === StorageEnum.NAS ?
+                    selectedDebrider === DebriderEnum.REALDEBRID ?
                         <Realdebrid />
                         :
                         null

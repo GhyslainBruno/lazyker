@@ -7,9 +7,9 @@ const logger = require('../../../logs/logger');
 /**
  * Update steps :
  * 1 - Get Tv Shows directory
- * 2 - Get all the tv shows from storage (nas, for now, but unlimited drives should come "soon") - First getting tv shows path
+ * 2 - Get all the tv shows from storages (nas, for now, but unlimited drives should come "soon") - First getting tv shows path
  * 4 - Get all the "autoUpdate" tv shows from Firebase database
- * 5 - Filter the files list (fro storage) with shows from DB
+ * 5 - Filter the files list (fro storages) with shows from DB
  * 6 - For Each Tv Show: find last season/episode numbers
  * 7 - get the qualities wanted by the user for Tv Shows
  * 8 - For Each Tv Show: call scraper(s) with the last season/episode numbers | Add, for each tvShow, a property "unrestrictedLink"
@@ -43,7 +43,7 @@ export const startUpdate = async (user: any) => {
         const tvShowsFolder = await database.getTvShowsFolderGdrive(user);
 
         /**
-         * 2 - Get all the tv shows from storage (only working for gdrive users, in this file at least) - First getting tv shows path
+         * 2 - Get all the tv shows from storages (only working for gdrive users, in this file at least) - First getting tv shows path
          * Returns :
          * [
          *         {

@@ -11,7 +11,7 @@ import {
   openDeleteTokenDialog,
   openTokenDialog,
   updateConnectedState
-} from '../../../../../../../ducks/storage/Uptobox.slice';
+} from '../../../../../../../ducks/storages/Uptobox.slice';
 
 const useStyles = makeStyles({
   container: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles({
 })
 
 export const UptoboxConnectionButton = () => {
-  const connectedState = useSelector((state: any) => state.uptobox.connectedState);
+  const connectedState = useSelector((state: any) => state.storages.uptobox.connectedState);
   const dispatch = useDispatch();
   const classes = useStyles();
 

@@ -4,7 +4,7 @@ import CheckCircle from '@material-ui/icons/CheckCircle';
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {ConnectedStateEnum} from '../../../../../../../ducks/ConnectedState.enum';
-import {listenTokenState} from '../../../../../../../ducks/storage/Uptobox.slice';
+import {listenTokenState} from '../../../../../../../ducks/storages/Uptobox.slice';
 
 const useStyles = makeStyles({
   container: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 })
 
 export const UptoboxConnectionState = () => {
-  const connectedState = useSelector((state: any) => state.uptobox.connectedState);
+  const connectedState = useSelector((state: any) => state.storages.uptobox.connectedState);
   const dispatch = useDispatch();
   const classes = useStyles();
 

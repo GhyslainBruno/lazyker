@@ -1,6 +1,7 @@
 import {Database} from '../database/database';
-import {TorrentFromFrontDto} from '../dtos/torrent-from-front.dto';
+import {DebriderEnum} from '../database/debrider-enum';
 import {TorrentToFrontDTO} from '../dtos/torrent-to-front.dto';
+import {MediaInfos} from '../entities/media-infos';
 import {StorageEnum} from '../entities/storage.enum';
 import {TorrentInDebriderInfos} from '../entities/torrent-in-debrider-infos';
 import {User} from '../entities/user';
@@ -55,16 +56,18 @@ export class Debrider {
     this.user = user;
   }
 
-  async addMagnet(magnetLink: string, user: User): Promise<TorrentInDebriderInfos> {
-    return await this.debrider.addMagnetLink(magnetLink, user);
+  async addMagnet(magnetLink: string, mediaInfos: MediaInfos, user: User): Promise<TorrentInDebriderInfos> {
+    const torrentInDebriderInfos = await this.debrider.addMagnetLink(magnetLink, user);
+    await Database.storeDownloadedTorrentInDebrider(user, torrentInDebriderInfos, mediaInfos);
+    return torrentInDebriderInfos;
   }
 
   static async getTorrents(user: User): Promise<TorrentToFrontDTO[]> {
 
     const selectedStorage = await Database.getSelectedStorage(user);
 
-    // Selecting debrider service based on storage, for now
-    // (later it should be a property juste like storage)
+    // Selecting debrider service based on storages, for now
+    // (later it should be a property juste like storages)
     switch (selectedStorage) {
       case StorageEnum.UPTOBOX: {
         return await AllDebrid.listTorrents(user);
@@ -81,19 +84,19 @@ export class Debrider {
     }
   }
 
-  static async deleteTorrent(user: User, torrentId: string, storage: StorageEnum): Promise<void> {
+  static async deleteTorrent(user: User, torrentId: string, debrider: DebriderEnum): Promise<void> {
 
-    switch (storage) {
-      case StorageEnum.UPTOBOX: {
+    switch (debrider) {
+      case DebriderEnum.ALLDEBRID: {
         return await AllDebrid.deleteTorrent(user, torrentId);
       }
 
-      case StorageEnum.GOOGLE_DRIVE: {
+      case DebriderEnum.REALDEBRID: {
         return await realdebrid.deleteTorrent(user, torrentId);
       }
 
       default: {
-        throw new Error('Unknown storage');
+        throw new Error('Unknown storages');
       }
     }
   }

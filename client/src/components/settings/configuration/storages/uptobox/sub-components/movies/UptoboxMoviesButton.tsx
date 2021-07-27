@@ -5,7 +5,7 @@ import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {ConnectedStateEnum} from '../../../../../../../ducks/ConnectedState.enum';
 import {displayErrorNotification} from '../../../../../../../ducks/snack/Snackbar.slice';
-import {openMoviesDialog, updateMoviesState} from '../../../../../../../ducks/storage/Uptobox.slice';
+import {openMoviesDialog, updateMoviesState} from '../../../../../../../ducks/storages/Uptobox.slice';
 
 const useStyles = makeStyles({
   container: {
@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 
 export const UptoboxMoviesButton = () => {
 
-  const uptoboxConnectedState = useSelector((state: any) => state.uptobox.connectedState);
+  const uptoboxConnectedState = useSelector((state: any) => state.storages.uptobox.connectedState);
   const dispatch = useDispatch();
   const classes = useStyles();
 

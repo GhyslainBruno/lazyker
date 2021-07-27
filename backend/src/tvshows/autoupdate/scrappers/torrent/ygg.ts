@@ -107,7 +107,7 @@ const filterTorrentsWithNumber = async (torrents: any, show: any) => {
 
 /**
  * Returns the heavier torrent - doing this to download the better quality foundable
- * -> using unlimited google drive storage, so don't really care for now
+ * -> using unlimited google drive storages, so don't really care for now
  * @param torrents
  */
 const getHeavierTorrent = (torrents: any) => {

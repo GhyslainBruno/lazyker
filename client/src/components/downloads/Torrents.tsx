@@ -21,7 +21,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getDebriderSelected} from '../../ducks/debriders/Debrider.slice';
 import {displayErrorNotification, displaySuccessNotification} from '../../ducks/snack/Snackbar.slice';
 import * as auth from "../../firebase/auth";
 import Tooltip from '@material-ui/core/Tooltip';
@@ -81,6 +82,8 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
     const [showDeleteDialogState, setShowDeleteDialog] = useState(false);
     const [open, setOpen] = useState(false);
     const [torrentsInterval, setTorrentsInterval] = useState<any>('torrentsInterval');
+
+    const selectedDebrider = useSelector(getDebriderSelected);
 
     const dispatch = useDispatch();
 
@@ -193,9 +196,9 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
 
         try {
 
-            const storage = await Database.getSelectedStorage();
+            const debrider = await Database.getSelectedDebrider();
 
-            await fetch(`/api/debrider/torrent?storage=${storage}&torrentId=${torrentToRemove?.id}`, {
+            await fetch(`/api/debrider/torrent?debrider=${debrider}&torrentId=${torrentToRemove?.id}`, {
                 method: 'DELETE',
                 headers: {
                     'token': await auth.getIdToken()
@@ -272,7 +275,7 @@ const Torrents = (props: TorrentsProps, state: TorrentsState) => {
       <Accordion onChange={(event, expanded) => expanded ? firstTorrentsLoad() : stopsRealTimeTorrents()}>
 
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Debrider Torrents</Typography>
+              <Typography>Debrider : { selectedDebrider }</Typography>
           </AccordionSummary>
 
           <Dialog

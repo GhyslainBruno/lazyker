@@ -4,7 +4,7 @@ import rp from 'request-promise';
 
 const db = admin.database();
 const tmdbApiKey = '7d7d89a7c475b8fdc9a5203419cb3964';
-const youtubeAPIKey = 'AIzaSyDJUXgEKJSwbsr_Gj7IuWTNlTPoGKP_xn8';
+const youtubeAPIKey = 'AIzaSyAB47PhZaWdCnPz9gLEPT49v_Fby1sq3RE';
 const searchMovieTmdbUrl = 'https://api.themoviedb.org/3/search/movie';
 const usersRef = db.ref("/users");
 

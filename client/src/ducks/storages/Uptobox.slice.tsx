@@ -20,7 +20,7 @@ export const listenTokenState = async (dispatch: Dispatch<any>) => {
     .database()
     .ref('/users')
     .child(await auth.getUid())
-    .child('/settings/storage/uptobox/token')
+    .child('/settings/storages/uptobox/token')
     .on('value', (snapshot: any) => {
       if (snapshot.val() !== null) {
         dispatch(updateConnectedState(ConnectedStateEnum.CONNECTED));
@@ -36,7 +36,7 @@ export const listenMoviesFolder = async (dispatch: Dispatch<any>) => {
     .database()
     .ref('/users')
     .child(await auth.getUid())
-    .child('/settings/storage/uptobox/moviesFolder')
+    .child('/settings/storages/uptobox/moviesFolder')
     .on('value', (snapshot: any) => {
       if (snapshot.val() !== null) {
         dispatch(updateMoviesState(ConnectedStateEnum.CONNECTED));
@@ -54,7 +54,7 @@ export const saveToken = createAsyncThunk("uptobox/saveToken", async (state: any
       .database()
       .ref('/users')
       .child(await auth.getUid())
-      .child('/settings/storage/uptobox/token')
+      .child('/settings/storages/uptobox/token')
       .set(state);
 
     thunkAPI.dispatch(displaySuccessNotification('Token saved'));
@@ -65,7 +65,7 @@ export const saveMoviesFolder = createAsyncThunk("uptobox/saveMoviesFolder", asy
     .database()
     .ref('/users')
     .child(await auth.getUid())
-    .child('/settings/storage/uptobox/moviesFolder')
+    .child('/settings/storages/uptobox/moviesFolder')
     .set(state);
 
   thunkAPI.dispatch(displaySuccessNotification('Movies folder saved'));
@@ -78,7 +78,7 @@ export const deleteToken = createAsyncThunk("uptobox/deleteToken", async (state:
       .database()
       .ref('/users')
       .child(await auth.getUid())
-      .child('/settings/storage/uptobox/token')
+      .child('/settings/storages/uptobox/token')
       .remove();
 
   thunkAPI.dispatch(displaySuccessNotification('Token deleted'));
@@ -89,7 +89,7 @@ export const deleteMoviesFolder = createAsyncThunk("uptobox/deleteMoviesFolder",
     .database()
     .ref('/users')
     .child(await auth.getUid())
-    .child('/settings/storage/uptobox/moviesFolder')
+    .child('/settings/storages/uptobox/moviesFolder')
     .remove();
 
   return thunkAPI.dispatch(displaySuccessNotification('Movies folder deleted'));

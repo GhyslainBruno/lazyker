@@ -28,8 +28,8 @@ import 'firebase/database';
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import {displayErrorNotification, displaySuccessNotification} from '../../ducks/snack/Snackbar.slice';
-import {StorageEnum} from '../../ducks/storage/Storage.enum';
-import {getStorageSelected, updateStorage} from '../../ducks/storage/Storage.slice';
+import {StorageEnum} from '../../ducks/storages/Storage.enum';
+import {getStorageSelected, updateStorage} from '../../ducks/storages/Storage.slice';
 import * as auth from "../../firebase/auth";
 import {Database} from '../../firebase/Database';
 
@@ -339,7 +339,7 @@ const CurrentDownloads = () => {
       <Accordion onChange={(event, expanded) => expanded ? loadCurrentDownloads() : null}>
 
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Current downloads</Typography>
+              <Typography>Storage</Typography>
           </AccordionSummary>
 
           <Dialog

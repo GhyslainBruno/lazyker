@@ -10,10 +10,10 @@ import {
   deleteToken,
   openDeleteTokenDialog,
   openTokenDialog,
-} from '../../../../../../../ducks/storage/Uptobox.slice';
+} from '../../../../../../../ducks/storages/Uptobox.slice';
 
 export const UptoboxDeleteTokenDialog = () => {
-  const isDeleteTokenDialogOpened = useSelector((state: any) => state.uptobox.isDeleteTokenDialogOpened);
+  const isDeleteTokenDialogOpened = useSelector((state: any) => state.storages.uptobox.isDeleteTokenDialogOpened);
   const dispatch = useDispatch();
 
   return (

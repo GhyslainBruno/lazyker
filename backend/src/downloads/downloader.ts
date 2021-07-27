@@ -53,7 +53,7 @@ export const startRealdebridTorrentDownload = async (torrent: any, name: string,
                     break;
 
                 default:
-                    throw new Error('Unknown storage');
+                    throw new Error('Unknown storages');
             }
         }, {concurrency: 1});
 
@@ -70,7 +70,7 @@ export const startRealdebridTorrentDownload = async (torrent: any, name: string,
  * @returns {Promise<void>}
  */
 export const startMovieDownload = async (linkFromRealdebrid: any, title: any, user: any) => {
-    const storage = await usersRef.child(user.uid).child('/settings/storage').once('value');
+    const storage = await usersRef.child(user.uid).child('/settings/storages').once('value');
 
     switch (storage.val()) {
 

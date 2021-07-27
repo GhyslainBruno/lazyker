@@ -24,7 +24,7 @@ const Realdebrid = (props: RealdebridProps) => {
     const dispatch = useDispatch();
     // To use when understood why created selector in slice "breaks the re render"
     // const isConnected = useSelector(getRealdebridConnectedState);
-    const connectedState = useSelector((state: any) => state.realdebrid.connectedState)
+    const connectedState = useSelector((state: any) => state.debriders.realdebrid.connectedState)
 
     // Production redirect Realdebrid URL - TODO: change the domain name by an environment variable
     let redirectUri = 'https://api.real-debrid.com/oauth/v2/auth?client_id=GPA2MB33HLS3I&redirect_uri=https%3A%2F%2Flazyker.ghyslain.xyz/api/link_rd&response_type=code&state=foobar';
@@ -38,6 +38,7 @@ const Realdebrid = (props: RealdebridProps) => {
         dispatch(listenRealdebridIsConnectedState);
     }, []);
 
+    // TODO: refactor
     return (
         <Grid container spacing={0}>
             { connectedState === ConnectedStateEnum.CONNECTED ?
@@ -45,7 +46,7 @@ const Realdebrid = (props: RealdebridProps) => {
 
                     <div style={{display: 'flex'}}>
                         <div style={{flex: '1', marginTop: '10px'}}>
-                            Realdebrid
+                            Connection
                         </div>
 
                         <div style={{flex: '1', marginTop: '10px'}}>
@@ -66,7 +67,7 @@ const Realdebrid = (props: RealdebridProps) => {
 
                     <div style={{display: 'flex'}}>
                         <div style={{flex: '1', marginTop: '10px'}}>
-                            Realdebrid
+                            Connection
                         </div>
 
                         <div style={{flex: '1', marginTop: '10px'}}>

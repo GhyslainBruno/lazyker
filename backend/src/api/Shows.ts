@@ -209,10 +209,10 @@ module.exports = (app: any) => {
             await autoupdateGdrive.startUpdate(await admin.auth().getUser("OmbDjWXTCdb5ZusQTyOP2Psa1Ws1"));
 
             // // Only keeping 'nas' users for now to autoupdate tvShows
-            // const snapshot = await usersRef.child('/').orderByChild('/settings/storage').equalTo('nas').once('value');
+            // const snapshot = await usersRef.child('/').orderByChild('/settings/storages').equalTo('nas').once('value');
             // const users = snapshot.val();
 
-            // Starting auto update with users who only use NAS storage & have entered values into the mandatory variables
+            // Starting auto update with users who only use NAS storages & have entered values into the mandatory variables
             // const usersToUpdateTvShows = Object.keys(users).filter(user => {
             //
             //     if (users[user].settings.qualities.first !== undefined &&

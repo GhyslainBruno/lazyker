@@ -6,35 +6,11 @@ export default defineConfig(
     {
         plugins: [reactRefresh()],
         build: {
-            outDir: '../backend/src/client_build',
-            rollupOptions: {
-                external: [
-                    'jss-plugin-window'
-                ],
-            },
+            outDir: '../backend/src/client_build'
         },
         server: {
             proxy: {
                 '/api': 'http://localhost:80/',
             }
-        },
-        resolve: {
-            alias: [
-                {
-                    find: /^@material-ui\/icons\/(.*)/,
-                    replacement: "@material-ui/icons/esm/$1",
-                },
-                {
-                    find: /^@material-ui\/core\/(.+)/,
-                    replacement: "@material-ui/core/es/$1",
-                },
-                {
-                    find: /^@material-ui\/core$/,
-                    replacement: "@material-ui/core/es",
-                },
-            ],
-        },
-        define: {
-            global: "window", // fix for packages that support both node and browser
-        },
+        }
     })

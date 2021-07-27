@@ -2,14 +2,14 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --mode production",
     "serve": "vite preview",
     "start": "vite"
   },
   "dependencies": {
-    "@material-ui/core": "^4.11.4",
+    "@material-ui/core": "^4.12.2",
     "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.58",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "@reduxjs/toolkit": "^1.5.1",
     "@types/gapi": "0.0.39",
     "@types/react": "^17.0.8",
@@ -19,6 +19,7 @@
     "firebase": "^8.6.3",
     "gapi-client": "^0.0.3",
     "googleapis": "^75.0.0",
+    "jss-plugin-extend": "^10.7.1",
     "ky": "^0.28.3",
     "node-sass": "^6.0.0",
     "query-string": "^7.0.0",

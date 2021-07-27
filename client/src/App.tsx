@@ -12,7 +12,7 @@ import Downloads from './components/Downloads';
 import Settings from './components/Settings';
 import Privacy from './components/privacy/PrivacyPolicies';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import {MuiThemeProvider, createTheme} from '@material-ui/core';
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
 import { SignUpForm } from "./components/SignUp";
@@ -42,7 +42,7 @@ const Alert = (props: any) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const theme = createMuiTheme({
+const theme = createTheme({
     palette: {
         type: 'dark', // Switching the dark mode on is a single property value change.
         primary: red,

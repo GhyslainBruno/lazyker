@@ -76,7 +76,7 @@ And probably many more I'm forgetting.
   * `heroku open -a lazyker`
   
 * **Debug in a Docker container**
-  * Starting server in production mode (in dockefile, last command) : ```CMD ["node", "--inspect=0.0.0.0:9229", "--debug-brk", "backend/server.js"]```
+  * Starting server in production mode (in dockefile, last command) : ```CMD ["node", "--inspect=0.0.0.0:9229", "--debug-brk", "backend/server.ts"]```
   * ```docker run -p 80:80 -p 443:443 -p 9229:9229 -d ghyslainbruno/lazyker```
   * Then use chrome://inspect in chrome to debug the whole app from chrome dev tools
 
@@ -102,13 +102,13 @@ Can, for now, be build in dev / prod mode :
 * dev : 
   * ```npm install``` (backend folder)
   * ```npm install``` (client folder)  
-  * ```node server.js``` (backend folder)
+  * ```node server.ts``` (backend folder)
   * ```npm start``` (client folder)
 * prod : 
   * ```npm install``` (backend folder)
   * ```npm install``` (client folder)  
   * ```npm run build``` (client folder)
-  * ```NODE_ENV=production node server.js``` (backend folder)
+  * ```NODE_ENV=production node server.ts``` (backend folder)
   
 
 **Careful : in Settings component, a callback url for OAuth realdebrid authentication is set to lazyker.herokuapp.com**

@@ -1,7 +1,7 @@
 .idea/
 backend/node_modules/
 backend/coverage/
-backend/client_build/
+backend/src/client_build/
 backend/build/
 backend/built/
 client/build/

@@ -4,7 +4,6 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
     "skipLibCheck": false,
-    "esModuleInterop": false,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
@@ -13,7 +12,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "esModuleIntertop": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true
   },

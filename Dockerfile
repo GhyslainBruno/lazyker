@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:14.17.1-alpine
 
 # Create app directory and use it as the working directory
 RUN mkdir -p /lazyker/app/client && mkdir -p /lazyker/app/backend

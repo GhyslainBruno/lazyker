@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 
 const config = {
-    apiKey: "AIzaSyAeHFqSP_4RdLM-Oz87XU2hMxWEgvvdOX0",
+    apiKey: "AIzaSyDInAzcwgIwj0eSvA1uQ9SfRw0TDQCKNXo",
     authDomain: "lazyker-568c4.firebaseapp.com",
     databaseURL: "https://lazyker-568c4.firebaseio.com",
     projectId: "lazyker-568c4",

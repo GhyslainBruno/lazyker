@@ -48,6 +48,17 @@ export class Database {
     return storageSnapshot.val() as StorageEnum
   }
 
+  static async getSelectedDebrider(user: User): Promise<DebriderEnum> {
+    const storageSnapshot = await Database.usersRef
+        .child(user.uid)
+        .child('settings')
+        .child('debriders')
+        .child('selected')
+        .once('value');
+
+    return storageSnapshot.val() as DebriderEnum
+  }
+
   // static async uptoboxToken(user: User): Promise<string> {
   //   const snapshot = await Database.usersRef.child(user.uid).child('settings').child('storages').child('uptobox').child('token').once('value');
   //   return snapshot.val();

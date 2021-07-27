@@ -64,16 +64,16 @@ export class Debrider {
 
   static async getTorrents(user: User): Promise<TorrentToFrontDTO[]> {
 
-    const selectedStorage = await Database.getSelectedStorage(user);
+    const selectedDebrider = await Database.getSelectedDebrider(user);
 
     // Selecting debrider service based on storages, for now
     // (later it should be a property juste like storages)
-    switch (selectedStorage) {
-      case StorageEnum.UPTOBOX: {
+    switch (selectedDebrider) {
+      case DebriderEnum.ALLDEBRID: {
         return await AllDebrid.listTorrents(user);
       }
 
-      case StorageEnum.GOOGLE_DRIVE: {
+      case DebriderEnum.REALDEBRID: {
         return await realdebrid.getTorrents(user)
       }
 

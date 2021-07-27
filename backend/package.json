@@ -47,7 +47,7 @@
     "string-similarity": "^1.2.0",
     "supertest": "^3.4.2",
     "syno": "^2.1.0",
-    "torrent-search-api": "GhyslainBruno/torrent-search-api#fix/ygg_provider",
+    "torrent-search-api": "git+https://github.com/GhyslainBruno/torrent-search-api.git#fix/ygg_provider",
     "torrent-to-magnet": "^1.0.1",
     "user-agents": "^1.0.559",
     "wait-promise": "^0.4.1"

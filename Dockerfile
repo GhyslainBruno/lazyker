@@ -1,4 +1,4 @@
-FROM node:14.17.1-alpine
+FROM node:14-alpine
 
 # Create app directory and use it as the working directory
 RUN mkdir -p /lazyker/app/client && mkdir -p /lazyker/app/backend
@@ -57,6 +57,7 @@ RUN \
   && apk --no-cache  update \
   && apk --no-cache  upgrade \
   && apk add --no-cache --virtual .build-deps \
+    bash git openssh \
     gifsicle pngquant optipng libjpeg-turbo-utils \
     udev ttf-opensans chromium \
   && rm -rf /var/cache/apk/* /tmp/*
@@ -66,23 +67,10 @@ ENV CHROME_BIN /usr/bin/chromium-browser
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
-# Puppeteer v1.4.0 works with Chromium 68.
-#RUN npm i puppeteer@1.4.0
-
-# Add user so we don't need --no-sandbox.
-#RUN addgroup -S pptruser && adduser -S -g pptruser pptruser \
-#    && mkdir -p /home/pptruser/Downloads \
-#    && chown -R pptruser:pptruser /home/pptruser \
-#    && chown -R pptruser:pptruser /app
-
-# Run everything after as non-privileged user.
-#USER pptruser
-### End of trying
-
-RUN npm install --ignore-engines
+RUN npm install
 
 WORKDIR /lazyker/app/client
-RUN npm install --ignore-engines
+RUN npm install
 
 WORKDIR /lazyker/app
 
@@ -103,6 +91,8 @@ WORKDIR /lazyker/app/client
 RUN npm run build
 
 WORKDIR /lazyker/app/
+
+# Is this part so useful ?
 RUN rm -rf client
 
 # Install lighthouse globally to be able to run a full lighthouse analysis in the CI pipeline

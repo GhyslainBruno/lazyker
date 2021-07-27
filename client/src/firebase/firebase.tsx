@@ -7,7 +7,8 @@ const config = {
     databaseURL: "https://lazyker-568c4.firebaseio.com",
     projectId: "lazyker-568c4",
     storageBucket: "lazyker-568c4.appspot.com",
-    messagingSenderId: "348584284"
+    messagingSenderId: "348584284",
+    appId: "1:348584284:web:7d41972acb562323"
 };
 
 // Similar to a singleton pattern

@@ -152,18 +152,15 @@ module.exports = (app: any) => {
         }
     });
 
+    /**
+     * Delete a particular torrent in user's debrider
+     */
     app.delete('/api/debrider/torrent', async (req: any, res: any) => {
         try {
             const { user } = req;
             const { torrentId } = req.query;
 
-            // Don't know why it was used, keeping it just in case
-            // await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();
-
-            const debrider: DebridersEnum = req.query.debrider;
-
-            // await usersRef.child(user.uid).child(`/torrentsDownloaded/${req.query.torrentId}`).remove();
-            // await realdebrid.deleteTorrent(req.query.torrentId, user);
+            const debrider: DebridersEnum = user.settings.debriders.selected;
 
             await Debrider.deleteTorrent(user, torrentId, debrider);
 

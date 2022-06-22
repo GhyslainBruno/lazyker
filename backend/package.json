@@ -33,7 +33,7 @@
     "express": "^4.16.3",
     "firebase-admin": "^6.0.0",
     "googleapis": "^36.0.0",
-    "got": "^9.5.0",
+    "got": "^11.8.5",
     "jest": "^23.6.0",
     "jest-sonar-reporter": "^2.0.0",
     "lodash": "^4.17.5",
